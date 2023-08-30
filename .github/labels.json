@@ -1,0 +1,57 @@
+[
+  {
+    "name": ":gear: Setting",
+    "color": "e3dede",
+    "description": "개발 환경 세팅"
+  },
+  {
+    "name": ":sparkles: Feature",
+    "color": "1d76db",
+    "description": "기능 개발"
+  },
+  {
+    "name": ":zero: Priority: 최상",
+    "color": "facfcf",
+    "description": "긴급!!!!!!!!!!"
+  },
+  {
+    "name": ":one: Priority: 상",
+    "color": "facfcf",
+    "description": "우선순위 상"
+  },
+  {
+    "name": ":two: Priority: 중",
+    "color": "facfcf",
+    "description": "우선순위 중"
+  },
+  {
+    "name": ":three: Priority: 하",
+    "color": "facfcf",
+    "description": "우선순위 하"
+  },
+  {
+    "name": ":bug: Bug",
+    "color": "A4F45C",
+    "description": "버그 발생!!"
+  },
+  {
+    "name": ":memo: Doc",
+    "color": "0075ca",
+    "description": "문서화"
+  },
+  {
+    "name": ":hammer: Refactor",
+    "color": "f29a4e",
+    "description": "코드 리팩토링"
+  },
+  {
+    "name": ":question: Question",
+    "color": "9ED447",
+    "description": "질문 있음!"
+  },
+  {
+    "name": ":white_check_mark: Test",
+    "color": "ccffc4",
+    "description": "test 관련"
+  }
+]
