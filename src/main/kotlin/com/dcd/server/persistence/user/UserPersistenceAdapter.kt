@@ -26,4 +26,7 @@ class UserPersistenceAdapter(
 
     override fun existsByEmail(email: String): Boolean =
         userRepository.existsByEmail(email)
+
+    override fun exitsById(userId: String): Boolean =
+        userRepository.existsById(userId)
 }
