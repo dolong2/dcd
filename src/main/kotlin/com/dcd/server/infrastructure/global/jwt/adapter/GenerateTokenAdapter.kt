@@ -17,6 +17,7 @@ import java.util.*
 class GenerateTokenAdapter(
     private val jwtProperty: JwtProperty,
     private val tokenTimeProperty: TokenTimeProperty,
+    private val commandRefreshTokenPort: CommandRefreshTokenPort
 ) : JwtPort {
     object JwtPrefix{
         const val ACCESS = "access"
@@ -49,4 +50,8 @@ class GenerateTokenAdapter(
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + tokenTimeProperty.refreshTime * 1000))
             .compact()
+            .apply {
+                commandRefreshTokenPort
+                    .save(RefreshToken(userId, this, tokenTimeProperty.refreshTime))
+            }
 }
