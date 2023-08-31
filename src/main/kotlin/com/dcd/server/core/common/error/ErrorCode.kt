@@ -5,6 +5,7 @@ enum class ErrorCode(
     val code: Int
 ) {
     BAD_REQUEST("요청이 옳바르지 않음", 400),
+    INVALID_ROLE("유효하지않은 권한", 400),
 
     UNAUTHORIZED("권한이 없음", 401),
     EXPIRED_TOKEN("토큰이 만료됨", 401),
