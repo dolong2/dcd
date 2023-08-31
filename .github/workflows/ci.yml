@@ -1,11 +1,9 @@
 name: Build and Test
 on:
-  push:
-    branches:
-      - develop
   pull_request:
     branches:
-      - feature/*
+      - develop
+      - main
 
 jobs:
   build-test:
