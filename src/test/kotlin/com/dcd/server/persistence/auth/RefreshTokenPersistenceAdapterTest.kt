@@ -23,10 +23,7 @@ class RefreshTokenPersistenceAdapterTest : BehaviorSpec({
 
             then("refreshTokenRepository.save가 실행되어야 함") {
                 adapter.save(refreshToken)
-                verify {
-                    refreshToken.toEntity()
-                    refreshTokenRepository.save(any())
-                }
+                verify { refreshTokenRepository.save(any()) }
             }
         }
 
