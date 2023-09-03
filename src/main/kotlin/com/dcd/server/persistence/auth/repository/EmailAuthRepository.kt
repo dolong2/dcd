@@ -6,4 +6,6 @@ import org.springframework.data.repository.CrudRepository
 interface EmailAuthRepository : CrudRepository<EmailAuthEntity, String> {
     fun deleteByEmailAndCode(email: String, code: String)
     fun findByEmail(email: String): List<EmailAuthEntity>
+    fun existsByEmailAndCode(email: String, code: String): Boolean
+    fun existsByEmail(email: String): Boolean
 }

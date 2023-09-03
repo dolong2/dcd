@@ -30,4 +30,10 @@ class EmailAuthPersistenceAdapter(
         emailAuthRepository.findByIdOrNull(code)
             ?.toDomain()
 
+    override fun existsByCodeAndEmail(email: String, code: String): Boolean =
+        emailAuthRepository.existsByEmailAndCode(email, code)
+
+    override fun existsByEmail(email: String): Boolean =
+        emailAuthRepository.existsByEmail(email)
+
 }
