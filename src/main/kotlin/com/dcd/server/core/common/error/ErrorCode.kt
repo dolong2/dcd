@@ -6,6 +6,8 @@ enum class ErrorCode(
 ) {
     BAD_REQUEST("요청이 옳바르지 않음", 400),
     INVALID_ROLE("유효하지않은 권한", 400),
+    PASSWORD_NOT_CORRECT("패스워드가 옳바르지 않음", 400),
+    ALREADY_USER_EXIST("이미 해당 유저가 존재함", 400),
 
     UNAUTHORIZED("권한이 없음", 401),
     EXPIRED_TOKEN("토큰이 만료됨", 401),
