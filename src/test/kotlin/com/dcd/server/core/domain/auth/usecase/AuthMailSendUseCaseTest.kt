@@ -1,6 +1,6 @@
 package com.dcd.server.core.domain.auth.usecase
 
-import com.dcd.server.core.domain.auth.dto.request.EmailSendRequestData
+import com.dcd.server.core.domain.auth.dto.request.EmailSendRequestDto
 import com.dcd.server.core.domain.auth.service.EmailSendService
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
@@ -13,7 +13,7 @@ class AuthMailSendUseCaseTest : BehaviorSpec({
 
     given("EmailSendRequestData가 주어지고") {
         val testEmail = "testEmail"
-        val request = EmailSendRequestData(testEmail)
+        val request = EmailSendRequestDto(testEmail)
         `when`("execute메서드를 실행할때") {
             every { emailSendService.sendEmail(testEmail) } returns Unit
             useCase.execute(request)
