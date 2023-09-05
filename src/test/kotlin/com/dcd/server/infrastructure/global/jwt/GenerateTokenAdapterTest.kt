@@ -20,9 +20,9 @@ class GenerateTokenAdapterTest : BehaviorSpec({
     given("adapter가 주어졌을때") {
         every { commandRefreshTokenPort.save(any()) } answers {callOriginal()}
         val userId = "testUserId"
-        val role = Role.ROLE_USER
+        val roles = listOf(Role.ROLE_USER)
         `when`("generateToken 메서드를 실행하면") {
-            val response = adapter.generateToken(userId, role)
+            val response = adapter.generateToken(userId, roles)
             then("tokenResponse의 타입으로 나와야함") {
                 response::class shouldBe TokenResponseDto::class
             }

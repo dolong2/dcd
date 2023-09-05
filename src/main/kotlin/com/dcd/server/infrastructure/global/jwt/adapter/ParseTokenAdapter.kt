@@ -7,6 +7,7 @@ import com.dcd.server.infrastructure.global.security.auth.AdminDetailsService
 import com.dcd.server.infrastructure.global.security.auth.UserDetailsService
 import com.dcd.server.infrastructure.global.jwt.exception.TokenNotValidException
 import com.dcd.server.infrastructure.global.security.auth.DeveloperDetailsService
+import com.dcd.server.infrastructure.global.security.exception.InvalidRoleException
 import io.jsonwebtoken.*
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -63,13 +64,14 @@ class ParseTokenAdapter(
     }
 
     private fun getDetails(body: Claims): UserDetails {
-        val role = body[JwtPrefix.ROLE, String::class.java]
+        val roles = body[JwtPrefix.ROLE, List::class.java]
+        val username = body.id
 
-        return when(role) {
-            Role.ROLE_USER.name -> userDetailsService.loadUserByUsername(body.id)
-            Role.ROLE_ADMIN.name -> adminDetailsService.loadUserByUsername(body.id)
-            Role.ROLE_DEVELOPER.name -> developerDetailsService.loadUserByUsername(body.id)
-            else -> throw throw RuntimeException()
+        return when {
+            Role.ROLE_ADMIN.name in roles -> adminDetailsService.loadUserByUsername(username)
+            Role.ROLE_DEVELOPER.name in roles -> developerDetailsService.loadUserByUsername(username)
+            Role.ROLE_USER.name in roles -> userDetailsService.loadUserByUsername(username)
+            else -> throw InvalidRoleException()
         }
     }
 }
