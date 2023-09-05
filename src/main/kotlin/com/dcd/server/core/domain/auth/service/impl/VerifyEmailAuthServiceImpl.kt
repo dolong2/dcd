@@ -12,12 +12,12 @@ class VerifyEmailAuthServiceImpl(
     private val queryEmailAuthPort: QueryEmailAuthPort,
     private val commandEmailAuthPort: CommandEmailAuthPort
 ) : VerifyEmailAuthService {
-    fun verifyCode(email: String, code: String) {
+    override fun verifyCode(email: String, code: String) {
         if (!queryEmailAuthPort.existsByCodeAndEmail(email, code))
             if (queryEmailAuthPort.existsByEmail(email))
                 throw InvalidAuthCodeException()
-            else
-                throw ExpiredCodeException() // 해당 코드가 만료됨
-        commandEmailAuthPort.deleteByCode(code)
+        val emailAuth = (queryEmailAuthPort.findByCode(code)
+            ?: throw ExpiredCodeException())
+        commandEmailAuthPort.save(emailAuth.copy(certificate = true))
     }
 }
