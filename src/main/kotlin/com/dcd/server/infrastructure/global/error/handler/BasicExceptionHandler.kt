@@ -5,6 +5,9 @@ import com.dcd.server.core.common.error.ErrorCode
 import com.dcd.server.infrastructure.global.error.response.ErrorResponse
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -14,22 +17,28 @@ class BasicExceptionHandler {
     private val log = LoggerFactory.getLogger(this::class.simpleName)
 
     @ExceptionHandler(BasicException::class)
-    fun handleBasicException(request: HttpServletRequest, ex: BasicException): ErrorResponse {
+    fun handleBasicException(request: HttpServletRequest, ex: BasicException): ResponseEntity<ErrorResponse> {
         log.error(request.method)
         log.error(request.requestURI)
         val errorCode = ex.errorCode
         log.error(errorCode.msg)
         log.error("${errorCode.code}")
-        return ErrorResponse(errorCode)
+        return ResponseEntity(
+            ErrorResponse(errorCode),
+            HttpStatus.valueOf(errorCode.code)
+        )
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleMethodArgumentNotValidException(request: HttpServletRequest, ex: MethodArgumentNotValidException): ErrorResponse {
+    fun handleMethodArgumentNotValidException(request: HttpServletRequest, ex: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
         log.error(request.method)
         log.error(request.requestURI)
         val errorCode = ErrorCode.BAD_REQUEST
         log.error(errorCode.msg)
         log.error("${errorCode.code}")
-        return ErrorResponse(errorCode)
+        return ResponseEntity(
+            ErrorResponse(errorCode),
+            HttpStatusCode.valueOf(errorCode.code)
+        )
     }
 }
