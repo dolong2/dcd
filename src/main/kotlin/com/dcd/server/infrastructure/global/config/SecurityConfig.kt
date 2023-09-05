@@ -42,6 +42,7 @@ class SecurityConfig(
 
                 //auth
                 .requestMatchers(HttpMethod.POST, "/auth/email").permitAll()
+                .requestMatchers(HttpMethod.POST, "/auth/email/certificate").permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/signup").permitAll()
 
                 //when url not set

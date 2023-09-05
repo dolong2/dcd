@@ -10,5 +10,6 @@ class EmailAuthEntity(
     val email: String,
     @Id
     @Indexed
-    val code: String
+    val code: String,
+    val certificate: Boolean
 )

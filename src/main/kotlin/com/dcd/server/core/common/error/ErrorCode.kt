@@ -16,6 +16,7 @@ enum class ErrorCode(
     FORBIDDEN("금지된 요청", 403),
     NOT_VALID_TOKEN("토큰이 유효하지 않음", 403),
     NOT_VALID_CODE("코드가 유효하지 않음", 403),
+    NOT_CERTIFICATE_MAIL("메일인증후 진행해주세요", 403),
 
     NOT_FOUND("해당 리소스를 찾을 수 없음", 404),
 

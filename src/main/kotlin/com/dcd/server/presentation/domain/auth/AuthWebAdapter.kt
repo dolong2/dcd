@@ -1,8 +1,10 @@
 package com.dcd.server.presentation.domain.auth
 
 import com.dcd.server.core.domain.auth.usecase.AuthMailSendUseCase
+import com.dcd.server.core.domain.auth.usecase.AuthenticateMailUseCase
 import com.dcd.server.core.domain.auth.usecase.SignUpUseCase
 import com.dcd.server.presentation.domain.auth.data.exetension.toDto
+import com.dcd.server.presentation.domain.auth.data.request.CertificateMailRequest
 import com.dcd.server.presentation.domain.auth.data.request.EmailSendRequest
 import com.dcd.server.presentation.domain.auth.data.request.SignUpRequest
 import org.springframework.http.HttpStatus
@@ -17,7 +19,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/auth")
 class AuthWebAdapter(
     private val authMailSendUseCase: AuthMailSendUseCase,
-    private val signUpUseCase: SignUpUseCase
+    private val signUpUseCase: SignUpUseCase,
+    private val authenticateMailUseCase: AuthenticateMailUseCase
 ) {
     @PostMapping("/email")
     fun sendAuthEmail(
@@ -28,6 +31,14 @@ class AuthWebAdapter(
         authMailSendUseCase.execute(emailSendRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
+    @PostMapping("/email/certificate")
+    fun certificateEmail(
+        @Validated
+        @RequestBody
+        certificateMailRequest: CertificateMailRequest
+    ): ResponseEntity<Void> =
+        authenticateMailUseCase.execute(certificateMailRequest.toDto())
+            .run { ResponseEntity.ok().build() }
 
     @PostMapping("/signup")
     fun signupUser(
