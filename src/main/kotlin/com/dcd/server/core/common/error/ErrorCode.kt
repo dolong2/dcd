@@ -19,6 +19,7 @@ enum class ErrorCode(
     NOT_CERTIFICATE_MAIL("메일인증후 진행해주세요", 403),
 
     NOT_FOUND("해당 리소스를 찾을 수 없음", 404),
+    USER_NOT_FOUND("해당 유저를 찾을 수 없음", 404),
 
     INTERNAL_ERROR("서버 내부 에러", 500)
 }
