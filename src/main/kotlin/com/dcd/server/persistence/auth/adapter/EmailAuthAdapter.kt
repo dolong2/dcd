@@ -6,11 +6,13 @@ import com.dcd.server.persistence.auth.entity.EmailAuthEntity
 fun EmailAuth.toEntity(): EmailAuthEntity =
     EmailAuthEntity(
         email = this.email,
-        code = this.code
+        code = this.code,
+        certificate = this.certificate
     )
 
 fun EmailAuthEntity.toDomain(): EmailAuth =
     EmailAuth(
         email = this.email,
-        code = this.code
+        code = this.code,
+        certificate = this.certificate
     )
