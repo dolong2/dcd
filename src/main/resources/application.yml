@@ -6,7 +6,7 @@ spring:
     driver-class-name: ${DB_DRIVER}
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     database: mysql
     show-sql: true
   redis:
