@@ -12,6 +12,7 @@ import io.jsonwebtoken.Jwts
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.collections.List
 
 @Component
 class GenerateTokenAdapter(
@@ -25,20 +26,20 @@ class GenerateTokenAdapter(
         const val ROLE = "role"
     }
 
-    override fun generateToken(userId: String, role: Role): TokenResponseDto =
+    override fun generateToken(userId: String, roles: List<Role>): TokenResponseDto =
         TokenResponseDto(
-            accessToken = generatedAccessToken(userId, role),
+            accessToken = generatedAccessToken(userId, roles),
             refreshToken = generatedRefreshToken(userId),
             accessTokenExp = LocalDateTime.now().withNano(0).plusSeconds(tokenTimeProperty.accessTime),
             refreshTokenExp = LocalDateTime.now().withNano(0).plusSeconds(tokenTimeProperty.refreshTime)
         )
 
-    private fun generatedAccessToken(userId: String, role: Role): String =
+    private fun generatedAccessToken(userId: String, roles: List<Role>): String =
         Jwts.builder()
             .signWith(jwtProperty.accessSecret)
             .setHeaderParam(Header.JWT_TYPE, JwtPrefix.ACCESS)
             .setId(userId)
-            .claim(JwtPrefix.ROLE, role.name)
+            .claim(JwtPrefix.ROLE, roles.map { it.name })
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + tokenTimeProperty.accessTime * 1000))
             .compact()
