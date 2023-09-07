@@ -50,5 +50,13 @@ class RefreshTokenPersistenceAdapterTest : BehaviorSpec({
                 result shouldBe listOf(refreshToken)
             }
         }
+
+        `when`("delete 메서드를 실행하면") {
+            every { refreshTokenRepository.delete(any()) } returns Unit
+            adapter.delete(refreshToken)
+            then("repository의 delete메서드를 실행해야함") {
+                verify { refreshTokenRepository.delete(any()) }
+            }
+        }
     }
 })

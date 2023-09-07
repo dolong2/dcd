@@ -11,6 +11,7 @@ enum class ErrorCode(
 
     UNAUTHORIZED("권한이 없음", 401),
     EXPIRED_TOKEN("토큰이 만료됨", 401),
+    EXPIRED_REFRESH_TOKEN("리프레시 토큰이 만료됨", 401),
     EXPIRED_AUTH_CODE("인증코드가 만료됨", 401),
 
     FORBIDDEN("금지된 요청", 403),

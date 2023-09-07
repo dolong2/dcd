@@ -1,10 +1,8 @@
 package com.dcd.server.presentation.domain.auth
 
 import com.dcd.server.core.domain.auth.dto.response.TokenResponseDto
-import com.dcd.server.core.domain.auth.usecase.AuthMailSendUseCase
-import com.dcd.server.core.domain.auth.usecase.AuthenticateMailUseCase
-import com.dcd.server.core.domain.auth.usecase.SignInUseCase
-import com.dcd.server.core.domain.auth.usecase.SignUpUseCase
+import com.dcd.server.core.domain.auth.usecase.*
+import com.dcd.server.presentation.domain.auth.data.exetension.toReissueResponse
 import com.dcd.server.presentation.domain.auth.data.exetension.toResponse
 import com.dcd.server.presentation.domain.auth.data.request.CertificateMailRequest
 import com.dcd.server.presentation.domain.auth.data.request.EmailSendRequest
@@ -25,7 +23,8 @@ class AuthWebAdapterTest : BehaviorSpec({
     val signUpUseCase = mockk<SignUpUseCase>()
     val authenticateMailUseCase = mockk<AuthenticateMailUseCase>()
     val signInUseCase = mockk<SignInUseCase>()
-    val authWebAdapter = AuthWebAdapter(authMailSendUseCase, signUpUseCase, authenticateMailUseCase, signInUseCase)
+    val reissueTokenUseCase = mockk<ReissueTokenUseCase>()
+    val authWebAdapter = AuthWebAdapter(authMailSendUseCase, signUpUseCase, authenticateMailUseCase, signInUseCase, reissueTokenUseCase)
 
     given("EmailSendRequest가 주어지고") {
         val testEmail = "testEmail"
@@ -81,6 +80,20 @@ class AuthWebAdapterTest : BehaviorSpec({
             then("상태코드는 200이여야 되고 SignInResponse가 바디에 들어있어야함") {
                 result.statusCode shouldBe HttpStatus.OK
                 result.body shouldBe targetResponse.toResponse()
+            }
+        }
+    }
+
+    given("RefreshToken이 주어지고") {
+        val refreshToken = "testRefreshToken"
+        `when`("reissueToken 메서드를 실행할때") {
+            val responseDto =
+                TokenResponseDto("testToken", LocalDateTime.now(), "newRefreshToken", LocalDateTime.now())
+            every { reissueTokenUseCase.execute(refreshToken) } returns responseDto
+            val result = authWebAdapter.reissueToken(refreshToken)
+            then("상태코드는 200이여야되고 ReissuTokenResponse가 바디에 들어있어야함") {
+                result.statusCode shouldBe HttpStatus.OK
+                result.body shouldBe responseDto.toReissueResponse()
             }
         }
     }

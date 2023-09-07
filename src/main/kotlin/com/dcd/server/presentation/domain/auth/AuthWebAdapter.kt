@@ -1,21 +1,22 @@
 package com.dcd.server.presentation.domain.auth
 
-import com.dcd.server.core.domain.auth.usecase.AuthMailSendUseCase
-import com.dcd.server.core.domain.auth.usecase.AuthenticateMailUseCase
-import com.dcd.server.core.domain.auth.usecase.SignInUseCase
-import com.dcd.server.core.domain.auth.usecase.SignUpUseCase
+import com.dcd.server.core.domain.auth.usecase.*
 import com.dcd.server.presentation.domain.auth.data.exetension.toDto
+import com.dcd.server.presentation.domain.auth.data.exetension.toReissueResponse
 import com.dcd.server.presentation.domain.auth.data.exetension.toResponse
 import com.dcd.server.presentation.domain.auth.data.request.CertificateMailRequest
 import com.dcd.server.presentation.domain.auth.data.request.EmailSendRequest
 import com.dcd.server.presentation.domain.auth.data.request.SignInRequest
 import com.dcd.server.presentation.domain.auth.data.request.SignUpRequest
+import com.dcd.server.presentation.domain.auth.data.response.ReissueTokenResponse
 import com.dcd.server.presentation.domain.auth.data.response.SignInResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -25,7 +26,8 @@ class AuthWebAdapter(
     private val authMailSendUseCase: AuthMailSendUseCase,
     private val signUpUseCase: SignUpUseCase,
     private val authenticateMailUseCase: AuthenticateMailUseCase,
-    private val signInUseCase: SignInUseCase
+    private val signInUseCase: SignInUseCase,
+    private val reissueTokenUseCase: ReissueTokenUseCase
 ) {
     @PostMapping("/email")
     fun sendAuthEmail(
@@ -62,4 +64,9 @@ class AuthWebAdapter(
     ): ResponseEntity<SignInResponse> =
         signInUseCase.execute(signInRequest.toDto())
             .let { ResponseEntity.ok(it.toResponse()) }
+
+    @PatchMapping
+    fun reissueToken(@RequestHeader("RefreshToken") refreshToken: String): ResponseEntity<ReissueTokenResponse> =
+        reissueTokenUseCase.execute(refreshToken)
+            .let { ResponseEntity.ok(it.toReissueResponse()) }
 }
