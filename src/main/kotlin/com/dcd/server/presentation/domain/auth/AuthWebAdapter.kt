@@ -13,6 +13,7 @@ import com.dcd.server.presentation.domain.auth.data.response.SignInResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -27,7 +28,8 @@ class AuthWebAdapter(
     private val signUpUseCase: SignUpUseCase,
     private val authenticateMailUseCase: AuthenticateMailUseCase,
     private val signInUseCase: SignInUseCase,
-    private val reissueTokenUseCase: ReissueTokenUseCase
+    private val reissueTokenUseCase: ReissueTokenUseCase,
+    private val signOutUseCase: SignOutUseCase
 ) {
     @PostMapping("/email")
     fun sendAuthEmail(
@@ -69,4 +71,9 @@ class AuthWebAdapter(
     fun reissueToken(@RequestHeader("RefreshToken") refreshToken: String): ResponseEntity<ReissueTokenResponse> =
         reissueTokenUseCase.execute(refreshToken)
             .let { ResponseEntity.ok(it.toReissueResponse()) }
+
+    @DeleteMapping
+    fun signOut(): ResponseEntity<Void>  =
+        signOutUseCase.execute()
+            .run { ResponseEntity.ok().build() }
 }

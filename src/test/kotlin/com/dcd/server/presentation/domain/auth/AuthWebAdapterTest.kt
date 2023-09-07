@@ -24,7 +24,15 @@ class AuthWebAdapterTest : BehaviorSpec({
     val authenticateMailUseCase = mockk<AuthenticateMailUseCase>()
     val signInUseCase = mockk<SignInUseCase>()
     val reissueTokenUseCase = mockk<ReissueTokenUseCase>()
-    val authWebAdapter = AuthWebAdapter(authMailSendUseCase, signUpUseCase, authenticateMailUseCase, signInUseCase, reissueTokenUseCase)
+    val signOutUseCase = mockk<SignOutUseCase>()
+    val authWebAdapter = AuthWebAdapter(
+        authMailSendUseCase,
+        signUpUseCase,
+        authenticateMailUseCase,
+        signInUseCase,
+        reissueTokenUseCase,
+        signOutUseCase
+    )
 
     given("EmailSendRequest가 주어지고") {
         val testEmail = "testEmail"
@@ -94,6 +102,16 @@ class AuthWebAdapterTest : BehaviorSpec({
             then("상태코드는 200이여야되고 ReissuTokenResponse가 바디에 들어있어야함") {
                 result.statusCode shouldBe HttpStatus.OK
                 result.body shouldBe responseDto.toReissueResponse()
+            }
+        }
+    }
+
+    given("주어지는게 없고") {
+        `when`("signOut메서드를 실행할때") {
+            every { signOutUseCase.execute() } returns Unit
+            val result = authWebAdapter.signOut()
+            then("상태코드는 200이여야함") {
+                result.statusCode shouldBe HttpStatus.OK
             }
         }
     }
