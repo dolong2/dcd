@@ -1,0 +1,30 @@
+package com.dcd.server.persistence.application
+
+import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.spi.ApplicationPort
+import com.dcd.server.core.domain.user.model.User
+import com.dcd.server.persistence.application.adapter.toDomain
+import com.dcd.server.persistence.application.adapter.toEntity
+import com.dcd.server.persistence.application.repository.ApplicationRepository
+import com.dcd.server.persistence.user.adapter.toEntity
+import org.springframework.data.repository.findByIdOrNull
+
+class ApplicationPersistenceAdapter(
+    private val applicationRepository: ApplicationRepository
+) : ApplicationPort {
+    override fun save(application: Application) {
+        applicationRepository.save(application.toEntity())
+    }
+
+    override fun delete(application: Application) {
+        applicationRepository.delete(application.toEntity())
+    }
+
+    override fun findAllByUser(user: User): List<Application> =
+        applicationRepository.findAllByOwner(user.toEntity())
+            .map { it.toDomain() }
+
+    override fun findById(id: String): Application? =
+        applicationRepository.findByIdOrNull(id)
+            ?.toDomain()
+}
