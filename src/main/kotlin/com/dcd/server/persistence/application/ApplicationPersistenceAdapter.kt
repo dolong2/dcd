@@ -8,7 +8,9 @@ import com.dcd.server.persistence.application.adapter.toEntity
 import com.dcd.server.persistence.application.repository.ApplicationRepository
 import com.dcd.server.persistence.user.adapter.toEntity
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.stereotype.Component
 
+@Component
 class ApplicationPersistenceAdapter(
     private val applicationRepository: ApplicationRepository
 ) : ApplicationPort {
