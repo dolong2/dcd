@@ -48,6 +48,9 @@ class SecurityConfig(
                 .requestMatchers(HttpMethod.PATCH, "/auth").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/auth").authenticated()
 
+                //application
+                .requestMatchers(HttpMethod.POST, "/application").authenticated()
+
                 //when url not set
                 .anyRequest().denyAll()
             }
