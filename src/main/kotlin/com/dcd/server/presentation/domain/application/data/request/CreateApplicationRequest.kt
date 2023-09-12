@@ -6,10 +6,8 @@ import jakarta.validation.constraints.NotBlank
 data class CreateApplicationRequest(
     @field:NotBlank
     val name: String,
-    @field:NotBlank
     val description: String?,
     @field:NotBlank
     val githubUrl: String,
-    @field:NotBlank
     val applicationType: ApplicationType
 )
