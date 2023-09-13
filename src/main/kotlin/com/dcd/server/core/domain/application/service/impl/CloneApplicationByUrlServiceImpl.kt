@@ -16,11 +16,11 @@ class CloneApplicationByUrlServiceImpl(
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
         val githubUrl = application.githubUrl
-        commandPort.executeShellCommand("git clone $githubUrl")
+        commandPort.executeShellCommand("git clone $githubUrl ${application.name}")
     }
 
     override fun cloneByApplication(application: Application) {
         val githubUrl = application.githubUrl
-        commandPort.executeShellCommand("git clone $githubUrl")
+        commandPort.executeShellCommand("git clone $githubUrl ${application.name}")
     }
 }

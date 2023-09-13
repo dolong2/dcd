@@ -30,7 +30,7 @@ class GetApplicationByUrlServiceImplTest : BehaviorSpec({
         `when`("service를 실행할때") {
             serviceImpl.cloneById(id)
             then("commandPort의 executeShellCommand 메서드를 실행해야함") {
-                verify { commandPort.executeShellCommand("git clone $testUrl") }
+                verify { commandPort.executeShellCommand("git clone $testUrl ${application.name}") }
             }
 
             every { queryApplicationPort.findById(id) } throws ApplicationNotFoundException()
@@ -47,7 +47,7 @@ class GetApplicationByUrlServiceImplTest : BehaviorSpec({
         `when`("service를 실행할때") {
             serviceImpl.cloneByApplication(application)
             then("commandPort의 executeShellCommand 메서드를 실행해야함") {
-                verify { commandPort.executeShellCommand("git clone ${application.githubUrl}") }
+                verify { commandPort.executeShellCommand("git clone ${application.githubUrl} ${application.name}") }
             }
         }
     }
