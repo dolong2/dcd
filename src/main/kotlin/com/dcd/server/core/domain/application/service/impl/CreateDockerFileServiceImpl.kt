@@ -1,6 +1,6 @@
 package com.dcd.server.core.domain.application.service.impl
 
-import com.dcd.server.core.common.cmd.CreateFileCommand
+import com.dcd.server.core.common.cmd.FileContent
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
@@ -22,7 +22,7 @@ class CreateDockerFileServiceImpl(
                 val name = application.name
                 try {
                     val file = File("./$name/Dockerfile")
-                    file.writeText(CreateFileCommand.getSpringBootDockerFileContent(name))
+                    file.writeText(FileContent.getSpringBootDockerFileContent(name))
                         if (!file.createNewFile())
                             return
                 } catch (e: IOException) {
@@ -37,7 +37,7 @@ class CreateDockerFileServiceImpl(
             ApplicationType.SPRING_BOOT -> {
                 val name = application.name
                 val file = File("./$name/Dockerfile")
-                file.writeText(CreateFileCommand.getSpringBootDockerFileContent(name))
+                file.writeText(FileContent.getSpringBootDockerFileContent(name))
                 try {
                     if (!file.createNewFile())
                         return

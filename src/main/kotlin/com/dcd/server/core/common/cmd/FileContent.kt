@@ -1,6 +1,6 @@
 package com.dcd.server.core.common.cmd
 
-object CreateFileCommand {
+object FileContent {
     fun getSpringBootDockerFileContent(name: String): String =
         "FROM openjdk:17-jdk\n" +
         "WORKDIR /usr/src/app\n" +
