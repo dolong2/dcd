@@ -10,7 +10,7 @@ object FileContent {
 
     fun getBuildGradleKtsFileContent(name: String): String =
         "tasks {\n" +
-        "\tval customBootJarName = \"$name-\$version.jar\"\n" +
+        "\tval customBootJarName = \"$name.jar\"\n" +
         "\tnamed<org.springframework.boot.gradle.tasks.bundling.BootJar>(\"bootJar\") {\n" +
         "\t\tarchiveFileName.set(customBootJarName)\n" +
         "\t}\n" +
