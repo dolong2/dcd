@@ -1,6 +1,6 @@
 package com.dcd.server.core.domain.application.service.impl
 
-import com.dcd.server.core.common.cmd.FileContent
+import com.dcd.server.core.common.file.FileContent
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
