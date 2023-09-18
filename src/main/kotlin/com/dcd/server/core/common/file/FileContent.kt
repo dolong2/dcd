@@ -1,4 +1,4 @@
-package com.dcd.server.core.common.cmd
+package com.dcd.server.core.common.file
 
 object FileContent {
     fun getSpringBootDockerFileContent(name: String, javaVersion: Int): String =
