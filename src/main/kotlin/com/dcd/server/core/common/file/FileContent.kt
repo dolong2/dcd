@@ -57,4 +57,12 @@ object FileContent {
         "  networks:\n" +
         "   - backend\n"
 
+    fun getApplicationComposeContent(applicationName: String, port: Int): String =
+        " ${applicationName.lowercase()}:\n" +
+                "  image: ${applicationName.lowercase()}:latest\n" +
+                "  ports:\n" +
+                "   - $port:$port\n" +
+                "  networks:\n" +
+                "   - backend\n"
+
 }
