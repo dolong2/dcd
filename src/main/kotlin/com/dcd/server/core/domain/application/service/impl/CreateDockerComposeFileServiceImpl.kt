@@ -22,6 +22,7 @@ class CreateDockerComposeFileServiceImpl(
             ApplicationType.SPRING_BOOT -> {
                 val name = application.name
                 var content = FileContent.getServerComposeContent()
+                content += FileContent.getApplicationComposeContent(name, 8080)
                 dbTypes.forEach {
                     when(it) {
                         DBType.MYSQL -> content += FileContent.getMySqlDockerComposeContent(rootPassword, dataBaseName)
@@ -46,6 +47,7 @@ class CreateDockerComposeFileServiceImpl(
             ApplicationType.SPRING_BOOT -> {
                 val name = application.name
                 var content = FileContent.getServerComposeContent()
+                content += FileContent.getApplicationComposeContent(name, 8080)
                 dbTypes.forEach {
                     when(it) {
                         DBType.MYSQL -> content += FileContent.getMySqlDockerComposeContent(rootPassword, dataBaseName)

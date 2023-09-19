@@ -3,10 +3,9 @@ package com.dcd.server.core.common.file
 object FileContent {
     fun getSpringBootDockerFileContent(name: String, javaVersion: Int): String =
         "FROM openjdk:${javaVersion}-jdk\n" +
-        "WORKDIR /usr/src/app\n" +
         "COPY build/libs/$name.jar build/libs/app.jar\n" +
         "EXPOSE 8080\n" +
-        "CMD [\"java\",\"-jar\",\"$name/build/libs/app.jar\"]"
+        "CMD [\"java\",\"-jar\",\"build/libs/app.jar\"]"
 
     fun getBuildGradleKtsFileContent(name: String): String =
         "tasks {\n" +
@@ -57,5 +56,13 @@ object FileContent {
         "   - 6379:6379\n" +
         "  networks:\n" +
         "   - backend\n"
+
+    fun getApplicationComposeContent(applicationName: String, port: Int): String =
+        " ${applicationName.lowercase()}:\n" +
+                "  image: ${applicationName.lowercase()}:latest\n" +
+                "  ports:\n" +
+                "   - $port:$port\n" +
+                "  networks:\n" +
+                "   - backend\n"
 
 }
