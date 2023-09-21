@@ -2,6 +2,7 @@ package com.dcd.server.presentation.domain.application
 
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.usecase.CreateApplicationUseCase
+import com.dcd.server.core.domain.application.usecase.RunApplicationUseCase
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -11,7 +12,8 @@ import org.springframework.http.HttpStatus
 
 class ApplicationWebAdapterTest : BehaviorSpec({
     val createApplicationUseCase = mockk<CreateApplicationUseCase>()
-    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase)
+    val runApplicationUseCase = mockk<RunApplicationUseCase>()
+    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, runApplicationUseCase)
 
     given("CreateApplicationRequest가 주어지고") {
         val request = CreateApplicationRequest(
