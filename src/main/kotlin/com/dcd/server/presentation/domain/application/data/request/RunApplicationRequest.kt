@@ -4,7 +4,7 @@ import com.dcd.server.core.domain.application.enums.DBType
 
 class RunApplicationRequest(
     val langVersion: Int,
-    val dbTypes: Array<DBType>?,
-    val rootPassword: String?,
-    val dataBaseName: String?
+    val dbTypes: Array<DBType>? = null,
+    val rootPassword: String? = null,
+    val dataBaseName: String? = null
 )
