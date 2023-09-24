@@ -10,5 +10,6 @@ data class Application(
     val description: String?,
     val applicationType: ApplicationType,
     val githubUrl: String,
+    val env: Map<String, String>,
     val owner: User
 )

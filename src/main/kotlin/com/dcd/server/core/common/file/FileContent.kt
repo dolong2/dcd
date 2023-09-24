@@ -1,5 +1,7 @@
 package com.dcd.server.core.common.file
 
+import com.dcd.server.core.domain.application.model.Application
+
 object FileContent {
     fun getSpringBootDockerFileContent(name: String, javaVersion: Int): String =
         "FROM openjdk:${javaVersion}-jdk\n" +
@@ -57,12 +59,23 @@ object FileContent {
         "  networks:\n" +
         "   - backend\n"
 
-    fun getApplicationComposeContent(applicationName: String, port: Int): String =
-        " ${applicationName.lowercase()}:\n" +
-                "  image: ${applicationName.lowercase()}:latest\n" +
-                "  ports:\n" +
-                "   - $port:$port\n" +
-                "  networks:\n" +
-                "   - backend\n"
+    fun getApplicationComposeContent(application: Application, port: Int): String =
+        " ${application.name.lowercase()}:\n" +
+        "  image: ${application.name.lowercase()}:latest\n" +
+        "  ports:\n" +
+        "   - $port:$port\n" +
+        "  networks:\n" +
+        "   - backend\n" +
+        getApplicationComposeEnvContent(application)
+
+    private fun getApplicationComposeEnvContent(application: Application): String =
+        if (application.env.isEmpty().not()) {
+            var result = "  environment:\n"
+            application.env.forEach {
+                result += "   ${it.key}: ${it.value}\n"
+            }
+            result
+        }
+        else ""
 
 }
