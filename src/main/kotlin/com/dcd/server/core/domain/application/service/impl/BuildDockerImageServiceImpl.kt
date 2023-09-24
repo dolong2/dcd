@@ -22,7 +22,8 @@ class BuildDockerImageServiceImpl(
 
     override fun buildImageByApplication(application: Application) {
         val name = application.name
-        commandPort.executeShellCommand("cd ./$name && docker build -t ${name.lowercase()}:v0.0.1")
+        commandPort.executeShellCommand("cd ./$name && ./gradlew clean build")
+        commandPort.executeShellCommand("cd ./$name && docker build -t ${name.lowercase()}:latest .")
     }
 
 }
