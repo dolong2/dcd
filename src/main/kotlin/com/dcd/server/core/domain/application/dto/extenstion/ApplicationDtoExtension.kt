@@ -10,5 +10,6 @@ fun CreateApplicationReqDto.toEntity(owner: User): Application =
         description = this.description,
         githubUrl = this.githubUrl,
         applicationType = this.applicationType,
+        env = this.env,
         owner = owner
     )

@@ -9,5 +9,6 @@ data class CreateApplicationRequest(
     val description: String?,
     @field:NotBlank
     val githubUrl: String,
+    val env: Map<String, String>,
     val applicationType: ApplicationType
 )

@@ -12,6 +12,7 @@ fun Application.toEntity(): ApplicationJpaEntity =
         description = this.description,
         applicationType = this.applicationType,
         githubUrl = this.githubUrl,
+        env = this.env,
         owner = this.owner.toEntity()
     )
 
@@ -22,5 +23,6 @@ fun ApplicationJpaEntity.toDomain(): Application =
         description = this.description,
         applicationType = this.applicationType,
         githubUrl = this.githubUrl,
+        env = this.env,
         owner = this.owner.toDomain()
     )
