@@ -25,6 +25,7 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
             name = "testName",
             description = "testDescription",
             applicationType = ApplicationType.SPRING_BOOT,
+            env = mapOf(),
             githubUrl = "testGithub"
         )
         val user =

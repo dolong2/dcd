@@ -29,6 +29,7 @@ class ApplicationPersistenceAdapterTest : BehaviorSpec({
             description = "test description",
             applicationType = ApplicationType.SPRING_BOOT,
             githubUrl = "testUrl",
+            env = mapOf(),
             owner = user
         )
         val id = application.id
