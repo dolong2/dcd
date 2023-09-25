@@ -1,9 +1,9 @@
 package com.dcd.server.presentation.domain.application.data.exetension
 
 import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDto
-import com.dcd.server.core.domain.application.dto.request.RunApplicationReqDto
+import com.dcd.server.core.domain.application.dto.request.SpringApplicationRunReqDto
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
-import com.dcd.server.presentation.domain.application.data.request.RunApplicationRequest
+import com.dcd.server.presentation.domain.application.data.request.SpringApplicationRunRequest
 
 fun CreateApplicationRequest.toDto(): CreateApplicationReqDto =
     CreateApplicationReqDto(
@@ -14,8 +14,8 @@ fun CreateApplicationRequest.toDto(): CreateApplicationReqDto =
         applicationType = this.applicationType
     )
 
-fun RunApplicationRequest.toDto(): RunApplicationReqDto =
-    RunApplicationReqDto(
+fun SpringApplicationRunRequest.toDto(): SpringApplicationRunReqDto =
+    SpringApplicationRunReqDto(
         langVersion = this.langVersion,
         dbTypes = this.dbTypes,
         rootPassword = this.rootPassword,
