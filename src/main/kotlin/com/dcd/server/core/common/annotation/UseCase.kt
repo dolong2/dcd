@@ -1,8 +1,8 @@
 package com.dcd.server.core.common.annotation
 
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
-@Service
+@Component
 @Transactional(rollbackFor = [Exception::class])
 annotation class UseCase()
