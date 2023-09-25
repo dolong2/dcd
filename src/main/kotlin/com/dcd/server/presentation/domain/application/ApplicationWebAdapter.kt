@@ -1,10 +1,10 @@
 package com.dcd.server.presentation.domain.application
 
 import com.dcd.server.core.domain.application.usecase.CreateApplicationUseCase
-import com.dcd.server.core.domain.application.usecase.RunApplicationUseCase
+import com.dcd.server.core.domain.application.usecase.SpringApplicationRunUseCase
 import com.dcd.server.presentation.domain.application.data.exetension.toDto
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
-import com.dcd.server.presentation.domain.application.data.request.RunApplicationRequest
+import com.dcd.server.presentation.domain.application.data.request.SpringApplicationRunRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -14,16 +14,16 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/application")
 class ApplicationWebAdapter(
     private val createApplicationUseCase: CreateApplicationUseCase,
-    private val runApplicationUseCase: RunApplicationUseCase
+    private val springApplicationRunUseCase: SpringApplicationRunUseCase
 ) {
     @PostMapping
     fun createApplication(@Validated @RequestBody createApplicationRequest: CreateApplicationRequest): ResponseEntity<Void> =
         createApplicationUseCase.execute(createApplicationRequest.toDto())
             .run { ResponseEntity(HttpStatus.CREATED) }
 
-    @PostMapping("/{id}/run")
-    fun runApplication(@PathVariable id: String, @RequestBody runApplicationRequest: RunApplicationRequest): ResponseEntity<Void> =
-        runApplicationUseCase.execute(id, runApplicationRequest.toDto())
+    @PostMapping("/{id}/run/spring")
+    fun runApplication(@PathVariable id: String, @RequestBody runApplicationRequest: SpringApplicationRunRequest): ResponseEntity<Void> =
+        springApplicationRunUseCase.execute(id, runApplicationRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
 }
