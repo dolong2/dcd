@@ -34,4 +34,4 @@ jwt:
     accessTime: ${JWT_ACCESS_TIME}
     refreshTime: ${JWT_REFRESH_TIME}
 server:
-  port: 8080
+  port: 8081
