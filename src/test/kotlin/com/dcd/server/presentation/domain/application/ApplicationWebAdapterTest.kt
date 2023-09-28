@@ -5,6 +5,7 @@ import com.dcd.server.core.domain.application.dto.response.ApplicationResponseDt
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.usecase.CreateApplicationUseCase
 import com.dcd.server.core.domain.application.usecase.GetAllApplicationUseCase
+import com.dcd.server.core.domain.application.usecase.GetOneApplicationUseCase
 import com.dcd.server.core.domain.application.usecase.SpringApplicationRunUseCase
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
@@ -19,7 +20,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     val createApplicationUseCase = mockk<CreateApplicationUseCase>()
     val springApplicationRunUseCase = mockk<SpringApplicationRunUseCase>()
     val getAllApplicationUseCase = mockk<GetAllApplicationUseCase>()
-    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springApplicationRunUseCase, getAllApplicationUseCase)
+    val getOneApplicationUseCase = mockk<GetOneApplicationUseCase>()
+    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springApplicationRunUseCase, getAllApplicationUseCase, getOneApplicationUseCase)
 
     given("CreateApplicationRequest가 주어지고") {
         val request = CreateApplicationRequest(
@@ -67,6 +69,27 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             val response = applicationWebAdapter.getAllApplication()
             then("응답바디는 targetResponse와 같아야하고 status는 200이여야함") {
                 val targetResponse = responseDto.toResponse()
+                response.body shouldBe targetResponse
+                response.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
+
+    given("ApplicationResponseDto가 주어지고") {
+        val testId = "testId"
+        val applicationResponse = ApplicationResponseDto(
+            id = testId,
+            name = "test",
+            description = "test",
+            applicationType = ApplicationType.SPRING_BOOT,
+            env = mapOf(),
+            githubUrl = "testUrl"
+        )
+        `when`("getOneApplication 메서드를 실행할때") {
+            every { getOneApplicationUseCase.execute(testId) } returns applicationResponse
+            val response = applicationWebAdapter.getOneApplication(testId)
+            then("응답바디는 targetResponse와 같아야하고 status는 200이여야함") {
+                val targetResponse = applicationResponse.toResponse()
                 response.body shouldBe targetResponse
                 response.statusCode shouldBe HttpStatus.OK
             }
