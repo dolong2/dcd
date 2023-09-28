@@ -52,6 +52,7 @@ class SecurityConfig(
                 .requestMatchers(HttpMethod.POST, "/application").authenticated()
                 .requestMatchers(HttpMethod.POST, "/application/{id}/run/spring").authenticated()
                 .requestMatchers(HttpMethod.GET, "/application").authenticated()
+                .requestMatchers(HttpMethod.GET, "/application/{id}").authenticated()
 
                 //when url not set
                 .anyRequest().denyAll()
