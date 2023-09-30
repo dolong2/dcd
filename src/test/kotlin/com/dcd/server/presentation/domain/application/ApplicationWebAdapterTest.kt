@@ -3,11 +3,9 @@ package com.dcd.server.presentation.domain.application
 import com.dcd.server.core.domain.application.dto.response.ApplicationListResponseDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationResponseDto
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import com.dcd.server.core.domain.application.usecase.CreateApplicationUseCase
-import com.dcd.server.core.domain.application.usecase.GetAllApplicationUseCase
-import com.dcd.server.core.domain.application.usecase.GetOneApplicationUseCase
-import com.dcd.server.core.domain.application.usecase.SpringApplicationRunUseCase
+import com.dcd.server.core.domain.application.usecase.*
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
+import com.dcd.server.presentation.domain.application.data.request.AddApplicationEnvRequest
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
 import com.dcd.server.presentation.domain.application.data.request.SpringApplicationRunRequest
 import io.kotest.core.spec.style.BehaviorSpec
@@ -21,7 +19,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     val springApplicationRunUseCase = mockk<SpringApplicationRunUseCase>()
     val getAllApplicationUseCase = mockk<GetAllApplicationUseCase>()
     val getOneApplicationUseCase = mockk<GetOneApplicationUseCase>()
-    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springApplicationRunUseCase, getAllApplicationUseCase, getOneApplicationUseCase)
+    val addApplicationEnvUseCase = mockk<AddApplicationEnvUseCase>()
+    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springApplicationRunUseCase, getAllApplicationUseCase, getOneApplicationUseCase, addApplicationEnvUseCase)
 
     given("CreateApplicationRequest가 주어지고") {
         val request = CreateApplicationRequest(
@@ -92,6 +91,20 @@ class ApplicationWebAdapterTest : BehaviorSpec({
                 val targetResponse = applicationResponse.toResponse()
                 response.body shouldBe targetResponse
                 response.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
+
+    given("AddApplicationEnvRequest가 주어지고") {
+        val testId = "testId"
+        val request = AddApplicationEnvRequest(
+            envList = mapOf(Pair("testKey", "testValue"))
+        )
+        `when`("addApplicationEnv메서드를 실행할때") {
+            every { addApplicationEnvUseCase.execute(testId, any()) } returns Unit
+            val result = applicationWebAdapter.addApplicationEnv(testId, request)
+            then("status는 200이여야함") {
+                result.statusCode shouldBe HttpStatus.OK
             }
         }
     }
