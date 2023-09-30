@@ -1,11 +1,9 @@
 package com.dcd.server.presentation.domain.application
 
-import com.dcd.server.core.domain.application.usecase.CreateApplicationUseCase
-import com.dcd.server.core.domain.application.usecase.GetAllApplicationUseCase
-import com.dcd.server.core.domain.application.usecase.GetOneApplicationUseCase
-import com.dcd.server.core.domain.application.usecase.SpringApplicationRunUseCase
+import com.dcd.server.core.domain.application.usecase.*
 import com.dcd.server.presentation.domain.application.data.exetension.toDto
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
+import com.dcd.server.presentation.domain.application.data.request.AddApplicationEnvRequest
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
 import com.dcd.server.presentation.domain.application.data.request.RunApplicationRequest
 import com.dcd.server.presentation.domain.application.data.response.ApplicationListResponse
@@ -21,7 +19,8 @@ class ApplicationWebAdapter(
     private val createApplicationUseCase: CreateApplicationUseCase,
     private val springApplicationRunUseCase: SpringApplicationRunUseCase,
     private val getAllApplicationUseCase: GetAllApplicationUseCase,
-    private val getOneApplicationUseCase: GetOneApplicationUseCase
+    private val getOneApplicationUseCase: GetOneApplicationUseCase,
+    private val addApplicationEnvUseCase: AddApplicationEnvUseCase
 ) {
     @PostMapping("/{workspaceId}")
     fun createApplication(@PathVariable workspaceId: String, @Validated @RequestBody createApplicationRequest: CreateApplicationRequest): ResponseEntity<Void> =
@@ -42,4 +41,9 @@ class ApplicationWebAdapter(
     fun getOneApplication(@PathVariable id: String): ResponseEntity<ApplicationResponse> =
         getOneApplicationUseCase.execute(id)
             .let { ResponseEntity.ok(it.toResponse()) }
+
+    @PostMapping("/{id}/env")
+    fun addApplicationEnv(@PathVariable id: String, @RequestBody addApplicationEnvRequest: AddApplicationEnvRequest): ResponseEntity<Void> =
+        addApplicationEnvUseCase.execute(id, addApplicationEnvRequest.toDto())
+            .run { ResponseEntity.ok().build() }
 }
