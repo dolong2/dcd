@@ -109,4 +109,16 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             }
         }
     }
+
+    given("애플리케이션 id와 삭젷할 키가 주어지고") {
+        val testId = "testId"
+        val key = "testKey"
+        `when`("deleteApplicationEnv메서드를 실행할때") {
+            every { deleteApplicationEnvUseCase.execute(testId, key) } returns Unit
+            val result = applicationWebAdapter.deleteApplicationEnv(testId, key)
+            then("status는 200이여야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
 })
