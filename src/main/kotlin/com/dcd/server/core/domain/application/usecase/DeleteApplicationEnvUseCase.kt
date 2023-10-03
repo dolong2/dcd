@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
+import com.dcd.server.core.domain.application.exception.ApplicationEnvNotFoundException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -15,7 +16,7 @@ class DeleteApplicationEnvUseCase(
             ?: throw ApplicationNotFoundException())
         val updatedEnv = application.env.toMutableMap()
         updatedEnv.remove(key)
-            ?: throw RuntimeException()
+            ?: throw ApplicationEnvNotFoundException()
         commandApplicationPort.save(application.copy(env = updatedEnv))
     }
 }
