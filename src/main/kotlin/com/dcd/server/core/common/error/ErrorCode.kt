@@ -24,6 +24,7 @@ enum class ErrorCode(
     NOT_FOUND("해당 리소스를 찾을 수 없음", 404),
     USER_NOT_FOUND("해당 유저를 찾을 수 없음", 404),
     APPLICATION_NOT_FOUND("해당 애플리케이션을 찾을 수 없음", 404),
+    APPLICATION_ENV_NOT_FOUND("해당 환경변수를 찾을 수 없음", 404),
 
     INTERNAL_ERROR("서버 내부 에러", 500)
 }
