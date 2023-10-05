@@ -55,6 +55,7 @@ class SecurityConfig(
                 .requestMatchers(HttpMethod.GET, "/application/{id}").authenticated()
                 .requestMatchers(HttpMethod.PATCH, "/application/{id}/env").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/application/{id}/env").authenticated()
+                .requestMatchers(HttpMethod.POST, "/application/{id}/stop").authenticated()
 
                 //when url not set
                 .anyRequest().denyAll()
