@@ -122,4 +122,15 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             }
         }
     }
+
+    given("애플리케이션 id가 주어지고") {
+        val testId = "testId"
+        `when`("stopApplication 메서드를 실행할때") {
+            every { stopApplicationUseCase.execute(testId) } returns Unit
+            val result = applicationWebAdapter.stopApplication(testId)
+            then("status는 200이여야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
 })
