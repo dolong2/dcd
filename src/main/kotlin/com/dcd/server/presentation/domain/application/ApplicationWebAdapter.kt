@@ -22,7 +22,8 @@ class ApplicationWebAdapter(
     private val getOneApplicationUseCase: GetOneApplicationUseCase,
     private val addApplicationEnvUseCase: AddApplicationEnvUseCase,
     private val deleteApplicationEnvUseCase: DeleteApplicationEnvUseCase,
-    private val stopApplicationUseCase: StopApplicationUseCase
+    private val stopApplicationUseCase: StopApplicationUseCase,
+    private val deleteApplicationUseCase: DeleteApplicationUseCase
 ) {
     @PostMapping("/{workspaceId}")
     fun createApplication(@PathVariable workspaceId: String, @Validated @RequestBody createApplicationRequest: CreateApplicationRequest): ResponseEntity<Void> =
@@ -59,4 +60,8 @@ class ApplicationWebAdapter(
         stopApplicationUseCase.execute(id)
             .run { ResponseEntity.ok().build() }
 
+    @DeleteMapping("/{id}")
+    fun deleteApplication(@PathVariable id: String): ResponseEntity<Void> =
+        deleteApplication(id)
+            .run { ResponseEntity.ok().build() }
 }
