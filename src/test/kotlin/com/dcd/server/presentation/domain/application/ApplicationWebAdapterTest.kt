@@ -134,4 +134,15 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             }
         }
     }
+
+    given("애플리케이션 Id가 주어지고") {
+        val testId = "testId"
+        `when`("deleteApplication 메서드를 실행할때") {
+            every { deleteApplicationUseCase.execute(testId) } returns Unit
+            val result = applicationWebAdapter.deleteApplication(testId)
+            then("status는 200이여야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
 })
