@@ -62,6 +62,6 @@ class ApplicationWebAdapter(
 
     @DeleteMapping("/{id}")
     fun deleteApplication(@PathVariable id: String): ResponseEntity<Void> =
-        deleteApplication(id)
+        deleteApplicationUseCase.execute(id)
             .run { ResponseEntity.ok().build() }
 }
