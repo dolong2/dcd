@@ -4,6 +4,8 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.persistence.application.entity.ApplicationJpaEntity
 import com.dcd.server.persistence.user.adapter.toDomain
 import com.dcd.server.persistence.user.adapter.toEntity
+import com.dcd.server.persistence.workspace.adapter.toDomain
+import com.dcd.server.persistence.workspace.adapter.toEntity
 
 fun Application.toEntity(): ApplicationJpaEntity =
     ApplicationJpaEntity(
@@ -13,7 +15,7 @@ fun Application.toEntity(): ApplicationJpaEntity =
         applicationType = this.applicationType,
         githubUrl = this.githubUrl,
         env = this.env,
-        owner = this.owner.toEntity()
+        workspace = this.workspace.toEntity()
     )
 
 fun ApplicationJpaEntity.toDomain(): Application =
@@ -24,5 +26,5 @@ fun ApplicationJpaEntity.toDomain(): Application =
         applicationType = this.applicationType,
         githubUrl = this.githubUrl,
         env = this.env,
-        owner = this.owner.toDomain()
+        workspace = this.workspace.toDomain()
     )

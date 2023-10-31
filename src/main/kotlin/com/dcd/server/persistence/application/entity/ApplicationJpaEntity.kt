@@ -2,6 +2,7 @@ package com.dcd.server.persistence.application.entity
 
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.persistence.user.entity.UserJpaEntity
+import com.dcd.server.persistence.workspace.entity.WorkspaceJpaEntity
 import jakarta.persistence.*
 
 
@@ -20,6 +21,6 @@ class ApplicationJpaEntity(
     @Column(name = "env_value")
     val env: Map<String, String>,
     @ManyToOne
-    @JoinColumn(name = "owner_id")
-    val owner: UserJpaEntity
+    @JoinColumn(name = "workspace_id")
+    val workspace: WorkspaceJpaEntity
 )
