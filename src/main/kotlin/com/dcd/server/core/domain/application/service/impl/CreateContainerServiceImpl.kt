@@ -19,6 +19,6 @@ class CreateContainerServiceImpl(
     }
 
     override fun createContainer(application: Application) {
-        commandPort.executeShellCommand("cd ${application.name} && docker-compose up -d")
+        commandPort.executeShellCommand("cd ${application.name} && docker run --newtwork ${application.workspace.title} --name ${application.name.lowercase()} -d ${application.name.lowercase()}")
     }
 }
