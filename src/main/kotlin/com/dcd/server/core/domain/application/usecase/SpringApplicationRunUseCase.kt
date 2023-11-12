@@ -33,7 +33,7 @@ class SpringApplicationRunUseCase(
                 val version = runApplicationReqDto.langVersion
                 createDockerFileService.createFileToApplication(application, version)
                 buildDockerImageService.buildImageByApplication(application)
-                createContainerService.createContainer(application, runApplicationReqDto.environment)
+                createContainerService.createContainer(application, runApplicationReqDto.env)
             }
         }
     }
