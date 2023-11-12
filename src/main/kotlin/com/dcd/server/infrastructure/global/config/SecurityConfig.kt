@@ -49,7 +49,7 @@ class SecurityConfig(
                 .requestMatchers(HttpMethod.DELETE, "/auth").authenticated()
 
                 //application
-                .requestMatchers(HttpMethod.POST, "/application").authenticated()
+                .requestMatchers(HttpMethod.POST, "/application/{workspaceId}").authenticated()
                 .requestMatchers(HttpMethod.POST, "/application/{id}/run/spring").authenticated()
 
                 //when url not set
