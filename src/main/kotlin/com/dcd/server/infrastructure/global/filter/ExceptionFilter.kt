@@ -25,6 +25,7 @@ class ExceptionFilter(
                     writeErrorResponse(response, ex)
                 }
                 else -> {
+                    ex.printStackTrace()
                     writeErrorResponse(response, BasicException(ErrorCode.INTERNAL_ERROR))
                 }
             }

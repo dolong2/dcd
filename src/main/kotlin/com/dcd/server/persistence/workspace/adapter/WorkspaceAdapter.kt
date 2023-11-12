@@ -7,6 +7,7 @@ import com.dcd.server.persistence.workspace.entity.WorkspaceJpaEntity
 
 fun Workspace.toEntity(): WorkspaceJpaEntity =
     WorkspaceJpaEntity(
+        id = this.id,
         title = this.title,
         description = this.description,
         owner = this.owner.toEntity()
@@ -14,6 +15,7 @@ fun Workspace.toEntity(): WorkspaceJpaEntity =
 
 fun WorkspaceJpaEntity.toDomain(): Workspace =
     Workspace(
+        id = this.id,
         title = this.title,
         description = this.description,
         owner = this.owner.toDomain()
