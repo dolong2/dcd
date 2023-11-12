@@ -3,10 +3,12 @@ package com.dcd.server.persistence.application
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.spi.ApplicationPort
 import com.dcd.server.core.domain.user.model.User
+import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.persistence.application.adapter.toDomain
 import com.dcd.server.persistence.application.adapter.toEntity
 import com.dcd.server.persistence.application.repository.ApplicationRepository
 import com.dcd.server.persistence.user.adapter.toEntity
+import com.dcd.server.persistence.workspace.adapter.toEntity
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 
@@ -22,8 +24,8 @@ class ApplicationPersistenceAdapter(
         applicationRepository.delete(application.toEntity())
     }
 
-    override fun findAllByUser(user: User): List<Application> =
-        applicationRepository.findAllByOwner(user.toEntity())
+    override fun findAllByWorkspace(workspace: Workspace): List<Application> =
+        applicationRepository.findAllByWorkspace(workspace.toEntity())
             .map { it.toDomain() }
 
     override fun findById(id: String): Application? =

@@ -4,5 +4,5 @@ import com.dcd.server.core.domain.application.enums.DBType
 
 class RunApplicationReqDto(
     val langVersion: Int,
-    val environment: Map<String, String>
+    val env: Map<String, String>
 )

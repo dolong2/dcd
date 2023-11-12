@@ -4,7 +4,7 @@ import com.dcd.server.core.domain.application.usecase.CreateApplicationUseCase
 import com.dcd.server.core.domain.application.usecase.SpringApplicationRunUseCase
 import com.dcd.server.presentation.domain.application.data.exetension.toDto
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
-import com.dcd.server.presentation.domain.application.data.request.SpringApplicationRunRequest
+import com.dcd.server.presentation.domain.application.data.request.RunApplicationRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -22,7 +22,7 @@ class ApplicationWebAdapter(
             .run { ResponseEntity(HttpStatus.CREATED) }
 
     @PostMapping("/{id}/run/spring")
-    fun runApplication(@PathVariable id: String, @RequestBody runApplicationRequest: SpringApplicationRunRequest): ResponseEntity<Void> =
+    fun runApplication(@PathVariable id: String, @RequestBody runApplicationRequest: RunApplicationRequest): ResponseEntity<Void> =
         springApplicationRunUseCase.execute(id, runApplicationRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
