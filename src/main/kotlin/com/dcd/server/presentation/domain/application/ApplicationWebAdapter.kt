@@ -16,9 +16,9 @@ class ApplicationWebAdapter(
     private val createApplicationUseCase: CreateApplicationUseCase,
     private val springApplicationRunUseCase: SpringApplicationRunUseCase
 ) {
-    @PostMapping
-    fun createApplication(@Validated @RequestBody createApplicationRequest: CreateApplicationRequest): ResponseEntity<Void> =
-        createApplicationUseCase.execute(createApplicationRequest.toDto())
+    @PostMapping("/{workspaceId}")
+    fun createApplication(@PathVariable workspaceId: String, @Validated @RequestBody createApplicationRequest: CreateApplicationRequest): ResponseEntity<Void> =
+        createApplicationUseCase.execute(workspaceId, createApplicationRequest.toDto())
             .run { ResponseEntity(HttpStatus.CREATED) }
 
     @PostMapping("/{id}/run/spring")
