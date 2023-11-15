@@ -20,7 +20,7 @@ class CreateContainerServiceImpl(
     }
 
     override fun createContainer(application: Application) {
-        commandPort.executeShellCommand("cd ${application.name} && docker run --network ${application.workspace.title} --name ${application.name.lowercase()} -d ${application.name.lowercase()}")
+        commandPort.executeShellCommand("cd ${application.name} && docker run --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d ${application.name.lowercase()}")
     }
 
     override fun createContainer(application: Application, env: Map<String, String>) {
@@ -28,6 +28,6 @@ class CreateContainerServiceImpl(
         env.forEach {
             envString.append("-e ${it.key}=${it.value}")
         }
-        commandPort.executeShellCommand("cd ${application.name} && docker run $envString --network ${application.workspace.title} --name ${application.name.lowercase()} -d ${application.name.lowercase()}")
+        commandPort.executeShellCommand("cd ${application.name} && docker run $envString --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d ${application.name.lowercase()}")
     }
 }
