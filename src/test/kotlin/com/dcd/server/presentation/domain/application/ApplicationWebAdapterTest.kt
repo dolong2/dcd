@@ -7,7 +7,7 @@ import com.dcd.server.core.domain.application.usecase.*
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
 import com.dcd.server.presentation.domain.application.data.request.AddApplicationEnvRequest
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
-import com.dcd.server.presentation.domain.application.data.request.SpringApplicationRunRequest
+import com.dcd.server.presentation.domain.application.data.request.RunApplicationRequest
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -35,8 +35,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         )
 
         `when`("createApplication 메서드를 실행할때") {
-            every { createApplicationUseCase.execute(any()) } returns Unit
-            val result = applicationWebAdapter.createApplication(request)
+            every { createApplicationUseCase.execute("testWorkspaceId", any()) } returns Unit
+            val result = applicationWebAdapter.createApplication("testWorkspaceId", request)
             then("상태코드가 201이여야함") {
                 result.statusCode shouldBe HttpStatus.CREATED
             }
@@ -45,7 +45,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
 
     given("RunApplicationRequest가 주어지고") {
         val id = "testApplicationId"
-        val request = SpringApplicationRunRequest(langVersion = 11, dbTypes = arrayOf())
+        val request = RunApplicationRequest(langVersion = 11, env = mapOf())
         `when`("runApplication 메서드를 실행할때") {
             every { springApplicationRunUseCase.execute(id, any()) } returns Unit
             val result = applicationWebAdapter.runApplication(id, request)
@@ -67,8 +67,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         val list = listOf(applicationResponse)
         val responseDto = ApplicationListResponseDto(list)
         `when`("getAllApplication 메서드를 실행할때") {
-            every { getAllApplicationUseCase.execute() } returns responseDto
-            val response = applicationWebAdapter.getAllApplication()
+            every { getAllApplicationUseCase.execute("testWorkspaceId") } returns responseDto
+            val response = applicationWebAdapter.getAllApplication("testWorkspaceId")
             then("응답바디는 targetResponse와 같아야하고 status는 200이여야함") {
                 val targetResponse = responseDto.toResponse()
                 response.body shouldBe targetResponse

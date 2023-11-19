@@ -5,7 +5,7 @@ import com.dcd.server.presentation.domain.application.data.exetension.toDto
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
 import com.dcd.server.presentation.domain.application.data.request.AddApplicationEnvRequest
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
-import com.dcd.server.presentation.domain.application.data.request.SpringApplicationRunRequest
+import com.dcd.server.presentation.domain.application.data.request.RunApplicationRequest
 import com.dcd.server.presentation.domain.application.data.response.ApplicationListResponse
 import com.dcd.server.presentation.domain.application.data.response.ApplicationResponse
 import org.springframework.http.HttpStatus
@@ -25,19 +25,19 @@ class ApplicationWebAdapter(
     private val stopApplicationUseCase: StopApplicationUseCase,
     private val deleteApplicationUseCase: DeleteApplicationUseCase
 ) {
-    @PostMapping
-    fun createApplication(@Validated @RequestBody createApplicationRequest: CreateApplicationRequest): ResponseEntity<Void> =
-        createApplicationUseCase.execute(createApplicationRequest.toDto())
+    @PostMapping("/{workspaceId}")
+    fun createApplication(@PathVariable workspaceId: String, @Validated @RequestBody createApplicationRequest: CreateApplicationRequest): ResponseEntity<Void> =
+        createApplicationUseCase.execute(workspaceId, createApplicationRequest.toDto())
             .run { ResponseEntity(HttpStatus.CREATED) }
 
-    @PostMapping("/{id}/run/spring")
-    fun runApplication(@PathVariable id: String, @RequestBody runApplicationRequest: SpringApplicationRunRequest): ResponseEntity<Void> =
+    @PostMapping("/{id}/run")
+    fun runApplication(@PathVariable id: String, @RequestBody runApplicationRequest: RunApplicationRequest): ResponseEntity<Void> =
         springApplicationRunUseCase.execute(id, runApplicationRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
     @GetMapping
-    fun getAllApplication(): ResponseEntity<ApplicationListResponse> =
-        getAllApplicationUseCase.execute()
+    fun getAllApplication(@RequestParam workspaceId: String): ResponseEntity<ApplicationListResponse> =
+        getAllApplicationUseCase.execute(workspaceId)
             .let { ResponseEntity.ok(it.toResponse()) }
 
     @GetMapping("/{id}")

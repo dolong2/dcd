@@ -16,7 +16,7 @@ class DeleteApplicationUseCase(
         val user = getCurrentUserService.getCurrentUser()
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
-        if (!application.owner.equals(user))
+        if (!application.workspace.owner.equals(user))
             throw RuntimeException()
         commandApplicationPort.delete(application)
     }

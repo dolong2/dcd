@@ -8,12 +8,14 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
+import com.dcd.server.core.domain.workspace.model.Workspace
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.lang.RuntimeException
+import java.util.*
 
 class DeleteApplicationUseCaseTest : BehaviorSpec({
     val getCurrentUserService = mockk<GetCurrentUserService>()
@@ -32,7 +34,7 @@ class DeleteApplicationUseCaseTest : BehaviorSpec({
             applicationType = ApplicationType.SPRING_BOOT,
             env = mapOf(),
             githubUrl = "testUrl",
-            owner = user
+            workspace = Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user)
         )
         every { getCurrentUserService.getCurrentUser() } returns user
         `when`("usecase를 실행할때") {

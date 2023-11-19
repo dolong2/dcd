@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.application.model
 
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.user.model.User
+import com.dcd.server.core.domain.workspace.model.Workspace
 import java.util.*
 
 data class Application(
@@ -11,5 +12,5 @@ data class Application(
     val applicationType: ApplicationType,
     val githubUrl: String,
     val env: Map<String, String>,
-    val owner: User
+    val workspace: Workspace
 )

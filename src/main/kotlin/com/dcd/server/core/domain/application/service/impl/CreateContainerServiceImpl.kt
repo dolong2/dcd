@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.service.CreateContainerService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import org.springframework.stereotype.Service
+import java.lang.StringBuilder
 
 @Service
 class CreateContainerServiceImpl(
@@ -19,6 +20,14 @@ class CreateContainerServiceImpl(
     }
 
     override fun createContainer(application: Application) {
-        commandPort.executeShellCommand("cd ${application.name} && docker-compose up -d")
+        commandPort.executeShellCommand("cd ${application.name} && docker run --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d ${application.name.lowercase()}")
+    }
+
+    override fun createContainer(application: Application, env: Map<String, String>) {
+        val envString = StringBuilder()
+        env.forEach {
+            envString.append("-e ${it.key}=${it.value}")
+        }
+        commandPort.executeShellCommand("cd ${application.name} && docker run $envString --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d ${application.name.lowercase()}")
     }
 }

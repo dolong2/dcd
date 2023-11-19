@@ -7,11 +7,13 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.User
+import com.dcd.server.core.domain.workspace.model.Workspace
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import java.util.*
 
 class GetOneApplicationUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
@@ -27,7 +29,7 @@ class GetOneApplicationUseCaseTest : BehaviorSpec({
             applicationType = ApplicationType.SPRING_BOOT,
             env = mapOf(),
             githubUrl = "testUrl",
-            owner = user
+            workspace = Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user)
         )
         `when`("해당 애플리케이션이 있을때") {
             every { queryApplicationPort.findById(application.id) } returns application
