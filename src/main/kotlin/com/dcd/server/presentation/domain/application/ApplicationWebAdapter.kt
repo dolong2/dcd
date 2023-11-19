@@ -36,8 +36,8 @@ class ApplicationWebAdapter(
             .run { ResponseEntity.ok().build() }
 
     @GetMapping
-    fun getAllApplication(): ResponseEntity<ApplicationListResponse> =
-        getAllApplicationUseCase.execute()
+    fun getAllApplication(@RequestParam workspaceId: String): ResponseEntity<ApplicationListResponse> =
+        getAllApplicationUseCase.execute(workspaceId)
             .let { ResponseEntity.ok(it.toResponse()) }
 
     @GetMapping("/{id}")
