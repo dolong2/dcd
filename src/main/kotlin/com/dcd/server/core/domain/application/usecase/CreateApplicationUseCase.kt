@@ -20,7 +20,6 @@ class CreateApplicationUseCase(
         val userId = securityService.getCurrentUserId()
         val user = (queryUserPort.findById(userId)
             ?: throw UserNotFoundException())
-        queryWorkspacePort.findAll().forEach{println(it)}
         val workspace = queryWorkspacePort.findById(workspaceId)
             ?: throw RuntimeException()
         val application = createApplicationReqDto.toEntity(user, workspace)

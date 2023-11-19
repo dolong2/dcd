@@ -4,6 +4,7 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.User
+import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.persistence.application.adapter.toEntity
 import com.dcd.server.persistence.application.repository.ApplicationRepository
 import io.kotest.core.spec.style.BehaviorSpec
@@ -12,6 +13,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.springframework.data.repository.findByIdOrNull
+import java.util.*
 
 class ApplicationPersistenceAdapterTest : BehaviorSpec({
     val applicationRepository = mockk<ApplicationRepository>()
@@ -24,13 +26,19 @@ class ApplicationPersistenceAdapterTest : BehaviorSpec({
             name = "testName",
             roles = mutableListOf(Role.ROLE_USER)
         )
+        val workspace = Workspace(
+            UUID.randomUUID().toString(),
+            title = "test workspace",
+            description = "test workspace description",
+            owner = user
+        )
         val application = Application(
             name = "test",
             description = "test description",
             applicationType = ApplicationType.SPRING_BOOT,
             githubUrl = "testUrl",
             env = mapOf(),
-            owner = user
+            workspace = workspace
         )
         val id = application.id
 
@@ -49,8 +57,8 @@ class ApplicationPersistenceAdapterTest : BehaviorSpec({
             }
         }
         `when`("findAllByUser 메서드를 실행할때") {
-            every { applicationRepository.findAllByOwner(any()) } returns listOf(application.toEntity())
-            val result = applicationPersistenceAdapter.findAllByUser(user)
+            every { applicationRepository.findAllByWorkspace(any()) } returns listOf(application.toEntity())
+            val result = applicationPersistenceAdapter.findAllByWorkspace(workspace)
             then("application list가 반환되야함") {
                 result shouldBe listOf(application)
             }

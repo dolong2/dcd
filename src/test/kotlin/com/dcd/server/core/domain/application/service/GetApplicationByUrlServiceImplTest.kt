@@ -8,11 +8,13 @@ import com.dcd.server.core.domain.application.service.impl.CloneApplicationByUrl
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.User
+import com.dcd.server.core.domain.workspace.model.Workspace
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.util.*
 
 class GetApplicationByUrlServiceImplTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
@@ -25,7 +27,7 @@ class GetApplicationByUrlServiceImplTest : BehaviorSpec({
         User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
 
     given("애플리케이션 Id와 url이 주어지고") {
-        val application = Application(id, "testName", null, ApplicationType.SPRING_BOOT, testUrl, mapOf(), user)
+        val application = Application(id, "testName", null, ApplicationType.SPRING_BOOT, testUrl, mapOf(), Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user))
         every { queryApplicationPort.findById(id) } returns application
         `when`("service를 실행할때") {
             serviceImpl.cloneById(id)
@@ -43,7 +45,7 @@ class GetApplicationByUrlServiceImplTest : BehaviorSpec({
     }
 
     given("애플리케이션이 주어지고") {
-        val application = Application(id, "testName", null, ApplicationType.SPRING_BOOT, testUrl, mapOf(), user)
+        val application = Application(id, "testName", null, ApplicationType.SPRING_BOOT, testUrl, mapOf(), Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user))
         `when`("service를 실행할때") {
             serviceImpl.cloneByApplication(application)
             then("commandPort의 executeShellCommand 메서드를 실행해야함") {
