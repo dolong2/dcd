@@ -1,7 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.ReadOnlyUseCase
-import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.spi.CompareUserPort
 import com.dcd.server.core.domain.application.dto.request.RunApplicationReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
@@ -12,7 +11,7 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 
 @ReadOnlyUseCase
-class SpringApplicationRunUseCase(
+class ApplicationRunUseCase(
     private val cloneApplicationByUrlService: CloneApplicationByUrlService,
     private val modifyGradleService: ModifyGradleService,
     private val createDockerFileService: CreateDockerFileService,
