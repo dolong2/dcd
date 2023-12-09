@@ -6,14 +6,15 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.workspace.model.Workspace
 
-fun CreateApplicationReqDto.toEntity(owner: User, workspace: Workspace): Application =
+fun CreateApplicationReqDto.toEntity(workspace: Workspace): Application =
     Application(
         name = this.name,
         description = this.description,
         githubUrl = this.githubUrl,
         applicationType = this.applicationType,
         env = this.env,
-        workspace = workspace
+        workspace = workspace,
+        port = this.port
     )
 
 fun Application.toDto(): ApplicationResponseDto =
@@ -23,5 +24,6 @@ fun Application.toDto(): ApplicationResponseDto =
         description = this.description,
         githubUrl = this.githubUrl,
         applicationType = this.applicationType,
-        env = this.env
+        env = this.env,
+        port = this.port
     )

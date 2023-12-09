@@ -38,7 +38,8 @@ class ApplicationPersistenceAdapterTest : BehaviorSpec({
             applicationType = ApplicationType.SPRING_BOOT,
             githubUrl = "testUrl",
             env = mapOf(),
-            workspace = workspace
+            workspace = workspace,
+            port = 8080
         )
         val id = application.id
 

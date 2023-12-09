@@ -7,5 +7,6 @@ data class CreateApplicationReqDto(
     val description: String?,
     val githubUrl: String,
     val env: Map<String, String>,
-    val applicationType: ApplicationType
+    val applicationType: ApplicationType,
+    val port: Int
 )

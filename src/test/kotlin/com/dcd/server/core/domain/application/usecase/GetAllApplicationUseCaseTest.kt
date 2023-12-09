@@ -38,7 +38,8 @@ class GetAllApplicationUseCaseTest : BehaviorSpec({
             applicationType = ApplicationType.SPRING_BOOT,
             env = mapOf(),
             githubUrl = "testUrl",
-            workspace = workspace
+            workspace = workspace,
+            port = 8080
         )
         val applicationList = listOf(application)
         `when`("usecase를 실행할때") {

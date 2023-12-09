@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/application")
 class ApplicationWebAdapter(
     private val createApplicationUseCase: CreateApplicationUseCase,
-    private val springApplicationRunUseCase: SpringApplicationRunUseCase,
+    private val applicationRunUseCase: ApplicationRunUseCase,
     private val getAllApplicationUseCase: GetAllApplicationUseCase,
     private val getOneApplicationUseCase: GetOneApplicationUseCase,
     private val addApplicationEnvUseCase: AddApplicationEnvUseCase,
@@ -32,7 +32,7 @@ class ApplicationWebAdapter(
 
     @PostMapping("/{id}/run")
     fun runApplication(@PathVariable id: String, @RequestBody runApplicationRequest: RunApplicationRequest): ResponseEntity<Void> =
-        springApplicationRunUseCase.execute(id, runApplicationRequest.toDto())
+        applicationRunUseCase.execute(id, runApplicationRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
     @GetMapping

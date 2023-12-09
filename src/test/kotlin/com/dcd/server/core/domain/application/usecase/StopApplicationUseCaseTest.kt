@@ -34,7 +34,8 @@ class StopApplicationUseCaseTest : BehaviorSpec({
             applicationType = ApplicationType.SPRING_BOOT,
             env = mapOf(),
             githubUrl = "testUrl",
-            workspace = Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user)
+            workspace = Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user),
+            port = 8080
         )
         `when`("유스케이스가 오류없이 동작할때") {
             every { queryApplicationPort.findById(applicationId) } returns application

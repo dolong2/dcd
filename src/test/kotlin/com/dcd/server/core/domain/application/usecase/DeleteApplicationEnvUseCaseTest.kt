@@ -33,7 +33,8 @@ class DeleteApplicationEnvUseCaseTest : BehaviorSpec({
             applicationType = ApplicationType.SPRING_BOOT,
             env = mapOf(Pair(key, "testValue")),
             githubUrl = "testUrl",
-            workspace = Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user)
+            workspace = Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user),
+            port = 8080
         )
         `when`("usecase를 실행할때") {
             every { queryApplicationPort.findById(applicationId) } returns application

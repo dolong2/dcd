@@ -22,5 +22,6 @@ class ApplicationJpaEntity(
     val env: Map<String, String>,
     @ManyToOne
     @JoinColumn(name = "workspace_id")
-    val workspace: WorkspaceJpaEntity
+    val workspace: WorkspaceJpaEntity,
+    val port: Int,
 )
