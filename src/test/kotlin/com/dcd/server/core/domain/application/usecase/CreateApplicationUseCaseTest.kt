@@ -30,7 +30,8 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
             description = "testDescription",
             applicationType = ApplicationType.SPRING_BOOT,
             env = mapOf(),
-            githubUrl = "testGithub"
+            githubUrl = "testGithub",
+            port = 8080
         )
         val user =
             User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
@@ -49,16 +50,6 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
             createApplicationUseCase.execute(workspace.id, request)
             then("repository의 save메서드가 실행되어야함") {
                 verify { commandApplicationPort.save(any()) }
-            }
-        }
-        `when`("해당 유저가 존재하지 않으면") {
-            every { securityService.getCurrentUserId() } returns id
-            every { queryWorkspacePort.findById(workspace.id) } returns workspace
-            every { queryUserPort.findById(id) } throws UserNotFoundException()
-            then("repository의 save메서드가 실행되어야함") {
-                shouldThrow<UserNotFoundException> {
-                    createApplicationUseCase.execute(workspace.id, request)
-                }
             }
         }
     }

@@ -34,7 +34,8 @@ class DeleteApplicationUseCaseTest : BehaviorSpec({
             applicationType = ApplicationType.SPRING_BOOT,
             env = mapOf(),
             githubUrl = "testUrl",
-            workspace = Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user)
+            workspace = Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user),
+            port = 8080
         )
         every { getCurrentUserService.getCurrentUser() } returns user
         `when`("usecase를 실행할때") {

@@ -11,7 +11,8 @@ fun CreateApplicationRequest.toDto(): CreateApplicationReqDto =
         description = this.description,
         githubUrl = this.githubUrl,
         env = this.env,
-        applicationType = this.applicationType
+        applicationType = this.applicationType,
+        port = this.port
     )
 
 fun RunApplicationRequest.toDto(): RunApplicationReqDto =

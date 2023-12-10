@@ -9,5 +9,6 @@ data class ApplicationResponseDto(
     val description: String?,
     val applicationType: ApplicationType,
     val githubUrl: String,
-    val env: Map<String, String>
+    val env: Map<String, String>,
+    val port: Int
 )

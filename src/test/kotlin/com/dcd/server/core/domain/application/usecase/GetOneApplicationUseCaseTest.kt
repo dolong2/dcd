@@ -29,7 +29,8 @@ class GetOneApplicationUseCaseTest : BehaviorSpec({
             applicationType = ApplicationType.SPRING_BOOT,
             env = mapOf(),
             githubUrl = "testUrl",
-            workspace = Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user)
+            workspace = Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user),
+            port = 8080
         )
         `when`("해당 애플리케이션이 있을때") {
             every { queryApplicationPort.findById(application.id) } returns application

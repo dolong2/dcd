@@ -16,7 +16,7 @@ import org.springframework.http.HttpStatus
 
 class ApplicationWebAdapterTest : BehaviorSpec({
     val createApplicationUseCase = mockk<CreateApplicationUseCase>()
-    val springApplicationRunUseCase = mockk<SpringApplicationRunUseCase>()
+    val springApplicationRunUseCase = mockk<ApplicationRunUseCase>()
     val getAllApplicationUseCase = mockk<GetAllApplicationUseCase>()
     val getOneApplicationUseCase = mockk<GetOneApplicationUseCase>()
     val addApplicationEnvUseCase = mockk<AddApplicationEnvUseCase>()
@@ -31,7 +31,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             description = "testDescription",
             applicationType = ApplicationType.SPRING_BOOT,
             env = mapOf(),
-            githubUrl = "testUrl"
+            githubUrl = "testUrl",
+            port = 8080
         )
 
         `when`("createApplication 메서드를 실행할때") {
@@ -62,7 +63,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             description = "test",
             applicationType = ApplicationType.SPRING_BOOT,
             env = mapOf(),
-            githubUrl = "testUrl"
+            githubUrl = "testUrl",
+            port = 8080
         )
         val list = listOf(applicationResponse)
         val responseDto = ApplicationListResponseDto(list)
@@ -85,7 +87,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             description = "test",
             applicationType = ApplicationType.SPRING_BOOT,
             env = mapOf(),
-            githubUrl = "testUrl"
+            githubUrl = "testUrl",
+            port = 8080
         )
         `when`("getOneApplication 메서드를 실행할때") {
             every { getOneApplicationUseCase.execute(testId) } returns applicationResponse

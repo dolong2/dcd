@@ -27,7 +27,7 @@ class GetApplicationByUrlServiceImplTest : BehaviorSpec({
         User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
 
     given("애플리케이션 Id와 url이 주어지고") {
-        val application = Application(id, "testName", null, ApplicationType.SPRING_BOOT, testUrl, mapOf(), Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user))
+        val application = Application(id, "testName", null, ApplicationType.SPRING_BOOT, testUrl, mapOf(), Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user), port = 8080)
         every { queryApplicationPort.findById(id) } returns application
         `when`("service를 실행할때") {
             serviceImpl.cloneById(id)
@@ -45,7 +45,7 @@ class GetApplicationByUrlServiceImplTest : BehaviorSpec({
     }
 
     given("애플리케이션이 주어지고") {
-        val application = Application(id, "testName", null, ApplicationType.SPRING_BOOT, testUrl, mapOf(), Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user))
+        val application = Application(id, "testName", null, ApplicationType.SPRING_BOOT, testUrl, mapOf(), Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user), port = 8080)
         `when`("service를 실행할때") {
             serviceImpl.cloneByApplication(application)
             then("commandPort의 executeShellCommand 메서드를 실행해야함") {

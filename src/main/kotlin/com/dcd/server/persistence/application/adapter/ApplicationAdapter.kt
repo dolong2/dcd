@@ -15,7 +15,8 @@ fun Application.toEntity(): ApplicationJpaEntity =
         applicationType = this.applicationType,
         githubUrl = this.githubUrl,
         env = this.env,
-        workspace = this.workspace.toEntity()
+        workspace = this.workspace.toEntity(),
+        port = this.port
     )
 
 fun ApplicationJpaEntity.toDomain(): Application =
@@ -26,5 +27,6 @@ fun ApplicationJpaEntity.toDomain(): Application =
         applicationType = this.applicationType,
         githubUrl = this.githubUrl,
         env = this.env,
-        workspace = this.workspace.toDomain()
+        workspace = this.workspace.toDomain(),
+        port = this.port
     )
