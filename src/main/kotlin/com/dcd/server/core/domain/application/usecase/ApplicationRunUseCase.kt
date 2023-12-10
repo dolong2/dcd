@@ -16,7 +16,7 @@ class ApplicationRunUseCase(
     private val modifyGradleService: ModifyGradleService,
     private val createDockerFileService: CreateDockerFileService,
     private val buildDockerImageService: BuildDockerImageService,
-    private val createContainerService: CreateContainerService,
+    private val dockerRunService: DockerRunService,
     private val currentUserService: GetCurrentUserService,
     private val queryApplicationPort: QueryApplicationPort,
     private val compareUserPort: CompareUserPort
@@ -33,7 +33,7 @@ class ApplicationRunUseCase(
                 val version = runApplicationReqDto.langVersion
                 createDockerFileService.createFileToApplication(application, version)
                 buildDockerImageService.buildImageByApplication(application)
-                createContainerService.createContainer(application, runApplicationReqDto.env)
+                dockerRunService.runApplication(application, runApplicationReqDto.env)
             }
         }
     }
