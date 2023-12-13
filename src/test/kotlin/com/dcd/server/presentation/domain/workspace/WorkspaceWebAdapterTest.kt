@@ -2,6 +2,8 @@ package com.dcd.server.presentation.domain.workspace
 
 import com.dcd.server.core.domain.workspace.dto.request.CreateWorkspaceReqDto
 import com.dcd.server.core.domain.workspace.usecase.CreateWorkspaceUseCase
+import com.dcd.server.core.domain.workspace.usecase.GetAllWorkspaceUseCase
+import com.dcd.server.core.domain.workspace.usecase.GetWorkspaceUseCase
 import com.dcd.server.presentation.domain.workspace.data.request.CreateWorkspaceRequest
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -11,7 +13,9 @@ import org.springframework.http.HttpStatus
 
 class WorkspaceWebAdapterTest : BehaviorSpec({
     val createWorkspaceUseCase = mockk<CreateWorkspaceUseCase>(relaxUnitFun = true)
-    val workspaceWebAdapter = WorkspaceWebAdapter(createWorkspaceUseCase)
+    val getAllWorkspaceUseCase = mockk<GetAllWorkspaceUseCase>()
+    val getWorkspaceUseCase = mockk<GetWorkspaceUseCase>()
+    val workspaceWebAdapter = WorkspaceWebAdapter(createWorkspaceUseCase, getAllWorkspaceUseCase, getWorkspaceUseCase)
 
     given("CreateWorkspaceRequest가 주어지고") {
         val request = CreateWorkspaceRequest(title = "test", description = "test description")

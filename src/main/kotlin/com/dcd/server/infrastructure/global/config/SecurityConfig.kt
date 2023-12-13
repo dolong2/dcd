@@ -61,6 +61,8 @@ class SecurityConfig(
 
                 //workspace
                 .requestMatchers(HttpMethod.POST, "/workspace").authenticated()
+                .requestMatchers(HttpMethod.GET, "/workspace").authenticated()
+                .requestMatchers(HttpMethod.GET, "/workspace/{workspaceId}").authenticated()
 
                 //when url not set
                 .anyRequest().denyAll()
