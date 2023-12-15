@@ -1,6 +1,7 @@
 package com.dcd.server.presentation.domain.workspace
 
 import com.dcd.server.core.domain.workspace.usecase.CreateWorkspaceUseCase
+import com.dcd.server.core.domain.workspace.usecase.DeleteWorkspaceUseCase
 import com.dcd.server.core.domain.workspace.usecase.GetAllWorkspaceUseCase
 import com.dcd.server.core.domain.workspace.usecase.GetWorkspaceUseCase
 import com.dcd.server.presentation.domain.workspace.data.exetension.toDto
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.*
 class WorkspaceWebAdapter(
     private val createWorkspaceUseCase: CreateWorkspaceUseCase,
     private val getAllWorkspaceUseCase: GetAllWorkspaceUseCase,
-    private val getWorkspaceUseCase: GetWorkspaceUseCase
+    private val getWorkspaceUseCase: GetWorkspaceUseCase,
+    private val deleteWorkspaceUseCase: DeleteWorkspaceUseCase
 ) {
     @PostMapping
     fun createWorkspace(@RequestBody createWorkspaceRequest: CreateWorkspaceRequest): ResponseEntity<Void> =
@@ -32,4 +34,10 @@ class WorkspaceWebAdapter(
     fun getOneWorkspace(@PathVariable workspaceId: String): ResponseEntity<WorkspaceResponse> =
         getWorkspaceUseCase.execute(workspaceId)
             .let { ResponseEntity.ok(it.toResponse()) }
+
+    @DeleteMapping("/{workspaceId}")
+    fun deleteWorkspace(@PathVariable workspaceId: String): ResponseEntity<Void> =
+        deleteWorkspaceUseCase.execute(workspaceId)
+            .let { ResponseEntity.ok().build() }
+
 }

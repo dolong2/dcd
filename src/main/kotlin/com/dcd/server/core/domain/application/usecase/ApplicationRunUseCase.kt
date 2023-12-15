@@ -4,11 +4,11 @@ import com.dcd.server.core.common.annotation.ReadOnlyUseCase
 import com.dcd.server.core.common.spi.CompareUserPort
 import com.dcd.server.core.domain.application.dto.request.RunApplicationReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
-import com.dcd.server.core.domain.application.exception.OwnerNotSameException
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
+import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
 
 @ReadOnlyUseCase
 class ApplicationRunUseCase(
@@ -25,7 +25,7 @@ class ApplicationRunUseCase(
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
         if (compareUserPort.compareTwoUserEntity(currentUserService.getCurrentUser(), application.workspace.owner))
-            throw OwnerNotSameException()
+            throw WorkspaceOwnerNotSameException()
         cloneApplicationByUrlService.cloneByApplication(application)
         when(application.applicationType){
             ApplicationType.SPRING_BOOT -> {
