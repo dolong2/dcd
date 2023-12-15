@@ -5,6 +5,7 @@ import com.dcd.server.core.domain.workspace.dto.request.CreateWorkspaceReqDto
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceListResDto
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceResDto
 import com.dcd.server.core.domain.workspace.usecase.CreateWorkspaceUseCase
+import com.dcd.server.core.domain.workspace.usecase.DeleteWorkspaceUseCase
 import com.dcd.server.core.domain.workspace.usecase.GetAllWorkspaceUseCase
 import com.dcd.server.core.domain.workspace.usecase.GetWorkspaceUseCase
 import com.dcd.server.presentation.domain.workspace.data.exetension.toResponse
@@ -21,7 +22,8 @@ class WorkspaceWebAdapterTest : BehaviorSpec({
     val createWorkspaceUseCase = mockk<CreateWorkspaceUseCase>(relaxUnitFun = true)
     val getAllWorkspaceUseCase = mockk<GetAllWorkspaceUseCase>()
     val getWorkspaceUseCase = mockk<GetWorkspaceUseCase>()
-    val workspaceWebAdapter = WorkspaceWebAdapter(createWorkspaceUseCase, getAllWorkspaceUseCase, getWorkspaceUseCase)
+    val deleteWorkspaceUseCase = mockk<DeleteWorkspaceUseCase>()
+    val workspaceWebAdapter = WorkspaceWebAdapter(createWorkspaceUseCase, getAllWorkspaceUseCase, getWorkspaceUseCase, deleteWorkspaceUseCase)
 
     given("CreateWorkspaceRequest가 주어지고") {
         val request = CreateWorkspaceRequest(title = "test", description = "test description")
