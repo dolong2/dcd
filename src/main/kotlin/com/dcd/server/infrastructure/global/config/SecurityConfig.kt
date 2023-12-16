@@ -41,29 +41,29 @@ class SecurityConfig(
                 }).permitAll()
 
                 //auth
-                .requestMatchers(HttpMethod.POST, "/auth/email").permitAll()
-                .requestMatchers(HttpMethod.POST, "/auth/email/certificate").permitAll()
-                .requestMatchers(HttpMethod.POST, "/auth/signup").permitAll()
-                .requestMatchers(HttpMethod.POST, "/auth").permitAll()
-                .requestMatchers(HttpMethod.PATCH, "/auth").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/auth").authenticated()
+                it.requestMatchers(HttpMethod.POST, "/auth/email").permitAll()
+                it.requestMatchers(HttpMethod.POST, "/auth/email/certificate").permitAll()
+                it.requestMatchers(HttpMethod.POST, "/auth/signup").permitAll()
+                it.requestMatchers(HttpMethod.POST, "/auth").permitAll()
+                it.requestMatchers(HttpMethod.PATCH, "/auth").permitAll()
+                it.requestMatchers(HttpMethod.DELETE, "/auth").authenticated()
 
                 //application
-                .requestMatchers(HttpMethod.POST, "/application/{workspaceId}").authenticated()
-                .requestMatchers(HttpMethod.POST, "/application/{id}/run").authenticated()
-                .requestMatchers(HttpMethod.POST, "/application/{id}/run/spring").authenticated()
-                .requestMatchers(HttpMethod.GET, "/application").authenticated()
-                .requestMatchers(HttpMethod.GET, "/application/{id}").authenticated()
-                .requestMatchers(HttpMethod.PATCH, "/application/{id}/env").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/application/{id}/env").authenticated()
-                .requestMatchers(HttpMethod.POST, "/application/{id}/stop").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/application/{id}").authenticated()
+                it.requestMatchers(HttpMethod.POST, "/application/{workspaceId}").authenticated()
+                it.requestMatchers(HttpMethod.POST, "/application/{id}/run").authenticated()
+                it.requestMatchers(HttpMethod.POST, "/application/{id}/run/spring").authenticated()
+                it.requestMatchers(HttpMethod.GET, "/application").authenticated()
+                it.requestMatchers(HttpMethod.GET, "/application/{id}").authenticated()
+                it.requestMatchers(HttpMethod.PATCH, "/application/{id}/env").authenticated()
+                it.requestMatchers(HttpMethod.DELETE, "/application/{id}/env").authenticated()
+                it.requestMatchers(HttpMethod.POST, "/application/{id}/stop").authenticated()
+                it.requestMatchers(HttpMethod.DELETE, "/application/{id}").authenticated()
 
                 //workspace
-                .requestMatchers(HttpMethod.POST, "/workspace").authenticated()
-                .requestMatchers(HttpMethod.GET, "/workspace").authenticated()
-                .requestMatchers(HttpMethod.GET, "/workspace/{workspaceId}").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/workspace/{workspaceId}").authenticated()
+                it.requestMatchers(HttpMethod.POST, "/workspace").authenticated()
+                it.requestMatchers(HttpMethod.GET, "/workspace").authenticated()
+                it.requestMatchers(HttpMethod.GET, "/workspace/{workspaceId}").authenticated()
+                it.requestMatchers(HttpMethod.DELETE, "/workspace/{workspaceId}").authenticated()
 
                 //when url not set
                 .anyRequest().denyAll()
