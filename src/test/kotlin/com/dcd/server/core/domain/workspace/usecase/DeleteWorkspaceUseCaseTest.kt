@@ -53,5 +53,29 @@ class DeleteWorkspaceUseCaseTest : BehaviorSpec({
             }
         }
 
+        `when`("요청한 유저가 workspace의 주인이 아닐때") {
+            val owner =
+                User(email = "owner", password = "password", name = "owner", roles = mutableListOf(Role.ROLE_USER))
+            val workspace = Workspace(
+                id = workspaceId,
+                title = "workspace",
+                description = "test workspace",
+                owner = owner
+            )
+            val user =
+                User(email = "user", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
+
+
+            every { getCurrentUserService.getCurrentUser() } returns user
+            every { queryWorkspacePort.findById(workspaceId) } returns workspace
+
+
+            then("에러가 발생해야함") {
+                shouldThrow<WorkspaceOwnerNotSameException> {
+                    deleteWorkspaceUseCase.execute(workspaceId)
+                }
+            }
+        }
+
     }
 })
