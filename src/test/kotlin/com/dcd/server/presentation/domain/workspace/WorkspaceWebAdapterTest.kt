@@ -22,7 +22,7 @@ class WorkspaceWebAdapterTest : BehaviorSpec({
     val createWorkspaceUseCase = mockk<CreateWorkspaceUseCase>(relaxUnitFun = true)
     val getAllWorkspaceUseCase = mockk<GetAllWorkspaceUseCase>()
     val getWorkspaceUseCase = mockk<GetWorkspaceUseCase>()
-    val deleteWorkspaceUseCase = mockk<DeleteWorkspaceUseCase>()
+    val deleteWorkspaceUseCase = mockk<DeleteWorkspaceUseCase>(relaxUnitFun = true)
     val workspaceWebAdapter = WorkspaceWebAdapter(createWorkspaceUseCase, getAllWorkspaceUseCase, getWorkspaceUseCase, deleteWorkspaceUseCase)
 
     given("CreateWorkspaceRequest가 주어지고") {
@@ -68,6 +68,15 @@ class WorkspaceWebAdapterTest : BehaviorSpec({
                 result.statusCode shouldBe HttpStatus.OK
                 result.body!! shouldBe workspaceResDto.toResponse()
             }
+        }
+    }
+
+    given("workspaceId가 주어지고") {
+        val workspaceId = UUID.randomUUID().toString()
+        val result = workspaceWebAdapter.deleteWorkspace(workspaceId)
+        then("200 코드가 반환되고 deleteWorkspaceUseCase를 실행해야함") {
+            result.statusCode shouldBe HttpStatus.OK
+            verify { deleteWorkspaceUseCase.execute(workspaceId) }
         }
     }
 })

@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.workspace.usecase
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
+import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 
@@ -17,7 +18,7 @@ class DeleteWorkspaceUseCase(
             ?: throw WorkspaceNotFoundException())
         val currentUser = getCurrentUserService.getCurrentUser()
         if (currentUser.equals(workspace.owner).not())
-            throw RuntimeException()
+            throw WorkspaceOwnerNotSameException()
         commandWorkspacePort.delete(workspace)
     }
 }
