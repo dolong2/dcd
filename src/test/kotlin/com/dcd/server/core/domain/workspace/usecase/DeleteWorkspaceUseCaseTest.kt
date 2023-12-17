@@ -43,5 +43,15 @@ class DeleteWorkspaceUseCaseTest : BehaviorSpec({
             }
         }
 
+        `when`("해당 id를 가진 workspace가 없을때") {
+            every { queryWorkspacePort.findById(workspaceId) } returns null
+
+            then("WorkspaceNotFoundException이 발생해야함") {
+                shouldThrow<WorkspaceNotFoundException> {
+                    deleteWorkspaceUseCase.execute(workspaceId)
+                }
+            }
+        }
+
     }
 })
