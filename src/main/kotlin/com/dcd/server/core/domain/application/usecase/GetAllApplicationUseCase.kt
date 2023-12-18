@@ -1,7 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.ReadOnlyUseCase
-import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.application.dto.extenstion.toDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationListResponseDto
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort

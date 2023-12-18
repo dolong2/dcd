@@ -13,13 +13,12 @@ class StopApplicationUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val deleteContainerService: DeleteContainerService,
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
-    private val getCurrentUserService: GetCurrentUserService,
     private val validateWorkspaceOwnerService: ValidateWorkspaceOwnerService
 ) {
     fun execute(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
-        validateWorkspaceOwnerService.validateOwner(getCurrentUserService.getCurrentUser(), application.workspace)
+        validateWorkspaceOwnerService.validateOwner(application.workspace)
         deleteContainerService.deleteContainer(application)
         deleteApplicationDirectoryService.deleteApplicationDirectory(application)
     }
