@@ -9,6 +9,7 @@ import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.model.Workspace
+import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
@@ -21,8 +22,9 @@ class DeleteApplicationUseCaseTest : BehaviorSpec({
     val getCurrentUserService = mockk<GetCurrentUserService>()
     val commandApplicationPort = mockk<CommandApplicationPort>()
     val queryApplicationPort = mockk<QueryApplicationPort>()
+    val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
     val deleteApplicationUseCase =
-        DeleteApplicationUseCase(getCurrentUserService, commandApplicationPort, queryApplicationPort)
+        DeleteApplicationUseCase(getCurrentUserService, commandApplicationPort, queryApplicationPort, validateWorkspaceOwnerService)
     given("애플리케이션 id가 주어지고") {
         val applicationId = "testId"
         val user =
