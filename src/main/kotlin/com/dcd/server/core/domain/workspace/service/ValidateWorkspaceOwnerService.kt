@@ -5,4 +5,6 @@ import com.dcd.server.core.domain.workspace.model.Workspace
 
 interface ValidateWorkspaceOwnerService {
     fun validateOwner(user: User, workspace: Workspace)
+
+    fun validateOwner(workspace: Workspace)
 }
