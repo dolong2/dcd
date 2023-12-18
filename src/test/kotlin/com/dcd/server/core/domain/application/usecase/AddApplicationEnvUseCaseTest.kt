@@ -9,6 +9,7 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.workspace.model.Workspace
+import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
@@ -19,7 +20,8 @@ import java.util.*
 class AddApplicationEnvUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
     val commandApplicationPort = mockk<CommandApplicationPort>()
-    val addApplicationEnvUseCase = AddApplicationEnvUseCase(queryApplicationPort, commandApplicationPort)
+    val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
+    val addApplicationEnvUseCase = AddApplicationEnvUseCase(queryApplicationPort, commandApplicationPort, validateWorkspaceOwnerService)
 
     given("request가 주어지고") {
         val request = AddApplicationEnvReqDto(

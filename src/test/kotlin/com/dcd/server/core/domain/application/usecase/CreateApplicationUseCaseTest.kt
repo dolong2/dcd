@@ -9,6 +9,7 @@ import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.model.Workspace
+import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -22,7 +23,8 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
     val queryUserPort = mockk<QueryUserPort>()
     val securityService = mockk<SecurityService>()
     val queryWorkspacePort = mockk<QueryWorkspacePort>()
-    val createApplicationUseCase = CreateApplicationUseCase(commandApplicationPort, securityService, queryWorkspacePort, queryUserPort)
+    val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
+    val createApplicationUseCase = CreateApplicationUseCase(commandApplicationPort, queryWorkspacePort, validateWorkspaceOwnerService)
 
     given("CreateApplicationReqDto와 유저가 주어지고") {
         val request = CreateApplicationReqDto(
