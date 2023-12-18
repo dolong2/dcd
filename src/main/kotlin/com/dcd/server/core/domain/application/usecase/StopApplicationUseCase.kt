@@ -5,16 +5,21 @@ import com.dcd.server.core.domain.application.exception.ApplicationNotFoundExcep
 import com.dcd.server.core.domain.application.service.DeleteApplicationDirectoryService
 import com.dcd.server.core.domain.application.service.DeleteContainerService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.user.service.GetCurrentUserService
+import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 
 @ReadOnlyUseCase
 class StopApplicationUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val deleteContainerService: DeleteContainerService,
-    private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService
+    private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
+    private val getCurrentUserService: GetCurrentUserService,
+    private val validateWorkspaceOwnerService: ValidateWorkspaceOwnerService
 ) {
     fun execute(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
+        validateWorkspaceOwnerService.validateOwner(getCurrentUserService.getCurrentUser(), application.workspace)
         deleteContainerService.deleteContainer(application)
         deleteApplicationDirectoryService.deleteApplicationDirectory(application)
     }

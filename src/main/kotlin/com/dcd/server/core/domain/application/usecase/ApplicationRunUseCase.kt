@@ -9,6 +9,7 @@ import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
+import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 
 @ReadOnlyUseCase
 class ApplicationRunUseCase(
@@ -19,13 +20,12 @@ class ApplicationRunUseCase(
     private val dockerRunService: DockerRunService,
     private val currentUserService: GetCurrentUserService,
     private val queryApplicationPort: QueryApplicationPort,
-    private val compareUserPort: CompareUserPort
+    private val validateWorkspaceOwnerService: ValidateWorkspaceOwnerService
 ) {
     fun execute(id: String, runApplicationReqDto: RunApplicationReqDto) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
-        if (compareUserPort.compareTwoUserEntity(currentUserService.getCurrentUser(), application.workspace.owner))
-            throw WorkspaceOwnerNotSameException()
+        validateWorkspaceOwnerService.validateOwner(currentUserService.getCurrentUser(), application.workspace)
         cloneApplicationByUrlService.cloneByApplication(application)
         when(application.applicationType){
             ApplicationType.SPRING_BOOT -> {
