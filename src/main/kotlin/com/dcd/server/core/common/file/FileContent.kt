@@ -3,10 +3,10 @@ package com.dcd.server.core.common.file
 import com.dcd.server.core.domain.application.model.Application
 
 object FileContent {
-    fun getSpringBootDockerFileContent(name: String, javaVersion: Int): String =
+    fun getSpringBootDockerFileContent(name: String, javaVersion: Int, port: Int): String =
         "FROM openjdk:${javaVersion}-jdk\n" +
         "COPY build/libs/$name.jar build/libs/app.jar\n" +
-        "EXPOSE 8080\n" +
+        "EXPOSE ${port}\n" +
         "CMD [\"java\",\"-jar\",\"build/libs/app.jar\"]"
 
     fun getBuildGradleKtsFileContent(name: String): String =
