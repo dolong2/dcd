@@ -22,7 +22,7 @@ class CreateDockerFileServiceImpl(
                 val name = application.name
                 try {
                     val file = File("./$name/Dockerfile")
-                    file.writeText(FileContent.getSpringBootDockerFileContent(name, javaVersion))
+                    file.writeText(FileContent.getSpringBootDockerFileContent(name, javaVersion, application.port))
                         if (!file.createNewFile())
                             return
                 } catch (e: IOException) {
@@ -37,7 +37,7 @@ class CreateDockerFileServiceImpl(
             ApplicationType.SPRING_BOOT -> {
                 val name = application.name
                 val file = File("./$name/Dockerfile")
-                file.writeText(FileContent.getSpringBootDockerFileContent(name, javaVersion))
+                file.writeText(FileContent.getSpringBootDockerFileContent(name, javaVersion, application.port))
                 try {
                     if (!file.createNewFile())
                         return
