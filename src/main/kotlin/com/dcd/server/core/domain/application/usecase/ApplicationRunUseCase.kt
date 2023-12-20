@@ -29,7 +29,7 @@ class ApplicationRunUseCase(
                 val version = runApplicationReqDto.langVersion
                 createDockerFileService.createFileToApplication(application, version)
                 buildDockerImageService.buildImageByApplication(application)
-                dockerRunService.runApplication(application, runApplicationReqDto.env)
+                dockerRunService.runApplication(application)
             }
         }
     }
