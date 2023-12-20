@@ -17,6 +17,5 @@ fun CreateApplicationRequest.toDto(): CreateApplicationReqDto =
 
 fun RunApplicationRequest.toDto(): RunApplicationReqDto =
     RunApplicationReqDto(
-        langVersion = this.langVersion,
-        env = this.env
+        langVersion = this.langVersion
     )
