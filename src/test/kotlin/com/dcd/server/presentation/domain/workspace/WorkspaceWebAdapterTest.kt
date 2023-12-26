@@ -4,10 +4,7 @@ import com.dcd.server.core.domain.user.dto.response.UserResDto
 import com.dcd.server.core.domain.workspace.dto.request.CreateWorkspaceReqDto
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceListResDto
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceResDto
-import com.dcd.server.core.domain.workspace.usecase.CreateWorkspaceUseCase
-import com.dcd.server.core.domain.workspace.usecase.DeleteWorkspaceUseCase
-import com.dcd.server.core.domain.workspace.usecase.GetAllWorkspaceUseCase
-import com.dcd.server.core.domain.workspace.usecase.GetWorkspaceUseCase
+import com.dcd.server.core.domain.workspace.usecase.*
 import com.dcd.server.presentation.domain.workspace.data.exetension.toResponse
 import com.dcd.server.presentation.domain.workspace.data.request.CreateWorkspaceRequest
 import io.kotest.core.spec.style.BehaviorSpec
@@ -23,7 +20,8 @@ class WorkspaceWebAdapterTest : BehaviorSpec({
     val getAllWorkspaceUseCase = mockk<GetAllWorkspaceUseCase>()
     val getWorkspaceUseCase = mockk<GetWorkspaceUseCase>()
     val deleteWorkspaceUseCase = mockk<DeleteWorkspaceUseCase>(relaxUnitFun = true)
-    val workspaceWebAdapter = WorkspaceWebAdapter(createWorkspaceUseCase, getAllWorkspaceUseCase, getWorkspaceUseCase, deleteWorkspaceUseCase)
+    val updateWorkspaceUseCase = mockk<UpdateWorkspaceUseCase>(relaxUnitFun = true)
+    val workspaceWebAdapter = WorkspaceWebAdapter(createWorkspaceUseCase, getAllWorkspaceUseCase, getWorkspaceUseCase, deleteWorkspaceUseCase, updateWorkspaceUseCase)
 
     given("CreateWorkspaceRequest가 주어지고") {
         val request = CreateWorkspaceRequest(title = "test", description = "test description")
