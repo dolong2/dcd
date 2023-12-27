@@ -5,13 +5,13 @@ import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.dto.request.UpdateWorkspaceReqDto
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
+import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
 import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
-import io.mockk.impl.annotations.SpyK
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
@@ -54,6 +54,29 @@ class UpdateWorkspaceUseCaseTest : BehaviorSpec({
 
             then("WorkspaceNotFoundException이 발생해야함") {
                 shouldThrow<WorkspaceNotFoundException> {
+                    updateWorkspaceUseCase.execute(workspaceId, reqDto)
+                }
+            }
+        }
+
+        `when`("워크스페이스의 유저와 로그인된 유저가 다를때") {
+            val user =
+                User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
+            val workspace = Workspace(
+                id = workspaceId,
+                title = "workspace",
+                description = "test workspace",
+                owner = user
+            )
+
+            val anotherUser =
+                User(email = "anotherEmail", password = "password", name = "another", roles = mutableListOf(Role.ROLE_USER))
+
+            every { getCurrentUserService.getCurrentUser() } returns anotherUser
+            every { queryWorkspacePort.findById(workspaceId) } returns workspace
+
+            then("WorkspaceOwnerNotSameException") {
+                shouldThrow<WorkspaceOwnerNotSameException> {
                     updateWorkspaceUseCase.execute(workspaceId, reqDto)
                 }
             }
