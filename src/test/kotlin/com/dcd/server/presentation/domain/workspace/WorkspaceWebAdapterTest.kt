@@ -2,11 +2,13 @@ package com.dcd.server.presentation.domain.workspace
 
 import com.dcd.server.core.domain.user.dto.response.UserResDto
 import com.dcd.server.core.domain.workspace.dto.request.CreateWorkspaceReqDto
+import com.dcd.server.core.domain.workspace.dto.request.UpdateWorkspaceReqDto
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceListResDto
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceResDto
 import com.dcd.server.core.domain.workspace.usecase.*
 import com.dcd.server.presentation.domain.workspace.data.exetension.toResponse
 import com.dcd.server.presentation.domain.workspace.data.request.CreateWorkspaceRequest
+import com.dcd.server.presentation.domain.workspace.data.request.UpdateWorkspaceRequest
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -71,10 +73,26 @@ class WorkspaceWebAdapterTest : BehaviorSpec({
 
     given("workspaceId가 주어지고") {
         val workspaceId = UUID.randomUUID().toString()
-        val result = workspaceWebAdapter.deleteWorkspace(workspaceId)
-        then("200 코드가 반환되고 deleteWorkspaceUseCase를 실행해야함") {
-            result.statusCode shouldBe HttpStatus.OK
-            verify { deleteWorkspaceUseCase.execute(workspaceId) }
+
+        `when`("deleteWorkspace 메서드를 실행했을때") {
+            val result = workspaceWebAdapter.deleteWorkspace(workspaceId)
+
+            then("200 코드가 반환되고 deleteWorkspaceUseCase를 실행해야함") {
+                result.statusCode shouldBe HttpStatus.OK
+                verify { deleteWorkspaceUseCase.execute(workspaceId) }
+            }
+        }
+
+        `when`("updateWorkspace 메서드를 실행했을때") {
+            val updatedRequest =
+                UpdateWorkspaceRequest(title = "updated title", description = "test description")
+
+            val result = workspaceWebAdapter.updateWorkspace(workspaceId, updatedRequest)
+
+            then("200 코드가 반환되고, updateWorkspaceUseCase를 실행해야함") {
+                result.statusCode shouldBe HttpStatus.OK
+                verify { updateWorkspaceUseCase.execute(workspaceId, any() as UpdateWorkspaceReqDto) }
+            }
         }
     }
 })
