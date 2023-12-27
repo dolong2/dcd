@@ -4,9 +4,11 @@ import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.dto.request.UpdateWorkspaceReqDto
+import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
@@ -19,8 +21,9 @@ class UpdateWorkspaceUseCaseTest : BehaviorSpec({
     val getCurrentUserService = mockk<GetCurrentUserService>(relaxUnitFun = true)
     val updateWorkspaceUseCase = UpdateWorkspaceUseCase(commandWorkspacePort, queryWorkspacePort, getCurrentUserService)
 
-    given("워크스페이스 아이디가 주어지고") {
+    given("워크스페이스 아이디와 UpdateReqDto가 주어지고") {
         val workspaceId = UUID.randomUUID().toString()
+        val reqDto = UpdateWorkspaceReqDto(title = "test title", description = "test description")
 
         `when`("해당 아이디를 가진 워크스페이스가 있을때") {
             val user =
@@ -35,10 +38,21 @@ class UpdateWorkspaceUseCaseTest : BehaviorSpec({
             every { queryWorkspacePort.findById(workspaceId) } returns workspace
             every { getCurrentUserService.getCurrentUser() } returns user
 
-            updateWorkspaceUseCase.execute(workspaceId, UpdateWorkspaceReqDto(title = "test title", description = "test description"))
+            updateWorkspaceUseCase.execute(workspaceId, reqDto)
             then("commandWorkspacePort의 save 메서드가 실행되어야함") {
                 verify { commandWorkspacePort.save(any() as Workspace) }
             }
         }
+
+        `when`("주어진 아이디를 가진 워크스페이스가 없을때") {
+            every { queryWorkspacePort.findById(workspaceId) } returns null
+
+            then("WorkspaceNotFoundException이 발생해야함") {
+                shouldThrow<WorkspaceNotFoundException> {
+                    updateWorkspaceUseCase.execute(workspaceId, reqDto)
+                }
+            }
+        }
+
     }
 })
