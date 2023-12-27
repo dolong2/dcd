@@ -11,7 +11,9 @@ import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
+import io.mockk.impl.annotations.SpyK
 import io.mockk.mockk
+import io.mockk.spyk
 import io.mockk.verify
 import java.util.*
 
@@ -28,11 +30,13 @@ class UpdateWorkspaceUseCaseTest : BehaviorSpec({
         `when`("해당 아이디를 가진 워크스페이스가 있을때") {
             val user =
                 User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-            val workspace = Workspace(
-                id = workspaceId,
-                title = "workspace",
-                description = "test workspace",
-                owner = user
+            val workspace = spyk(
+                Workspace(
+                    id = workspaceId,
+                    title = "workspace",
+                    description = "test workspace",
+                    owner = user
+                )
             )
 
             every { queryWorkspacePort.findById(workspaceId) } returns workspace
@@ -40,6 +44,7 @@ class UpdateWorkspaceUseCaseTest : BehaviorSpec({
 
             updateWorkspaceUseCase.execute(workspaceId, reqDto)
             then("commandWorkspacePort의 save 메서드가 실행되어야함") {
+                verify { workspace.copy(title = reqDto.title, description = reqDto.description) }
                 verify { commandWorkspacePort.save(any() as Workspace) }
             }
         }
