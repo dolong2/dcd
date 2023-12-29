@@ -30,6 +30,6 @@ class DockerRunServiceImpl(
         while (existsPortService.existsPort(externalPort)) {
             externalPort += 1
         }
-        commandPort.executeShellCommand("cd ${application.name} && docker run $envString --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d ${application.name.lowercase()} -p ${externalPort}:${application.port}")
+        commandPort.executeShellCommand("cd ${application.name} && docker run --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d ${application.name.lowercase()} -p ${externalPort}:${application.port}")
     }
 }
