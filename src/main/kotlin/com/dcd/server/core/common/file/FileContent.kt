@@ -1,12 +1,13 @@
 package com.dcd.server.core.common.file
 
-import com.dcd.server.core.domain.application.model.Application
+import java.lang.StringBuilder
 
 object FileContent {
-    fun getSpringBootDockerFileContent(name: String, javaVersion: Int, port: Int): String =
+    fun getSpringBootDockerFileContent(name: String, javaVersion: Int, port: Int, env: Map<String, String>): String =
         "FROM openjdk:${javaVersion}-jdk\n" +
         "COPY build/libs/$name.jar build/libs/app.jar\n" +
         "EXPOSE ${port}\n" +
+        getEnvString(env) +
         "CMD [\"java\",\"-jar\",\"build/libs/app.jar\"]"
 
     fun getBuildGradleKtsFileContent(name: String): String =
@@ -21,5 +22,13 @@ object FileContent {
         "bootJar {\n" +
         "\tarchiveFileName = '$name.jar'\n" +
         "}"
+
+    private fun getEnvString(env: Map<String, String>): String {
+        val envString = StringBuilder()
+        for (it in env) {
+            envString.append("ENV ${it.key} ${it.value}\n")
+        }
+        return envString.toString()
+    }
 
 }
