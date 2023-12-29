@@ -39,7 +39,8 @@ class DockerRunServiceImplTest : BehaviorSpec({
 
             service.runApplication(appId)
             then("commandPort가 실행되어야함") {
-                verify { commandPort.executeShellCommand("cd ${application.name} && docker-compose up -d") }
+                val externalPort = application.port
+                verify { commandPort.executeShellCommand("cd ${application.name} && docker run --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d ${application.name.lowercase()} -p ${externalPort}:${application.port}") }
             }
         }
     }
@@ -59,11 +60,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
 
             then("commandPort가 실행되어야함") {
                 val externalPort = application.port
-                val envString = StringBuilder()
-                application.env.forEach {
-                    envString.append("-e ${it.key}=${it.value}")
-                }
-                verify { commandPort.executeShellCommand("cd ${application.name} && docker run $envString --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d ${application.name.lowercase()} -p ${externalPort}:${application.port}") }
+                verify { commandPort.executeShellCommand("cd ${application.name} && docker run --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d ${application.name.lowercase()} -p ${externalPort}:${application.port}") }
             }
         }
     }
