@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.application.dto.response.ApplicationListRespon
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
+import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 
 @ReadOnlyUseCase
@@ -14,13 +15,18 @@ class GetAllApplicationUseCase(
     private val getCurrentUserService: GetCurrentUserService,
     private val queryWorkspacePort: QueryWorkspacePort
 ) {
-    fun execute(workspaceId: String): ApplicationListResponseDto =
-        ApplicationListResponseDto(
+    fun execute(workspaceId: String): ApplicationListResponseDto {
+        val workspace = (queryWorkspacePort.findById(workspaceId)
+            ?: throw WorkspaceNotFoundException())
+        val currentUser = getCurrentUserService.getCurrentUser()
+        if (workspace.owner.equals(currentUser).not())
+            throw WorkspaceOwnerNotSameException()
+        return ApplicationListResponseDto(
             queryApplicationPort
                 .findAllByWorkspace(
-                    queryWorkspacePort.findById(workspaceId)
-                        ?: throw WorkspaceNotFoundException()
+                    workspace
                 )
                 .map { it.toDto() }
         )
+    }
 }

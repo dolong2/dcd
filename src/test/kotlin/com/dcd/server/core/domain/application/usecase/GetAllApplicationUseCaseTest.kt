@@ -8,8 +8,10 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
+import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
 import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -50,6 +52,19 @@ class GetAllApplicationUseCaseTest : BehaviorSpec({
             val target = ApplicationListResponseDto(applicationList.map { it.toDto() })
             then("result는 target이랑 같아야함") {
                 result shouldBe target
+            }
+        }
+
+        `when`("실행한 유저가 워크스페이스의 주인이 아닐때") {
+            val another =
+                User(email = "another", password = "password", name = "another", roles = mutableListOf(Role.ROLE_USER))
+            every { getCurrentUserService.getCurrentUser() } returns another
+            every { queryApplicationPort.findAllByWorkspace(workspace) } returns applicationList
+            every { queryWorkspacePort.findById(workspace.id) } returns workspace
+            then("WorkspaceOwnerNotSameException이 발생해야함") {
+                shouldThrow<WorkspaceOwnerNotSameException> {
+                    getAllApplicationUseCase.execute(workspace.id)
+                }
             }
         }
     }
