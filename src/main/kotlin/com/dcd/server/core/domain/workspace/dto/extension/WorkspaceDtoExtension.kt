@@ -3,6 +3,8 @@ package com.dcd.server.core.domain.workspace.dto.extension
 import com.dcd.server.core.domain.application.dto.extenstion.toDto
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.user.dto.extension.toDto
+import com.dcd.server.core.domain.user.model.User
+import com.dcd.server.core.domain.workspace.dto.request.CreateWorkspaceReqDto
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceResDto
 import com.dcd.server.core.domain.workspace.model.Workspace
 
@@ -13,4 +15,11 @@ fun Workspace.toDto(applicationList: List<Application>): WorkspaceResDto =
         description = this.description,
         owner = this.owner.toDto(),
         applicationList = applicationList.map { it.toDto() }
+    )
+
+fun CreateWorkspaceReqDto.toEntity(user: User): Workspace =
+    Workspace(
+        title = this.title,
+        description = this.description,
+        owner = user
     )
