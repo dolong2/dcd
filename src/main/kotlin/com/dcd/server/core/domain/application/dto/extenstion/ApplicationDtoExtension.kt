@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.application.dto.extenstion
 
 import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDto
+import com.dcd.server.core.domain.application.dto.response.ApplicationProfileResponseDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationResponseDto
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.user.model.User
@@ -26,4 +27,11 @@ fun Application.toDto(): ApplicationResponseDto =
         applicationType = this.applicationType,
         env = this.env,
         port = this.port
+    )
+
+fun Application.toProfileDto(): ApplicationProfileResponseDto =
+    ApplicationProfileResponseDto(
+        id = this.id,
+        name = this.name,
+        description = this.description
     )
