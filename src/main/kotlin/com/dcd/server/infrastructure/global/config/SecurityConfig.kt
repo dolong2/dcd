@@ -65,6 +65,9 @@ class SecurityConfig(
                 it.requestMatchers(HttpMethod.GET, "/workspace/{workspaceId}").authenticated()
                 it.requestMatchers(HttpMethod.DELETE, "/workspace/{workspaceId}").authenticated()
 
+                //user
+                it.requestMatchers(HttpMethod.GET, "/user/profile").authenticated()
+
                 //when url not set
                 .anyRequest().denyAll()
             }
