@@ -1,6 +1,6 @@
 package com.dcd.server.core.domain.auth.usecase
 
-import com.dcd.server.core.domain.auth.dto.request.CertificateMailRequestDto
+import com.dcd.server.core.domain.auth.dto.request.CertificateMailReqDto
 import com.dcd.server.core.domain.auth.service.VerifyEmailAuthService
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
@@ -14,7 +14,7 @@ class AuthenticateMailUseCaseTest : BehaviorSpec({
     given("CertificateMailRequestDto가 주어지고") {
         val testEmail = "testEmail"
         val testCode = "testCode"
-        val request = CertificateMailRequestDto(testEmail, testCode)
+        val request = CertificateMailReqDto(testEmail, testCode)
 
         `when`("실행할때") {
             every { verifyEmailAuthService.verifyCode(request.email, request.code) } returns Unit

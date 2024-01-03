@@ -1,7 +1,7 @@
 package com.dcd.server.core.domain.auth.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
-import com.dcd.server.core.domain.auth.dto.response.TokenResponseDto
+import com.dcd.server.core.domain.auth.dto.response.TokenResDto
 import com.dcd.server.core.domain.auth.exception.ExpiredRefreshTokenException
 import com.dcd.server.core.domain.auth.exception.UserNotFoundException
 import com.dcd.server.core.domain.auth.spi.CommandRefreshTokenPort
@@ -16,7 +16,7 @@ class ReissueTokenUseCase(
     private val jwtPort: JwtPort,
     private val queryUserPort: QueryUserPort
 ) {
-    fun execute(token: String): TokenResponseDto {
+    fun execute(token: String): TokenResDto {
         val refreshToken = (queryRefreshTokenPort.findByToken(token)
             ?: throw ExpiredRefreshTokenException()) // 리프레시 토큰 만료
         val user = (queryUserPort.findById(refreshToken.userId)

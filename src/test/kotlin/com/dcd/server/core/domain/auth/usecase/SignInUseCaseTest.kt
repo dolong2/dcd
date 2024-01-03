@@ -2,8 +2,8 @@ package com.dcd.server.core.domain.auth.usecase
 
 import com.dcd.server.core.common.service.SecurityService
 import com.dcd.server.core.common.service.exception.PasswordNotCorrectException
-import com.dcd.server.core.domain.auth.dto.request.SignInRequestDto
-import com.dcd.server.core.domain.auth.dto.response.TokenResponseDto
+import com.dcd.server.core.domain.auth.dto.request.SignInReqDto
+import com.dcd.server.core.domain.auth.dto.response.TokenResDto
 import com.dcd.server.core.domain.auth.exception.UserNotFoundException
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.auth.spi.JwtPort
@@ -25,7 +25,7 @@ class SignInUseCaseTest : BehaviorSpec({
     given("dto가 주어지고") {
         val testEmail = "testEmail"
         val testPassword = "testPassword"
-        val requestDto = SignInRequestDto(testEmail, testPassword)
+        val requestDto = SignInReqDto(testEmail, testPassword)
 
         val user =
             User(email = testEmail, password = testPassword, name = "testName", roles = mutableListOf(Role.ROLE_USER))
@@ -34,14 +34,14 @@ class SignInUseCaseTest : BehaviorSpec({
         val accessToken = "testAccessToken"
         val refreshToken = "testRefreshToken"
 
-        val tokenResponseDto = TokenResponseDto(accessToken, accessTokenExp, refreshToken, refreshTokenExp)
+        val tokenResDto = TokenResDto(accessToken, accessTokenExp, refreshToken, refreshTokenExp)
         `when`("usecase를 실행할때") {
-            every { jwtPort.generateToken(user.id, user.roles) } returns tokenResponseDto
+            every { jwtPort.generateToken(user.id, user.roles) } returns tokenResDto
             every { queryUserPort.findByEmail(requestDto.email) } returns user
             every { securityService.matchPassword(requestDto.password, user.password) } returns Unit
             val result = signInUseCase.execute(requestDto)
             then("아무 이상이 없으면 주어진 responseDto를 반환해야됨") {
-                result shouldBe tokenResponseDto
+                result shouldBe tokenResDto
             }
 
             every { securityService.matchPassword(requestDto.password, user.password) } throws PasswordNotCorrectException()

@@ -1,6 +1,6 @@
 package com.dcd.server.core.domain.auth.usecase
 
-import com.dcd.server.core.domain.auth.dto.response.TokenResponseDto
+import com.dcd.server.core.domain.auth.dto.response.TokenResDto
 import com.dcd.server.core.domain.auth.exception.ExpiredRefreshTokenException
 import com.dcd.server.core.domain.auth.exception.UserNotFoundException
 import com.dcd.server.core.domain.auth.model.RefreshToken
@@ -31,7 +31,7 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
     val ttl = 1L
     val user =
         User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-    val tokenResponseDto = TokenResponseDto("newAccessToken", LocalDateTime.of(2023, 9, 7, 8, 30), "newRefreshToken", LocalDateTime.of(2023, 9, 7, 8, 30))
+    val tokenResDto = TokenResDto("newAccessToken", LocalDateTime.of(2023, 9, 7, 8, 30), "newRefreshToken", LocalDateTime.of(2023, 9, 7, 8, 30))
 
     given("리프레시 토큰이 주어지고") {
         val refreshToken = RefreshToken(userId, token, ttl)
@@ -40,7 +40,7 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
             every { queryRefreshTokenPort.findByToken(token) } returns refreshToken
             every { queryUserPort.findById(userId) } returns user
             every { commandRefreshTokenPort.delete(refreshToken) } returns Unit
-            every { jwtPort.generateToken(user.id, user.roles) } returns tokenResponseDto
+            every { jwtPort.generateToken(user.id, user.roles) } returns tokenResDto
         }
 
         init()
@@ -50,7 +50,7 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
                 verify { queryRefreshTokenPort.findByToken(token) }
                 verify { queryUserPort.findById(userId) }
                 verify { commandRefreshTokenPort.delete(refreshToken) }
-                result shouldBe tokenResponseDto
+                result shouldBe tokenResDto
             }
         }
 

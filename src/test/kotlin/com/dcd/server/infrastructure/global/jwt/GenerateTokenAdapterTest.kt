@@ -1,6 +1,6 @@
 package com.dcd.server.infrastructure.global.jwt
 
-import com.dcd.server.core.domain.auth.dto.response.TokenResponseDto
+import com.dcd.server.core.domain.auth.dto.response.TokenResDto
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.auth.spi.CommandRefreshTokenPort
 import com.dcd.server.infrastructure.global.jwt.adapter.GenerateTokenAdapter
@@ -24,7 +24,7 @@ class GenerateTokenAdapterTest : BehaviorSpec({
         `when`("generateToken 메서드를 실행하면") {
             val response = adapter.generateToken(userId, roles)
             then("tokenResponse의 타입으로 나와야함") {
-                response::class shouldBe TokenResponseDto::class
+                response::class shouldBe TokenResDto::class
             }
         }
     }

@@ -1,7 +1,7 @@
 package com.dcd.server.core.common.aop
 
 import com.dcd.server.core.common.aop.exception.NotCertificateEmailException
-import com.dcd.server.core.domain.auth.dto.request.SignUpRequestDto
+import com.dcd.server.core.domain.auth.dto.request.SignUpReqDto
 import com.dcd.server.core.domain.auth.spi.CommandEmailAuthPort
 import com.dcd.server.core.domain.auth.spi.QueryEmailAuthPort
 import org.aspectj.lang.annotation.Aspect
@@ -15,13 +15,13 @@ class EmailCertificateAspect(
     private val queryEmailAuthPort: QueryEmailAuthPort,
     private val commandEmailAuthPort: CommandEmailAuthPort
 ) {
-    @Pointcut("execution(* com.dcd.server.core.domain.auth.usecase.SignUpUseCase.execute(..)) " +  "&& args(signUpRequestDto)")
-    fun signupUseCasePointcut(signUpRequestDto: SignUpRequestDto) {
+    @Pointcut("execution(* com.dcd.server.core.domain.auth.usecase.SignUpUseCase.execute(..)) " + "&& args(signUpReqDto)")
+    fun signupUseCasePointcut(signUpReqDto: SignUpReqDto) {
     }
 
-    @Before("signupUseCasePointcut(signUpRequestDto)")
-    private fun checkEmailCertificate(signUpRequestDto: SignUpRequestDto) {
-        val emailAuthList = queryEmailAuthPort.findByEmail(signUpRequestDto.email)
+    @Before("signupUseCasePointcut(signUpReqDto)")
+    private fun checkEmailCertificate(signUpReqDto: SignUpReqDto) {
+        val emailAuthList = queryEmailAuthPort.findByEmail(signUpReqDto.email)
             .filter { it.certificate }
         if (emailAuthList.isEmpty())
             throw NotCertificateEmailException()

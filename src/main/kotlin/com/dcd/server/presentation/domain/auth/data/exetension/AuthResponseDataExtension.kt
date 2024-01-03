@@ -1,10 +1,10 @@
 package com.dcd.server.presentation.domain.auth.data.exetension
 
-import com.dcd.server.core.domain.auth.dto.response.TokenResponseDto
+import com.dcd.server.core.domain.auth.dto.response.TokenResDto
 import com.dcd.server.presentation.domain.auth.data.response.ReissueTokenResponse
 import com.dcd.server.presentation.domain.auth.data.response.SignInResponse
 
-fun TokenResponseDto.toReissueResponse(): ReissueTokenResponse =
+fun TokenResDto.toReissueResponse(): ReissueTokenResponse =
     ReissueTokenResponse(
         accessToken = this.accessToken,
         accessTokenExp = this.accessTokenExp,
@@ -12,7 +12,7 @@ fun TokenResponseDto.toReissueResponse(): ReissueTokenResponse =
         refreshTokenExp = this.refreshTokenExp
     )
 
-fun TokenResponseDto.toResponse(): SignInResponse =
+fun TokenResDto.toResponse(): SignInResponse =
     SignInResponse(
         accessToken = this.accessToken,
         refreshToken = this.refreshToken,

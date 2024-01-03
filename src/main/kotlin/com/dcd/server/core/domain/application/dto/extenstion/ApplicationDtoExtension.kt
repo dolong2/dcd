@@ -4,7 +4,6 @@ import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDt
 import com.dcd.server.core.domain.application.dto.response.ApplicationProfileResponseDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationResponseDto
 import com.dcd.server.core.domain.application.model.Application
-import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.workspace.model.Workspace
 
 fun CreateApplicationReqDto.toEntity(workspace: Workspace): Application =

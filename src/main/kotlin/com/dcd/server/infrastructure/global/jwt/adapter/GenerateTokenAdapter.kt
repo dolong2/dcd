@@ -1,6 +1,6 @@
 package com.dcd.server.infrastructure.global.jwt.adapter
 
-import com.dcd.server.core.domain.auth.dto.response.TokenResponseDto
+import com.dcd.server.core.domain.auth.dto.response.TokenResDto
 import com.dcd.server.core.domain.auth.model.RefreshToken
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.auth.spi.CommandRefreshTokenPort
@@ -26,8 +26,8 @@ class GenerateTokenAdapter(
         const val ROLE = "role"
     }
 
-    override fun generateToken(userId: String, roles: List<Role>): TokenResponseDto =
-        TokenResponseDto(
+    override fun generateToken(userId: String, roles: List<Role>): TokenResDto =
+        TokenResDto(
             accessToken = generatedAccessToken(userId, roles),
             refreshToken = generatedRefreshToken(userId),
             accessTokenExp = LocalDateTime.now().withNano(0).plusSeconds(tokenTimeProperty.accessTime),
