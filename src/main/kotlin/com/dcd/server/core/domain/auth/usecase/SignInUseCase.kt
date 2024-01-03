@@ -2,8 +2,8 @@ package com.dcd.server.core.domain.auth.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.service.SecurityService
-import com.dcd.server.core.domain.auth.dto.request.SignInRequestDto
-import com.dcd.server.core.domain.auth.dto.response.TokenResponseDto
+import com.dcd.server.core.domain.auth.dto.request.SignInReqDto
+import com.dcd.server.core.domain.auth.dto.response.TokenResDto
 import com.dcd.server.core.domain.auth.exception.UserNotFoundException
 import com.dcd.server.core.domain.auth.spi.JwtPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
@@ -14,10 +14,10 @@ class SignInUseCase(
     private val securityService: SecurityService,
     private val jwtPort: JwtPort
 ) {
-    fun execute(signInRequestDto: SignInRequestDto): TokenResponseDto {
-        val user = (queryUserPort.findByEmail(signInRequestDto.email)
+    fun execute(signInReqDto: SignInReqDto): TokenResDto {
+        val user = (queryUserPort.findByEmail(signInReqDto.email)
             ?: throw UserNotFoundException()) // 해당 유저를 찾을 수 없음
-        securityService.matchPassword(signInRequestDto.password, user.password)
+        securityService.matchPassword(signInReqDto.password, user.password)
         return jwtPort.generateToken(user.id, user.roles)
     }
 }

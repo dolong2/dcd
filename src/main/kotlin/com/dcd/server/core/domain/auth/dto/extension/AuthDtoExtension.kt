@@ -1,10 +1,10 @@
 package com.dcd.server.core.domain.auth.dto.extension
 
-import com.dcd.server.core.domain.auth.dto.request.SignUpRequestDto
+import com.dcd.server.core.domain.auth.dto.request.SignUpReqDto
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.User
 
-fun SignUpRequestDto.toEntity(encodedPassword: String): User =
+fun SignUpReqDto.toEntity(encodedPassword: String): User =
     User(
         email = this.email,
         password = encodedPassword,

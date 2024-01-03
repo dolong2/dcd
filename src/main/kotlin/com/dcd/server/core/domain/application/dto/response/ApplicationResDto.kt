@@ -1,9 +1,8 @@
 package com.dcd.server.core.domain.application.dto.response
 
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import java.util.*
 
-data class ApplicationResponseDto(
+data class ApplicationResDto(
     val id: String,
     val name: String,
     val description: String?,

@@ -1,7 +1,7 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.domain.application.dto.extenstion.toDto
-import com.dcd.server.core.domain.application.dto.response.ApplicationListResponseDto
+import com.dcd.server.core.domain.application.dto.response.ApplicationListResDto
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -49,7 +49,7 @@ class GetAllApplicationUseCaseTest : BehaviorSpec({
             every { queryApplicationPort.findAllByWorkspace(workspace) } returns applicationList
             every { queryWorkspacePort.findById(workspace.id) } returns workspace
             val result = getAllApplicationUseCase.execute(workspace.id)
-            val target = ApplicationListResponseDto(applicationList.map { it.toDto() })
+            val target = ApplicationListResDto(applicationList.map { it.toDto() })
             then("result는 target이랑 같아야함") {
                 result shouldBe target
             }

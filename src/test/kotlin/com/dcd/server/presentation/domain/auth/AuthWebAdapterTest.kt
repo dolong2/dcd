@@ -1,6 +1,6 @@
 package com.dcd.server.presentation.domain.auth
 
-import com.dcd.server.core.domain.auth.dto.response.TokenResponseDto
+import com.dcd.server.core.domain.auth.dto.response.TokenResDto
 import com.dcd.server.core.domain.auth.usecase.*
 import com.dcd.server.presentation.domain.auth.data.exetension.toReissueResponse
 import com.dcd.server.presentation.domain.auth.data.exetension.toResponse
@@ -8,7 +8,6 @@ import com.dcd.server.presentation.domain.auth.data.request.CertificateMailReque
 import com.dcd.server.presentation.domain.auth.data.request.EmailSendRequest
 import com.dcd.server.presentation.domain.auth.data.request.SignInRequest
 import com.dcd.server.presentation.domain.auth.data.request.SignUpRequest
-import com.dcd.server.presentation.domain.auth.data.response.SignInResponse
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -82,7 +81,7 @@ class AuthWebAdapterTest : BehaviorSpec({
         val testPassword = "testPassword"
         val request = SignInRequest(testEmail, testPassword)
         `when`("SignIn메서드를 실행할때") {
-            val targetResponse = TokenResponseDto("testToken", LocalDateTime.now(), "refreshToken", LocalDateTime.now())
+            val targetResponse = TokenResDto("testToken", LocalDateTime.now(), "refreshToken", LocalDateTime.now())
             every { signInUseCase.execute(any()) } returns targetResponse
             val result = authWebAdapter.signIn(request)
             then("상태코드는 200이여야 되고 SignInResponse가 바디에 들어있어야함") {
@@ -96,7 +95,7 @@ class AuthWebAdapterTest : BehaviorSpec({
         val refreshToken = "testRefreshToken"
         `when`("reissueToken 메서드를 실행할때") {
             val responseDto =
-                TokenResponseDto("testToken", LocalDateTime.now(), "newRefreshToken", LocalDateTime.now())
+                TokenResDto("testToken", LocalDateTime.now(), "newRefreshToken", LocalDateTime.now())
             every { reissueTokenUseCase.execute(refreshToken) } returns responseDto
             val result = authWebAdapter.reissueToken(refreshToken)
             then("상태코드는 200이여야되고 ReissuTokenResponse가 바디에 들어있어야함") {

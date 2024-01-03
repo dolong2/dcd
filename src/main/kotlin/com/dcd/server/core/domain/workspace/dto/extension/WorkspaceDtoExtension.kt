@@ -1,7 +1,7 @@
 package com.dcd.server.core.domain.workspace.dto.extension
 
 import com.dcd.server.core.domain.application.dto.extenstion.toDto
-import com.dcd.server.core.domain.application.dto.response.ApplicationProfileResponseDto
+import com.dcd.server.core.domain.application.dto.response.ApplicationProfileResDto
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.user.dto.extension.toDto
 import com.dcd.server.core.domain.user.model.User
@@ -26,7 +26,7 @@ fun CreateWorkspaceReqDto.toEntity(user: User): Workspace =
         owner = user
     )
 
-fun Workspace.toProfileDto(applicationList: List<ApplicationProfileResponseDto>): WorkspaceProfileResDto =
+fun Workspace.toProfileDto(applicationList: List<ApplicationProfileResDto>): WorkspaceProfileResDto =
     WorkspaceProfileResDto(
         id = this.id,
         title = this.title,

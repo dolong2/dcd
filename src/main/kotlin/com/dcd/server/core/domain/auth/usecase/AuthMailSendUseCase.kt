@@ -1,7 +1,7 @@
 package com.dcd.server.core.domain.auth.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
-import com.dcd.server.core.domain.auth.dto.request.EmailSendRequestDto
+import com.dcd.server.core.domain.auth.dto.request.EmailSendReqDto
 import com.dcd.server.core.domain.auth.service.EmailSendService
 
 
@@ -9,7 +9,7 @@ import com.dcd.server.core.domain.auth.service.EmailSendService
 class AuthMailSendUseCase(
     private val emailSendService: EmailSendService
 ) {
-    fun execute(emailSendRequestDto: EmailSendRequestDto) {
-        emailSendService.sendEmail(emailSendRequestDto.email)
+    fun execute(emailSendReqDto: EmailSendReqDto) {
+        emailSendService.sendEmail(emailSendReqDto.email)
     }
 }
