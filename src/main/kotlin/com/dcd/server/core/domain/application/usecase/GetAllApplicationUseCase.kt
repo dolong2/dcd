@@ -2,7 +2,7 @@ package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.ReadOnlyUseCase
 import com.dcd.server.core.domain.application.dto.extenstion.toDto
-import com.dcd.server.core.domain.application.dto.response.ApplicationListResponseDto
+import com.dcd.server.core.domain.application.dto.response.ApplicationListResDto
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
@@ -15,13 +15,13 @@ class GetAllApplicationUseCase(
     private val getCurrentUserService: GetCurrentUserService,
     private val queryWorkspacePort: QueryWorkspacePort
 ) {
-    fun execute(workspaceId: String): ApplicationListResponseDto {
+    fun execute(workspaceId: String): ApplicationListResDto {
         val workspace = (queryWorkspacePort.findById(workspaceId)
             ?: throw WorkspaceNotFoundException())
         val currentUser = getCurrentUserService.getCurrentUser()
         if (workspace.owner.equals(currentUser).not())
             throw WorkspaceOwnerNotSameException()
-        return ApplicationListResponseDto(
+        return ApplicationListResDto(
             queryApplicationPort
                 .findAllByWorkspace(
                     workspace

@@ -1,7 +1,7 @@
 package com.dcd.server.presentation.domain.application
 
-import com.dcd.server.core.domain.application.dto.response.ApplicationListResponseDto
-import com.dcd.server.core.domain.application.dto.response.ApplicationResponseDto
+import com.dcd.server.core.domain.application.dto.response.ApplicationListResDto
+import com.dcd.server.core.domain.application.dto.response.ApplicationResDto
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.usecase.*
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
@@ -57,7 +57,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     }
 
     given("ApplicationListResponse가 주어지고") {
-        val applicationResponse = ApplicationResponseDto(
+        val applicationResponse = ApplicationResDto(
             id = "testId",
             name = "test",
             description = "test",
@@ -67,7 +67,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             port = 8080
         )
         val list = listOf(applicationResponse)
-        val responseDto = ApplicationListResponseDto(list)
+        val responseDto = ApplicationListResDto(list)
         `when`("getAllApplication 메서드를 실행할때") {
             every { getAllApplicationUseCase.execute("testWorkspaceId") } returns responseDto
             val response = applicationWebAdapter.getAllApplication("testWorkspaceId")
@@ -81,7 +81,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
 
     given("ApplicationResponseDto가 주어지고") {
         val testId = "testId"
-        val applicationResponse = ApplicationResponseDto(
+        val applicationResponse = ApplicationResDto(
             id = testId,
             name = "test",
             description = "test",
