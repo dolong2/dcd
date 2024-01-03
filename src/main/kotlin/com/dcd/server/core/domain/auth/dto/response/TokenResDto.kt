@@ -2,7 +2,7 @@ package com.dcd.server.core.domain.auth.dto.response
 
 import java.time.LocalDateTime
 
-data class TokenResponseDto(
+data class TokenResDto(
     val accessToken: String,
 
     val accessTokenExp: LocalDateTime,
