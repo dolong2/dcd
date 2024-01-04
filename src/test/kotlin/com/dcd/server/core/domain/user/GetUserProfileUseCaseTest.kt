@@ -64,4 +64,25 @@ class GetUserProfileUseCaseTest : BehaviorSpec({
             }
         }
     }
+
+    given("유저가 주어지고") {
+        val user =
+            User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
+
+        `when`("usecase를 실행할때") {
+            every { getCurrentUserService.getCurrentUser() } returns user
+            every { queryWorkspacePort.findByUser(user) } returns listOf()
+
+            val result = getUserProfileUseCase.execute()
+
+            then("워크스페이스를 조회해야함") {
+                verify { queryWorkspacePort.findByUser(user) }
+            }
+
+            then("결과값은 user의 값을 담고 있어야함") {
+                result.user shouldBe user.toDto()
+                result.workspaces shouldBe listOf()
+            }
+        }
+    }
 })
