@@ -67,9 +67,10 @@ class SecurityConfig(
 
                 //user
                 it.requestMatchers(HttpMethod.GET, "/user/profile").authenticated()
+                it.requestMatchers(HttpMethod.PATCH, "/user/password").authenticated()
 
                 //when url not set
-                .anyRequest().denyAll()
+                it.anyRequest().denyAll()
             }
 
         http

@@ -4,6 +4,7 @@ import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.dto.extension.toDto
 import com.dcd.server.core.domain.user.dto.response.UserProfileResDto
 import com.dcd.server.core.domain.user.model.User
+import com.dcd.server.core.domain.user.usecase.ChangePasswordUseCase
 import com.dcd.server.core.domain.user.usecase.GetUserProfileUseCase
 import com.dcd.server.presentation.domain.user.data.exetension.toResponse
 import io.kotest.core.spec.style.BehaviorSpec
@@ -14,8 +15,9 @@ import org.springframework.http.HttpStatus
 
 class UserWebAdapterTest : BehaviorSpec({
     val getUserProfileUseCase = mockk<GetUserProfileUseCase>()
+    val changePasswordUseCase = mockk<ChangePasswordUseCase>()
 
-    val userWebAdapter = UserWebAdapter(getUserProfileUseCase)
+    val userWebAdapter = UserWebAdapter(getUserProfileUseCase, changePasswordUseCase)
 
     given("UserProfileResDto가 주어지고") {
         val user =
