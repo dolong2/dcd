@@ -1,8 +1,8 @@
-package com.dcd.server.core.domain.auth.usecase
+package com.dcd.server.core.domain.user.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.service.exception.PasswordNotCorrectException
-import com.dcd.server.core.domain.auth.dto.request.PasswordChangeReqDto
+import com.dcd.server.core.domain.user.dto.request.PasswordChangeReqDto
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.user.spi.CommandUserPort
 import org.springframework.security.crypto.password.PasswordEncoder

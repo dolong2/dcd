@@ -1,7 +1,7 @@
 package com.dcd.server.core.common.aop
 
 import com.dcd.server.core.common.aop.exception.NotCertificateEmailException
-import com.dcd.server.core.domain.auth.dto.request.PasswordChangeReqDto
+import com.dcd.server.core.domain.user.dto.request.PasswordChangeReqDto
 import com.dcd.server.core.domain.auth.dto.request.SignUpReqDto
 import com.dcd.server.core.domain.auth.spi.CommandEmailAuthPort
 import com.dcd.server.core.domain.auth.spi.QueryEmailAuthPort
@@ -22,7 +22,7 @@ class EmailCertificateAspect(
     fun signupUseCasePointcut(signUpReqDto: SignUpReqDto) {
     }
 
-    @Pointcut("execution(* com.dcd.server.core.domain.auth.usecase.ChangePasswordUseCase.execute(..))" + "&& args(passwordChangeReqDto)")
+    @Pointcut("execution(* com.dcd.server.core.domain.user.usecase.ChangePasswordUseCase.execute(..))" + "&& args(passwordChangeReqDto)")
     fun changePasswordUseCasePointcut(passwordChangeReqDto: PasswordChangeReqDto) {}
 
     @Before("signupUseCasePointcut(signUpReqDto)")

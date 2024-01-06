@@ -1,4 +1,4 @@
-package com.dcd.server.core.domain.auth.dto.request
+package com.dcd.server.core.domain.user.dto.request
 
 data class PasswordChangeReqDto(
     val existingPassword: String,
