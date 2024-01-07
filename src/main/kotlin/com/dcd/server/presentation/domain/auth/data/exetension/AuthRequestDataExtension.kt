@@ -1,13 +1,7 @@
 package com.dcd.server.presentation.domain.auth.data.exetension
 
-import com.dcd.server.core.domain.auth.dto.request.CertificateMailReqDto
-import com.dcd.server.core.domain.auth.dto.request.EmailSendReqDto
-import com.dcd.server.core.domain.auth.dto.request.SignInReqDto
-import com.dcd.server.core.domain.auth.dto.request.SignUpReqDto
-import com.dcd.server.presentation.domain.auth.data.request.CertificateMailRequest
-import com.dcd.server.presentation.domain.auth.data.request.EmailSendRequest
-import com.dcd.server.presentation.domain.auth.data.request.SignInRequest
-import com.dcd.server.presentation.domain.auth.data.request.SignUpRequest
+import com.dcd.server.core.domain.auth.dto.request.*
+import com.dcd.server.presentation.domain.auth.data.request.*
 
 fun EmailSendRequest.toDto(): EmailSendReqDto =
     EmailSendReqDto(
@@ -31,4 +25,10 @@ fun SignUpRequest.toDto(): SignUpReqDto =
         email = this.email,
         password = this.password,
         name = this.name
+    )
+
+fun NonAuthChangePasswordRequest.toDto(): NonAuthChangePasswordReqDto =
+    NonAuthChangePasswordReqDto(
+        email = this.email,
+        newPassword = this.newPassword
     )
