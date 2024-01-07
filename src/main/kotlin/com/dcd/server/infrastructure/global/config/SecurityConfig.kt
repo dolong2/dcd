@@ -47,6 +47,7 @@ class SecurityConfig(
                 it.requestMatchers(HttpMethod.POST, "/auth").permitAll()
                 it.requestMatchers(HttpMethod.PATCH, "/auth").permitAll()
                 it.requestMatchers(HttpMethod.DELETE, "/auth").authenticated()
+                it.requestMatchers(HttpMethod.PATCH, "/auth/password").authenticated()
 
                 //application
                 it.requestMatchers(HttpMethod.POST, "/application/{workspaceId}").authenticated()
