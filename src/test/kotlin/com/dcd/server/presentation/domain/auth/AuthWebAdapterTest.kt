@@ -24,13 +24,15 @@ class AuthWebAdapterTest : BehaviorSpec({
     val signInUseCase = mockk<SignInUseCase>()
     val reissueTokenUseCase = mockk<ReissueTokenUseCase>()
     val signOutUseCase = mockk<SignOutUseCase>()
+    val nonAuthChangePasswordUseCase = mockk<NonAuthChangePasswordUseCase>()
     val authWebAdapter = AuthWebAdapter(
         authMailSendUseCase,
         signUpUseCase,
         authenticateMailUseCase,
         signInUseCase,
         reissueTokenUseCase,
-        signOutUseCase
+        signOutUseCase,
+        nonAuthChangePasswordUseCase
     )
 
     given("EmailSendRequest가 주어지고") {
