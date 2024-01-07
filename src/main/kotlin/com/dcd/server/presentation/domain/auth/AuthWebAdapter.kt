@@ -4,10 +4,7 @@ import com.dcd.server.core.domain.auth.usecase.*
 import com.dcd.server.presentation.domain.auth.data.exetension.toDto
 import com.dcd.server.presentation.domain.auth.data.exetension.toReissueResponse
 import com.dcd.server.presentation.domain.auth.data.exetension.toResponse
-import com.dcd.server.presentation.domain.auth.data.request.CertificateMailRequest
-import com.dcd.server.presentation.domain.auth.data.request.EmailSendRequest
-import com.dcd.server.presentation.domain.auth.data.request.SignInRequest
-import com.dcd.server.presentation.domain.auth.data.request.SignUpRequest
+import com.dcd.server.presentation.domain.auth.data.request.*
 import com.dcd.server.presentation.domain.auth.data.response.ReissueTokenResponse
 import com.dcd.server.presentation.domain.auth.data.response.SignInResponse
 import org.springframework.http.HttpStatus
@@ -29,7 +26,8 @@ class AuthWebAdapter(
     private val authenticateMailUseCase: AuthenticateMailUseCase,
     private val signInUseCase: SignInUseCase,
     private val reissueTokenUseCase: ReissueTokenUseCase,
-    private val signOutUseCase: SignOutUseCase
+    private val signOutUseCase: SignOutUseCase,
+    private val nonAuthChangePasswordUseCase: NonAuthChangePasswordUseCase
 ) {
     @PostMapping("/email")
     fun sendAuthEmail(
@@ -75,5 +73,11 @@ class AuthWebAdapter(
     @DeleteMapping
     fun signOut(): ResponseEntity<Void>  =
         signOutUseCase.execute()
+            .run { ResponseEntity.ok().build() }
+
+    @PatchMapping("/password")
+    fun changePassword(@RequestBody nonAuthChangePasswordRequest: NonAuthChangePasswordRequest): ResponseEntity<Void> =
+        nonAuthChangePasswordUseCase
+            .execute(nonAuthChangePasswordRequest.toDto())
             .run { ResponseEntity.ok().build() }
 }
