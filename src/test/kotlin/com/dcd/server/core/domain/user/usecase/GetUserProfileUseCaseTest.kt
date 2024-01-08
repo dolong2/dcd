@@ -1,4 +1,4 @@
-package com.dcd.server.core.domain.user
+package com.dcd.server.core.domain.user.usecase
 
 import com.dcd.server.core.domain.application.dto.extenstion.toProfileDto
 import com.dcd.server.core.domain.application.model.Application
