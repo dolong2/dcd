@@ -2,12 +2,11 @@ package com.dcd.server.presentation.domain.auth
 
 import com.dcd.server.core.domain.auth.dto.response.TokenResDto
 import com.dcd.server.core.domain.auth.usecase.*
+import com.dcd.server.presentation.domain.auth.data.exetension.toDto
 import com.dcd.server.presentation.domain.auth.data.exetension.toReissueResponse
 import com.dcd.server.presentation.domain.auth.data.exetension.toResponse
-import com.dcd.server.presentation.domain.auth.data.request.CertificateMailRequest
-import com.dcd.server.presentation.domain.auth.data.request.EmailSendRequest
-import com.dcd.server.presentation.domain.auth.data.request.SignInRequest
-import com.dcd.server.presentation.domain.auth.data.request.SignUpRequest
+import com.dcd.server.presentation.domain.auth.data.request.*
+import com.dcd.server.presentation.domain.user.data.request.PasswordChangeRequest
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -24,7 +23,7 @@ class AuthWebAdapterTest : BehaviorSpec({
     val signInUseCase = mockk<SignInUseCase>()
     val reissueTokenUseCase = mockk<ReissueTokenUseCase>()
     val signOutUseCase = mockk<SignOutUseCase>()
-    val nonAuthChangePasswordUseCase = mockk<NonAuthChangePasswordUseCase>()
+    val nonAuthChangePasswordUseCase = mockk<NonAuthChangePasswordUseCase>(relaxUnitFun = true)
     val authWebAdapter = AuthWebAdapter(
         authMailSendUseCase,
         signUpUseCase,
@@ -103,6 +102,18 @@ class AuthWebAdapterTest : BehaviorSpec({
             then("상태코드는 200이여야되고 ReissuTokenResponse가 바디에 들어있어야함") {
                 result.statusCode shouldBe HttpStatus.OK
                 result.body shouldBe responseDto.toReissueResponse()
+            }
+        }
+    }
+
+    given("PasswordChangeRequest가 주어지고") {
+        val nonAuthChangePasswordRequest = NonAuthChangePasswordRequest(email = "email", newPassword = "newPassword")
+
+        `when`("changePassword 메서드를 실행할때") {
+            val result = authWebAdapter.changePassword(nonAuthChangePasswordRequest)
+
+            then("상태코드는 200이여야함") {
+                result.statusCode shouldBe HttpStatus.OK
             }
         }
     }
