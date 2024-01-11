@@ -22,13 +22,16 @@ class ApplicationRunUseCase(
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
         validateWorkspaceOwnerService.validateOwner(application.workspace)
-        cloneApplicationByUrlService.cloneByApplication(application)
         when(application.applicationType){
             ApplicationType.SPRING_BOOT -> {
+                cloneApplicationByUrlService.cloneByApplication(application)
                 modifyGradleService.modifyGradleByApplication(application)
                 val version = runApplicationReqDto.langVersion
                 createDockerFileService.createFileToApplication(application, version)
                 buildDockerImageService.buildImageByApplication(application)
+                dockerRunService.runApplication(application)
+            }
+            ApplicationType.MYSQL -> {
                 dockerRunService.runApplication(application)
             }
         }
