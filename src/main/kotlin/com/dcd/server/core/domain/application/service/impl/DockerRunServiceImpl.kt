@@ -42,13 +42,10 @@ class DockerRunServiceImpl(
             }
 
             ApplicationType.MYSQL -> {
-                println("application.port = ${application.port}")
-                println("application.id = ${application.id}")
                 var externalPort = application.port
                 while (existsPortService.existsPort(externalPort)) {
                     externalPort += 1
                 }
-                println("externalPort = ${externalPort}")
                 commandPort.executeShellCommand(
                     "docker run --network ${application.workspace.title.replace(' ', '_')} " +
                             "-e MYSQL_ROOT_PASSWORD=${application.env["rootPassword"] ?: throw ApplicationEnvNotFoundException()} " +
