@@ -36,19 +36,16 @@ class DockerRunServiceImpl(
                 commandPort.executeShellCommand(
                     "cd ${application.name} " +
                             "&& docker run --network ${application.workspace.title.replace(' ', '_')} " +
-                            "--name ${application.name.lowercase()} -d ${application.name.lowercase()} " +
-                            "-p ${externalPort}:${application.port}"
+                            "--name ${application.name.lowercase()} -d " +
+                            "-p ${externalPort}:${application.port} ${application.name.lowercase()}"
                 )
             }
 
             ApplicationType.MYSQL -> {
-                println("application.port = ${application.port}")
-                println("application.id = ${application.id}")
                 var externalPort = application.port
                 while (existsPortService.existsPort(externalPort)) {
                     externalPort += 1
                 }
-                println("externalPort = ${externalPort}")
                 commandPort.executeShellCommand(
                     "docker run --network ${application.workspace.title.replace(' ', '_')} " +
                             "-e MYSQL_ROOT_PASSWORD=${application.env["rootPassword"] ?: throw ApplicationEnvNotFoundException()} " +
