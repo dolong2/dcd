@@ -36,8 +36,8 @@ class DockerRunServiceImpl(
                 commandPort.executeShellCommand(
                     "cd ${application.name} " +
                             "&& docker run --network ${application.workspace.title.replace(' ', '_')} " +
-                            "--name ${application.name.lowercase()} -d ${application.name.lowercase()} " +
-                            "-p ${externalPort}:${application.port}"
+                            "--name ${application.name.lowercase()} -d " +
+                            "-p ${externalPort}:${application.port} ${application.name.lowercase()}"
                 )
             }
 
