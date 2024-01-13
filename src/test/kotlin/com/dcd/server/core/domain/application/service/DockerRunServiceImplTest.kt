@@ -66,7 +66,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
             null,
             ApplicationType.MYSQL,
             "testUrl",
-            mapOf(),
+            mapOf( Pair("rootPassword", "testMysqlPassword") ),
             workspace,
             port = 3306
         )
