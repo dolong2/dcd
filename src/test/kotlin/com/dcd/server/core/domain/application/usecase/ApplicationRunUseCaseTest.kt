@@ -35,15 +35,15 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
         validateWorkspaceOwnerService
     )
 
-    given("application, runApplicationDto가 주어지고") {
-        val user =
-            User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-        val workspace = Workspace(
-            UUID.randomUUID().toString(),
-            title = "test workspace",
-            description = "test workspace description",
-            owner = user
-        )
+    val user =
+        User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
+    val workspace = Workspace(
+        UUID.randomUUID().toString(),
+        title = "test workspace",
+        description = "test workspace description",
+        owner = user
+    )
+    given("spring boot application, runApplicationDto가 주어지고") {
         val application = Application(
             id = "testId",
             name = "test",
