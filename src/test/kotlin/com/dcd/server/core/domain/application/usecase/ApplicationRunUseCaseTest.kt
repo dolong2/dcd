@@ -87,7 +87,7 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
             env = mapOf(),
             githubUrl = "testUrl",
             workspace = workspace,
-            port = 8080
+            port = 3306
         )
         val reqDto = RunApplicationReqDto(8)
 

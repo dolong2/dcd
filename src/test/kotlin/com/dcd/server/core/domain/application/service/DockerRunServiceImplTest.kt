@@ -58,4 +58,29 @@ class DockerRunServiceImplTest : BehaviorSpec({
             }
         }
     }
+
+    given("mysql 애플리케이션이 주어지고") {
+        val application = Application(
+            UUID.randomUUID().toString(),
+            "mysqlTest",
+            null,
+            ApplicationType.MYSQL,
+            "testUrl",
+            mapOf(),
+            workspace,
+            port = 3306
+        )
+
+        `when`("buildImageByApplication 메서드를 실행할때") {
+            every { existsPortService.existsPort(application.port) } returns false
+            service.runApplication(application)
+
+            then("commandPort가 실행되어야함") {
+                val externalPort = application.port
+                verify {
+                    commandPort.executeShellCommand("docker run --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d -p ${externalPort}:${application.port} mysql")
+                }
+            }
+        }
+    }
 })
