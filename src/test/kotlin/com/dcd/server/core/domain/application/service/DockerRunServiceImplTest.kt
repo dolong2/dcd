@@ -23,16 +23,16 @@ class DockerRunServiceImplTest : BehaviorSpec({
 
     val user =
         User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
+    val workspace = Workspace(
+        UUID.randomUUID().toString(),
+        title = "test workspace",
+        description = "test workspace description",
+        owner = user
+    )
     given("애플리케이션id가 주어지고") {
         val appId = UUID.randomUUID().toString()
 
         `when`("buildImageByApplicationId를 실행할때") {
-            val workspace = Workspace(
-                UUID.randomUUID().toString(),
-                title = "test workspace",
-                description = "test workspace description",
-                owner = user
-            )
             val application = Application(appId, "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), workspace, port = 8080)
             every { queryApplicationPort.findById(appId) } returns application
             every { existsPortService.existsPort(application.port) } returns false
@@ -46,12 +46,6 @@ class DockerRunServiceImplTest : BehaviorSpec({
     }
 
     given("애플리케이션이 주이지고") {
-        val workspace = Workspace(
-            UUID.randomUUID().toString(),
-            title = "test workspace",
-            description = "test workspace description",
-            owner = user
-        )
         val application = Application(UUID.randomUUID().toString(), "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), workspace, port = 8080)
 
         `when`("buildImageByApplication 메서드를 실행할때") {
