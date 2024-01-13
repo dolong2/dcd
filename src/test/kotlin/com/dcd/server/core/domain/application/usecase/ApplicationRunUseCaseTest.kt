@@ -35,15 +35,15 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
         validateWorkspaceOwnerService
     )
 
-    given("application, runApplicationDto가 주어지고") {
-        val user =
-            User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-        val workspace = Workspace(
-            UUID.randomUUID().toString(),
-            title = "test workspace",
-            description = "test workspace description",
-            owner = user
-        )
+    val user =
+        User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
+    val workspace = Workspace(
+        UUID.randomUUID().toString(),
+        title = "test workspace",
+        description = "test workspace description",
+        owner = user
+    )
+    given("spring boot application, runApplicationDto가 주어지고") {
         val application = Application(
             id = "testId",
             name = "test",
@@ -73,6 +73,36 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
             then("ApplicationNotFoundException이 발생해야함") {
                 shouldThrow<ApplicationNotFoundException> {
                     applicationRunUseCase.execute("testId", reqDto)
+                }
+            }
+        }
+    }
+
+    given("mysql application, runApplicationReqDto가 주어지고") {
+        val application = Application(
+            id = "testId",
+            name = "mysqlTest",
+            description = "test",
+            applicationType = ApplicationType.MYSQL,
+            env = mapOf(),
+            githubUrl = "testUrl",
+            workspace = workspace,
+            port = 3306
+        )
+        val reqDto = RunApplicationReqDto(8)
+
+        `when`("usecase를 실행하면") {
+            every { queryApplicationPort.findById(application.id) } returns application
+
+            applicationRunUseCase.execute(application.id, reqDto)
+            then("dockerRunService만 실행되어야함") {
+                verify { dockerRunService.runApplication(application) }
+                shouldThrow<AssertionError> {
+                    verify { cloneApplicationByUrlService.cloneByApplication(application) }
+                    verify { validateWorkspaceOwnerService.validateOwner(workspace) }
+                    verify { modifyGradleService.modifyGradleByApplication(application) }
+                    verify { createDockerFileService.createFileToApplication(application, reqDto.langVersion) }
+                    verify { buildDockerImageService.buildImageByApplication(application) }
                 }
             }
         }
