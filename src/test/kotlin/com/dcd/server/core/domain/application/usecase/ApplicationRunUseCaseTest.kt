@@ -77,4 +77,34 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
             }
         }
     }
+
+    given("mysql application, runApplicationReqDto가 주어지고") {
+        val application = Application(
+            id = "testId",
+            name = "mysqlTest",
+            description = "test",
+            applicationType = ApplicationType.MYSQL,
+            env = mapOf(),
+            githubUrl = "testUrl",
+            workspace = workspace,
+            port = 8080
+        )
+        val reqDto = RunApplicationReqDto(8)
+
+        `when`("usecase를 실행하면") {
+            every { queryApplicationPort.findById(application.id) } returns application
+
+            applicationRunUseCase.execute(application.id, reqDto)
+            then("dockerRunService만 실행되어야함") {
+                verify { dockerRunService.runApplication(application) }
+                shouldThrow<AssertionError> {
+                    verify { cloneApplicationByUrlService.cloneByApplication(application) }
+                    verify { validateWorkspaceOwnerService.validateOwner(workspace) }
+                    verify { modifyGradleService.modifyGradleByApplication(application) }
+                    verify { createDockerFileService.createFileToApplication(application, reqDto.langVersion) }
+                    verify { buildDockerImageService.buildImageByApplication(application) }
+                }
+            }
+        }
+    }
 })
