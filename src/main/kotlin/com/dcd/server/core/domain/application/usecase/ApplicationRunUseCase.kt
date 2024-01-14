@@ -26,7 +26,7 @@ class ApplicationRunUseCase(
             ApplicationType.SPRING_BOOT -> {
                 cloneApplicationByUrlService.cloneByApplication(application)
                 modifyGradleService.modifyGradleByApplication(application)
-                val version = runApplicationReqDto.langVersion
+                val version = runApplicationReqDto.version
                 createDockerFileService.createFileToApplication(application, version)
                 buildDockerImageService.buildImageByApplication(application)
                 dockerRunService.runApplication(application)
