@@ -54,7 +54,7 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
             workspace = workspace,
             port = 8080
         )
-        val reqDto = RunApplicationReqDto(17)
+        val reqDto = RunApplicationReqDto("17")
         `when`("usecase를 실행할때") {
             every { queryApplicationPort.findById("testId") } returns application
             applicationRunUseCase.execute("testId", reqDto)
@@ -62,7 +62,7 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
                 verify { cloneApplicationByUrlService.cloneByApplication(application) }
                 verify { validateWorkspaceOwnerService.validateOwner(workspace) }
                 verify { modifyGradleService.modifyGradleByApplication(application) }
-                verify { createDockerFileService.createFileToApplication(application, reqDto.langVersion) }
+                verify { createDockerFileService.createFileToApplication(application, reqDto.version) }
                 verify { buildDockerImageService.buildImageByApplication(application) }
                 verify { dockerRunService.runApplication(application) }
             }
@@ -89,19 +89,19 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
             workspace = workspace,
             port = 3306
         )
-        val reqDto = RunApplicationReqDto(8)
+        val reqDto = RunApplicationReqDto("8")
 
         `when`("usecase를 실행하면") {
             every { queryApplicationPort.findById(application.id) } returns application
 
             applicationRunUseCase.execute(application.id, reqDto)
             then("dockerRunService만 실행되어야함") {
-                verify { dockerRunService.runApplication(application) }
+                verify { dockerRunService.runApplication(application, reqDto.version) }
                 shouldThrow<AssertionError> {
                     verify { cloneApplicationByUrlService.cloneByApplication(application) }
                     verify { validateWorkspaceOwnerService.validateOwner(workspace) }
                     verify { modifyGradleService.modifyGradleByApplication(application) }
-                    verify { createDockerFileService.createFileToApplication(application, reqDto.langVersion) }
+                    verify { createDockerFileService.createFileToApplication(application, reqDto.version) }
                     verify { buildDockerImageService.buildImageByApplication(application) }
                 }
             }
