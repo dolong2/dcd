@@ -15,7 +15,7 @@ import java.io.IOException
 class CreateDockerFileServiceImpl(
     private val queryApplicationPort: QueryApplicationPort
 ) : CreateDockerFileService {
-    override fun createFileByApplicationId(id: String, version: Int) {
+    override fun createFileByApplicationId(id: String, version: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
         when(application.applicationType){
@@ -36,7 +36,7 @@ class CreateDockerFileServiceImpl(
         }
     }
 
-    override fun createFileToApplication(application: Application, version: Int) {
+    override fun createFileToApplication(application: Application, version: String) {
         when(application.applicationType){
             ApplicationType.SPRING_BOOT -> {
                 val name = application.name

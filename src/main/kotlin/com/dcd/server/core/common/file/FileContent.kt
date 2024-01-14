@@ -3,7 +3,7 @@ package com.dcd.server.core.common.file
 import java.lang.StringBuilder
 
 object FileContent {
-    fun getSpringBootDockerFileContent(name: String, javaVersion: Int, port: Int, env: Map<String, String>): String =
+    fun getSpringBootDockerFileContent(name: String, javaVersion: String, port: Int, env: Map<String, String>): String =
         "FROM openjdk:${javaVersion}-jdk\n" +
         "COPY build/libs/$name.jar build/libs/app.jar\n" +
         "EXPOSE ${port}\n" +

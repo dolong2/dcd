@@ -26,7 +26,17 @@ class DockerRunServiceImpl(
         run(application)
     }
 
-    private fun run(application: Application) {
+    override fun runApplication(id: String, version: String) {
+        val application = (queryApplicationPort.findById(id)
+            ?: throw ApplicationNotFoundException())
+        run(application, version)
+    }
+
+    override fun runApplication(application: Application, version: String) {
+        run(application, version)
+    }
+
+    private fun run(application: Application, version: String = "latest") {
         when (application.applicationType) {
             ApplicationType.SPRING_BOOT -> {
                 var externalPort = application.port
@@ -37,7 +47,7 @@ class DockerRunServiceImpl(
                     "cd ${application.name} " +
                             "&& docker run --network ${application.workspace.title.replace(' ', '_')} " +
                             "--name ${application.name.lowercase()} -d " +
-                            "-p ${externalPort}:${application.port} ${application.name.lowercase()}"
+                            "-p ${externalPort}:${application.port} ${application.name.lowercase()}:$version"
                 )
             }
 
@@ -50,7 +60,7 @@ class DockerRunServiceImpl(
                     "docker run --network ${application.workspace.title.replace(' ', '_')} " +
                             "-e MYSQL_ROOT_PASSWORD=${application.env["rootPassword"] ?: throw ApplicationEnvNotFoundException()} " +
                             "--name ${application.name.lowercase()} -d " +
-                            "-p ${externalPort}:${application.port} mysql"
+                            "-p ${externalPort}:${application.port} mysql:$version"
                 )
             }
         }

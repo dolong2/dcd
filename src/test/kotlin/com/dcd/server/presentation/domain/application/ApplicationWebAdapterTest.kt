@@ -46,7 +46,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
 
     given("RunApplicationRequest가 주어지고") {
         val id = "testApplicationId"
-        val request = RunApplicationRequest(langVersion = 11)
+        val request = RunApplicationRequest(version = "11")
         `when`("runApplication 메서드를 실행할때") {
             every { springApplicationRunUseCase.execute(id, any()) } returns Unit
             val result = applicationWebAdapter.runApplication(id, request)

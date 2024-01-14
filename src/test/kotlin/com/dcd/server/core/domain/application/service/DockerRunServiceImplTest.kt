@@ -41,7 +41,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
             service.runApplication(appId)
             then("commandPort가 실행되어야함") {
                 val externalPort = application.port
-                verify { commandPort.executeShellCommand("cd ${application.name} && docker run --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d -p ${externalPort}:${application.port} ${application.name.lowercase()}") }
+                verify { commandPort.executeShellCommand("cd ${application.name} && docker run --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d -p ${externalPort}:${application.port} ${application.name.lowercase()}:latest") }
             }
         }
     }
@@ -55,7 +55,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
 
             then("commandPort가 실행되어야함") {
                 val externalPort = application.port
-                verify { commandPort.executeShellCommand("cd ${application.name} && docker run --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d -p ${externalPort}:${application.port} ${application.name.lowercase()}") }
+                verify { commandPort.executeShellCommand("cd ${application.name} && docker run --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d -p ${externalPort}:${application.port} ${application.name.lowercase()}:latest") }
             }
         }
     }
@@ -79,7 +79,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
             then("commandPort가 실행되어야함") {
                 val externalPort = application.port
                 verify {
-                    commandPort.executeShellCommand("docker run --network ${application.workspace.title.replace(' ', '_')} -e MYSQL_ROOT_PASSWORD=${application.env["rootPassword"] ?: throw ApplicationEnvNotFoundException()} --name ${application.name.lowercase()} -d -p ${externalPort}:${application.port} mysql")
+                    commandPort.executeShellCommand("docker run --network ${application.workspace.title.replace(' ', '_')} -e MYSQL_ROOT_PASSWORD=${application.env["rootPassword"] ?: throw ApplicationEnvNotFoundException()} --name ${application.name.lowercase()} -d -p ${externalPort}:${application.port} mysql:latest")
                 }
             }
         }
