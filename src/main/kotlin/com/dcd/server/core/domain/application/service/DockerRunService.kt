@@ -7,4 +7,8 @@ interface DockerRunService {
 
     fun runApplication(application: Application)
 
+    fun runApplication(id: String, version: String)
+
+    fun runApplication(application: Application, version: String)
+
 }

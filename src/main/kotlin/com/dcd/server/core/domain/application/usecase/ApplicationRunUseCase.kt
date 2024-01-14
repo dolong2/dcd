@@ -32,7 +32,7 @@ class ApplicationRunUseCase(
                 dockerRunService.runApplication(application)
             }
             ApplicationType.MYSQL -> {
-                dockerRunService.runApplication(application)
+                dockerRunService.runApplication(application, runApplicationReqDto.version)
             }
         }
     }
