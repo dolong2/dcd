@@ -37,12 +37,13 @@ class DockerRunServiceImpl(
     }
 
     private fun run(application: Application, version: String = "latest") {
+        var externalPort = application.port
+        while (existsPortService.existsPort(externalPort)) {
+            externalPort += 1
+        }
+
         when (application.applicationType) {
             ApplicationType.SPRING_BOOT -> {
-                var externalPort = application.port
-                while (existsPortService.existsPort(externalPort)) {
-                    externalPort += 1
-                }
                 commandPort.executeShellCommand(
                     "cd ${application.name} " +
                             "&& docker run --network ${application.workspace.title.replace(' ', '_')} " +
@@ -52,15 +53,19 @@ class DockerRunServiceImpl(
             }
 
             ApplicationType.MYSQL -> {
-                var externalPort = application.port
-                while (existsPortService.existsPort(externalPort)) {
-                    externalPort += 1
-                }
                 commandPort.executeShellCommand(
                     "docker run --network ${application.workspace.title.replace(' ', '_')} " +
                             "-e MYSQL_ROOT_PASSWORD=${application.env["rootPassword"] ?: throw ApplicationEnvNotFoundException()} " +
                             "--name ${application.name.lowercase()} -d " +
                             "-p ${externalPort}:${application.port} mysql:$version"
+                )
+            }
+
+            ApplicationType.REDIS -> {
+                commandPort.executeShellCommand(
+                    "docker run --network ${application.workspace.title.replace(' ', '_')} " +
+                    "--name ${application.name.lowercase()} -d " +
+                    "-p ${externalPort}:${application.port} redis:$version"
                 )
             }
         }
