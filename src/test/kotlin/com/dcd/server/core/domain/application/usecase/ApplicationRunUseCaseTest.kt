@@ -107,4 +107,34 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
             }
         }
     }
+
+    given("redis application, runApplicationReqDto가 주어지고") {
+        val application = Application(
+            id = "testId",
+            name = "redisTest",
+            description = "test",
+            applicationType = ApplicationType.REDIS,
+            env = mapOf(),
+            githubUrl = "testUrl",
+            workspace = workspace,
+            port = 6379
+        )
+        val reqDto = RunApplicationReqDto("6")
+
+        `when`("usecase를 실행하면") {
+            every { queryApplicationPort.findById(application.id) } returns application
+
+            applicationRunUseCase.execute(application.id, reqDto)
+            then("dockerRunService만 실행되어야함") {
+                verify { dockerRunService.runApplication(application, reqDto.version) }
+                shouldThrow<AssertionError> {
+                    verify { cloneApplicationByUrlService.cloneByApplication(application) }
+                    verify { validateWorkspaceOwnerService.validateOwner(workspace) }
+                    verify { modifyGradleService.modifyGradleByApplication(application) }
+                    verify { createDockerFileService.createFileToApplication(application, reqDto.version) }
+                    verify { buildDockerImageService.buildImageByApplication(application) }
+                }
+            }
+        }
+    }
 })

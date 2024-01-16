@@ -33,7 +33,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
     given("애플리케이션id가 주어지고") {
         val appId = UUID.randomUUID().toString()
 
-        `when`("buildImageByApplicationId를 실행할때") {
+        `when`("executeShellCommand를 실행할때") {
             val application = Application(appId, "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), workspace, port = 8080)
             every { queryApplicationPort.findById(appId) } returns application
             every { existsPortService.existsPort(application.port) } returns false
@@ -49,7 +49,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
     given("애플리케이션이 주이지고") {
         val application = Application(UUID.randomUUID().toString(), "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), workspace, port = 8080)
 
-        `when`("buildImageByApplication 메서드를 실행할때") {
+        `when`("executeShellCommand 메서드를 실행할때") {
             every { existsPortService.existsPort(application.port) } returns false
             service.runApplication(application)
 
@@ -72,7 +72,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
             port = 3306
         )
 
-        `when`("buildImageByApplication 메서드를 실행할때") {
+        `when`("executeShellCommand 메서드를 실행할때") {
             every { existsPortService.existsPort(application.port) } returns false
             service.runApplication(application)
 
@@ -80,6 +80,31 @@ class DockerRunServiceImplTest : BehaviorSpec({
                 val externalPort = application.port
                 verify {
                     commandPort.executeShellCommand("docker run --network ${application.workspace.title.replace(' ', '_')} -e MYSQL_ROOT_PASSWORD=${application.env["rootPassword"] ?: throw ApplicationEnvNotFoundException()} --name ${application.name.lowercase()} -d -p ${externalPort}:${application.port} mysql:latest")
+                }
+            }
+        }
+    }
+
+    given("redis 애플리케이션이 주어지고") {
+        val application = Application(
+            UUID.randomUUID().toString(),
+            "redisTest",
+            null,
+            ApplicationType.REDIS,
+            "testUrl",
+            mapOf(),
+            workspace,
+            port = 6379
+        )
+
+        `when`("executeShellCommand 메서드를 실행할때") {
+            every { existsPortService.existsPort(application.port) } returns false
+            service.runApplication(application)
+
+            then("commandPort가 실행되어야함") {
+                val externalPort = application.port
+                verify {
+                    commandPort.executeShellCommand("docker run --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d -p ${externalPort}:${application.port} redis:latest")
                 }
             }
         }
