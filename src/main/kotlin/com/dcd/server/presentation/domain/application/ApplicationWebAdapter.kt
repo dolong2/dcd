@@ -6,6 +6,7 @@ import com.dcd.server.presentation.domain.application.data.exetension.toResponse
 import com.dcd.server.presentation.domain.application.data.request.AddApplicationEnvRequest
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
 import com.dcd.server.presentation.domain.application.data.request.RunApplicationRequest
+import com.dcd.server.presentation.domain.application.data.request.UpdateApplicationRequest
 import com.dcd.server.presentation.domain.application.data.response.ApplicationListResponse
 import com.dcd.server.presentation.domain.application.data.response.ApplicationResponse
 import org.springframework.http.HttpStatus
@@ -23,7 +24,8 @@ class ApplicationWebAdapter(
     private val addApplicationEnvUseCase: AddApplicationEnvUseCase,
     private val deleteApplicationEnvUseCase: DeleteApplicationEnvUseCase,
     private val stopApplicationUseCase: StopApplicationUseCase,
-    private val deleteApplicationUseCase: DeleteApplicationUseCase
+    private val deleteApplicationUseCase: DeleteApplicationUseCase,
+    private val updateApplicationUseCase: UpdateApplicationUseCase
 ) {
     @PostMapping("/{workspaceId}")
     fun createApplication(@PathVariable workspaceId: String, @Validated @RequestBody createApplicationRequest: CreateApplicationRequest): ResponseEntity<Void> =
@@ -63,5 +65,10 @@ class ApplicationWebAdapter(
     @DeleteMapping("/{id}")
     fun deleteApplication(@PathVariable id: String): ResponseEntity<Void> =
         deleteApplicationUseCase.execute(id)
+            .run { ResponseEntity.ok().build() }
+
+    @PatchMapping("/{id}")
+    fun updateApplication(@PathVariable id: String, @RequestBody updateApplicationRequest: UpdateApplicationRequest): ResponseEntity<Void> =
+        updateApplicationUseCase.execute(id, updateApplicationRequest.toDto())
             .run { ResponseEntity.ok().build() }
 }

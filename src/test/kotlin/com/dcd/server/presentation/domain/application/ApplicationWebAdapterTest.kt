@@ -23,7 +23,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     val deleteApplicationEnvUseCase = mockk<DeleteApplicationEnvUseCase>()
     val stopApplicationUseCase = mockk<StopApplicationUseCase>()
     val deleteApplicationUseCase = mockk<DeleteApplicationUseCase>()
-    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springApplicationRunUseCase, getAllApplicationUseCase, getOneApplicationUseCase, addApplicationEnvUseCase, deleteApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase)
+    val updateApplicationUseCase = mockk<UpdateApplicationUseCase>()
+    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springApplicationRunUseCase, getAllApplicationUseCase, getOneApplicationUseCase, addApplicationEnvUseCase, deleteApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase)
 
     given("CreateApplicationRequest가 주어지고") {
         val request = CreateApplicationRequest(
