@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.application.exception.ApplicationNotFoundExcep
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
+import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
 
 @UseCase
 class UpdateApplicationUseCase(
@@ -19,7 +20,7 @@ class UpdateApplicationUseCase(
         val owner = application.workspace.owner
 
         if (owner.equals(getCurrentUserService.getCurrentUser()).not())
-            throw RuntimeException()
+            throw WorkspaceOwnerNotSameException()
 
         val updatedApplication =
             application.copy(name = updateApplicationReqDto.name, description = updateApplicationReqDto.description)

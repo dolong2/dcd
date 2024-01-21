@@ -1,5 +1,6 @@
 package com.dcd.server.presentation.domain.application
 
+import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationListResDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationResDto
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
@@ -8,10 +9,12 @@ import com.dcd.server.presentation.domain.application.data.exetension.toResponse
 import com.dcd.server.presentation.domain.application.data.request.AddApplicationEnvRequest
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
 import com.dcd.server.presentation.domain.application.data.request.RunApplicationRequest
+import com.dcd.server.presentation.domain.application.data.request.UpdateApplicationRequest
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.springframework.http.HttpStatus
 
 class ApplicationWebAdapterTest : BehaviorSpec({
@@ -23,7 +26,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     val deleteApplicationEnvUseCase = mockk<DeleteApplicationEnvUseCase>()
     val stopApplicationUseCase = mockk<StopApplicationUseCase>()
     val deleteApplicationUseCase = mockk<DeleteApplicationUseCase>()
-    val updateApplicationUseCase = mockk<UpdateApplicationUseCase>()
+    val updateApplicationUseCase = mockk<UpdateApplicationUseCase>(relaxUnitFun = true)
     val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springApplicationRunUseCase, getAllApplicationUseCase, getOneApplicationUseCase, addApplicationEnvUseCase, deleteApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase)
 
     given("CreateApplicationRequest가 주어지고") {
@@ -116,7 +119,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         }
     }
 
-    given("애플리케이션 id와 삭젷할 키가 주어지고") {
+    given("애플리케이션 id와 삭제할 키가 주어지고") {
         val testId = "testId"
         val key = "testKey"
         `when`("deleteApplicationEnv메서드를 실행할때") {
@@ -137,15 +140,28 @@ class ApplicationWebAdapterTest : BehaviorSpec({
                 result.statusCode shouldBe HttpStatus.OK
             }
         }
-    }
 
-    given("애플리케이션 Id가 주어지고") {
-        val testId = "testId"
         `when`("deleteApplication 메서드를 실행할때") {
             every { deleteApplicationUseCase.execute(testId) } returns Unit
             val result = applicationWebAdapter.deleteApplication(testId)
             then("status는 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
+
+    given("UpdateRequest가 주어지고") {
+        val testId ="testId"
+        val request = UpdateApplicationRequest(name = "update", description = null)
+
+        `when`("updateApplication 메서드를 실행할때") {
+            val result = applicationWebAdapter.updateApplication(testId, request)
+
+            then("status는 200이여야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+            then("updateApplicationUseCase를 실행해야함") {
+                verify { updateApplicationUseCase.execute(testId, any() as UpdateApplicationReqDto) }
             }
         }
     }
