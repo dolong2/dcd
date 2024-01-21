@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
+import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
@@ -65,6 +66,19 @@ class UpdateApplicationUseCaseTest : BehaviorSpec({
 
             then("WorkspaceOwnerNotSameException이 발생해야함") {
                 shouldThrow<WorkspaceOwnerNotSameException> {
+                    updateApplicationUseCase.execute(applicationId, updateReqDto)
+                }
+            }
+        }
+    }
+
+    given("애플리케이션이 주어지지 않고") {
+
+        `when`("usecase를 실행할때") {
+            every { queryApplicationPort.findById(applicationId) } returns null
+
+            then("ApplicationNotFoundException이 발생해야함") {
+                shouldThrow<ApplicationNotFoundException> {
                     updateApplicationUseCase.execute(applicationId, updateReqDto)
                 }
             }
