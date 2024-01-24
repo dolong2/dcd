@@ -1,7 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.ReadOnlyUseCase
-import com.dcd.server.core.domain.application.dto.request.RunApplicationReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
@@ -18,7 +17,7 @@ class ApplicationRunUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val validateWorkspaceOwnerService: ValidateWorkspaceOwnerService
 ) {
-    fun execute(id: String, runApplicationReqDto: RunApplicationReqDto) {
+    fun execute(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
         validateWorkspaceOwnerService.validateOwner(application.workspace)
@@ -28,18 +27,18 @@ class ApplicationRunUseCase(
             ApplicationType.SPRING_BOOT -> {
                 cloneApplicationByUrlService.cloneByApplication(application)
                 modifyGradleService.modifyGradleByApplication(application)
-                val version = runApplicationReqDto.version
+                val version = application.version
                 createDockerFileService.createFileToApplication(application, version)
                 buildDockerImageService.buildImageByApplication(application)
                 dockerRunService.runApplication(application)
             }
 
             ApplicationType.MYSQL -> {
-                dockerRunService.runApplication(application, runApplicationReqDto.version)
+                dockerRunService.runApplication(application, application.version)
             }
 
             ApplicationType.REDIS -> {
-                dockerRunService.runApplication(application, runApplicationReqDto.version)
+                dockerRunService.runApplication(application, application.version)
             }
         }
     }

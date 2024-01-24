@@ -12,6 +12,7 @@ data class Application(
     val applicationType: ApplicationType,
     val githubUrl: String,
     val env: Map<String, String>,
+    val version: String,
     val workspace: Workspace,
     val port: Int
 )
