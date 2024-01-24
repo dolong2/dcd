@@ -34,7 +34,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
         val appId = UUID.randomUUID().toString()
 
         `when`("executeShellCommand를 실행할때") {
-            val application = Application(appId, "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), workspace, port = 8080)
+            val application = Application(appId, "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080)
             every { queryApplicationPort.findById(appId) } returns application
             every { existsPortService.existsPort(application.port) } returns false
 
@@ -47,7 +47,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
     }
 
     given("애플리케이션이 주이지고") {
-        val application = Application(UUID.randomUUID().toString(), "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), workspace, port = 8080)
+        val application = Application(UUID.randomUUID().toString(), "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080)
 
         `when`("executeShellCommand 메서드를 실행할때") {
             every { existsPortService.existsPort(application.port) } returns false
@@ -68,6 +68,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
             ApplicationType.MYSQL,
             "testUrl",
             mapOf( Pair("rootPassword", "testMysqlPassword") ),
+            "17",
             workspace,
             port = 3306
         )
@@ -93,6 +94,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
             ApplicationType.REDIS,
             "testUrl",
             mapOf(),
+            "17",
             workspace,
             port = 6379
         )

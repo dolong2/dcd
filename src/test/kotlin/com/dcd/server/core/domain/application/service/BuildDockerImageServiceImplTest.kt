@@ -31,7 +31,7 @@ class BuildDockerImageServiceImplTest : BehaviorSpec({
                 description = "test workspace description",
                 owner = user
             )
-            val application = Application(appId, "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), workspace, port = 8080)
+            val application = Application(appId, "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080)
             every { queryApplicationPort.findById(appId) } returns application
 
             service.buildImageByApplicationId(appId)
@@ -49,7 +49,7 @@ class BuildDockerImageServiceImplTest : BehaviorSpec({
             description = "test workspace description",
             owner = user
         )
-        val application = Application(UUID.randomUUID().toString(), "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), workspace, port = 8080)
+        val application = Application(UUID.randomUUID().toString(), "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080)
 
         `when`("buildImageByApplication 메서드를 실행할때") {
             service.buildImageByApplication(application)
