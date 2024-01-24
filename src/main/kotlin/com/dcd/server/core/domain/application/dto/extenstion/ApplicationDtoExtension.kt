@@ -14,7 +14,8 @@ fun CreateApplicationReqDto.toEntity(workspace: Workspace): Application =
         applicationType = this.applicationType,
         env = this.env,
         workspace = workspace,
-        port = this.port
+        port = this.port,
+        version = this.version
     )
 
 fun Application.toDto(): ApplicationResDto =

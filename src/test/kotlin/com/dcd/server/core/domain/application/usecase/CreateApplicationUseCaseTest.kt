@@ -33,6 +33,7 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
             applicationType = ApplicationType.SPRING_BOOT,
             env = mapOf(),
             githubUrl = "testGithub",
+            version = "17",
             port = 8080
         )
         val user =

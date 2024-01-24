@@ -1,6 +1,5 @@
 package com.dcd.server.core.domain.application.usecase
 
-import com.dcd.server.core.domain.application.dto.request.RunApplicationReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
@@ -52,17 +51,17 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
             env = mapOf(),
             githubUrl = "testUrl",
             workspace = workspace,
-            port = 8080
+            port = 8080,
+            version = "17"
         )
-        val reqDto = RunApplicationReqDto("17")
         `when`("usecase를 실행할때") {
             every { queryApplicationPort.findById("testId") } returns application
-            applicationRunUseCase.execute("testId", reqDto)
+            applicationRunUseCase.execute("testId")
             then("애플리케이션 실행에 관한 service들이 실행되어야함") {
                 verify { cloneApplicationByUrlService.cloneByApplication(application) }
                 verify { validateWorkspaceOwnerService.validateOwner(workspace) }
                 verify { modifyGradleService.modifyGradleByApplication(application) }
-                verify { createDockerFileService.createFileToApplication(application, reqDto.version) }
+                verify { createDockerFileService.createFileToApplication(application, application.version) }
                 verify { buildDockerImageService.buildImageByApplication(application) }
                 verify { dockerRunService.runApplication(application) }
             }
@@ -72,7 +71,7 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
             every { queryApplicationPort.findById("testId") } returns null
             then("ApplicationNotFoundException이 발생해야함") {
                 shouldThrow<ApplicationNotFoundException> {
-                    applicationRunUseCase.execute("testId", reqDto)
+                    applicationRunUseCase.execute("testId")
                 }
             }
         }
@@ -87,21 +86,21 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
             env = mapOf(),
             githubUrl = "testUrl",
             workspace = workspace,
-            port = 3306
+            port = 3306,
+            version = "8"
         )
-        val reqDto = RunApplicationReqDto("8")
 
         `when`("usecase를 실행하면") {
             every { queryApplicationPort.findById(application.id) } returns application
 
-            applicationRunUseCase.execute(application.id, reqDto)
+            applicationRunUseCase.execute(application.id)
             then("dockerRunService만 실행되어야함") {
-                verify { dockerRunService.runApplication(application, reqDto.version) }
+                verify { dockerRunService.runApplication(application, application.version) }
                 shouldThrow<AssertionError> {
                     verify { cloneApplicationByUrlService.cloneByApplication(application) }
                     verify { validateWorkspaceOwnerService.validateOwner(workspace) }
                     verify { modifyGradleService.modifyGradleByApplication(application) }
-                    verify { createDockerFileService.createFileToApplication(application, reqDto.version) }
+                    verify { createDockerFileService.createFileToApplication(application, application.version) }
                     verify { buildDockerImageService.buildImageByApplication(application) }
                 }
             }
@@ -117,21 +116,21 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
             env = mapOf(),
             githubUrl = "testUrl",
             workspace = workspace,
-            port = 6379
+            port = 6379,
+            version = "6"
         )
-        val reqDto = RunApplicationReqDto("6")
 
         `when`("usecase를 실행하면") {
             every { queryApplicationPort.findById(application.id) } returns application
 
-            applicationRunUseCase.execute(application.id, reqDto)
+            applicationRunUseCase.execute(application.id)
             then("dockerRunService만 실행되어야함") {
-                verify { dockerRunService.runApplication(application, reqDto.version) }
+                verify { dockerRunService.runApplication(application, application.version) }
                 shouldThrow<AssertionError> {
                     verify { cloneApplicationByUrlService.cloneByApplication(application) }
                     verify { validateWorkspaceOwnerService.validateOwner(workspace) }
                     verify { modifyGradleService.modifyGradleByApplication(application) }
-                    verify { createDockerFileService.createFileToApplication(application, reqDto.version) }
+                    verify { createDockerFileService.createFileToApplication(application, application.version) }
                     verify { buildDockerImageService.buildImageByApplication(application) }
                 }
             }

@@ -24,4 +24,5 @@ class ApplicationJpaEntity(
     @JoinColumn(name = "workspace_id")
     val workspace: WorkspaceJpaEntity,
     val port: Int,
+    val version: String,
 )

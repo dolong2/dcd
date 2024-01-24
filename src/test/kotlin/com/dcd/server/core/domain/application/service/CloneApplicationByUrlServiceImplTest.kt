@@ -31,7 +31,7 @@ class CloneApplicationByUrlServiceImplTest : BehaviorSpec({
                 description = "test workspace description",
                 owner = user
             )
-            val application = Application(appId, "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), workspace, port = 8080)
+            val application = Application(appId, "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080)
             every { queryApplicationPort.findById(appId) } returns application
 
             service.cloneById(appId)
@@ -48,7 +48,7 @@ class CloneApplicationByUrlServiceImplTest : BehaviorSpec({
             description = "test workspace description",
             owner = user
         )
-        val application = Application(UUID.randomUUID().toString(), "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), workspace, port = 8080)
+        val application = Application(UUID.randomUUID().toString(), "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080)
 
         `when`("cloneByApplication 메서드를 실행할때") {
             service.cloneByApplication(application)

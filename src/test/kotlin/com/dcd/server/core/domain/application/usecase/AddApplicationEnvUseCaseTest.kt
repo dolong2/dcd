@@ -42,6 +42,7 @@ class AddApplicationEnvUseCaseTest : BehaviorSpec({
             applicationType = ApplicationType.SPRING_BOOT,
             env = mapOf(),
             githubUrl = "testUrl",
+            version = "17",
             workspace = workspace,
             port = 8080
         )
