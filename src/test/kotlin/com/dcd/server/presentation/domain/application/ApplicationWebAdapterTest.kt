@@ -35,7 +35,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             applicationType = ApplicationType.SPRING_BOOT,
             env = mapOf(),
             githubUrl = "testUrl",
-            port = 8080
+            port = 8080,
+            version = "17",
         )
 
         `when`("createApplication 메서드를 실행할때") {

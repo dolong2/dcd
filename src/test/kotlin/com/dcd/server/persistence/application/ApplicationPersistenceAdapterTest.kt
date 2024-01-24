@@ -38,6 +38,7 @@ class ApplicationPersistenceAdapterTest : BehaviorSpec({
             applicationType = ApplicationType.SPRING_BOOT,
             githubUrl = "testUrl",
             env = mapOf(),
+            version = "17",
             workspace = workspace,
             port = 8080
         )
