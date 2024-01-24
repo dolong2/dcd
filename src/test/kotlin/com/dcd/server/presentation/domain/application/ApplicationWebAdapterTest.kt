@@ -8,7 +8,6 @@ import com.dcd.server.core.domain.application.usecase.*
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
 import com.dcd.server.presentation.domain.application.data.request.AddApplicationEnvRequest
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
-import com.dcd.server.presentation.domain.application.data.request.RunApplicationRequest
 import com.dcd.server.presentation.domain.application.data.request.UpdateApplicationRequest
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -50,10 +49,9 @@ class ApplicationWebAdapterTest : BehaviorSpec({
 
     given("RunApplicationRequest가 주어지고") {
         val id = "testApplicationId"
-        val request = RunApplicationRequest(version = "11")
         `when`("runApplication 메서드를 실행할때") {
-            every { springApplicationRunUseCase.execute(id, any()) } returns Unit
-            val result = applicationWebAdapter.runApplication(id, request)
+            every { springApplicationRunUseCase.execute(id) } returns Unit
+            val result = applicationWebAdapter.runApplication(id)
             then("상태코드가 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
             }

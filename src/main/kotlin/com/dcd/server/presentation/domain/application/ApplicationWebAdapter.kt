@@ -5,7 +5,6 @@ import com.dcd.server.presentation.domain.application.data.exetension.toDto
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
 import com.dcd.server.presentation.domain.application.data.request.AddApplicationEnvRequest
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
-import com.dcd.server.presentation.domain.application.data.request.RunApplicationRequest
 import com.dcd.server.presentation.domain.application.data.request.UpdateApplicationRequest
 import com.dcd.server.presentation.domain.application.data.response.ApplicationListResponse
 import com.dcd.server.presentation.domain.application.data.response.ApplicationResponse
@@ -33,8 +32,8 @@ class ApplicationWebAdapter(
             .run { ResponseEntity(HttpStatus.CREATED) }
 
     @PostMapping("/{id}/run")
-    fun runApplication(@PathVariable id: String, @RequestBody runApplicationRequest: RunApplicationRequest): ResponseEntity<Void> =
-        applicationRunUseCase.execute(id, runApplicationRequest.toDto())
+    fun runApplication(@PathVariable id: String): ResponseEntity<Void> =
+        applicationRunUseCase.execute(id)
             .run { ResponseEntity.ok().build() }
 
     @GetMapping

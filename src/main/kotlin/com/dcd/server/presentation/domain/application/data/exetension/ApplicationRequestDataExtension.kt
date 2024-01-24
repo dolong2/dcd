@@ -2,11 +2,9 @@ package com.dcd.server.presentation.domain.application.data.exetension
 
 import com.dcd.server.core.domain.application.dto.request.AddApplicationEnvReqDto
 import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDto
-import com.dcd.server.core.domain.application.dto.request.RunApplicationReqDto
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
 import com.dcd.server.presentation.domain.application.data.request.AddApplicationEnvRequest
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
-import com.dcd.server.presentation.domain.application.data.request.RunApplicationRequest
 import com.dcd.server.presentation.domain.application.data.request.UpdateApplicationRequest
 
 fun AddApplicationEnvRequest.toDto(): AddApplicationEnvReqDto =
@@ -22,11 +20,6 @@ fun CreateApplicationRequest.toDto(): CreateApplicationReqDto =
         env = this.env,
         applicationType = this.applicationType,
         port = this.port
-    )
-
-fun RunApplicationRequest.toDto(): RunApplicationReqDto =
-    RunApplicationReqDto(
-        version = this.version
     )
 
 fun UpdateApplicationRequest.toDto(): UpdateApplicationReqDto =
