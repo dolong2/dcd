@@ -1,5 +1,6 @@
 package com.dcd.server.presentation.domain.application
 
+import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.usecase.*
 import com.dcd.server.presentation.domain.application.data.exetension.toDto
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
@@ -8,6 +9,7 @@ import com.dcd.server.presentation.domain.application.data.request.CreateApplica
 import com.dcd.server.presentation.domain.application.data.request.UpdateApplicationRequest
 import com.dcd.server.presentation.domain.application.data.response.ApplicationListResponse
 import com.dcd.server.presentation.domain.application.data.response.ApplicationResponse
+import com.dcd.server.presentation.domain.application.data.response.AvailableVersionResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -24,7 +26,8 @@ class ApplicationWebAdapter(
     private val deleteApplicationEnvUseCase: DeleteApplicationEnvUseCase,
     private val stopApplicationUseCase: StopApplicationUseCase,
     private val deleteApplicationUseCase: DeleteApplicationUseCase,
-    private val updateApplicationUseCase: UpdateApplicationUseCase
+    private val updateApplicationUseCase: UpdateApplicationUseCase,
+    private val getAvailableVersionUseCase: GetAvailableVersionUseCase
 ) {
     @PostMapping("/{workspaceId}")
     fun createApplication(@PathVariable workspaceId: String, @Validated @RequestBody createApplicationRequest: CreateApplicationRequest): ResponseEntity<Void> =
@@ -70,4 +73,9 @@ class ApplicationWebAdapter(
     fun updateApplication(@PathVariable id: String, @RequestBody updateApplicationRequest: UpdateApplicationRequest): ResponseEntity<Void> =
         updateApplicationUseCase.execute(id, updateApplicationRequest.toDto())
             .run { ResponseEntity.ok().build() }
+
+    @GetMapping("/version/{applicationType}")
+    fun getAvailableVersion(@PathVariable applicationType: ApplicationType): ResponseEntity<AvailableVersionResponse> =
+        getAvailableVersionUseCase.execute(applicationType)
+            .let { ResponseEntity.ok(it.toResponse()) }
 }
