@@ -10,20 +10,21 @@ import java.io.InputStreamReader
 @Service
 class GetApplicationVersionServiceImpl : GetApplicationVersionService {
     override fun getAvailableVersion(applicationType: ApplicationType): List<String> {
-        val cmd = arrayOf("docker images ${applicationType.name.lowercase()}")
+        val cmd = arrayOf("/bin/sh", "-c", "docker images ${applicationType.name.lowercase()}")
         val p = Runtime.getRuntime().exec(cmd)
         val br = BufferedReader(InputStreamReader(p.inputStream))
-        var isFirst = true
         val result = mutableListOf<String>()
-        while (br.readLine() != null) {
-            if (isFirst) {
-                isFirst = !isFirst
-                continue
+        var first = true
+        br.readLines().forEach {
+            if (first) first = !first
+            else {
+                val split = it.replace(Regex("\\s{2,}"), " ").split(" ")
+                val tag = split[1]
+                result.add(tag)
             }
-            val split = br.readLine().split("    ")
-            val tag = split[1]
-            result.add(tag)
         }
+        p.waitFor()
+        p.destroy()
         return result
     }
 }
