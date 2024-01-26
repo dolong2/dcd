@@ -14,10 +14,14 @@ class GetApplicationVersionServiceImpl : GetApplicationVersionService {
         val p = Runtime.getRuntime().exec(cmd)
         val br = BufferedReader(InputStreamReader(p.inputStream))
         val result = mutableListOf<String>()
-        while (br.readLine() != null) {
-            val split = br.readLine().replace(Regex("\\s{2,}"), " ").split(" ")
-            val tag = split[1]
-            result.add(tag)
+        var first = true
+        br.readLines().forEach {
+            if (first) first = !first
+            else {
+                val split = it.replace(Regex("\\s{2,}"), " ").split(" ")
+                val tag = split[1]
+                result.add(tag)
+            }
         }
         p.waitFor()
         p.destroy()
