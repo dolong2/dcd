@@ -12,6 +12,8 @@ class ExistsPortServiceImpl
         val cmd = arrayOf("/bin/sh", "-c", "lsof -i :${port}")
         val p = Runtime.getRuntime().exec(cmd)
         val br = BufferedReader(InputStreamReader(p.inputStream))
+        p.waitFor()
+        p.destroy()
         return br.readLine() != null
     }
 }
