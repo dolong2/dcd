@@ -11,8 +11,9 @@ class CommandAdapter : CommandPort {
         val cmd = arrayOf("/bin/sh", "-c", cmd)
         val p = Runtime.getRuntime().exec(cmd)
         val br = BufferedReader(InputStreamReader(p.inputStream))
-        while (br.readLine() != null)
-            println("br.readLine() = ${br.readLine()}")
+        br.readLines().forEach {
+            println("$it")
+        }
         p.waitFor()
         println("p.exitValue() = ${p.exitValue()}")
         p.destroy()
