@@ -154,7 +154,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
 
     given("UpdateRequest가 주어지고") {
         val testId ="testId"
-        val request = UpdateApplicationRequest(name = "update", description = null)
+        val request = UpdateApplicationRequest(name = "update", description = null, version = "11")
 
         `when`("updateApplication 메서드를 실행할때") {
             val result = applicationWebAdapter.updateApplication(testId, request)

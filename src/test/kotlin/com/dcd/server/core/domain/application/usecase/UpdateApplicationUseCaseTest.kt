@@ -35,7 +35,7 @@ class UpdateApplicationUseCaseTest : BehaviorSpec({
         owner = user
     )
     val applicationId = "testId"
-    val updateReqDto = UpdateApplicationReqDto(name = "updated application", description = "dldl")
+    val updateReqDto = UpdateApplicationReqDto(name = "updated application", description = "dldl", version = "11")
 
     given("애플리케이션이 주어지고") {
         val application = Application(
@@ -57,7 +57,7 @@ class UpdateApplicationUseCaseTest : BehaviorSpec({
             updateApplicationUseCase.execute(applicationId, updateReqDto)
 
             then("ReqDto의 내용이 반영된 애플리케이션을 저장해야함") {
-                val updatedApplication = application.copy(name = updateReqDto.name, description = updateReqDto.description)
+                val updatedApplication = application.copy(name = updateReqDto.name, description = updateReqDto.description, version = updateReqDto.version)
                 verify { commandApplicationPort.save(updatedApplication) }
             }
         }
