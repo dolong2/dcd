@@ -12,6 +12,7 @@ class ApplicationJpaEntity(
     val id: String,
     val name: String,
     val description: String?,
+    @Enumerated(EnumType.STRING)
     val applicationType: ApplicationType,
     val githubUrl: String,
     @ElementCollection

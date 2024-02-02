@@ -26,5 +26,6 @@ fun CreateApplicationRequest.toDto(): CreateApplicationReqDto =
 fun UpdateApplicationRequest.toDto(): UpdateApplicationReqDto =
     UpdateApplicationReqDto(
         name = this.name,
-        description = this.description
+        description = this.description,
+        version = this.version
     )
