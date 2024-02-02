@@ -23,7 +23,11 @@ class UpdateApplicationUseCase(
             throw WorkspaceOwnerNotSameException()
 
         val updatedApplication =
-            application.copy(name = updateApplicationReqDto.name, description = updateApplicationReqDto.description)
+            application.copy(
+                name = updateApplicationReqDto.name,
+                description = updateApplicationReqDto.description,
+                version = updateApplicationReqDto.version
+            )
         commandApplicationPort.save(updatedApplication)
     }
 }
