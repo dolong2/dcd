@@ -2,5 +2,6 @@ package com.dcd.server.presentation.domain.application.data.request
 
 data class UpdateApplicationRequest(
     val name: String,
-    val description: String?
+    val description: String?,
+    val version: String
 )
