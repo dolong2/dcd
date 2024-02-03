@@ -10,7 +10,7 @@ data class Application(
     val name: String,
     val description: String?,
     val applicationType: ApplicationType,
-    val githubUrl: String,
+    val githubUrl: String?,
     val env: Map<String, String>,
     val version: String,
     val workspace: Workspace,

@@ -14,7 +14,7 @@ class ApplicationJpaEntity(
     val description: String?,
     @Enumerated(EnumType.STRING)
     val applicationType: ApplicationType,
-    val githubUrl: String,
+    val githubUrl: String?,
     @ElementCollection
     @CollectionTable(name = "application_env_table",
         joinColumns = [JoinColumn(name = "application_id", referencedColumnName = "id")])
