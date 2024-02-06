@@ -24,6 +24,7 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
     val dockerRunService = mockk<DockerRunService>(relaxUnitFun = true)
     val queryApplicationPort = mockk<QueryApplicationPort>(relaxUnitFun = true)
     val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
+    val getExternalPortService = mockk<GetExternalPortService>(relaxed = true)
     val runApplicationUseCase = RunApplicationUseCase(
         cloneApplicationByUrlService,
         modifyGradleService,
@@ -31,7 +32,8 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
         buildDockerImageService,
         dockerRunService,
         queryApplicationPort,
-        validateWorkspaceOwnerService
+        validateWorkspaceOwnerService,
+        getExternalPortService
     )
 
     val user =
@@ -61,9 +63,9 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
                 verify { cloneApplicationByUrlService.cloneByApplication(application) }
                 verify { validateWorkspaceOwnerService.validateOwner(workspace) }
                 verify { modifyGradleService.modifyGradleByApplication(application) }
-                verify { createDockerFileService.createFileToApplication(application, application.version) }
+                verify { createDockerFileService.createFileToApplication(application, application.version, 0) }
                 verify { buildDockerImageService.buildImageByApplication(application) }
-                verify { dockerRunService.runApplication(application) }
+                verify { dockerRunService.runApplication(application, getExternalPortService.getExternalPort(application.port)) }
             }
         }
 
@@ -95,12 +97,12 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
 
             runApplicationUseCase.execute(application.id)
             then("dockerRunService만 실행되어야함") {
-                verify { dockerRunService.runApplication(application, application.version) }
+                verify { dockerRunService.runApplication(application, application.version, getExternalPortService.getExternalPort(application.port)) }
                 shouldThrow<AssertionError> {
                     verify { cloneApplicationByUrlService.cloneByApplication(application) }
                     verify { validateWorkspaceOwnerService.validateOwner(workspace) }
                     verify { modifyGradleService.modifyGradleByApplication(application) }
-                    verify { createDockerFileService.createFileToApplication(application, application.version) }
+                    verify { createDockerFileService.createFileToApplication(application, application.version, 0) }
                     verify { buildDockerImageService.buildImageByApplication(application) }
                 }
             }
@@ -125,12 +127,12 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
 
             runApplicationUseCase.execute(application.id)
             then("dockerRunService만 실행되어야함") {
-                verify { dockerRunService.runApplication(application, application.version) }
+                verify { dockerRunService.runApplication(application, application.version, getExternalPortService.getExternalPort(application.port)) }
                 shouldThrow<AssertionError> {
                     verify { cloneApplicationByUrlService.cloneByApplication(application) }
                     verify { validateWorkspaceOwnerService.validateOwner(workspace) }
                     verify { modifyGradleService.modifyGradleByApplication(application) }
-                    verify { createDockerFileService.createFileToApplication(application, application.version) }
+                    verify { createDockerFileService.createFileToApplication(application, application.version, 0) }
                     verify { buildDockerImageService.buildImageByApplication(application) }
                 }
             }

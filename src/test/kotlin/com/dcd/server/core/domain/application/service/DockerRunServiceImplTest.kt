@@ -38,7 +38,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
             every { queryApplicationPort.findById(appId) } returns application
             every { existsPortService.existsPort(application.port) } returns false
 
-            service.runApplication(appId)
+            service.runApplication(appId, application.port)
             then("commandPort가 실행되어야함") {
                 val externalPort = application.port
                 verify { commandPort.executeShellCommand("cd ${application.name} && docker run --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d -p ${externalPort}:${application.port} ${application.name.lowercase()}:latest") }
@@ -51,7 +51,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
 
         `when`("executeShellCommand 메서드를 실행할때") {
             every { existsPortService.existsPort(application.port) } returns false
-            service.runApplication(application)
+            service.runApplication(application, application.port)
 
             then("commandPort가 실행되어야함") {
                 val externalPort = application.port
@@ -75,7 +75,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
 
         `when`("executeShellCommand 메서드를 실행할때") {
             every { existsPortService.existsPort(application.port) } returns false
-            service.runApplication(application)
+            service.runApplication(application, application.port)
 
             then("commandPort가 실행되어야함") {
                 val externalPort = application.port
@@ -101,7 +101,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
 
         `when`("executeShellCommand 메서드를 실행할때") {
             every { existsPortService.existsPort(application.port) } returns false
-            service.runApplication(application)
+            service.runApplication(application, application.port)
 
             then("commandPort가 실행되어야함") {
                 val externalPort = application.port
