@@ -15,30 +15,32 @@ class RunApplicationUseCase(
     private val buildDockerImageService: BuildDockerImageService,
     private val dockerRunService: DockerRunService,
     private val queryApplicationPort: QueryApplicationPort,
-    private val validateWorkspaceOwnerService: ValidateWorkspaceOwnerService
+    private val validateWorkspaceOwnerService: ValidateWorkspaceOwnerService,
+    private val getExternalPortService: GetExternalPortService
 ) {
     fun execute(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
+
         validateWorkspaceOwnerService.validateOwner(application.workspace)
 
+        val version = application.version
+        val externalPort = getExternalPortService.getExternalPort(application.port)
         when(application.applicationType){
-
             ApplicationType.SPRING_BOOT -> {
                 cloneApplicationByUrlService.cloneByApplication(application)
                 modifyGradleService.modifyGradleByApplication(application)
-                val version = application.version
-                createDockerFileService.createFileToApplication(application, version)
+                createDockerFileService.createFileToApplication(application, version, externalPort)
                 buildDockerImageService.buildImageByApplication(application)
-                dockerRunService.runApplication(application)
+                dockerRunService.runApplication(application, externalPort)
             }
 
             ApplicationType.MYSQL -> {
-                dockerRunService.runApplication(application, application.version)
+                dockerRunService.runApplication(application, version, externalPort)
             }
 
             ApplicationType.REDIS -> {
-                dockerRunService.runApplication(application, application.version)
+                dockerRunService.runApplication(application, version, externalPort)
             }
         }
     }
