@@ -8,7 +8,7 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 
 @ReadOnlyUseCase
-class ApplicationRunUseCase(
+class RunApplicationUseCase(
     private val cloneApplicationByUrlService: CloneApplicationByUrlService,
     private val modifyGradleService: ModifyGradleService,
     private val createDockerFileService: CreateDockerFileService,

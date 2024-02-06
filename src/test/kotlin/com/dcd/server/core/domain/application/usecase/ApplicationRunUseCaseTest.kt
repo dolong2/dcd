@@ -24,7 +24,7 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
     val dockerRunService = mockk<DockerRunService>(relaxUnitFun = true)
     val queryApplicationPort = mockk<QueryApplicationPort>(relaxUnitFun = true)
     val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
-    val applicationRunUseCase = ApplicationRunUseCase(
+    val runApplicationUseCase = RunApplicationUseCase(
         cloneApplicationByUrlService,
         modifyGradleService,
         createDockerFileService,
@@ -56,7 +56,7 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
         )
         `when`("usecase를 실행할때") {
             every { queryApplicationPort.findById("testId") } returns application
-            applicationRunUseCase.execute("testId")
+            runApplicationUseCase.execute("testId")
             then("애플리케이션 실행에 관한 service들이 실행되어야함") {
                 verify { cloneApplicationByUrlService.cloneByApplication(application) }
                 verify { validateWorkspaceOwnerService.validateOwner(workspace) }
@@ -71,7 +71,7 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
             every { queryApplicationPort.findById("testId") } returns null
             then("ApplicationNotFoundException이 발생해야함") {
                 shouldThrow<ApplicationNotFoundException> {
-                    applicationRunUseCase.execute("testId")
+                    runApplicationUseCase.execute("testId")
                 }
             }
         }
@@ -93,7 +93,7 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
         `when`("usecase를 실행하면") {
             every { queryApplicationPort.findById(application.id) } returns application
 
-            applicationRunUseCase.execute(application.id)
+            runApplicationUseCase.execute(application.id)
             then("dockerRunService만 실행되어야함") {
                 verify { dockerRunService.runApplication(application, application.version) }
                 shouldThrow<AssertionError> {
@@ -123,7 +123,7 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
         `when`("usecase를 실행하면") {
             every { queryApplicationPort.findById(application.id) } returns application
 
-            applicationRunUseCase.execute(application.id)
+            runApplicationUseCase.execute(application.id)
             then("dockerRunService만 실행되어야함") {
                 verify { dockerRunService.runApplication(application, application.version) }
                 shouldThrow<AssertionError> {

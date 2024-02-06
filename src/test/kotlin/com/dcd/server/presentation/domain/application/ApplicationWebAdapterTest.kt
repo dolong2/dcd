@@ -10,7 +10,6 @@ import com.dcd.server.presentation.domain.application.data.exetension.toResponse
 import com.dcd.server.presentation.domain.application.data.request.AddApplicationEnvRequest
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
 import com.dcd.server.presentation.domain.application.data.request.UpdateApplicationRequest
-import com.dcd.server.presentation.domain.application.data.response.AvailableVersionResponse
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -20,7 +19,7 @@ import org.springframework.http.HttpStatus
 
 class ApplicationWebAdapterTest : BehaviorSpec({
     val createApplicationUseCase = mockk<CreateApplicationUseCase>()
-    val springApplicationRunUseCase = mockk<ApplicationRunUseCase>()
+    val springRunApplicationUseCase = mockk<RunApplicationUseCase>()
     val getAllApplicationUseCase = mockk<GetAllApplicationUseCase>()
     val getOneApplicationUseCase = mockk<GetOneApplicationUseCase>()
     val addApplicationEnvUseCase = mockk<AddApplicationEnvUseCase>()
@@ -29,7 +28,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     val deleteApplicationUseCase = mockk<DeleteApplicationUseCase>()
     val updateApplicationUseCase = mockk<UpdateApplicationUseCase>(relaxUnitFun = true)
     val getAvailableVersionUseCase = mockk<GetAvailableVersionUseCase>()
-    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springApplicationRunUseCase, getAllApplicationUseCase, getOneApplicationUseCase, addApplicationEnvUseCase, deleteApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase, getAvailableVersionUseCase)
+    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springRunApplicationUseCase, getAllApplicationUseCase, getOneApplicationUseCase, addApplicationEnvUseCase, deleteApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase, getAvailableVersionUseCase)
 
     given("CreateApplicationRequest가 주어지고") {
         val request = CreateApplicationRequest(
@@ -54,7 +53,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     given("RunApplicationRequest가 주어지고") {
         val id = "testApplicationId"
         `when`("runApplication 메서드를 실행할때") {
-            every { springApplicationRunUseCase.execute(id) } returns Unit
+            every { springRunApplicationUseCase.execute(id) } returns Unit
             val result = applicationWebAdapter.runApplication(id)
             then("상태코드가 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
