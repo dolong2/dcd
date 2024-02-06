@@ -15,7 +15,7 @@ import java.io.IOException
 class CreateDockerFileServiceImpl(
     private val queryApplicationPort: QueryApplicationPort
 ) : CreateDockerFileService {
-    override fun createFileByApplicationId(id: String, version: String) {
+    override fun createFileByApplicationId(id: String, version: String, externalPort: Int) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
         when(application.applicationType){
@@ -23,7 +23,7 @@ class CreateDockerFileServiceImpl(
                 val name = application.name
                 try {
                     val file = File("./$name/Dockerfile")
-                    file.writeText(FileContent.getSpringBootDockerFileContent(name, version, application.port, application.env))
+                    file.writeText(FileContent.getSpringBootDockerFileContent(name, version, externalPort, application.env))
                         if (!file.createNewFile())
                             return
                 } catch (e: IOException) {
@@ -36,12 +36,12 @@ class CreateDockerFileServiceImpl(
         }
     }
 
-    override fun createFileToApplication(application: Application, version: String) {
+    override fun createFileToApplication(application: Application, version: String, externalPort: Int) {
         when(application.applicationType){
             ApplicationType.SPRING_BOOT -> {
                 val name = application.name
                 val file = File("./$name/Dockerfile")
-                file.writeText(FileContent.getSpringBootDockerFileContent(name, version, application.port, application.env))
+                file.writeText(FileContent.getSpringBootDockerFileContent(name, version, externalPort, application.env))
                 try {
                     if (!file.createNewFile())
                         return
