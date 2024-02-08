@@ -22,4 +22,16 @@ class GenerateSSLCertificateServiceImpl(
             "-d $domain"
         )
     }
+
+    override fun generateSSL(domain: String, email: String) {
+        commandPort.executeShellCommand(
+            "certbot certonly " +
+            "--webroot " +
+            "--webroot-path=/var/www/certbot" +
+            "--email ${email} " +
+            "--agree-tos " +
+            "--no-eff-email " +
+            "-d $domain"
+        )
+    }
 }
