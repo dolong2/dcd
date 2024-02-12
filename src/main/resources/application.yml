@@ -34,5 +34,8 @@ jwt:
   time:
     accessTime: ${JWT_ACCESS_TIME}
     refreshTime: ${JWT_REFRESH_TIME}
+application:
+  ssl:
+    directory: ${CERTIFICATE_DIRECTORY}
 server:
   port: 8081
