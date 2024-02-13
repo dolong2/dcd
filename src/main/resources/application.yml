@@ -37,5 +37,6 @@ jwt:
 application:
   ssl:
     directory: ${CERTIFICATE_DIRECTORY}
+    password: ${CERTIFICATE_PASSWORD}
 server:
   port: 8081

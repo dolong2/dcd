@@ -4,5 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties("application.ssl")
 class ApplicationSSLProperty(
-    val directory: String
+    val directory: String,
+    val password: String
 )
