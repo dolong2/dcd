@@ -30,6 +30,11 @@ object FileContent {
         "\t\tkey-store-type: PKC12\n" +
         "\t\tkey-store-password: $password"
 
+    fun getSSLPropertyFileContent(name: String, password: String): String =
+        "server.ssl.key-store=classpath:${name}.p12\n" +
+        "server.ssl.key-store-type: PKC12\n" +
+        "server.ssl.key-store-password: $password"
+
     private fun getEnvString(env: Map<String, String>): String {
         val envString = StringBuilder()
         for (it in env) {
