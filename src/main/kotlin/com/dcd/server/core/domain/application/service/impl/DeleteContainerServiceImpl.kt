@@ -10,7 +10,7 @@ class DeleteContainerServiceImpl(
     private val commandPort: CommandPort
 ) : DeleteContainerService {
     override fun deleteContainer(application: Application) {
-        val name = application.name
+        val name = application.name.lowercase()
         commandPort.executeShellCommand("docker stop $name && docker rm $name")
     }
 
