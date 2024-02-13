@@ -24,10 +24,10 @@ object FileContent {
         "}"
 
     fun getSSLYmlFileContent(name: String, password: String): String =
-        "server:" +
-        "\tssl:" +
-        "\t\tkey-store: classpath:${name}.p12" +
-        "\t\tkey-store-type: PKC12" +
+        "server:\n" +
+        "\tssl:\n" +
+        "\t\tkey-store: classpath:${name}.p12\n" +
+        "\t\tkey-store-type: PKC12\n" +
         "\t\tkey-store-password: $password"
 
     private fun getEnvString(env: Map<String, String>): String {
