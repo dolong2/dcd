@@ -6,6 +6,7 @@ import com.dcd.server.presentation.domain.application.data.exetension.toDto
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
 import com.dcd.server.presentation.domain.application.data.request.AddApplicationEnvRequest
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
+import com.dcd.server.presentation.domain.application.data.request.GenerateSSLCertificateRequest
 import com.dcd.server.presentation.domain.application.data.request.UpdateApplicationRequest
 import com.dcd.server.presentation.domain.application.data.response.ApplicationListResponse
 import com.dcd.server.presentation.domain.application.data.response.ApplicationResponse
@@ -27,7 +28,8 @@ class ApplicationWebAdapter(
     private val stopApplicationUseCase: StopApplicationUseCase,
     private val deleteApplicationUseCase: DeleteApplicationUseCase,
     private val updateApplicationUseCase: UpdateApplicationUseCase,
-    private val getAvailableVersionUseCase: GetAvailableVersionUseCase
+    private val getAvailableVersionUseCase: GetAvailableVersionUseCase,
+    private val generateSSLCertificateUseCase: GenerateSSLCertificateUseCase
 ) {
     @PostMapping("/{workspaceId}")
     fun createApplication(@PathVariable workspaceId: String, @Validated @RequestBody createApplicationRequest: CreateApplicationRequest): ResponseEntity<Void> =
@@ -78,4 +80,9 @@ class ApplicationWebAdapter(
     fun getAvailableVersion(@PathVariable applicationType: ApplicationType): ResponseEntity<AvailableVersionResponse> =
         getAvailableVersionUseCase.execute(applicationType)
             .let { ResponseEntity.ok(it.toResponse()) }
+
+    @PostMapping("/{id}/certificate")
+    fun generateSSLCertificate(@PathVariable id: String, @RequestBody generateSSLCertificateRequest: GenerateSSLCertificateRequest): ResponseEntity<Void> =
+        generateSSLCertificateUseCase.execute(id, generateSSLCertificateRequest.toDto())
+            .run { ResponseEntity.ok().build() }
 }
