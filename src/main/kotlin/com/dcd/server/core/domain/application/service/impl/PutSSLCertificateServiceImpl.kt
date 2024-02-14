@@ -28,7 +28,7 @@ class PutSSLCertificateServiceImpl(
                     val propertyFile = propertyPath + "application.yml"
                     FileWriter(propertyFile, true).use { fileWriter ->
                         BufferedWriter(fileWriter).use {
-                            it.write("${FileContent.getSSLYmlFileContent(name, "")}")
+                            it.write("${FileContent.getSSLYmlFileContent(name, applicationSSLProperty.password)}")
                             it.newLine()
                             it.close()
                         }
@@ -38,7 +38,7 @@ class PutSSLCertificateServiceImpl(
                     val propertyFile = propertyPath + "application.properties"
                     FileWriter(propertyFile, true).use { fileWriter ->
                         BufferedWriter(fileWriter).use {
-                            it.write("${FileContent.getSSLPropertyFileContent(name, "")}")
+                            it.write("${FileContent.getSSLPropertyFileContent(name, applicationSSLProperty.password)}")
                             it.newLine()
                             it.close()
                         }

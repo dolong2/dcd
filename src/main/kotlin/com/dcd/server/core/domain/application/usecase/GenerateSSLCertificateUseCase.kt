@@ -1,0 +1,26 @@
+package com.dcd.server.core.domain.application.usecase
+
+import com.dcd.server.core.common.annotation.UseCase
+import com.dcd.server.core.domain.application.dto.request.GenerateSSLCertificateReqDto
+import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
+import com.dcd.server.core.domain.application.service.GenerateSSLCertificateService
+import com.dcd.server.core.domain.application.service.GetExternalPortService
+import com.dcd.server.core.domain.application.service.PutSSLCertificateService
+import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+
+@UseCase
+class GenerateSSLCertificateUseCase(
+    private val queryApplicationPort: QueryApplicationPort,
+    private val generateSSLCertificateService: GenerateSSLCertificateService,
+    private val putSSLCertificateService: PutSSLCertificateService,
+    private val getExternalPortService: GetExternalPortService
+) {
+    fun execute(id: String, generateSSLCertificateReqDto: GenerateSSLCertificateReqDto) {
+        val application = (queryApplicationPort.findById(id)
+            ?: throw ApplicationNotFoundException())
+        val domain = generateSSLCertificateReqDto.domain
+        val externalPort = getExternalPortService.getExternalPort(application.port)
+        generateSSLCertificateService.generateSSL(domain)
+        putSSLCertificateService.putSSLCertificate(domain, externalPort, application)
+    }
+}
