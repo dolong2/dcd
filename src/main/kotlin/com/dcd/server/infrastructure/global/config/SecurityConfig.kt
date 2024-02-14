@@ -61,6 +61,7 @@ class SecurityConfig(
                 it.requestMatchers(HttpMethod.DELETE, "/application/{id}").authenticated()
                 it.requestMatchers(HttpMethod.PATCH, "/application/{id}").authenticated()
                 it.requestMatchers(HttpMethod.GET, "/application/version/{applicationType}").authenticated()
+                it.requestMatchers(HttpMethod.POST, "/application/{id}/certificate").authenticated()
 
                 //workspace
                 it.requestMatchers(HttpMethod.POST, "/workspace").authenticated()
