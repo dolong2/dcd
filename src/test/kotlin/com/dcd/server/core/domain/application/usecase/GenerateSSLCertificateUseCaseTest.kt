@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.domain.application.dto.request.GenerateSSLCertificateReqDto
+import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.GenerateSSLCertificateService
@@ -10,6 +11,7 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.workspace.model.Workspace
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
@@ -67,6 +69,16 @@ class GenerateSSLCertificateUseCaseTest : BehaviorSpec({
 
             then("외부 포트중에 사용할 수 있는 포트를 조회해야함") {
                 verify { getExternalPortService.getExternalPort(application.port) }
+            }
+        }
+
+        `when`("해당 id를 가진 애플리케이션이 없을때") {
+            every { queryApplicationPort.findById(applicationId) } returns null
+
+            then("ApplicationNotFoundException이 발생해야함") {
+                shouldThrow<ApplicationNotFoundException> {
+                    generateSSLCertificateUseCase.execute(applicationId, reqDto)
+                }
             }
         }
     }
