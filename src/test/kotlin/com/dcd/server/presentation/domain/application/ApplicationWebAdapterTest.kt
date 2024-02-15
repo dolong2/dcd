@@ -1,5 +1,6 @@
 package com.dcd.server.presentation.domain.application
 
+import com.dcd.server.core.domain.application.dto.request.GenerateSSLCertificateReqDto
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationListResDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationResDto
@@ -9,6 +10,7 @@ import com.dcd.server.core.domain.application.usecase.*
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
 import com.dcd.server.presentation.domain.application.data.request.AddApplicationEnvRequest
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
+import com.dcd.server.presentation.domain.application.data.request.GenerateSSLCertificateRequest
 import com.dcd.server.presentation.domain.application.data.request.UpdateApplicationRequest
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -178,6 +180,22 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             val result = applicationWebAdapter.getAvailableVersion(applicationType)
             then("result의 바디는 availableVersionResDto랑 같아야함") {
                 result.body?.version shouldBe availableVersionResDto.version
+            }
+            then("result는 200 상태코드를 가져야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
+
+    given("애플리케이션 id와 GenerateSSLCertificateRequest가 주어지고") {
+        val testId ="testId"
+        val request = GenerateSSLCertificateRequest("test.domain.com")
+
+        `when`("generateSSLCertificate 메서드를 실행할때") {
+            val result = applicationWebAdapter.generateSSLCertificate(testId, request)
+
+            then("GenerateSSLCertificateUseCase를 실행해야함") {
+                verify { generateSSLCertificateUseCase.execute(testId, any() as GenerateSSLCertificateReqDto) }
             }
             then("result는 200 상태코드를 가져야함") {
                 result.statusCode shouldBe HttpStatus.OK
