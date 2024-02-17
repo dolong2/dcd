@@ -26,7 +26,10 @@ class UpdateApplicationUseCase(
             application.copy(
                 name = updateApplicationReqDto.name,
                 description = updateApplicationReqDto.description,
-                version = updateApplicationReqDto.version
+                applicationType = updateApplicationReqDto.applicationType,
+                githubUrl = updateApplicationReqDto.githubUrl,
+                version = updateApplicationReqDto.version,
+                port = updateApplicationReqDto.port
             )
         commandApplicationPort.save(updatedApplication)
     }
