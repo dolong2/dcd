@@ -29,7 +29,10 @@ fun UpdateApplicationRequest.toDto(): UpdateApplicationReqDto =
     UpdateApplicationReqDto(
         name = this.name,
         description = this.description,
-        version = this.version
+        applicationType = this.applicationType,
+        githubUrl = this.githubUrl,
+        version = this.version,
+        port = this.port
     )
 
 fun GenerateSSLCertificateRequest.toDto(): GenerateSSLCertificateReqDto =
