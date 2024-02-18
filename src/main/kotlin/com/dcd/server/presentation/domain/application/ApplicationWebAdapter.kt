@@ -11,6 +11,7 @@ import com.dcd.server.presentation.domain.application.data.request.UpdateApplica
 import com.dcd.server.presentation.domain.application.data.response.ApplicationListResponse
 import com.dcd.server.presentation.domain.application.data.response.ApplicationResponse
 import com.dcd.server.presentation.domain.application.data.response.AvailableVersionResponse
+import com.dcd.server.presentation.domain.application.data.response.RunApplicationResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -37,9 +38,9 @@ class ApplicationWebAdapter(
             .run { ResponseEntity(HttpStatus.CREATED) }
 
     @PostMapping("/{id}/run")
-    fun runApplication(@PathVariable id: String): ResponseEntity<Void> =
+    fun runApplication(@PathVariable id: String): ResponseEntity<RunApplicationResponse> =
         runApplicationUseCase.execute(id)
-            .run { ResponseEntity.ok().build() }
+            .let { ResponseEntity.ok(it.toResponse()) }
 
     @GetMapping
     fun getAllApplication(@RequestParam workspaceId: String): ResponseEntity<ApplicationListResponse> =
