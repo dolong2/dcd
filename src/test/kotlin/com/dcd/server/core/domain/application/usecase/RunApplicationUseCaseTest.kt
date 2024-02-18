@@ -18,7 +18,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
 
-class ApplicationRunUseCaseTest : BehaviorSpec({
+class RunApplicationUseCaseTest : BehaviorSpec({
     val cloneApplicationByUrlService = mockk<CloneApplicationByUrlService>(relaxUnitFun = true)
     val modifyGradleService = mockk<ModifyGradleService>(relaxUnitFun = true)
     val createDockerFileService = mockk<CreateDockerFileService>(relaxUnitFun = true)
