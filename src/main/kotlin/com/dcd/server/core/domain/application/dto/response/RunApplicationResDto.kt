@@ -1,5 +1,5 @@
 package com.dcd.server.core.domain.application.dto.response
 
 data class RunApplicationResDto(
-    val port: Int
+    val externalPort: Int
 )
