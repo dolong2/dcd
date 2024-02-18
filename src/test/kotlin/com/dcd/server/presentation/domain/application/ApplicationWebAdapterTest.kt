@@ -5,6 +5,7 @@ import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDt
 import com.dcd.server.core.domain.application.dto.response.ApplicationListResDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationResDto
 import com.dcd.server.core.domain.application.dto.response.AvailableVersionResDto
+import com.dcd.server.core.domain.application.dto.response.RunApplicationResDto
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.usecase.*
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
@@ -12,6 +13,7 @@ import com.dcd.server.presentation.domain.application.data.request.AddApplicatio
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
 import com.dcd.server.presentation.domain.application.data.request.GenerateSSLCertificateRequest
 import com.dcd.server.presentation.domain.application.data.request.UpdateApplicationRequest
+import com.dcd.server.presentation.domain.application.data.response.RunApplicationResponse
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -56,10 +58,13 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     given("RunApplicationRequest가 주어지고") {
         val id = "testApplicationId"
         `when`("runApplication 메서드를 실행할때") {
-            every { springRunApplicationUseCase.execute(id) } returns Unit
+            every { springRunApplicationUseCase.execute(id) } returns RunApplicationResDto(externalPort = 8080)
             val result = applicationWebAdapter.runApplication(id)
             then("상태코드가 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
+            }
+            then("반환값은 RunApplicationResDto의 필드를 가져야함") {
+                result.body shouldBe RunApplicationResponse(8080)
             }
         }
     }
