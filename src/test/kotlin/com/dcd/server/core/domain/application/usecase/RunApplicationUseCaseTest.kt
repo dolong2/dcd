@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.domain.application.dto.response.RunApplicationResDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
@@ -11,12 +12,13 @@ import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
 
-class ApplicationRunUseCaseTest : BehaviorSpec({
+class RunApplicationUseCaseTest : BehaviorSpec({
     val cloneApplicationByUrlService = mockk<CloneApplicationByUrlService>(relaxUnitFun = true)
     val modifyGradleService = mockk<ModifyGradleService>(relaxUnitFun = true)
     val createDockerFileService = mockk<CreateDockerFileService>(relaxUnitFun = true)
@@ -58,7 +60,7 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
         )
         `when`("usecase를 실행할때") {
             every { queryApplicationPort.findById("testId") } returns application
-            runApplicationUseCase.execute("testId")
+            val result = runApplicationUseCase.execute("testId")
             then("애플리케이션 실행에 관한 service들이 실행되어야함") {
                 verify { cloneApplicationByUrlService.cloneByApplication(application) }
                 verify { validateWorkspaceOwnerService.validateOwner(workspace) }
@@ -66,6 +68,9 @@ class ApplicationRunUseCaseTest : BehaviorSpec({
                 verify { createDockerFileService.createFileToApplication(application, application.version, 0) }
                 verify { buildDockerImageService.buildImageByApplication(application) }
                 verify { dockerRunService.runApplication(application, getExternalPortService.getExternalPort(application.port)) }
+            }
+            then("반환값은 이용가능한 외부 포트를 담아야함") {
+                result shouldBe RunApplicationResDto(getExternalPortService.getExternalPort(application.port))
             }
         }
 

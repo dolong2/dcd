@@ -1,13 +1,7 @@
 package com.dcd.server.presentation.domain.application.data.exetension
 
-import com.dcd.server.core.domain.application.dto.response.ApplicationListResDto
-import com.dcd.server.core.domain.application.dto.response.ApplicationProfileResDto
-import com.dcd.server.core.domain.application.dto.response.ApplicationResDto
-import com.dcd.server.core.domain.application.dto.response.AvailableVersionResDto
-import com.dcd.server.presentation.domain.application.data.response.ApplicationListResponse
-import com.dcd.server.presentation.domain.application.data.response.ApplicationProfileResponse
-import com.dcd.server.presentation.domain.application.data.response.ApplicationResponse
-import com.dcd.server.presentation.domain.application.data.response.AvailableVersionResponse
+import com.dcd.server.core.domain.application.dto.response.*
+import com.dcd.server.presentation.domain.application.data.response.*
 
 fun ApplicationResDto.toResponse(): ApplicationResponse =
     ApplicationResponse(
@@ -34,4 +28,9 @@ fun ApplicationProfileResDto.toResponse(): ApplicationProfileResponse =
 fun AvailableVersionResDto.toResponse(): AvailableVersionResponse =
     AvailableVersionResponse(
         version = this.version
+    )
+
+fun RunApplicationResDto.toResponse(): RunApplicationResponse =
+    RunApplicationResponse(
+        externalPort = this.externalPort
     )
