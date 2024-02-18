@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.ReadOnlyUseCase
+import com.dcd.server.core.domain.application.dto.response.RunApplicationResDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
@@ -18,7 +19,7 @@ class RunApplicationUseCase(
     private val validateWorkspaceOwnerService: ValidateWorkspaceOwnerService,
     private val getExternalPortService: GetExternalPortService
 ) {
-    fun execute(id: String) {
+    fun execute(id: String): RunApplicationResDto {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
 
@@ -43,5 +44,7 @@ class RunApplicationUseCase(
                 dockerRunService.runApplication(application, version, externalPort)
             }
         }
+
+        return RunApplicationResDto(externalPort = externalPort)
     }
 }
