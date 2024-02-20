@@ -57,6 +57,15 @@ class DockerRunServiceImpl(
                 )
             }
 
+            ApplicationType.MARIA_DB -> {
+                commandPort.executeShellCommand(
+                    "docker run --network ${application.workspace.title.replace(' ', '_')} " +
+                    "-e MYSQL_ROOT_PASSWORD=${application.env["rootPassword"] ?: throw ApplicationEnvNotFoundException()} " +
+                    "--name ${application.name.lowercase()} -d " +
+                    "-p ${externalPort}:${application.port} mariadb:$version"
+                )
+            }
+
             ApplicationType.REDIS -> {
                 commandPort.executeShellCommand(
                     "docker run --network ${application.workspace.title.replace(' ', '_')} " +
