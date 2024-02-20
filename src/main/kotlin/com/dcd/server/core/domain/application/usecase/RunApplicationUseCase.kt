@@ -36,11 +36,7 @@ class RunApplicationUseCase(
                 dockerRunService.runApplication(application, externalPort)
             }
 
-            ApplicationType.MYSQL -> {
-                dockerRunService.runApplication(application, version, externalPort)
-            }
-
-            ApplicationType.REDIS -> {
+            else -> {
                 dockerRunService.runApplication(application, version, externalPort)
             }
         }
