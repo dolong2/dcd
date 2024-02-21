@@ -67,7 +67,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
             null,
             ApplicationType.MYSQL,
             "testUrl",
-            mapOf( Pair("rootPassword", "testMysqlPassword") ),
+            mapOf( Pair("rootPassword", "testMysqlPassword"), Pair("database", "test") ),
             "17",
             workspace,
             port = 3306
@@ -80,7 +80,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
             then("commandPort가 실행되어야함") {
                 val externalPort = application.port
                 verify {
-                    commandPort.executeShellCommand("docker run --network ${application.workspace.title.replace(' ', '_')} -e MYSQL_ROOT_PASSWORD=${application.env["rootPassword"] ?: throw ApplicationEnvNotFoundException()} --name ${application.name.lowercase()} -d -p ${externalPort}:${application.port} mysql:latest")
+                    commandPort.executeShellCommand("docker run --network ${application.workspace.title.replace(' ', '_')} -e MYSQL_ROOT_PASSWORD=${application.env["rootPassword"]} -e MYSQL_DATABASE=${application.env["database"]} --name ${application.name.lowercase()} -d -p ${externalPort}:${application.port} mysql:latest")
                 }
             }
         }
