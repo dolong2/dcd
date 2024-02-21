@@ -52,7 +52,9 @@ class DockerRunServiceImpl(
                 commandPort.executeShellCommand(
                     "docker run --network ${application.workspace.title.replace(' ', '_')} " +
                     "-e MYSQL_ROOT_PASSWORD=${application.env["rootPassword"] ?: throw ApplicationEnvNotFoundException()} " +
-                    "-e MYSQL_DATABASE=${application.env["database"] ?: throw ApplicationEnvNotFoundException()} " +
+                    if (application.env.containsKey("database"))
+                        "-e MYSQL_DATABASE=${application.env["database"]} "
+                    else "" +
                     "--name ${application.name.lowercase()} -d " +
                     "-p ${externalPort}:${application.port} mysql:$version"
                 )
@@ -62,7 +64,9 @@ class DockerRunServiceImpl(
                 commandPort.executeShellCommand(
                     "docker run --network ${application.workspace.title.replace(' ', '_')} " +
                     "-e MYSQL_ROOT_PASSWORD=${application.env["rootPassword"] ?: throw ApplicationEnvNotFoundException()} " +
-                    "-e MYSQL_DATABASE=${application.env["database"] ?: throw ApplicationEnvNotFoundException()} " +
+                    if (application.env.containsKey("database"))
+                        "-e MYSQL_DATABASE=${application.env["database"]} "
+                    else "" +
                     "--name ${application.name.lowercase()} -d " +
                     "-p ${externalPort}:${application.port} mariadb:$version"
                 )
