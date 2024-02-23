@@ -28,5 +28,6 @@ enum class ErrorCode(
     APPLICATION_ENV_NOT_FOUND("해당 환경변수를 찾을 수 없음", 404),
     WORKSPACE_NOT_FOUND("해당 워크스페이스를 찾을 수 없음", 404),
 
+    CONTAINER_NOT_RUN("해당 애플리케이션을 실행할 수 없음", 500),
     INTERNAL_ERROR("서버 내부 에러", 500)
 }
