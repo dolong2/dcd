@@ -16,29 +16,14 @@ class ModifyGradleServiceImpl(
 ) : ModifyGradleService{
     override fun modifyGradleByApplicationId(id: String) {
         val application = queryApplicationPort.findById(id) ?: throw ApplicationNotFoundException()
-        val name = application.name
-        val fileName =
-        if (File("./$name/build.gradle.kts").exists()) {
-            "build.gradle.kts"
-        } else {
-            "build.gradle"
-        }
-        val buildGradle =
-        if (fileName == "build.gradle.kts") {
-            FileContent.getBuildGradleKtsFileContent(name)
-        } else {
-            FileContent.getBuildGradleFileContent(name)
-        }
-        FileWriter("./$name/$fileName", true).use { fileWriter ->
-            BufferedWriter(fileWriter).use { bufferedWriter ->
-                bufferedWriter.write(buildGradle)
-                bufferedWriter.newLine()
-                bufferedWriter.close()
-            }
-        }
+        modifyGradle(application)
     }
 
     override fun modifyGradleByApplication(application: Application) {
+        modifyGradle(application)
+    }
+
+    private fun modifyGradle(application: Application) {
         val name = application.name
         val fileName =
             if (File("./$name/build.gradle.kts").exists()) {
@@ -47,11 +32,11 @@ class ModifyGradleServiceImpl(
                 "build.gradle"
             }
         val buildGradle =
-        if (fileName == "build.gradle.kts") {
-            FileContent.getBuildGradleKtsFileContent(name)
-        } else {
-            FileContent.getBuildGradleFileContent(name)
-        }
+            if (fileName == "build.gradle.kts") {
+                FileContent.getBuildGradleKtsFileContent(name)
+            } else {
+                FileContent.getBuildGradleFileContent(name)
+            }
         FileWriter("./$name/$fileName", true).use { fileWriter ->
             BufferedWriter(fileWriter).use { bufferedWriter ->
                 bufferedWriter.write(buildGradle)
