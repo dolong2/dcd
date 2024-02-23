@@ -7,7 +7,7 @@ import java.io.InputStreamReader
 
 @Component
 class CommandAdapter : CommandPort {
-    override fun executeShellCommand(cmd: String) {
+    override fun executeShellCommand(cmd: String): Int {
         val cmd = arrayOf("/bin/sh", "-c", cmd)
         val p = Runtime.getRuntime().exec(cmd)
         val br = BufferedReader(InputStreamReader(p.inputStream))
@@ -15,8 +15,9 @@ class CommandAdapter : CommandPort {
             println("$it")
         }
         p.waitFor()
-        println("p.exitValue() = ${p.exitValue()}")
+        val exitValue = p.exitValue()
         p.destroy()
+        return exitValue
     }
 
 }
