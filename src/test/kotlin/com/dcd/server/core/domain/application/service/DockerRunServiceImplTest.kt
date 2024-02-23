@@ -17,7 +17,7 @@ import java.lang.StringBuilder
 import java.util.*
 
 class DockerRunServiceImplTest : BehaviorSpec({
-    val commandPort = mockk<CommandPort>(relaxUnitFun = true)
+    val commandPort = mockk<CommandPort>(relaxed = true)
     val existsPortService = mockk<ExistsPortService>()
     val queryApplicationPort = mockk<QueryApplicationPort>()
     val service = DockerRunServiceImpl(queryApplicationPort, existsPortService, commandPort)

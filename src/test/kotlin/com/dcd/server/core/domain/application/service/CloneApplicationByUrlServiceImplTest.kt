@@ -15,7 +15,7 @@ import io.mockk.verify
 import java.util.*
 
 class CloneApplicationByUrlServiceImplTest : BehaviorSpec({
-    val commandPort = mockk<CommandPort>(relaxUnitFun = true)
+    val commandPort = mockk<CommandPort>(relaxed = true)
     val queryApplicationPort = mockk<QueryApplicationPort>()
     val service = CloneApplicationByUrlServiceImpl(queryApplicationPort, commandPort)
 

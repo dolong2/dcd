@@ -13,7 +13,7 @@ import io.mockk.verify
 import java.util.*
 
 class DeleteApplicationDirectoryServiceImplTest : BehaviorSpec({
-    val commandPort = mockk<CommandPort>(relaxUnitFun = true)
+    val commandPort = mockk<CommandPort>(relaxed = true)
     val service = DeleteApplicationDirectoryServiceImpl(commandPort)
 
     val user =
