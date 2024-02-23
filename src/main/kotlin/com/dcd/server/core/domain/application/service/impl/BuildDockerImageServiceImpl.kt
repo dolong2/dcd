@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.application.service.impl
 
 import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
+import com.dcd.server.core.domain.application.exception.ImageNotBuiltException
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.BuildDockerImageService
@@ -27,7 +28,7 @@ class BuildDockerImageServiceImpl(
                 commandPort.executeShellCommand("cd ./$name && docker build -t ${name.lowercase()}:latest .")
             }
         }
-        if (exitValue != 0) throw RuntimeException()
+        if (exitValue != 0) throw ImageNotBuiltException()
     }
 
     override fun buildImageByApplication(application: Application) {
@@ -41,7 +42,7 @@ class BuildDockerImageServiceImpl(
                 commandPort.executeShellCommand("cd ./$name && docker build -t ${name.lowercase()}:latest .")
             }
         }
-        if (exitValue != 0) throw RuntimeException()
+        if (exitValue != 0) throw ImageNotBuiltException()
     }
 
 }
