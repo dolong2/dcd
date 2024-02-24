@@ -1,5 +1,6 @@
 package com.dcd.server.persistence.application.entity
 
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.persistence.user.entity.UserJpaEntity
 import com.dcd.server.persistence.workspace.entity.WorkspaceJpaEntity
@@ -26,4 +27,6 @@ class ApplicationJpaEntity(
     val workspace: WorkspaceJpaEntity,
     val port: Int,
     val version: String,
+    @Enumerated(EnumType.STRING)
+    val status: ApplicationStatus
 )

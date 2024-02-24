@@ -17,7 +17,8 @@ fun Application.toEntity(): ApplicationJpaEntity =
         env = this.env,
         workspace = this.workspace.toEntity(),
         port = this.port,
-        version = this.version
+        version = this.version,
+        status = this.status
     )
 
 fun ApplicationJpaEntity.toDomain(): Application =
@@ -30,5 +31,6 @@ fun ApplicationJpaEntity.toDomain(): Application =
         env = this.env,
         workspace = this.workspace.toDomain(),
         port = this.port,
-        version = this.version
+        version = this.version,
+        status = this.status
     )
