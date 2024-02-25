@@ -10,7 +10,10 @@ fun ApplicationResDto.toResponse(): ApplicationResponse =
         description = this.description,
         githubUrl = this.githubUrl,
         applicationType = this.applicationType,
-        env = this.env
+        env = this.env,
+        port = this.port,
+        version = this.version,
+        status = this.status
     )
 
 fun ApplicationListResDto.toResponse(): ApplicationListResponse =

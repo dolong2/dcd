@@ -28,7 +28,9 @@ fun Application.toDto(): ApplicationResDto =
         githubUrl = this.githubUrl,
         applicationType = this.applicationType,
         env = this.env,
-        port = this.port
+        port = this.port,
+        version = this.version,
+        status = this.status
     )
 
 fun Application.toProfileDto(): ApplicationProfileResDto =
