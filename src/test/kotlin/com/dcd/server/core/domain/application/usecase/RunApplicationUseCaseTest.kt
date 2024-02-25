@@ -28,6 +28,7 @@ class RunApplicationUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>(relaxUnitFun = true)
     val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
     val getExternalPortService = mockk<GetExternalPortService>(relaxed = true)
+    val changeApplicationStatusService = mockk<ChangeApplicationStatusService>(relaxUnitFun = true)
     val runApplicationUseCase = RunApplicationUseCase(
         cloneApplicationByUrlService,
         modifyGradleService,
@@ -36,7 +37,8 @@ class RunApplicationUseCaseTest : BehaviorSpec({
         dockerRunService,
         queryApplicationPort,
         validateWorkspaceOwnerService,
-        getExternalPortService
+        getExternalPortService,
+        changeApplicationStatusService
     )
 
     val user =
@@ -70,6 +72,7 @@ class RunApplicationUseCaseTest : BehaviorSpec({
                 verify { createDockerFileService.createFileToApplication(application, application.version, 0) }
                 verify { buildDockerImageService.buildImageByApplication(application) }
                 verify { dockerRunService.runApplication(application, getExternalPortService.getExternalPort(application.port)) }
+                verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING) }
             }
             then("반환값은 이용가능한 외부 포트를 담아야함") {
                 result shouldBe RunApplicationResDto(getExternalPortService.getExternalPort(application.port))
@@ -112,6 +115,7 @@ class RunApplicationUseCaseTest : BehaviorSpec({
                     verify { modifyGradleService.modifyGradleByApplication(application) }
                     verify { createDockerFileService.createFileToApplication(application, application.version, 0) }
                     verify { buildDockerImageService.buildImageByApplication(application) }
+                    verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING) }
                 }
             }
         }
@@ -143,6 +147,7 @@ class RunApplicationUseCaseTest : BehaviorSpec({
                     verify { modifyGradleService.modifyGradleByApplication(application) }
                     verify { createDockerFileService.createFileToApplication(application, application.version, 0) }
                     verify { buildDockerImageService.buildImageByApplication(application) }
+                    verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING) }
                 }
             }
         }

@@ -4,6 +4,7 @@ import com.dcd.server.core.domain.application.exception.ApplicationNotFoundExcep
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
+import com.dcd.server.core.domain.application.service.ChangeApplicationStatusService
 import com.dcd.server.core.domain.application.service.DeleteApplicationDirectoryService
 import com.dcd.server.core.domain.application.service.DeleteContainerService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -23,8 +24,9 @@ class StopApplicationUseCaseTest : BehaviorSpec({
     val deleteContainerService = mockk<DeleteContainerService>()
     val deleteApplicationDirectoryService = mockk<DeleteApplicationDirectoryService>()
     val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
+    val changeApplicationStatusService = mockk<ChangeApplicationStatusService>(relaxUnitFun = true)
     val stopApplicationUseCase =
-        StopApplicationUseCase(queryApplicationPort, deleteContainerService, deleteApplicationDirectoryService, validateWorkspaceOwnerService)
+        StopApplicationUseCase(queryApplicationPort, deleteContainerService, deleteApplicationDirectoryService, validateWorkspaceOwnerService, changeApplicationStatusService)
 
     given("애플리케이션 Id가 주어지고") {
         val applicationId = "testApplicationId"
