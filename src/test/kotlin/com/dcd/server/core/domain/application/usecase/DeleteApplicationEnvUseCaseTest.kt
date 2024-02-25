@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.application.usecase
 import com.dcd.server.core.domain.application.exception.ApplicationEnvNotFoundException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -37,7 +38,8 @@ class DeleteApplicationEnvUseCaseTest : BehaviorSpec({
             githubUrl = "testUrl",
             version = "17",
             workspace = Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user),
-            port = 8080
+            port = 8080,
+            status = ApplicationStatus.STOPPED
         )
         `when`("usecase를 실행할때") {
             every { queryApplicationPort.findById(applicationId) } returns application

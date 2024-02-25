@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.user.usecase
 
 import com.dcd.server.core.domain.application.dto.extenstion.toProfileDto
 import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.auth.model.Role
@@ -44,7 +45,8 @@ class GetUserProfileUseCaseTest : BehaviorSpec({
             githubUrl = "testUrl",
             version = "17",
             workspace = workspace,
-            port = 8080
+            port = 8080,
+            status = ApplicationStatus.STOPPED
         )
 
         `when`("usecase를 실행할때") {

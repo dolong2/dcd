@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.application.service
 
 import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.impl.DeleteContainerServiceImpl
 import com.dcd.server.core.domain.auth.model.Role
@@ -25,7 +26,7 @@ class DeleteContainerServiceImplTest : BehaviorSpec({
             description = "test workspace description",
             owner = user
         )
-        val application = Application(UUID.randomUUID().toString(), "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080)
+        val application = Application(UUID.randomUUID().toString(), "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080, ApplicationStatus.STOPPED)
 
         `when`("buildImageByApplication 메서드를 실행할때") {
             service.deleteContainer(application)

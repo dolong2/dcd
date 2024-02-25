@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.application.usecase
 import com.dcd.server.core.domain.application.dto.response.RunApplicationResDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -56,7 +57,8 @@ class RunApplicationUseCaseTest : BehaviorSpec({
             githubUrl = "testUrl",
             workspace = workspace,
             port = 8080,
-            version = "17"
+            version = "17",
+            status = ApplicationStatus.STOPPED
         )
         `when`("usecase를 실행할때") {
             every { queryApplicationPort.findById("testId") } returns application
@@ -94,7 +96,8 @@ class RunApplicationUseCaseTest : BehaviorSpec({
             githubUrl = "testUrl",
             workspace = workspace,
             port = 3306,
-            version = "8"
+            version = "8",
+            status = ApplicationStatus.STOPPED
         )
 
         `when`("usecase를 실행하면") {
@@ -124,7 +127,8 @@ class RunApplicationUseCaseTest : BehaviorSpec({
             githubUrl = "testUrl",
             workspace = workspace,
             port = 6379,
-            version = "6"
+            version = "6",
+            status = ApplicationStatus.STOPPED
         )
 
         `when`("usecase를 실행하면") {

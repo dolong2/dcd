@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.application.dto.response.ApplicationListResDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationResDto
 import com.dcd.server.core.domain.application.dto.response.AvailableVersionResDto
 import com.dcd.server.core.domain.application.dto.response.RunApplicationResDto
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.usecase.*
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
@@ -77,7 +78,9 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             applicationType = ApplicationType.SPRING_BOOT,
             env = mapOf(),
             githubUrl = "testUrl",
-            port = 8080
+            port = 8080,
+            version = "latest",
+            status = ApplicationStatus.STOPPED
         )
         val list = listOf(applicationResponse)
         val responseDto = ApplicationListResDto(list)
@@ -101,7 +104,9 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             applicationType = ApplicationType.SPRING_BOOT,
             env = mapOf(),
             githubUrl = "testUrl",
-            port = 8080
+            port = 8080,
+            version = "latest",
+            status = ApplicationStatus.STOPPED
         )
         `when`("getOneApplication 메서드를 실행할때") {
             every { getOneApplicationUseCase.execute(testId) } returns applicationResponse
