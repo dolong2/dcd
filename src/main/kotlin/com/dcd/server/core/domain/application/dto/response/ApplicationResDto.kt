@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.dto.response
 
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 
 data class ApplicationResDto(
@@ -9,5 +10,7 @@ data class ApplicationResDto(
     val applicationType: ApplicationType,
     val githubUrl: String?,
     val env: Map<String, String>,
-    val port: Int
+    val port: Int,
+    val version: String,
+    val status: ApplicationStatus
 )

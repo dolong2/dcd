@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.application.usecase
 import com.dcd.server.core.domain.application.dto.extenstion.toDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationListResDto
 import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.auth.model.Role
@@ -42,7 +43,8 @@ class GetAllApplicationUseCaseTest : BehaviorSpec({
             githubUrl = "testUrl",
             version = "17",
             workspace = workspace,
-            port = 8080
+            port = 8080,
+            status = ApplicationStatus.STOPPED
         )
         val applicationList = listOf(application)
         `when`("usecase를 실행할때") {

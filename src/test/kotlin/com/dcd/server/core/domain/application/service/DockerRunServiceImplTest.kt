@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.application.service
 
 import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.impl.DockerRunServiceImpl
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -31,7 +32,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
         val appId = UUID.randomUUID().toString()
 
         `when`("executeShellCommand를 실행할때") {
-            val application = Application(appId, "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080)
+            val application = Application(appId, "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080, ApplicationStatus.STOPPED)
             every { queryApplicationPort.findById(appId) } returns application
 
             service.runApplication(appId, application.port)
@@ -43,7 +44,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
     }
 
     given("애플리케이션이 주이지고") {
-        val application = Application(UUID.randomUUID().toString(), "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080)
+        val application = Application(UUID.randomUUID().toString(), "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080, ApplicationStatus.STOPPED)
 
         `when`("executeShellCommand 메서드를 실행할때") {
             service.runApplication(application, application.port)
@@ -65,7 +66,8 @@ class DockerRunServiceImplTest : BehaviorSpec({
             mapOf( Pair("rootPassword", "testMysqlPassword"), Pair("database", "test") ),
             "17",
             workspace,
-            port = 3306
+            port = 3306,
+            ApplicationStatus.STOPPED
         )
 
         `when`("executeShellCommand 메서드를 실행할때") {
@@ -90,7 +92,8 @@ class DockerRunServiceImplTest : BehaviorSpec({
             mapOf( Pair("rootPassword", "testMariaPassword"), Pair("database", "test") ),
             "17",
             workspace,
-            port = 3306
+            port = 3306,
+            ApplicationStatus.STOPPED
         )
 
         `when`("executeShellCommand 메서드를 실행할때") {
@@ -115,7 +118,8 @@ class DockerRunServiceImplTest : BehaviorSpec({
             mapOf(),
             "17",
             workspace,
-            port = 6379
+            port = 6379,
+            ApplicationStatus.STOPPED
         )
 
         `when`("executeShellCommand 메서드를 실행할때") {

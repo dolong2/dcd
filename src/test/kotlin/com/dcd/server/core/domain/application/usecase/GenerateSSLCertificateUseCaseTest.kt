@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.application.usecase
 import com.dcd.server.core.domain.application.dto.request.GenerateSSLCertificateReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.GenerateSSLCertificateService
 import com.dcd.server.core.domain.application.service.GetExternalPortService
@@ -56,7 +57,8 @@ class GenerateSSLCertificateUseCaseTest : BehaviorSpec({
                 githubUrl = "testUrl",
                 workspace = workspace,
                 port = 8080,
-                version = "17"
+                version = "17",
+                status = ApplicationStatus.STOPPED
             )
             every { queryApplicationPort.findById(applicationId) } returns application
             every { getCurrentUserService.getCurrentUser() } returns user
@@ -105,7 +107,8 @@ class GenerateSSLCertificateUseCaseTest : BehaviorSpec({
                 githubUrl = "testUrl",
                 workspace = workspace,
                 port = 8080,
-                version = "17"
+                version = "17",
+                status = ApplicationStatus.STOPPED
             )
             every { queryApplicationPort.findById(applicationId) } returns application
             every { getCurrentUserService.getCurrentUser() } returns user.copy(id = "another")

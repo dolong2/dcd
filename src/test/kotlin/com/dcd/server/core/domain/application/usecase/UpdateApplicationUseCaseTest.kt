@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.application.usecase
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -47,7 +48,8 @@ class UpdateApplicationUseCaseTest : BehaviorSpec({
             githubUrl = "testUrl",
             version = "17",
             workspace = workspace,
-            port = 8080
+            port = 8080,
+            status = ApplicationStatus.STOPPED
         )
 
         `when`("usecase를 실행할때") {

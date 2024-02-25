@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.application.usecase
 import com.dcd.server.core.domain.application.dto.response.RunApplicationResDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -27,6 +28,7 @@ class RunApplicationUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>(relaxUnitFun = true)
     val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
     val getExternalPortService = mockk<GetExternalPortService>(relaxed = true)
+    val changeApplicationStatusService = mockk<ChangeApplicationStatusService>(relaxUnitFun = true)
     val runApplicationUseCase = RunApplicationUseCase(
         cloneApplicationByUrlService,
         modifyGradleService,
@@ -35,7 +37,8 @@ class RunApplicationUseCaseTest : BehaviorSpec({
         dockerRunService,
         queryApplicationPort,
         validateWorkspaceOwnerService,
-        getExternalPortService
+        getExternalPortService,
+        changeApplicationStatusService
     )
 
     val user =
@@ -56,7 +59,8 @@ class RunApplicationUseCaseTest : BehaviorSpec({
             githubUrl = "testUrl",
             workspace = workspace,
             port = 8080,
-            version = "17"
+            version = "17",
+            status = ApplicationStatus.STOPPED
         )
         `when`("usecase를 실행할때") {
             every { queryApplicationPort.findById("testId") } returns application
@@ -68,6 +72,7 @@ class RunApplicationUseCaseTest : BehaviorSpec({
                 verify { createDockerFileService.createFileToApplication(application, application.version, 0) }
                 verify { buildDockerImageService.buildImageByApplication(application) }
                 verify { dockerRunService.runApplication(application, getExternalPortService.getExternalPort(application.port)) }
+                verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING) }
             }
             then("반환값은 이용가능한 외부 포트를 담아야함") {
                 result shouldBe RunApplicationResDto(getExternalPortService.getExternalPort(application.port))
@@ -94,7 +99,8 @@ class RunApplicationUseCaseTest : BehaviorSpec({
             githubUrl = "testUrl",
             workspace = workspace,
             port = 3306,
-            version = "8"
+            version = "8",
+            status = ApplicationStatus.STOPPED
         )
 
         `when`("usecase를 실행하면") {
@@ -109,6 +115,7 @@ class RunApplicationUseCaseTest : BehaviorSpec({
                     verify { modifyGradleService.modifyGradleByApplication(application) }
                     verify { createDockerFileService.createFileToApplication(application, application.version, 0) }
                     verify { buildDockerImageService.buildImageByApplication(application) }
+                    verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING) }
                 }
             }
         }
@@ -124,7 +131,8 @@ class RunApplicationUseCaseTest : BehaviorSpec({
             githubUrl = "testUrl",
             workspace = workspace,
             port = 6379,
-            version = "6"
+            version = "6",
+            status = ApplicationStatus.STOPPED
         )
 
         `when`("usecase를 실행하면") {
@@ -139,6 +147,7 @@ class RunApplicationUseCaseTest : BehaviorSpec({
                     verify { modifyGradleService.modifyGradleByApplication(application) }
                     verify { createDockerFileService.createFileToApplication(application, application.version, 0) }
                     verify { buildDockerImageService.buildImageByApplication(application) }
+                    verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING) }
                 }
             }
         }

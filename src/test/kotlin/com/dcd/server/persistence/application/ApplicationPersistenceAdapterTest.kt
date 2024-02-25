@@ -1,6 +1,7 @@
 package com.dcd.server.persistence.application
 
 import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.User
@@ -40,7 +41,8 @@ class ApplicationPersistenceAdapterTest : BehaviorSpec({
             env = mapOf(),
             version = "17",
             workspace = workspace,
-            port = 8080
+            port = 8080,
+            status = ApplicationStatus.STOPPED
         )
         val id = application.id
 

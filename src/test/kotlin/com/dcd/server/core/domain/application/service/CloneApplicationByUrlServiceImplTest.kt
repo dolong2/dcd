@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.application.service
 
 import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.impl.CloneApplicationByUrlServiceImpl
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -31,7 +32,7 @@ class CloneApplicationByUrlServiceImplTest : BehaviorSpec({
                 description = "test workspace description",
                 owner = user
             )
-            val application = Application(appId, "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080)
+            val application = Application(appId, "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080, ApplicationStatus.STOPPED)
             every { queryApplicationPort.findById(appId) } returns application
 
             service.cloneById(appId)
@@ -48,7 +49,7 @@ class CloneApplicationByUrlServiceImplTest : BehaviorSpec({
             description = "test workspace description",
             owner = user
         )
-        val application = Application(UUID.randomUUID().toString(), "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080)
+        val application = Application(UUID.randomUUID().toString(), "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080, ApplicationStatus.STOPPED)
 
         `when`("cloneByApplication 메서드를 실행할때") {
             service.cloneByApplication(application)

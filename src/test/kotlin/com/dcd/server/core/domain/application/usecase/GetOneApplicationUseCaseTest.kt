@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.application.usecase
 import com.dcd.server.core.domain.application.dto.extenstion.toDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.auth.model.Role
@@ -34,7 +35,8 @@ class GetOneApplicationUseCaseTest : BehaviorSpec({
             githubUrl = "testUrl",
             version = "17",
             workspace = Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user),
-            port = 8080
+            port = 8080,
+            status = ApplicationStatus.STOPPED
         )
         `when`("해당 애플리케이션이 있을때") {
             every { queryApplicationPort.findById(application.id) } returns application
