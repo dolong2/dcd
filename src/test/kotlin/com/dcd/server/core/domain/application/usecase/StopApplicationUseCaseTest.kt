@@ -42,7 +42,7 @@ class StopApplicationUseCaseTest : BehaviorSpec({
             version = "17",
             workspace = Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user),
             port = 8080,
-            status = ApplicationStatus.STOPPED
+            status = ApplicationStatus.RUNNING
         )
         `when`("유스케이스가 오류없이 동작할때") {
             every { queryApplicationPort.findById(applicationId) } returns application
