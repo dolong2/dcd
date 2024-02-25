@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.ReadOnlyUseCase
 import com.dcd.server.core.domain.application.dto.response.RunApplicationResDto
+import com.dcd.server.core.domain.application.exception.AlreadyRunningException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
@@ -24,6 +25,9 @@ class RunApplicationUseCase(
     fun execute(id: String): RunApplicationResDto {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
+
+        if (application.status == ApplicationStatus.RUNNING)
+            throw AlreadyRunningException()
 
         validateWorkspaceOwnerService.validateOwner(application.workspace)
 

@@ -10,6 +10,8 @@ enum class ErrorCode(
     ALREADY_USER_EXIST("이미 해당 유저가 존재함", 400),
     APPLICATION_OPTION_NOT_VALID("애플리케이션 옵션이 유효하지 않음", 400),
     NOT_SUPPORTED_APPLICATION_TYPE("지원되는 애플리케이션 타입이 아님", 400),
+    APPLICATION_ALREADY_RUNNING("해당 애플리케이션은 이미 실행중임", 400),
+    APPLICATION_ALREADY_STOPPED("해당 애플리케이션은 이미 정지됨", 400),
 
     UNAUTHORIZED("권한이 없음", 401),
     EXPIRED_TOKEN("토큰이 만료됨", 401),

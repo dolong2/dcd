@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.ReadOnlyUseCase
+import com.dcd.server.core.domain.application.exception.AlreadyStoppedException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.ChangeApplicationStatusService
@@ -21,6 +22,10 @@ class StopApplicationUseCase(
     fun execute(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
+
+        if (application.status == ApplicationStatus.STOPPED)
+            throw AlreadyStoppedException()
+
         validateWorkspaceOwnerService.validateOwner(application.workspace)
         deleteContainerService.deleteContainer(application)
         deleteApplicationDirectoryService.deleteApplicationDirectory(application)
