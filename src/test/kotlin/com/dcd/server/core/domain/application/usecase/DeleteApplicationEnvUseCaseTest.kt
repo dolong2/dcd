@@ -16,6 +16,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import util.application.ApplicationGenerator
 import java.util.*
 
 class DeleteApplicationEnvUseCaseTest : BehaviorSpec({
@@ -27,20 +28,7 @@ class DeleteApplicationEnvUseCaseTest : BehaviorSpec({
     given("애플리케이션 Id와 삭제할 key가 주어지고") {
         val applicationId = "testId"
         val key = "testKey"
-        val user =
-            User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-        val application = Application(
-            id = applicationId,
-            name = "test",
-            description = "test",
-            applicationType = ApplicationType.SPRING_BOOT,
-            env = mapOf(Pair(key, "testValue")),
-            githubUrl = "testUrl",
-            version = "17",
-            workspace = Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user),
-            port = 8080,
-            status = ApplicationStatus.STOPPED
-        )
+        val application = ApplicationGenerator.generateApplication(env = mapOf(Pair("testKey", "testValue")))
         `when`("usecase를 실행할때") {
             every { queryApplicationPort.findById(applicationId) } returns application
             every { commandApplicationPort.save(any()) } answers { callOriginal() }

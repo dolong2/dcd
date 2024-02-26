@@ -16,6 +16,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import util.application.ApplicationGenerator
 import java.util.*
 
 class AddApplicationEnvUseCaseTest : BehaviorSpec({
@@ -28,26 +29,7 @@ class AddApplicationEnvUseCaseTest : BehaviorSpec({
         val request = AddApplicationEnvReqDto(
             envList = mapOf(Pair("testA", "testB"))
         )
-        val user =
-            User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-        val workspace = Workspace(
-            UUID.randomUUID().toString(),
-            title = "test workspace",
-            description = "test workspace description",
-            owner = user
-        )
-        val application = Application(
-            id = "testId",
-            name = "test",
-            description = "test",
-            applicationType = ApplicationType.SPRING_BOOT,
-            env = mapOf(),
-            githubUrl = "testUrl",
-            version = "17",
-            workspace = workspace,
-            port = 8080,
-            status = ApplicationStatus.STOPPED
-        )
+        val application = ApplicationGenerator.generateApplication()
         `when`("usecase를 실행할때") {
             every { queryApplicationPort.findById(application.id) } returns application
             every { commandApplicationPort.save(any()) } answers { callOriginal() }

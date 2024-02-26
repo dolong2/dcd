@@ -6,13 +6,11 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.impl.DockerRunServiceImpl
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
-import com.dcd.server.core.domain.auth.model.Role
-import com.dcd.server.core.domain.user.model.User
-import com.dcd.server.core.domain.workspace.model.Workspace
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import util.application.ApplicationGenerator
 import java.util.*
 
 class DockerRunServiceImplTest : BehaviorSpec({
@@ -20,19 +18,11 @@ class DockerRunServiceImplTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
     val service = DockerRunServiceImpl(queryApplicationPort, commandPort)
 
-    val user =
-        User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-    val workspace = Workspace(
-        UUID.randomUUID().toString(),
-        title = "test workspace",
-        description = "test workspace description",
-        owner = user
-    )
     given("애플리케이션id가 주어지고") {
         val appId = UUID.randomUUID().toString()
 
         `when`("executeShellCommand를 실행할때") {
-            val application = Application(appId, "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080, ApplicationStatus.STOPPED)
+            val application = ApplicationGenerator.generateApplication()
             every { queryApplicationPort.findById(appId) } returns application
 
             service.runApplication(appId, application.port)
@@ -44,7 +34,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
     }
 
     given("애플리케이션이 주이지고") {
-        val application = Application(UUID.randomUUID().toString(), "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080, ApplicationStatus.STOPPED)
+        val application = ApplicationGenerator.generateApplication()
 
         `when`("executeShellCommand 메서드를 실행할때") {
             service.runApplication(application, application.port)
@@ -57,18 +47,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
     }
 
     given("mysql 애플리케이션이 주어지고") {
-        val application = Application(
-            UUID.randomUUID().toString(),
-            "mysqlTest",
-            null,
-            ApplicationType.MYSQL,
-            "testUrl",
-            mapOf( Pair("rootPassword", "testMysqlPassword"), Pair("database", "test") ),
-            "17",
-            workspace,
-            port = 3306,
-            ApplicationStatus.STOPPED
-        )
+        val application = ApplicationGenerator.generateApplication(applicationType = ApplicationType.MYSQL, env = mapOf(Pair("rootPassword", "test"), Pair("database", "test")))
 
         `when`("executeShellCommand 메서드를 실행할때") {
             service.runApplication(application, application.port)
@@ -83,18 +62,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
     }
 
     given("mariadb 애플리케이션이 주어지고") {
-        val application = Application(
-            UUID.randomUUID().toString(),
-            "mysqlTest",
-            null,
-            ApplicationType.MARIA_DB,
-            "testUrl",
-            mapOf( Pair("rootPassword", "testMariaPassword"), Pair("database", "test") ),
-            "17",
-            workspace,
-            port = 3306,
-            ApplicationStatus.STOPPED
-        )
+        val application = ApplicationGenerator.generateApplication(applicationType = ApplicationType.MARIA_DB, env = mapOf(Pair("rootPassword", "test"), Pair("database", "test")))
 
         `when`("executeShellCommand 메서드를 실행할때") {
             service.runApplication(application, application.port)
@@ -109,18 +77,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
     }
 
     given("redis 애플리케이션이 주어지고") {
-        val application = Application(
-            UUID.randomUUID().toString(),
-            "redisTest",
-            null,
-            ApplicationType.REDIS,
-            "testUrl",
-            mapOf(),
-            "17",
-            workspace,
-            port = 6379,
-            ApplicationStatus.STOPPED
-        )
+        val application = ApplicationGenerator.generateApplication(applicationType = ApplicationType.REDIS)
 
         `when`("executeShellCommand 메서드를 실행할때") {
             service.runApplication(application, application.port)

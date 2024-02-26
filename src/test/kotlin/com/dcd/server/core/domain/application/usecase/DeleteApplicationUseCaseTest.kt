@@ -16,6 +16,9 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import util.application.ApplicationGenerator
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 import java.lang.RuntimeException
 import java.util.*
 
@@ -28,20 +31,8 @@ class DeleteApplicationUseCaseTest : BehaviorSpec({
         DeleteApplicationUseCase(getCurrentUserService, commandApplicationPort, queryApplicationPort, validateWorkspaceOwnerService)
     given("애플리케이션 id가 주어지고") {
         val applicationId = "testId"
-        val user =
-            User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-        val application = Application(
-            id = applicationId,
-            name = "test",
-            description = "test",
-            applicationType = ApplicationType.SPRING_BOOT,
-            env = mapOf(),
-            githubUrl = "testUrl",
-            version = "17",
-            workspace = Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user),
-            port = 8080,
-            status = ApplicationStatus.STOPPED
-        )
+        val user = UserGenerator.generateUser()
+        val application = ApplicationGenerator.generateApplication(workspace = WorkspaceGenerator.generateWorkspace(user = user))
         every { getCurrentUserService.getCurrentUser() } returns user
         `when`("usecase를 실행할때") {
             every { commandApplicationPort.delete(application) } returns Unit

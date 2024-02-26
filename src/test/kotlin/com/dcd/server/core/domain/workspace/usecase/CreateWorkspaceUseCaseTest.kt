@@ -11,6 +11,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import util.user.UserGenerator
 
 class CreateWorkspaceUseCaseTest : BehaviorSpec({
     val commandWorkspacePort = mockk<CommandWorkspacePort>(relaxed = true)
@@ -25,8 +26,7 @@ class CreateWorkspaceUseCaseTest : BehaviorSpec({
             description = "test workspace description"
         )
         `when`("useCase를 실행할때") {
-            val user =
-                User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
+            val user = UserGenerator.generateUser()
             every { getCurrentUserService.getCurrentUser() } returns user
             createWorkspaceUseCase.execute(createWorkspaceReqDto)
             then("워크스페이스를 저장하고 네트워크를 생성해야함") {

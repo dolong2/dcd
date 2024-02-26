@@ -17,6 +17,9 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import util.application.ApplicationGenerator
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 import java.util.*
 
 class GetAllApplicationUseCaseTest : BehaviorSpec({
@@ -26,26 +29,9 @@ class GetAllApplicationUseCaseTest : BehaviorSpec({
     val getAllApplicationUseCase = GetAllApplicationUseCase(queryApplicationPort, getCurrentUserService, queryWorkspacePort)
 
     given("applicationList가 주어지고") {
-        val user =
-            User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-        val workspace = Workspace(
-            UUID.randomUUID().toString(),
-            title = "test workspace",
-            description = "test workspace description",
-            owner = user
-        )
-        val application = Application(
-            id = "testId",
-            name = "test",
-            description = "test",
-            applicationType = ApplicationType.SPRING_BOOT,
-            env = mapOf(),
-            githubUrl = "testUrl",
-            version = "17",
-            workspace = workspace,
-            port = 8080,
-            status = ApplicationStatus.STOPPED
-        )
+        val user = UserGenerator.generateUser()
+        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
+        val application = ApplicationGenerator.generateApplication(workspace = workspace)
         val applicationList = listOf(application)
         `when`("usecase를 실행할때") {
             every { getCurrentUserService.getCurrentUser() } returns user

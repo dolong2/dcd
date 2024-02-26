@@ -17,6 +17,9 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import util.application.ApplicationGenerator
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 import java.util.*
 
 class RunApplicationUseCaseTest : BehaviorSpec({
@@ -41,27 +44,10 @@ class RunApplicationUseCaseTest : BehaviorSpec({
         changeApplicationStatusService
     )
 
-    val user =
-        User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-    val workspace = Workspace(
-        UUID.randomUUID().toString(),
-        title = "test workspace",
-        description = "test workspace description",
-        owner = user
-    )
+    val user = UserGenerator.generateUser()
+    val workspace = WorkspaceGenerator.generateWorkspace(user = user)
     given("spring boot application, runApplicationDto가 주어지고") {
-        val application = Application(
-            id = "testId",
-            name = "test",
-            description = "test",
-            applicationType = ApplicationType.SPRING_BOOT,
-            env = mapOf(),
-            githubUrl = "testUrl",
-            workspace = workspace,
-            port = 8080,
-            version = "17",
-            status = ApplicationStatus.STOPPED
-        )
+        val application = ApplicationGenerator.generateApplication(workspace = workspace)
         `when`("usecase를 실행할때") {
             every { queryApplicationPort.findById("testId") } returns application
             val result = runApplicationUseCase.execute("testId")
@@ -90,18 +76,7 @@ class RunApplicationUseCaseTest : BehaviorSpec({
     }
 
     given("mysql application, runApplicationReqDto가 주어지고") {
-        val application = Application(
-            id = "testId",
-            name = "mysqlTest",
-            description = "test",
-            applicationType = ApplicationType.MYSQL,
-            env = mapOf(),
-            githubUrl = "testUrl",
-            workspace = workspace,
-            port = 3306,
-            version = "8",
-            status = ApplicationStatus.STOPPED
-        )
+        val application = ApplicationGenerator.generateApplication(workspace = workspace, applicationType = ApplicationType.MYSQL)
 
         `when`("usecase를 실행하면") {
             every { queryApplicationPort.findById(application.id) } returns application
@@ -122,18 +97,7 @@ class RunApplicationUseCaseTest : BehaviorSpec({
     }
 
     given("redis application, runApplicationReqDto가 주어지고") {
-        val application = Application(
-            id = "testId",
-            name = "redisTest",
-            description = "test",
-            applicationType = ApplicationType.REDIS,
-            env = mapOf(),
-            githubUrl = "testUrl",
-            workspace = workspace,
-            port = 6379,
-            version = "6",
-            status = ApplicationStatus.STOPPED
-        )
+        val application = ApplicationGenerator.generateApplication(applicationType = ApplicationType.REDIS)
 
         `when`("usecase를 실행하면") {
             every { queryApplicationPort.findById(application.id) } returns application

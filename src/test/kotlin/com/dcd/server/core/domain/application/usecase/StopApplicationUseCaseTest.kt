@@ -17,6 +17,9 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import util.application.ApplicationGenerator
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 import java.util.*
 
 class StopApplicationUseCaseTest : BehaviorSpec({
@@ -30,20 +33,8 @@ class StopApplicationUseCaseTest : BehaviorSpec({
 
     given("애플리케이션 Id가 주어지고") {
         val applicationId = "testApplicationId"
-        val user =
-            User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-        val application = Application(
-            id = applicationId,
-            name = "test",
-            description = "test",
-            applicationType = ApplicationType.SPRING_BOOT,
-            env = mapOf(),
-            githubUrl = "testUrl",
-            version = "17",
-            workspace = Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user),
-            port = 8080,
-            status = ApplicationStatus.RUNNING
-        )
+        val user = UserGenerator.generateUser()
+        val application = ApplicationGenerator.generateApplication(id = applicationId, workspace = WorkspaceGenerator.generateWorkspace(user = user), status = ApplicationStatus.RUNNING)
         `when`("유스케이스가 오류없이 동작할때") {
             every { queryApplicationPort.findById(applicationId) } returns application
             every { deleteContainerService.deleteContainer(application) } returns Unit

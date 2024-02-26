@@ -16,6 +16,8 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 import java.util.*
 
 class CreateApplicationUseCaseTest : BehaviorSpec({
@@ -36,14 +38,8 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
             version = "17",
             port = 8080
         )
-        val user =
-            User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-        val workspace = Workspace(
-            UUID.randomUUID().toString(),
-            title = "test workspace",
-            description = "test workspace description",
-            owner = user
-        )
+        val user = UserGenerator.generateUser()
+        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
         val id = user.id
         `when`("usecase를 실행하면") {
             every { securityService.getCurrentUserId() } returns id

@@ -12,6 +12,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.springframework.security.crypto.password.PasswordEncoder
+import util.user.UserGenerator
 
 class ChangePasswordUseCaseTest : BehaviorSpec({
     val getCurrentUserService = mockk<GetCurrentUserService>()
@@ -20,8 +21,7 @@ class ChangePasswordUseCaseTest : BehaviorSpec({
     val changePasswordUseCase = ChangePasswordUseCase(getCurrentUserService, commandUserPort, passwordEncoder)
 
     given("User, PasswordChangeReqDto가 주어지고") {
-        val user =
-            User(email = "email", password = "existingPassword", name = "testName", roles = mutableListOf(Role.ROLE_USER))
+        val user = UserGenerator.generateUser()
         val passwordChangeReqDto = PasswordChangeReqDto(
             existingPassword = "existingPassword",
             newPassword = "newPassword"

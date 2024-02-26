@@ -16,6 +16,9 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import util.application.ApplicationGenerator
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 import java.util.*
 
 class GetOneApplicationUseCaseTest : BehaviorSpec({
@@ -24,20 +27,8 @@ class GetOneApplicationUseCaseTest : BehaviorSpec({
     val getOneApplicationUseCase = GetOneApplicationUseCase(queryApplicationPort, getCurrentUserService)
 
     given("애플리케이션이 주어지고") {
-        val user =
-            User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-        val application = Application(
-            id = "testId",
-            name = "test",
-            description = "test",
-            applicationType = ApplicationType.SPRING_BOOT,
-            env = mapOf(),
-            githubUrl = "testUrl",
-            version = "17",
-            workspace = Workspace(UUID.randomUUID().toString(), title = "test workspace", description = "test workspace description", owner = user),
-            port = 8080,
-            status = ApplicationStatus.STOPPED
-        )
+        val user = UserGenerator.generateUser()
+        val application = ApplicationGenerator.generateApplication(workspace = WorkspaceGenerator.generateWorkspace(user = user))
         `when`("해당 애플리케이션이 있을때") {
             every { queryApplicationPort.findById(application.id) } returns application
             every { getCurrentUserService.getCurrentUser() } returns user
@@ -56,8 +47,7 @@ class GetOneApplicationUseCaseTest : BehaviorSpec({
             }
         }
         `when`("현재 유저가 해당 애플리케이션의 워크스페이스 주인이 아닐때") {
-            val another =
-                User(email = "another", password = "password", name = "another", roles = mutableListOf(Role.ROLE_USER))
+            val another = UserGenerator.generateUser(email = "another")
 
             every { queryApplicationPort.findById(application.id) } returns application
             every { getCurrentUserService.getCurrentUser() } returns another

@@ -17,6 +17,9 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import util.application.ApplicationGenerator
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 import java.util.*
 
 class UpdateApplicationUseCaseTest : BehaviorSpec({
@@ -27,30 +30,13 @@ class UpdateApplicationUseCaseTest : BehaviorSpec({
     val updateApplicationUseCase =
         UpdateApplicationUseCase(queryApplicationPort, commandApplicationPort, getCurrentUserService)
 
-    val user =
-        User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-    val workspace = Workspace(
-        UUID.randomUUID().toString(),
-        title = "test workspace",
-        description = "test workspace description",
-        owner = user
-    )
+    val user = UserGenerator.generateUser()
+    val workspace = WorkspaceGenerator.generateWorkspace(user = user)
     val applicationId = "testId"
     val updateReqDto = UpdateApplicationReqDto(name = "updated application", description = "dldl", applicationType = ApplicationType.SPRING_BOOT, githubUrl = null, version = "11", port = 8080)
 
     given("애플리케이션이 주어지고") {
-        val application = Application(
-            id = applicationId,
-            name = "test",
-            description = "test",
-            applicationType = ApplicationType.SPRING_BOOT,
-            env = mapOf(),
-            githubUrl = "testUrl",
-            version = "17",
-            workspace = workspace,
-            port = 8080,
-            status = ApplicationStatus.STOPPED
-        )
+        val application = ApplicationGenerator.generateApplication(id = applicationId, workspace = workspace)
 
         `when`("usecase를 실행할때") {
             every { getCurrentUserService.getCurrentUser() } returns user
