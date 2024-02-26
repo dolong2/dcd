@@ -19,6 +19,9 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import util.application.ApplicationGenerator
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 import java.util.*
 
 class GenerateSSLCertificateUseCaseTest : BehaviorSpec({
@@ -40,26 +43,9 @@ class GenerateSSLCertificateUseCaseTest : BehaviorSpec({
         val reqDto = GenerateSSLCertificateReqDto(domain = "dcd-server.dolong.co.kr")
 
         `when`("usecase를 실행하면") {
-            val user =
-                User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-            val workspace = Workspace(
-                UUID.randomUUID().toString(),
-                title = "test workspace",
-                description = "test workspace description",
-                owner = user
-            )
-            val application = Application(
-                id = "testId",
-                name = "test",
-                description = "test",
-                applicationType = ApplicationType.SPRING_BOOT,
-                env = mapOf(),
-                githubUrl = "testUrl",
-                workspace = workspace,
-                port = 8080,
-                version = "17",
-                status = ApplicationStatus.STOPPED
-            )
+            val user = UserGenerator.generateUser()
+            val workspace = WorkspaceGenerator.generateWorkspace(user = user)
+            val application = ApplicationGenerator.generateApplication(workspace = workspace)
             every { queryApplicationPort.findById(applicationId) } returns application
             every { getCurrentUserService.getCurrentUser() } returns user
 
@@ -90,26 +76,9 @@ class GenerateSSLCertificateUseCaseTest : BehaviorSpec({
         }
 
         `when`("현재 로그인된 유저가 해당 workspace에 권한이 없을때") {
-            val user =
-                User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-            val workspace = Workspace(
-                UUID.randomUUID().toString(),
-                title = "test workspace",
-                description = "test workspace description",
-                owner = user
-            )
-            val application = Application(
-                id = "testId",
-                name = "test",
-                description = "test",
-                applicationType = ApplicationType.SPRING_BOOT,
-                env = mapOf(),
-                githubUrl = "testUrl",
-                workspace = workspace,
-                port = 8080,
-                version = "17",
-                status = ApplicationStatus.STOPPED
-            )
+            val user = UserGenerator.generateUser()
+            val workspace = WorkspaceGenerator.generateWorkspace(user = user)
+            val application = ApplicationGenerator.generateApplication(workspace = workspace)
             every { queryApplicationPort.findById(applicationId) } returns application
             every { getCurrentUserService.getCurrentUser() } returns user.copy(id = "another")
 
