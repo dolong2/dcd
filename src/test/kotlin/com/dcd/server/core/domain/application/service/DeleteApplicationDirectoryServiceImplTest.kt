@@ -11,22 +11,16 @@ import com.dcd.server.core.domain.workspace.model.Workspace
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.mockk
 import io.mockk.verify
+import util.application.ApplicationGenerator
+import util.user.UserGenerator
 import java.util.*
 
 class DeleteApplicationDirectoryServiceImplTest : BehaviorSpec({
     val commandPort = mockk<CommandPort>(relaxed = true)
     val service = DeleteApplicationDirectoryServiceImpl(commandPort)
 
-    val user =
-        User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
     given("애플리케이션이 주이지고") {
-        val workspace = Workspace(
-            UUID.randomUUID().toString(),
-            title = "test workspace",
-            description = "test workspace description",
-            owner = user
-        )
-        val application = Application(UUID.randomUUID().toString(), "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080, ApplicationStatus.STOPPED)
+        val application = ApplicationGenerator.generateApplication()
 
         `when`("buildImageByApplication 메서드를 실행할때") {
             service.deleteApplicationDirectory(application)

@@ -13,6 +13,9 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import util.application.ApplicationGenerator
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 import java.util.*
 
 class BuildDockerImageServiceImplTest : BehaviorSpec({
@@ -20,19 +23,13 @@ class BuildDockerImageServiceImplTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
     val service = BuildDockerImageServiceImpl(commandPort, queryApplicationPort)
 
-    val user =
-        User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
+    val user = UserGenerator.generateUser()
     given("애플리케이션id가 주어지고") {
         val appId = UUID.randomUUID().toString()
 
         `when`("buildImageByApplicationId를 실행할때") {
-            val workspace = Workspace(
-                UUID.randomUUID().toString(),
-                title = "test workspace",
-                description = "test workspace description",
-                owner = user
-            )
-            val application = Application(appId, "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080, ApplicationStatus.STOPPED)
+            val workspace = WorkspaceGenerator.generateWorkspace(user = user)
+            val application = ApplicationGenerator.generateApplication(id = appId, workspace = workspace)
             every { queryApplicationPort.findById(appId) } returns application
 
             service.buildImageByApplicationId(appId)
@@ -44,13 +41,8 @@ class BuildDockerImageServiceImplTest : BehaviorSpec({
     }
 
     given("애플리케이션이 주이지고") {
-        val workspace = Workspace(
-            UUID.randomUUID().toString(),
-            title = "test workspace",
-            description = "test workspace description",
-            owner = user
-        )
-        val application = Application(UUID.randomUUID().toString(), "testName", null, ApplicationType.SPRING_BOOT, "testUrl", mapOf(), "17", workspace, port = 8080, ApplicationStatus.STOPPED)
+        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
+        val application = ApplicationGenerator.generateApplication(workspace = workspace)
 
         `when`("buildImageByApplication 메서드를 실행할때") {
             service.buildImageByApplication(application)
