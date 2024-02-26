@@ -4,7 +4,7 @@ import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.User
 
 object UserGenerator {
-    fun createUser(
+    fun generateUser(
         email: String = "testEmail",
         password: String = "testPassword",
         name: String = "testName",

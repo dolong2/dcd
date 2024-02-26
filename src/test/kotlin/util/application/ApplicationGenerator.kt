@@ -15,7 +15,7 @@ object ApplicationGenerator {
         env: Map<String, String> = mapOf(),
         githubUrl: String = "testUrl",
         version: String = "17",
-        workspace: Workspace = WorkspaceGenerator.createWorkspace(),
+        workspace: Workspace = WorkspaceGenerator.generateWorkspace(),
         port: Int = 8080,
         status: ApplicationStatus = ApplicationStatus.STOPPED
     ): Application =

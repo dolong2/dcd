@@ -6,11 +6,11 @@ import util.user.UserGenerator
 import java.util.*
 
 object WorkspaceGenerator {
-    fun createWorkspace(
+    fun generateWorkspace(
         id: String = UUID.randomUUID().toString(),
         title: String = "testTitle",
         description: String = "testDescription",
-        user: User = UserGenerator.createUser()
+        user: User = UserGenerator.generateUser()
     ): Workspace =
         Workspace(
             id = id,
