@@ -16,6 +16,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import util.user.UserGenerator
 import java.time.LocalDateTime
 
 class ReissueTokenUseCaseTest : BehaviorSpec({
@@ -29,8 +30,7 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
     val userId = "testUserId"
     val token = "testRefreshToken"
     val ttl = 1L
-    val user =
-        User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
+    val user = UserGenerator.generateUser()
     val tokenResDto = TokenResDto("newAccessToken", LocalDateTime.of(2023, 9, 7, 8, 30), "newRefreshToken", LocalDateTime.of(2023, 9, 7, 8, 30))
 
     given("리프레시 토큰이 주어지고") {

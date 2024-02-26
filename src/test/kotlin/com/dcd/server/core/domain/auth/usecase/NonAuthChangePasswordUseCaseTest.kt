@@ -12,6 +12,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.springframework.security.crypto.password.PasswordEncoder
+import util.user.UserGenerator
 
 class NonAuthChangePasswordUseCaseTest : BehaviorSpec({
     val queryUserPort = mockk<QueryUserPort>()
@@ -20,8 +21,7 @@ class NonAuthChangePasswordUseCaseTest : BehaviorSpec({
     val nonAuthChangePasswordUseCase = NonAuthChangePasswordUseCase(queryUserPort, commandUserPort, passwordEncoder)
 
     given("유저와 NonAuthChangePasswordReqDto가 주어지고") {
-        val user =
-            User(email = "email", password = "existingPassword", name = "testName", roles = mutableListOf(Role.ROLE_USER))
+        val user = UserGenerator.generateUser()
         val nonAuthChangePasswordReqDto = NonAuthChangePasswordReqDto(email = "email", newPassword = "newPassword")
 
         `when`("유스케이스를 실행할때") {

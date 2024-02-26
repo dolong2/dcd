@@ -14,6 +14,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import util.user.UserGenerator
 import java.time.LocalDateTime
 
 class SignInUseCaseTest : BehaviorSpec({
@@ -27,8 +28,7 @@ class SignInUseCaseTest : BehaviorSpec({
         val testPassword = "testPassword"
         val requestDto = SignInReqDto(testEmail, testPassword)
 
-        val user =
-            User(email = testEmail, password = testPassword, name = "testName", roles = mutableListOf(Role.ROLE_USER))
+        val user = UserGenerator.generateUser()
         val accessTokenExp = LocalDateTime.of(2023, 9, 5, 8, 3)
         val refreshTokenExp = LocalDateTime.of(2023, 9, 5, 8, 3)
         val accessToken = "testAccessToken"
