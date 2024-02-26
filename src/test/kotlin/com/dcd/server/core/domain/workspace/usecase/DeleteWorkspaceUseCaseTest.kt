@@ -14,6 +14,8 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 import java.util.*
 
 class DeleteWorkspaceUseCaseTest : BehaviorSpec({
@@ -27,14 +29,8 @@ class DeleteWorkspaceUseCaseTest : BehaviorSpec({
         val workspaceId = UUID.randomUUID().toString()
 
         `when`("해당 id를 가진 workspace가 있을때") {
-            val user =
-                User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-            val workspace = Workspace(
-                id = workspaceId,
-                title = "workspace",
-                description = "test workspace",
-                owner = user
-            )
+            val user = UserGenerator.generateUser()
+            val workspace = WorkspaceGenerator.generateWorkspace(user = user)
 
             every { getCurrentUserService.getCurrentUser() } returns user
             every { queryWorkspacePort.findById(workspaceId) } returns workspace

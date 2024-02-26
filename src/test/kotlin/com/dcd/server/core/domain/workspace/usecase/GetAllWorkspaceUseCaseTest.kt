@@ -11,6 +11,8 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 import java.util.*
 
 class GetAllWorkspaceUseCaseTest : BehaviorSpec({
@@ -20,22 +22,11 @@ class GetAllWorkspaceUseCaseTest : BehaviorSpec({
     val getAllWorkspaceUseCase = GetAllWorkspaceUseCase(getCurrentUserService, queryWorkspacePort, queryApplicationPort)
 
     given("workspaceId, workspace, workspaceList, user가 주어지고") {
-        val user =
-            User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
+        val user = UserGenerator.generateUser()
         val firstWorkspaceId = UUID.randomUUID().toString()
-        val firstWorkspace = Workspace(
-            id = firstWorkspaceId,
-            title = "workspace",
-            description = "test workspace",
-            owner = user
-        )
+        val firstWorkspace = WorkspaceGenerator.generateWorkspace(id = firstWorkspaceId, user = user)
         val secondWorkspaceId = UUID.randomUUID().toString()
-        val secondWorkspace = Workspace(
-            id = secondWorkspaceId,
-            title = "workspace",
-            description = "test workspace",
-            owner = user
-        )
+        val secondWorkspace = WorkspaceGenerator.generateWorkspace(id = secondWorkspaceId, user = user)
         val workspaceList = listOf(firstWorkspace, secondWorkspace)
 
         `when`("해당 user가 workspace를 여러개 가지고 있을때") {

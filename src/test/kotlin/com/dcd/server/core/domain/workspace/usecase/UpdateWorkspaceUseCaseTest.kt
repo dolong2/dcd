@@ -15,6 +15,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 import java.util.*
 
 class UpdateWorkspaceUseCaseTest : BehaviorSpec({
@@ -28,8 +30,7 @@ class UpdateWorkspaceUseCaseTest : BehaviorSpec({
         val reqDto = UpdateWorkspaceReqDto(title = "test title", description = "test description")
 
         `when`("해당 아이디를 가진 워크스페이스가 있을때") {
-            val user =
-                User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
+            val user = UserGenerator.generateUser()
             val workspace = spyk(
                 Workspace(
                     id = workspaceId,
@@ -60,17 +61,10 @@ class UpdateWorkspaceUseCaseTest : BehaviorSpec({
         }
 
         `when`("워크스페이스의 유저와 로그인된 유저가 다를때") {
-            val user =
-                User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-            val workspace = Workspace(
-                id = workspaceId,
-                title = "workspace",
-                description = "test workspace",
-                owner = user
-            )
+            val user = UserGenerator.generateUser()
+            val workspace = WorkspaceGenerator.generateWorkspace(user = user)
 
-            val anotherUser =
-                User(email = "anotherEmail", password = "password", name = "another", roles = mutableListOf(Role.ROLE_USER))
+            val anotherUser = UserGenerator.generateUser(email = "another")
 
             every { getCurrentUserService.getCurrentUser() } returns anotherUser
             every { queryWorkspacePort.findById(workspaceId) } returns workspace

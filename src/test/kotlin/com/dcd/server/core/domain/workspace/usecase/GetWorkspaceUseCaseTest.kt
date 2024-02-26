@@ -13,6 +13,8 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 import java.util.*
 
 class GetWorkspaceUseCaseTest : BehaviorSpec({
@@ -22,14 +24,8 @@ class GetWorkspaceUseCaseTest : BehaviorSpec({
 
     given("workspaceId, workspace가 주어지고") {
         val workspaceId = UUID.randomUUID().toString()
-        val user =
-            User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
-        val workspace = Workspace(
-            id = workspaceId,
-            title = "workspace",
-            description = "test workspace",
-            owner = user
-        )
+        val user = UserGenerator.generateUser()
+        val workspace = WorkspaceGenerator.generateWorkspace(id = workspaceId, user = user)
 
         `when`("해당 id를 가진 workspace가 있을때") {
             every { queryWorkspacePort.findById(workspaceId) } returns workspace
