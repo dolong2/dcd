@@ -1,15 +1,12 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.domain.application.dto.response.RunApplicationResDto
+import com.dcd.server.core.domain.application.exception.AlreadyRunningException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
-import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
-import com.dcd.server.core.domain.auth.model.Role
-import com.dcd.server.core.domain.user.model.User
-import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -20,7 +17,6 @@ import io.mockk.verify
 import util.application.ApplicationGenerator
 import util.user.UserGenerator
 import util.workspace.WorkspaceGenerator
-import java.util.*
 
 class RunApplicationUseCaseTest : BehaviorSpec({
     val cloneApplicationByUrlService = mockk<CloneApplicationByUrlService>(relaxUnitFun = true)
@@ -73,6 +69,15 @@ class RunApplicationUseCaseTest : BehaviorSpec({
                 }
             }
         }
+
+        `when`("해당 애플리케이션이 이미 실행된 있는 상태일때") {
+            every { queryApplicationPort.findById("testId") } returns application.copy(status = ApplicationStatus.RUNNING)
+            then("AlreadyRunningException이 발생해야됨") {
+                shouldThrow<AlreadyRunningException> {
+                    runApplicationUseCase.execute("testId")
+                }
+            }
+        }
     }
 
     given("mysql application, runApplicationReqDto가 주어지고") {
@@ -94,6 +99,15 @@ class RunApplicationUseCaseTest : BehaviorSpec({
                 }
             }
         }
+
+        `when`("해당 애플리케이션이 이미 실행된 있는 상태일때") {
+            every { queryApplicationPort.findById("testId") } returns application.copy(status = ApplicationStatus.RUNNING)
+            then("AlreadyRunningException이 발생해야됨") {
+                shouldThrow<AlreadyRunningException> {
+                    runApplicationUseCase.execute("testId")
+                }
+            }
+        }
     }
 
     given("redis application, runApplicationReqDto가 주어지고") {
@@ -112,6 +126,15 @@ class RunApplicationUseCaseTest : BehaviorSpec({
                     verify { createDockerFileService.createFileToApplication(application, application.version, 0) }
                     verify { buildDockerImageService.buildImageByApplication(application) }
                     verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING) }
+                }
+            }
+        }
+
+        `when`("해당 애플리케이션이 이미 실행된 있는 상태일때") {
+            every { queryApplicationPort.findById("testId") } returns application.copy(status = ApplicationStatus.RUNNING)
+            then("AlreadyRunningException이 발생해야됨") {
+                shouldThrow<AlreadyRunningException> {
+                    runApplicationUseCase.execute("testId")
                 }
             }
         }
