@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.domain.application.exception.AlreadyStoppedException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
@@ -49,6 +50,14 @@ class StopApplicationUseCaseTest : BehaviorSpec({
             every { queryApplicationPort.findById(applicationId) } returns null
             then("ApplicationNotFoundException이 발생해야함") {
                 shouldThrow<ApplicationNotFoundException> {
+                    stopApplicationUseCase.execute(applicationId)
+                }
+            }
+        }
+        `when`("해당 애플리케이션이 이미 정지된 있는 상태일때") {
+            every { queryApplicationPort.findById(applicationId) } returns application.copy(status = ApplicationStatus.STOPPED)
+            then("AlreadyStoppedException이 발생해야됨") {
+                shouldThrow<AlreadyStoppedException> {
                     stopApplicationUseCase.execute(applicationId)
                 }
             }
