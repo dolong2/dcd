@@ -8,10 +8,7 @@ import com.dcd.server.presentation.domain.application.data.request.AddApplicatio
 import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
 import com.dcd.server.presentation.domain.application.data.request.GenerateSSLCertificateRequest
 import com.dcd.server.presentation.domain.application.data.request.UpdateApplicationRequest
-import com.dcd.server.presentation.domain.application.data.response.ApplicationListResponse
-import com.dcd.server.presentation.domain.application.data.response.ApplicationResponse
-import com.dcd.server.presentation.domain.application.data.response.AvailableVersionResponse
-import com.dcd.server.presentation.domain.application.data.response.RunApplicationResponse
+import com.dcd.server.presentation.domain.application.data.response.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -30,7 +27,8 @@ class ApplicationWebAdapter(
     private val deleteApplicationUseCase: DeleteApplicationUseCase,
     private val updateApplicationUseCase: UpdateApplicationUseCase,
     private val getAvailableVersionUseCase: GetAvailableVersionUseCase,
-    private val generateSSLCertificateUseCase: GenerateSSLCertificateUseCase
+    private val generateSSLCertificateUseCase: GenerateSSLCertificateUseCase,
+    private val getApplicationLogUseCase: GetApplicationLogUseCase
 ) {
     @PostMapping("/{workspaceId}")
     fun createApplication(@PathVariable workspaceId: String, @Validated @RequestBody createApplicationRequest: CreateApplicationRequest): ResponseEntity<Void> =
@@ -86,4 +84,9 @@ class ApplicationWebAdapter(
     fun generateSSLCertificate(@PathVariable id: String, @RequestBody generateSSLCertificateRequest: GenerateSSLCertificateRequest): ResponseEntity<Void> =
         generateSSLCertificateUseCase.execute(id, generateSSLCertificateRequest.toDto())
             .run { ResponseEntity.ok().build() }
+
+    @GetMapping("/{id}/logs")
+    fun getApplicationLog(@PathVariable id: String): ResponseEntity<ApplicationLogResponse> =
+        getApplicationLogUseCase.execute(id)
+            .let { ResponseEntity.ok(it.toResponse()) }
 }
