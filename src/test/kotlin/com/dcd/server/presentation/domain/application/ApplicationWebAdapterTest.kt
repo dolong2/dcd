@@ -2,10 +2,7 @@ package com.dcd.server.presentation.domain.application
 
 import com.dcd.server.core.domain.application.dto.request.GenerateSSLCertificateReqDto
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
-import com.dcd.server.core.domain.application.dto.response.ApplicationListResDto
-import com.dcd.server.core.domain.application.dto.response.ApplicationResDto
-import com.dcd.server.core.domain.application.dto.response.AvailableVersionResDto
-import com.dcd.server.core.domain.application.dto.response.RunApplicationResDto
+import com.dcd.server.core.domain.application.dto.response.*
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.usecase.*
@@ -161,6 +158,18 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             val result = applicationWebAdapter.deleteApplication(testId)
             then("status는 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+
+        `when`("getApplicationLog 메서드를 실행할때") {
+            val logs = listOf("testLogs")
+            every { getApplicationLogUseCase.execute(testId) } returns ApplicationLogResDto(logs)
+            val result = applicationWebAdapter.getApplicationLog(testId)
+            then("status는 200이여야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+            then("응답의 바디는 반환된 로그를 포함해야함") {
+                result.body!!.logs shouldBe logs
             }
         }
     }
