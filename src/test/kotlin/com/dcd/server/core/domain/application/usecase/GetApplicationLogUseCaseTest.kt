@@ -8,6 +8,7 @@ import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameExcep
 import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import util.application.ApplicationGenerator
@@ -53,6 +54,19 @@ class GetApplicationLogUseCaseTest : BehaviorSpec({
                 shouldThrow<WorkspaceOwnerNotSameException> {
                     getApplicationLogUseCase.execute(appId)
                 }
+            }
+        }
+
+        `when`("해당 애플리케이션이 존재하고, 로그인된 유저가 워크스페이스의 권한을 가지고 있을때") {
+            val logs = listOf("testLogs")
+
+            every { queryApplicationPort.findById(appId) } returns application
+            every { getCurrentUserService.getCurrentUser() } returns owner
+            every { getContainerLogService.getLogs(application) } returns logs
+
+            val response = getApplicationLogUseCase.execute(appId)
+            then("유스케이스의 반환값은 logs를 가지고 있어야함") {
+                response.logs shouldBe logs
             }
         }
     }
