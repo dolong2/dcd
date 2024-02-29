@@ -11,6 +11,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import util.application.ApplicationGenerator
 import util.user.UserGenerator
 import util.workspace.WorkspaceGenerator
@@ -67,6 +68,9 @@ class GetApplicationLogUseCaseTest : BehaviorSpec({
             val response = getApplicationLogUseCase.execute(appId)
             then("유스케이스의 반환값은 logs를 가지고 있어야함") {
                 response.logs shouldBe logs
+            }
+            then("유스케이스는 getContainerLogService를 실행해야함") {
+                verify { getContainerLogService.getLogs(application) }
             }
         }
     }
