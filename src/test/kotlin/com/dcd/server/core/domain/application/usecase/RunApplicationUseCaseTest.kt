@@ -19,7 +19,6 @@ import util.user.UserGenerator
 import util.workspace.WorkspaceGenerator
 
 class RunApplicationUseCaseTest : BehaviorSpec({
-    val buildDockerImageService = mockk<BuildDockerImageService>(relaxUnitFun = true)
     val dockerRunService = mockk<DockerRunService>(relaxUnitFun = true)
     val queryApplicationPort = mockk<QueryApplicationPort>(relaxUnitFun = true)
     val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
@@ -40,7 +39,6 @@ class RunApplicationUseCaseTest : BehaviorSpec({
             val result = runApplicationUseCase.execute("testId")
             then("애플리케이션 실행에 관한 service들이 실행되어야함") {
                 verify { validateWorkspaceOwnerService.validateOwner(workspace) }
-                verify { buildDockerImageService.buildImageByApplication(application) }
                 verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING) }
             }
         }
@@ -73,11 +71,6 @@ class RunApplicationUseCaseTest : BehaviorSpec({
             runApplicationUseCase.execute(application.id)
             then("dockerRunService만 실행되어야함") {
                 verify { dockerRunService.runApplication(application) }
-                shouldThrow<AssertionError> {
-                    verify { validateWorkspaceOwnerService.validateOwner(workspace) }
-                    verify { buildDockerImageService.buildImageByApplication(application) }
-                    verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING) }
-                }
             }
         }
 
@@ -100,11 +93,6 @@ class RunApplicationUseCaseTest : BehaviorSpec({
             runApplicationUseCase.execute(application.id)
             then("dockerRunService만 실행되어야함") {
                 verify { dockerRunService.runApplication(application) }
-                shouldThrow<AssertionError> {
-                    verify { validateWorkspaceOwnerService.validateOwner(workspace) }
-                    verify { buildDockerImageService.buildImageByApplication(application) }
-                    verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING) }
-                }
             }
         }
 

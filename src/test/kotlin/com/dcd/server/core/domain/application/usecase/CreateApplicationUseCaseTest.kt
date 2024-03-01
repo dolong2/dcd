@@ -2,7 +2,9 @@ package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.service.SecurityService
 import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDto
+import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
+import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.auth.exception.UserNotFoundException
 import com.dcd.server.core.domain.auth.model.Role
@@ -26,7 +28,23 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
     val securityService = mockk<SecurityService>()
     val queryWorkspacePort = mockk<QueryWorkspacePort>()
     val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
-    val createApplicationUseCase = CreateApplicationUseCase(commandApplicationPort, queryWorkspacePort, validateWorkspaceOwnerService)
+    val cloneApplicationByUrlService = mockk<CloneApplicationByUrlService>(relaxUnitFun = true)
+    val modifyGradleService = mockk<ModifyGradleService>(relaxUnitFun = true)
+    val createDockerFileService = mockk<CreateDockerFileService>(relaxUnitFun = true)
+    val getExternalPortService = mockk<GetExternalPortService>(relaxed = true)
+    val buildDockerImageService = mockk<BuildDockerImageService>(relaxUnitFun = true)
+    val createContainerService = mockk<CreateContainerService>(relaxUnitFun = true)
+    val createApplicationUseCase = CreateApplicationUseCase(
+        commandApplicationPort,
+        queryWorkspacePort,
+        validateWorkspaceOwnerService,
+        cloneApplicationByUrlService,
+        modifyGradleService,
+        createDockerFileService,
+        getExternalPortService,
+        buildDockerImageService,
+        createContainerService
+    )
 
     given("CreateApplicationReqDto와 유저가 주어지고") {
         val request = CreateApplicationReqDto(
@@ -49,6 +67,11 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
             createApplicationUseCase.execute(workspace.id, request)
             then("repository의 save메서드가 실행되어야함") {
                 verify { commandApplicationPort.save(any()) }
+                verify { cloneApplicationByUrlService.cloneByApplication(any() as Application) }
+                verify { validateWorkspaceOwnerService.validateOwner(workspace) }
+                verify { modifyGradleService.modifyGradleByApplication(any() as Application) }
+                verify { createDockerFileService.createFileToApplication(any() as Application, request.version, 0) }
+                verify { buildDockerImageService.buildImageByApplication(any() as Application) }
             }
         }
     }

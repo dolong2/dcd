@@ -25,10 +25,9 @@ class DockerRunServiceImplTest : BehaviorSpec({
             val application = ApplicationGenerator.generateApplication()
             every { queryApplicationPort.findById(appId) } returns application
 
-            service.runApplication(appId, application.port)
+            service.runApplication(appId)
             then("commandPort가 실행되어야함") {
-                val externalPort = application.port
-                verify { commandPort.executeShellCommand("cd ${application.name} && docker run --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d -p ${externalPort}:${application.port} ${application.name.lowercase()}:latest") }
+                verify { commandPort.executeShellCommand("docker start ${application.name.lowercase()}") }
             }
         }
     }
@@ -37,57 +36,12 @@ class DockerRunServiceImplTest : BehaviorSpec({
         val application = ApplicationGenerator.generateApplication()
 
         `when`("executeShellCommand 메서드를 실행할때") {
-            service.runApplication(application, application.port)
+            service.runApplication(application)
 
             then("commandPort가 실행되어야함") {
-                val externalPort = application.port
-                verify { commandPort.executeShellCommand("cd ${application.name} && docker run --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d -p ${externalPort}:${application.port} ${application.name.lowercase()}:latest") }
+                verify { commandPort.executeShellCommand("docker start ${application.name.lowercase()}") }
             }
         }
     }
 
-    given("mysql 애플리케이션이 주어지고") {
-        val application = ApplicationGenerator.generateApplication(applicationType = ApplicationType.MYSQL, env = mapOf(Pair("rootPassword", "test"), Pair("database", "test")))
-
-        `when`("executeShellCommand 메서드를 실행할때") {
-            service.runApplication(application, application.port)
-
-            then("commandPort가 실행되어야함") {
-                val externalPort = application.port
-                verify {
-                    commandPort.executeShellCommand("docker run --network ${application.workspace.title.replace(' ', '_')} -e MYSQL_ROOT_PASSWORD=${application.env["rootPassword"]} -e MYSQL_DATABASE=${application.env["database"]} --name ${application.name.lowercase()} -d -p ${externalPort}:${application.port} mysql:latest")
-                }
-            }
-        }
-    }
-
-    given("mariadb 애플리케이션이 주어지고") {
-        val application = ApplicationGenerator.generateApplication(applicationType = ApplicationType.MARIA_DB, env = mapOf(Pair("rootPassword", "test"), Pair("database", "test")))
-
-        `when`("executeShellCommand 메서드를 실행할때") {
-            service.runApplication(application, application.port)
-
-            then("commandPort가 실행되어야함") {
-                val externalPort = application.port
-                verify {
-                    commandPort.executeShellCommand("docker run --network ${application.workspace.title.replace(' ', '_')} -e MYSQL_ROOT_PASSWORD=${application.env["rootPassword"]} -e MYSQL_DATABASE=${application.env["database"]} --name ${application.name.lowercase()} -d -p ${externalPort}:${application.port} mariadb:latest")
-                }
-            }
-        }
-    }
-
-    given("redis 애플리케이션이 주어지고") {
-        val application = ApplicationGenerator.generateApplication(applicationType = ApplicationType.REDIS)
-
-        `when`("executeShellCommand 메서드를 실행할때") {
-            service.runApplication(application, application.port)
-
-            then("commandPort가 실행되어야함") {
-                val externalPort = application.port
-                verify {
-                    commandPort.executeShellCommand("docker run --network ${application.workspace.title.replace(' ', '_')} --name ${application.name.lowercase()} -d -p ${externalPort}:${application.port} redis:latest")
-                }
-            }
-        }
-    }
 })
