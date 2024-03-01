@@ -31,6 +31,7 @@ enum class ErrorCode(
     WORKSPACE_NOT_FOUND("해당 워크스페이스를 찾을 수 없음", 404),
 
     CONTAINER_NOT_RUN("해당 애플리케이션을 실행할 수 없음", 500),
+    CONTAINER_NOT_CREATED("해당 애플리케이션의 이미지를 컨테이너로 빌드할 수 없음", 500),
     IMAGE_NOT_BUILT("해당 애플리케이션을 이미지로 빌드할 수 없음", 500),
     INTERNAL_ERROR("서버 내부 에러", 500)
 }
