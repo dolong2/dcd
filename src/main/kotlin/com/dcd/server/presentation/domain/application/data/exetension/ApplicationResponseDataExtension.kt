@@ -33,11 +33,6 @@ fun AvailableVersionResDto.toResponse(): AvailableVersionResponse =
         version = this.version
     )
 
-fun RunApplicationResDto.toResponse(): RunApplicationResponse =
-    RunApplicationResponse(
-        externalPort = this.externalPort
-    )
-
 fun ApplicationLogResDto.toResponse(): ApplicationLogResponse =
     ApplicationLogResponse(
         logs = this.logs

@@ -7,6 +7,7 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.ChangeApplicationStatusService
 import com.dcd.server.core.domain.application.service.DeleteApplicationDirectoryService
 import com.dcd.server.core.domain.application.service.DeleteContainerService
+import com.dcd.server.core.domain.application.service.StopContainerService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
@@ -14,8 +15,7 @@ import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerServic
 @ReadOnlyUseCase
 class StopApplicationUseCase(
     private val queryApplicationPort: QueryApplicationPort,
-    private val deleteContainerService: DeleteContainerService,
-    private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
+    private val stopContainerService: StopContainerService,
     private val validateWorkspaceOwnerService: ValidateWorkspaceOwnerService,
     private val changeApplicationStatusService: ChangeApplicationStatusService
 ) {
@@ -27,8 +27,9 @@ class StopApplicationUseCase(
             throw AlreadyStoppedException()
 
         validateWorkspaceOwnerService.validateOwner(application.workspace)
-        deleteContainerService.deleteContainer(application)
-        deleteApplicationDirectoryService.deleteApplicationDirectory(application)
+
+        stopContainerService.stopContainer(application)
+
         changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.STOPPED)
     }
 }

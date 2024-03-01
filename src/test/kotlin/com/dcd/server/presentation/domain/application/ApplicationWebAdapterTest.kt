@@ -21,7 +21,7 @@ import org.springframework.http.HttpStatus
 
 class ApplicationWebAdapterTest : BehaviorSpec({
     val createApplicationUseCase = mockk<CreateApplicationUseCase>()
-    val springRunApplicationUseCase = mockk<RunApplicationUseCase>()
+    val springRunApplicationUseCase = mockk<RunApplicationUseCase>(relaxUnitFun = true)
     val getAllApplicationUseCase = mockk<GetAllApplicationUseCase>()
     val getOneApplicationUseCase = mockk<GetOneApplicationUseCase>()
     val addApplicationEnvUseCase = mockk<AddApplicationEnvUseCase>()
@@ -50,20 +50,6 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             val result = applicationWebAdapter.createApplication("testWorkspaceId", request)
             then("상태코드가 201이여야함") {
                 result.statusCode shouldBe HttpStatus.CREATED
-            }
-        }
-    }
-
-    given("RunApplicationRequest가 주어지고") {
-        val id = "testApplicationId"
-        `when`("runApplication 메서드를 실행할때") {
-            every { springRunApplicationUseCase.execute(id) } returns RunApplicationResDto(externalPort = 8080)
-            val result = applicationWebAdapter.runApplication(id)
-            then("상태코드가 200이여야함") {
-                result.statusCode shouldBe HttpStatus.OK
-            }
-            then("반환값은 RunApplicationResDto의 필드를 가져야함") {
-                result.body shouldBe RunApplicationResponse(8080)
             }
         }
     }
@@ -170,6 +156,13 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             }
             then("응답의 바디는 반환된 로그를 포함해야함") {
                 result.body!!.logs shouldBe logs
+            }
+        }
+
+        `when`("runApplication 메서드를 실행할때") {
+            val result = applicationWebAdapter.runApplication(testId)
+            then("상태코드가 200이여야함") {
+                result.statusCode shouldBe HttpStatus.OK
             }
         }
     }

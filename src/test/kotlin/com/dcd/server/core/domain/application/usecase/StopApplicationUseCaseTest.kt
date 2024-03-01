@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.ChangeApplicationStatusService
 import com.dcd.server.core.domain.application.service.DeleteApplicationDirectoryService
 import com.dcd.server.core.domain.application.service.DeleteContainerService
+import com.dcd.server.core.domain.application.service.StopContainerService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 import io.kotest.assertions.throwables.shouldThrow
@@ -19,12 +20,11 @@ import util.workspace.WorkspaceGenerator
 
 class StopApplicationUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
-    val deleteContainerService = mockk<DeleteContainerService>()
-    val deleteApplicationDirectoryService = mockk<DeleteApplicationDirectoryService>()
+    val stopContainerService = mockk<StopContainerService>(relaxUnitFun = true)
     val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
     val changeApplicationStatusService = mockk<ChangeApplicationStatusService>(relaxUnitFun = true)
     val stopApplicationUseCase =
-        StopApplicationUseCase(queryApplicationPort, deleteContainerService, deleteApplicationDirectoryService, validateWorkspaceOwnerService, changeApplicationStatusService)
+        StopApplicationUseCase(queryApplicationPort, stopContainerService, validateWorkspaceOwnerService, changeApplicationStatusService)
 
     given("애플리케이션 Id가 주어지고") {
         val applicationId = "testApplicationId"
@@ -32,12 +32,9 @@ class StopApplicationUseCaseTest : BehaviorSpec({
         val application = ApplicationGenerator.generateApplication(id = applicationId, workspace = WorkspaceGenerator.generateWorkspace(user = user), status = ApplicationStatus.RUNNING)
         `when`("유스케이스가 오류없이 동작할때") {
             every { queryApplicationPort.findById(applicationId) } returns application
-            every { deleteContainerService.deleteContainer(application) } returns Unit
-            every { deleteApplicationDirectoryService.deleteApplicationDirectory(application) } returns Unit
             stopApplicationUseCase.execute(applicationId)
             then("deleteContainerService와 deleteApplicationDirectoryService가 실행되어야함") {
-                verify { deleteApplicationDirectoryService.deleteApplicationDirectory(application) }
-                verify { deleteContainerService.deleteContainer(application) }
+                verify { stopContainerService.stopContainer(application) }
                 verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.STOPPED) }
             }
         }

@@ -36,9 +36,9 @@ class ApplicationWebAdapter(
             .run { ResponseEntity(HttpStatus.CREATED) }
 
     @PostMapping("/{id}/run")
-    fun runApplication(@PathVariable id: String): ResponseEntity<RunApplicationResponse> =
+    fun runApplication(@PathVariable id: String): ResponseEntity<Void> =
         runApplicationUseCase.execute(id)
-            .let { ResponseEntity.ok(it.toResponse()) }
+            .run { ResponseEntity.ok().build() }
 
     @GetMapping
     fun getAllApplication(@RequestParam workspaceId: String): ResponseEntity<ApplicationListResponse> =
