@@ -19,24 +19,15 @@ import util.user.UserGenerator
 import util.workspace.WorkspaceGenerator
 
 class RunApplicationUseCaseTest : BehaviorSpec({
-    val cloneApplicationByUrlService = mockk<CloneApplicationByUrlService>(relaxUnitFun = true)
-    val modifyGradleService = mockk<ModifyGradleService>(relaxUnitFun = true)
-    val createDockerFileService = mockk<CreateDockerFileService>(relaxUnitFun = true)
     val buildDockerImageService = mockk<BuildDockerImageService>(relaxUnitFun = true)
     val dockerRunService = mockk<DockerRunService>(relaxUnitFun = true)
     val queryApplicationPort = mockk<QueryApplicationPort>(relaxUnitFun = true)
     val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
-    val getExternalPortService = mockk<GetExternalPortService>(relaxed = true)
     val changeApplicationStatusService = mockk<ChangeApplicationStatusService>(relaxUnitFun = true)
     val runApplicationUseCase = RunApplicationUseCase(
-        cloneApplicationByUrlService,
-        modifyGradleService,
-        createDockerFileService,
-        buildDockerImageService,
         dockerRunService,
         queryApplicationPort,
         validateWorkspaceOwnerService,
-        getExternalPortService,
         changeApplicationStatusService
     )
 
@@ -48,16 +39,9 @@ class RunApplicationUseCaseTest : BehaviorSpec({
             every { queryApplicationPort.findById("testId") } returns application
             val result = runApplicationUseCase.execute("testId")
             then("애플리케이션 실행에 관한 service들이 실행되어야함") {
-                verify { cloneApplicationByUrlService.cloneByApplication(application) }
                 verify { validateWorkspaceOwnerService.validateOwner(workspace) }
-                verify { modifyGradleService.modifyGradleByApplication(application) }
-                verify { createDockerFileService.createFileToApplication(application, application.version, 0) }
                 verify { buildDockerImageService.buildImageByApplication(application) }
-                verify { dockerRunService.runApplication(application, getExternalPortService.getExternalPort(application.port)) }
                 verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING) }
-            }
-            then("반환값은 이용가능한 외부 포트를 담아야함") {
-                result shouldBe RunApplicationResDto(getExternalPortService.getExternalPort(application.port))
             }
         }
 
@@ -88,12 +72,9 @@ class RunApplicationUseCaseTest : BehaviorSpec({
 
             runApplicationUseCase.execute(application.id)
             then("dockerRunService만 실행되어야함") {
-                verify { dockerRunService.runApplication(application, application.version, getExternalPortService.getExternalPort(application.port)) }
+                verify { dockerRunService.runApplication(application) }
                 shouldThrow<AssertionError> {
-                    verify { cloneApplicationByUrlService.cloneByApplication(application) }
                     verify { validateWorkspaceOwnerService.validateOwner(workspace) }
-                    verify { modifyGradleService.modifyGradleByApplication(application) }
-                    verify { createDockerFileService.createFileToApplication(application, application.version, 0) }
                     verify { buildDockerImageService.buildImageByApplication(application) }
                     verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING) }
                 }
@@ -118,12 +99,9 @@ class RunApplicationUseCaseTest : BehaviorSpec({
 
             runApplicationUseCase.execute(application.id)
             then("dockerRunService만 실행되어야함") {
-                verify { dockerRunService.runApplication(application, application.version, getExternalPortService.getExternalPort(application.port)) }
+                verify { dockerRunService.runApplication(application) }
                 shouldThrow<AssertionError> {
-                    verify { cloneApplicationByUrlService.cloneByApplication(application) }
                     verify { validateWorkspaceOwnerService.validateOwner(workspace) }
-                    verify { modifyGradleService.modifyGradleByApplication(application) }
-                    verify { createDockerFileService.createFileToApplication(application, application.version, 0) }
                     verify { buildDockerImageService.buildImageByApplication(application) }
                     verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING) }
                 }
