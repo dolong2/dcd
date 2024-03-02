@@ -12,6 +12,7 @@ fun ApplicationResDto.toResponse(): ApplicationResponse =
         applicationType = this.applicationType,
         env = this.env,
         port = this.port,
+        externalPort = this.externalPort,
         version = this.version,
         status = this.status
     )
