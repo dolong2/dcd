@@ -7,7 +7,7 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.workspace.model.Workspace
 
-fun CreateApplicationReqDto.toEntity(workspace: Workspace): Application =
+fun CreateApplicationReqDto.toEntity(workspace: Workspace, externalPort: Int): Application =
     Application(
         name = this.name,
         description = this.description,
@@ -16,6 +16,7 @@ fun CreateApplicationReqDto.toEntity(workspace: Workspace): Application =
         env = this.env,
         workspace = workspace,
         port = this.port,
+        externalPort = externalPort,
         version = this.version,
         status = ApplicationStatus.STOPPED
     )

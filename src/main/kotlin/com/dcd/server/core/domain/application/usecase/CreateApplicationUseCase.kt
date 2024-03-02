@@ -26,11 +26,13 @@ class CreateApplicationUseCase(
         val workspace = queryWorkspacePort.findById(workspaceId)
             ?: throw WorkspaceNotFoundException()
         validateWorkspaceOwnerService.validateOwner(workspace)
-        val application = createApplicationReqDto.toEntity(workspace)
+
+        val externalPort = getExternalPortService.getExternalPort(createApplicationReqDto.port)
+
+        val application = createApplicationReqDto.toEntity(workspace, externalPort)
         commandApplicationPort.save(application)
 
         val version = application.version
-        val externalPort = getExternalPortService.getExternalPort(application.port)
         when(application.applicationType){
             ApplicationType.SPRING_BOOT -> {
                 cloneApplicationByUrlService.cloneByApplication(application)
