@@ -17,6 +17,7 @@ fun Application.toEntity(): ApplicationJpaEntity =
         env = this.env,
         workspace = this.workspace.toEntity(),
         port = this.port,
+        externalPort = this.externalPort,
         version = this.version,
         status = this.status
     )
@@ -31,6 +32,7 @@ fun ApplicationJpaEntity.toDomain(): Application =
         env = this.env,
         workspace = this.workspace.toDomain(),
         port = this.port,
+        externalPort = this.externalPort,
         version = this.version,
         status = this.status
     )

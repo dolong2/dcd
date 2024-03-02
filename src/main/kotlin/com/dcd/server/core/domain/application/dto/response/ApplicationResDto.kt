@@ -11,6 +11,7 @@ data class ApplicationResDto(
     val githubUrl: String?,
     val env: Map<String, String>,
     val port: Int,
+    val externalPort: Int,
     val version: String,
     val status: ApplicationStatus
 )

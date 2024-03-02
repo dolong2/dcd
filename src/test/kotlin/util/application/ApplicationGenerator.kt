@@ -29,6 +29,7 @@ object ApplicationGenerator {
             version = version,
             workspace = workspace,
             port = port,
+            externalPort = port,
             status = status
         )
 }

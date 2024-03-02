@@ -42,6 +42,7 @@ class ApplicationPersistenceAdapterTest : BehaviorSpec({
             version = "17",
             workspace = workspace,
             port = 8080,
+            externalPort = 8080,
             status = ApplicationStatus.STOPPED
         )
         val id = application.id

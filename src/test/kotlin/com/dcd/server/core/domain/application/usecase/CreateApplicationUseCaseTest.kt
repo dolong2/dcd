@@ -72,6 +72,7 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
                 verify { modifyGradleService.modifyGradleByApplication(any() as Application) }
                 verify { createDockerFileService.createFileToApplication(any() as Application, request.version, 0) }
                 verify { buildDockerImageService.buildImageByApplication(any() as Application) }
+                verify { getExternalPortService.getExternalPort(request.port) }
             }
         }
     }

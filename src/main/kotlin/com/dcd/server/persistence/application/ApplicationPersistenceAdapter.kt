@@ -31,4 +31,7 @@ class ApplicationPersistenceAdapter(
     override fun findById(id: String): Application? =
         applicationRepository.findByIdOrNull(id)
             ?.toDomain()
+
+    override fun existsByExternalPort(externalPort: Int): Boolean =
+        applicationRepository.existsByExternalPort(externalPort)
 }
