@@ -63,6 +63,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             env = mapOf(),
             githubUrl = "testUrl",
             port = 8080,
+            externalPort = 8080,
             version = "latest",
             status = ApplicationStatus.STOPPED
         )
@@ -89,6 +90,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             env = mapOf(),
             githubUrl = "testUrl",
             port = 8080,
+            externalPort = 8080,
             version = "latest",
             status = ApplicationStatus.STOPPED
         )
