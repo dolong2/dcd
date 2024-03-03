@@ -3,12 +3,27 @@ package com.dcd.server.core.common.file
 import java.lang.StringBuilder
 
 object FileContent {
-    fun getSpringBootDockerFileContent(name: String, javaVersion: String, port: Int, env: Map<String, String>): String =
-        "FROM openjdk:${javaVersion}-jdk\n" +
+    fun getSpringBootDockerFileContent(name: String, version: String, port: Int, env: Map<String, String>): String =
+        "FROM openjdk:${version}-jdk\n" +
         "COPY build/libs/$name.jar build/libs/app.jar\n" +
         "EXPOSE ${port}\n" +
         getEnvString(env) +
         "CMD [\"java\",\"-jar\",\"build/libs/app.jar\"]"
+
+    fun getMYSQLDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
+        "FROM mysql:${version}\n" +
+        "EXPOSE ${port}\n" +
+        getEnvString(env)
+
+    fun getMARIADBDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
+        "FROM mariadb:${version}\n" +
+        "EXPOSE ${port}\n" +
+        getEnvString(env)
+
+    fun getRedisDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
+        "FROM mariadb:${version}\n" +
+        "EXPOSE ${port}\n" +
+        getEnvString(env)
 
     fun getBuildGradleKtsFileContent(name: String): String =
         "tasks {\n" +
