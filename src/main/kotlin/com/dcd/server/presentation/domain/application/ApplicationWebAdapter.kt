@@ -28,7 +28,8 @@ class ApplicationWebAdapter(
     private val updateApplicationUseCase: UpdateApplicationUseCase,
     private val getAvailableVersionUseCase: GetAvailableVersionUseCase,
     private val generateSSLCertificateUseCase: GenerateSSLCertificateUseCase,
-    private val getApplicationLogUseCase: GetApplicationLogUseCase
+    private val getApplicationLogUseCase: GetApplicationLogUseCase,
+    private val deployApplicationUseCase: DeployApplicationUseCase
 ) {
     @PostMapping("/{workspaceId}")
     fun createApplication(@PathVariable workspaceId: String, @Validated @RequestBody createApplicationRequest: CreateApplicationRequest): ResponseEntity<Void> =
@@ -38,6 +39,11 @@ class ApplicationWebAdapter(
     @PostMapping("/{id}/run")
     fun runApplication(@PathVariable id: String): ResponseEntity<Void> =
         runApplicationUseCase.execute(id)
+            .run { ResponseEntity.ok().build() }
+
+    @PostMapping("/{id}/deploy")
+    fun deployApplication(@PathVariable id: String): ResponseEntity<Void> =
+        deployApplicationUseCase.execute(id)
             .run { ResponseEntity.ok().build() }
 
     @GetMapping

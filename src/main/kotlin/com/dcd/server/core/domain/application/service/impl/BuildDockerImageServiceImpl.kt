@@ -39,7 +39,7 @@ class BuildDockerImageServiceImpl(
                 commandPort.executeShellCommand("cd ./$name && docker build -t ${name.lowercase()}:latest .")
             }
             else -> {
-                commandPort.executeShellCommand("cd ./$name && docker build -t ${name.lowercase()}:latest .")
+                commandPort.executeShellCommand("cd ./$name && docker build -t ${name.lowercase()}:${application.version} .")
             }
         }
         if (exitValue != 0) throw ImageNotBuiltException()
