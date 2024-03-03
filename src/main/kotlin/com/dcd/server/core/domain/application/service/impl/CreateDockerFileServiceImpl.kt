@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.service.impl
 
+import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.common.file.FileContent
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.exception.NotSupportedTypeException
@@ -13,7 +14,8 @@ import java.io.IOException
 
 @Service
 class CreateDockerFileServiceImpl(
-    private val queryApplicationPort: QueryApplicationPort
+    private val queryApplicationPort: QueryApplicationPort,
+    private val commandPort: CommandPort
 ) : CreateDockerFileService {
     override fun createFileByApplicationId(id: String, version: String) {
         val application = (queryApplicationPort.findById(id)
@@ -27,6 +29,9 @@ class CreateDockerFileServiceImpl(
 
     private fun createFile(application: Application, version: String) {
         val name = application.name
+
+        commandPort.executeShellCommand("mkdir $name")
+
         val file = File("./$name/Dockerfile")
         val fileContent = when (application.applicationType) {
             ApplicationType.SPRING_BOOT ->

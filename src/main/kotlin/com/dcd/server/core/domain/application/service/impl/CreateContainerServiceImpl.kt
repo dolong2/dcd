@@ -13,18 +13,10 @@ class CreateContainerServiceImpl(
     private val commandPort: CommandPort
 ) : CreateContainerService{
     override fun createContainer(application: Application, externalPort: Int) {
-        create(application, externalPort = externalPort)
-    }
-
-    override fun createContainer(application: Application, version: String, externalPort: Int) {
-        create(application, version, externalPort)
-    }
-
-    private fun create(application: Application, version: String = "latest", externalPort: Int) {
         val cmd =
             "docker create --network ${application.workspace.title.replace(' ', '_')} " +
-            "--name ${application.name.lowercase()} -d " +
-            "-p ${externalPort}:${application.port} ${application.name.lowercase()}:$version"
+            "--name ${application.name.lowercase()} " +
+            "-p ${externalPort}:${application.port} ${application.name.lowercase()}:latest"
 
         val exitValue = commandPort.executeShellCommand(cmd)
         if (exitValue != 0) throw ContainerNotCreatedException()
