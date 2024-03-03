@@ -70,7 +70,7 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
                 verify { cloneApplicationByUrlService.cloneByApplication(any() as Application) }
                 verify { validateWorkspaceOwnerService.validateOwner(workspace) }
                 verify { modifyGradleService.modifyGradleByApplication(any() as Application) }
-                verify { createDockerFileService.createFileToApplication(any() as Application, request.version, 0) }
+                verify { createDockerFileService.createFileToApplication(any() as Application, request.version) }
                 verify { buildDockerImageService.buildImageByApplication(any() as Application) }
                 verify { getExternalPortService.getExternalPort(request.port) }
             }

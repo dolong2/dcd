@@ -33,18 +33,14 @@ class CreateApplicationUseCase(
         commandApplicationPort.save(application)
 
         val version = application.version
-        when(application.applicationType){
-            ApplicationType.SPRING_BOOT -> {
-                cloneApplicationByUrlService.cloneByApplication(application)
-                modifyGradleService.modifyGradleByApplication(application)
-                createDockerFileService.createFileToApplication(application, version, externalPort)
-                buildDockerImageService.buildImageByApplication(application)
-                createContainerService.createContainer(application, externalPort)
-            }
 
-            else -> {
-                createContainerService.createContainer(application, version, externalPort)
-            }
+        if (application.applicationType == ApplicationType.SPRING_BOOT) {
+            cloneApplicationByUrlService.cloneByApplication(application)
+            modifyGradleService.modifyGradleByApplication(application)
         }
+
+        createDockerFileService.createFileToApplication(application, version)
+        buildDockerImageService.buildImageByApplication(application)
+        createContainerService.createContainer(application, externalPort)
     }
 }
