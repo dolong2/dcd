@@ -15,43 +15,38 @@ import java.io.IOException
 class CreateDockerFileServiceImpl(
     private val queryApplicationPort: QueryApplicationPort
 ) : CreateDockerFileService {
-    override fun createFileByApplicationId(id: String, version: String, externalPort: Int) {
+    override fun createFileByApplicationId(id: String, version: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
-        when(application.applicationType){
-            ApplicationType.SPRING_BOOT -> {
-                val name = application.name
-                try {
-                    val file = File("./$name/Dockerfile")
-                    file.writeText(FileContent.getSpringBootDockerFileContent(name, version, externalPort, application.env))
-                        if (!file.createNewFile())
-                            return
-                } catch (e: IOException) {
-                    throw ApplicationNotFoundException()
-                }
-            }
-            else -> {
-                throw NotSupportedTypeException()
-            }
-        }
+        createFile(application, version)
     }
 
-    override fun createFileToApplication(application: Application, version: String, externalPort: Int) {
-        when(application.applicationType){
-            ApplicationType.SPRING_BOOT -> {
-                val name = application.name
-                val file = File("./$name/Dockerfile")
-                file.writeText(FileContent.getSpringBootDockerFileContent(name, version, externalPort, application.env))
-                try {
-                    if (!file.createNewFile())
-                        return
-                } catch (e: IOException) {
-                    throw ApplicationNotFoundException()
-                }
-            }
-            else -> {
-                throw NotSupportedTypeException()
-            }
+    override fun createFileToApplication(application: Application, version: String) {
+        createFile(application, version)
+    }
+
+    private fun createFile(application: Application, version: String) {
+        val name = application.name
+        val file = File("./$name/Dockerfile")
+        val fileContent = when (application.applicationType) {
+            ApplicationType.SPRING_BOOT ->
+                FileContent.getSpringBootDockerFileContent(name, version, application.port, application.env)
+
+            ApplicationType.MYSQL ->
+                FileContent.getMYSQLDockerFileContent(version, application.port, application.env)
+
+            ApplicationType.MARIA_DB ->
+                FileContent.getMARIADBDockerFileContent(version, application.port, application.env)
+
+            ApplicationType.REDIS ->
+                FileContent.getRedisDockerFileContent(version, application.port, application.env)
+        }
+        file.writeText(fileContent)
+        try {
+            if (!file.createNewFile())
+                return
+        } catch (e: IOException) {
+            throw ApplicationNotFoundException()
         }
     }
 }
