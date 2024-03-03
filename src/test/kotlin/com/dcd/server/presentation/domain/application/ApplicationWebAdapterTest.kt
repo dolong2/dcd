@@ -32,7 +32,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     val getAvailableVersionUseCase = mockk<GetAvailableVersionUseCase>()
     val generateSSLCertificateUseCase = mockk<GenerateSSLCertificateUseCase>(relaxUnitFun = true)
     val getApplicationLogUseCase = mockk<GetApplicationLogUseCase>()
-    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springRunApplicationUseCase, getAllApplicationUseCase, getOneApplicationUseCase, addApplicationEnvUseCase, deleteApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase, getAvailableVersionUseCase, generateSSLCertificateUseCase, getApplicationLogUseCase)
+    val deployApplicationUseCase = mockk<DeployApplicationUseCase>()
+    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springRunApplicationUseCase, getAllApplicationUseCase, getOneApplicationUseCase, addApplicationEnvUseCase, deleteApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase, getAvailableVersionUseCase, generateSSLCertificateUseCase, getApplicationLogUseCase, deployApplicationUseCase)
 
     given("CreateApplicationRequest가 주어지고") {
         val request = CreateApplicationRequest(
