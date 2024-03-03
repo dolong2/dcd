@@ -52,7 +52,7 @@ class SecurityConfig(
                 //application
                 it.requestMatchers(HttpMethod.POST, "/application/{workspaceId}").authenticated()
                 it.requestMatchers(HttpMethod.POST, "/application/{id}/run").authenticated()
-                it.requestMatchers(HttpMethod.POST, "/application/{id}/run/spring").authenticated()
+                it.requestMatchers(HttpMethod.POST, "/application/{id}/deploy").authenticated()
                 it.requestMatchers(HttpMethod.GET, "/application").authenticated()
                 it.requestMatchers(HttpMethod.GET, "/application/{id}").authenticated()
                 it.requestMatchers(HttpMethod.PATCH, "/application/{id}/env").authenticated()
