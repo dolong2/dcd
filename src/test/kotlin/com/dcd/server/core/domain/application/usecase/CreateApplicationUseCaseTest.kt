@@ -34,6 +34,7 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
     val getExternalPortService = mockk<GetExternalPortService>(relaxed = true)
     val buildDockerImageService = mockk<BuildDockerImageService>(relaxUnitFun = true)
     val createContainerService = mockk<CreateContainerService>(relaxUnitFun = true)
+    val deleteApplicationDirectoryService = mockk<DeleteApplicationDirectoryService>(relaxUnitFun = true)
     val createApplicationUseCase = CreateApplicationUseCase(
         commandApplicationPort,
         queryWorkspacePort,
@@ -43,7 +44,8 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
         createDockerFileService,
         getExternalPortService,
         buildDockerImageService,
-        createContainerService
+        createContainerService,
+        deleteApplicationDirectoryService
     )
 
     given("CreateApplicationReqDto와 유저가 주어지고") {
@@ -73,6 +75,7 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
                 verify { createDockerFileService.createFileToApplication(any() as Application, request.version) }
                 verify { buildDockerImageService.buildImageByApplication(any() as Application) }
                 verify { getExternalPortService.getExternalPort(request.port) }
+                verify { deleteApplicationDirectoryService.deleteApplicationDirectory(any() as Application) }
             }
         }
     }
