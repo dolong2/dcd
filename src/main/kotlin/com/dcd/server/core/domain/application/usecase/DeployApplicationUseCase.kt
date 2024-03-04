@@ -15,7 +15,8 @@ class DeployApplicationUseCase(
     private val modifyGradleService: ModifyGradleService,
     private val createDockerFileService: CreateDockerFileService,
     private val buildDockerImageService: BuildDockerImageService,
-    private val createContainerService: CreateContainerService
+    private val createContainerService: CreateContainerService,
+    private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService
 ) {
     fun execute(id: String) {
         val application = (queryApplicationPort.findById(id)
@@ -35,5 +36,7 @@ class DeployApplicationUseCase(
         createDockerFileService.createFileToApplication(application, version)
         buildDockerImageService.buildImageByApplication(application)
         createContainerService.createContainer(application, externalPort)
+
+        deleteApplicationDirectoryService.deleteApplicationDirectory(application)
     }
 }
