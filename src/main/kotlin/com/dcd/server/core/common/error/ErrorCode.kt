@@ -31,7 +31,8 @@ enum class ErrorCode(
     WORKSPACE_NOT_FOUND("해당 워크스페이스를 찾을 수 없음", 404),
 
     CONFLICT("해당 요청은 서버의 상태와 충돌됩니다.", 409),
-    CAN_NOT_DELETE_APPLICATION("애플리케이션을 삭제할 수 없습니다. 애플리케이션을 정지시킨후 실행해주세요.", 409),
+    CAN_NOT_DEPLOY_APPLICATION("애플리케이션을 배포할 수 없습니다. 애플리케이션을 정지시킨 후 실행해주세요.", 409),
+    CAN_NOT_DELETE_APPLICATION("애플리케이션을 삭제할 수 없습니다. 애플리케이션을 정지시킨 후 실행해주세요.", 409),
 
     CONTAINER_NOT_RUN("해당 애플리케이션을 실행할 수 없음", 500),
     CONTAINER_NOT_STOPPED("해당 애플리케이션을 정지할 수 없음", 500),
