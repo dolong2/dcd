@@ -2,6 +2,8 @@ package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
+import com.dcd.server.core.domain.application.exception.CanNotDeployApplicationException
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -21,6 +23,9 @@ class DeployApplicationUseCase(
     fun execute(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
+
+        if (application.status == ApplicationStatus.RUNNING)
+            throw CanNotDeployApplicationException()
 
         deleteContainerService.deleteContainer(application)
         deleteImageService.deleteImage(application)
