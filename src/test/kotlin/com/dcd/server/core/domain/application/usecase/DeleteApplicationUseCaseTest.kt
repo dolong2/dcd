@@ -4,6 +4,8 @@ import com.dcd.server.core.domain.application.exception.ApplicationNotFoundExcep
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
+import com.dcd.server.core.domain.application.service.DeleteContainerService
+import com.dcd.server.core.domain.application.service.DeleteImageService
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.auth.model.Role
@@ -27,8 +29,10 @@ class DeleteApplicationUseCaseTest : BehaviorSpec({
     val commandApplicationPort = mockk<CommandApplicationPort>()
     val queryApplicationPort = mockk<QueryApplicationPort>()
     val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
+    val deleteContainerService = mockk<DeleteContainerService>(relaxUnitFun = true)
+    val deleteImageService = mockk<DeleteImageService>(relaxUnitFun = true)
     val deleteApplicationUseCase =
-        DeleteApplicationUseCase(getCurrentUserService, commandApplicationPort, queryApplicationPort, validateWorkspaceOwnerService)
+        DeleteApplicationUseCase(getCurrentUserService, commandApplicationPort, queryApplicationPort, validateWorkspaceOwnerService, deleteContainerService, deleteImageService)
     given("애플리케이션 id가 주어지고") {
         val applicationId = "testId"
         val user = UserGenerator.generateUser()
@@ -40,6 +44,8 @@ class DeleteApplicationUseCaseTest : BehaviorSpec({
             deleteApplicationUseCase.execute(applicationId)
             then("commandApplicationPort의 delete메서드가 실행되어야함") {
                 verify { commandApplicationPort.delete(application) }
+                verify { deleteContainerService.deleteContainer(application) }
+                verify { deleteImageService.deleteImage(application) }
             }
         }
         `when`("application을 찾을 수 없을때") {
