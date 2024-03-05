@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
+import com.dcd.server.core.domain.application.exception.CanNotDeleteApplicationException
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
@@ -60,6 +61,22 @@ class DeleteApplicationUseCaseTest : BehaviorSpec({
             every { getCurrentUserService.getCurrentUser() } returns user.copy(id = "otherUser")
             then("RuntimeException이 발생해야함") {
                 shouldThrow<RuntimeException> {
+                    deleteApplicationUseCase.execute(applicationId)
+                }
+            }
+        }
+    }
+
+    given("이미 실행중인 애플리케이션이 주어지고") {
+        val applicationId = "testId"
+        val user = UserGenerator.generateUser()
+        val application = ApplicationGenerator.generateApplication(workspace = WorkspaceGenerator.generateWorkspace(user = user), status = ApplicationStatus.RUNNING)
+        every { getCurrentUserService.getCurrentUser() } returns user
+        `when`("usecase를 실행할때") {
+            every { commandApplicationPort.delete(application) } returns Unit
+            every { queryApplicationPort.findById(applicationId) } returns application
+            then("commandApplicationPort의 delete메서드가 실행되어야함") {
+                shouldThrow<CanNotDeleteApplicationException> {
                     deleteApplicationUseCase.execute(applicationId)
                 }
             }

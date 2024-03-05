@@ -2,6 +2,8 @@ package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
+import com.dcd.server.core.domain.application.exception.CanNotDeleteApplicationException
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.DeleteContainerService
 import com.dcd.server.core.domain.application.service.DeleteImageService
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
@@ -23,6 +25,9 @@ class DeleteApplicationUseCase(
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
         validateWorkspaceOwnerService.validateOwner(user, application.workspace)
+
+        if (application.status == ApplicationStatus.RUNNING)
+            throw CanNotDeleteApplicationException()
 
         deleteContainerService.deleteContainer(application)
         deleteImageService.deleteImage(application)
