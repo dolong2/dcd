@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.exception.CanNotDeployApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
@@ -119,6 +120,16 @@ class DeployApplicationUseCaseTest : BehaviorSpec({
 
             then("CanNotDeployApplicationException이 발생해야함") {
                 shouldThrow<CanNotDeployApplicationException> {
+                    deployApplicationUseCase.execute(applicationId)
+                }
+            }
+        }
+
+        `when`("주어진 id를 가진 애플리케이션이 존재하지 않을때") {
+            every { queryApplicationPort.findById(applicationId) } returns null
+
+            then("ApplicationNotFoundException이 발생해야함") {
+                shouldThrow<ApplicationNotFoundException> {
                     deployApplicationUseCase.execute(applicationId)
                 }
             }
