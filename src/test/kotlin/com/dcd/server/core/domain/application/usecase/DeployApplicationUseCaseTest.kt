@@ -60,5 +60,28 @@ class DeployApplicationUseCaseTest : BehaviorSpec({
                 verify { deleteApplicationDirectoryService.deleteApplicationDirectory(application) }
             }
         }
+
+        `when`("주어진 id의 애플리케이션이 MYSQL 타입의 애플리케이션일때") {
+            val application = ApplicationGenerator.generateApplication(
+                id = applicationId,
+                applicationType = ApplicationType.MYSQL
+            )
+            every { queryApplicationPort.findById(applicationId) } returns application
+
+            deployApplicationUseCase.execute(applicationId)
+
+            then("이미지와 컨테이너를 삭제하는 서비스를 실행해야함") {
+                verify { deleteContainerService.deleteContainer(application) }
+                verify { deleteImageService.deleteImage(application) }
+            }
+            then("도커파일을 생성하고, 이미지를 빌드하고, 컨테이너를 생성해야함") {
+                verify { createDockerFileService.createFileToApplication(application, application.version) }
+                verify { buildDockerImageService.buildImageByApplication(application) }
+                verify { createContainerService.createContainer(application, application.externalPort) }
+            }
+            then("생성된 애플리케이션 디렉토리를 제거해야함") {
+                verify { deleteApplicationDirectoryService.deleteApplicationDirectory(application) }
+            }
+        }
     }
 })
