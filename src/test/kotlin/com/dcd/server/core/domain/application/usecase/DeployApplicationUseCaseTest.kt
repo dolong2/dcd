@@ -1,8 +1,11 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.domain.application.exception.CanNotDeployApplicationException
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
@@ -104,6 +107,20 @@ class DeployApplicationUseCaseTest : BehaviorSpec({
             }
             then("생성된 애플리케이션 디렉토리를 제거해야함") {
                 verify { deleteApplicationDirectoryService.deleteApplicationDirectory(application) }
+            }
+        }
+
+        `when`("주어진 id의 애플리케이션이 실행중인 애플리케이션일때") {
+            val application = ApplicationGenerator.generateApplication(
+                id = applicationId,
+                status = ApplicationStatus.RUNNING
+            )
+            every { queryApplicationPort.findById(applicationId) } returns application
+
+            then("CanNotDeployApplicationException이 발생해야함") {
+                shouldThrow<CanNotDeployApplicationException> {
+                    deployApplicationUseCase.execute(applicationId)
+                }
             }
         }
     }
