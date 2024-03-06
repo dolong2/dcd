@@ -32,7 +32,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     val getAvailableVersionUseCase = mockk<GetAvailableVersionUseCase>()
     val generateSSLCertificateUseCase = mockk<GenerateSSLCertificateUseCase>(relaxUnitFun = true)
     val getApplicationLogUseCase = mockk<GetApplicationLogUseCase>()
-    val deployApplicationUseCase = mockk<DeployApplicationUseCase>()
+    val deployApplicationUseCase = mockk<DeployApplicationUseCase>(relaxUnitFun = true)
     val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springRunApplicationUseCase, getAllApplicationUseCase, getOneApplicationUseCase, addApplicationEnvUseCase, deleteApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase, getAvailableVersionUseCase, generateSSLCertificateUseCase, getApplicationLogUseCase, deployApplicationUseCase)
 
     given("CreateApplicationRequest가 주어지고") {
@@ -164,6 +164,13 @@ class ApplicationWebAdapterTest : BehaviorSpec({
 
         `when`("runApplication 메서드를 실행할때") {
             val result = applicationWebAdapter.runApplication(testId)
+            then("상태코드가 200이여야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+
+        `when`("deployApplication 메서드를 실행할때") {
+            val result = applicationWebAdapter.deployApplication(testId)
             then("상태코드가 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
             }
