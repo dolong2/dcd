@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.application.usecase
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
@@ -21,6 +22,9 @@ class UpdateApplicationUseCase(
 
         if (owner.equals(getCurrentUserService.getCurrentUser()).not())
             throw WorkspaceOwnerNotSameException()
+
+        if (application.status == ApplicationStatus.RUNNING)
+            throw RuntimeException()
 
         val updatedApplication =
             application.copy(
