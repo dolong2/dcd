@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
+import com.dcd.server.core.domain.application.exception.AlreadyRunningException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
@@ -24,7 +25,7 @@ class UpdateApplicationUseCase(
             throw WorkspaceOwnerNotSameException()
 
         if (application.status == ApplicationStatus.RUNNING)
-            throw RuntimeException()
+            throw AlreadyRunningException()
 
         val updatedApplication =
             application.copy(
