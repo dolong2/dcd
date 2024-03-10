@@ -1,6 +1,6 @@
 package com.dcd.server.core.domain.user.usecase
 
-import com.dcd.server.core.common.annotation.UseCase
+import com.dcd.server.core.common.annotation.ReadOnlyUseCase
 import com.dcd.server.core.domain.application.dto.extenstion.toProfileDto
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.dto.extension.toDto
@@ -10,7 +10,7 @@ import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.dto.extension.toProfileDto
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 
-@UseCase
+@ReadOnlyUseCase
 class GetUserProfileUseCase(
     private val getCurrentUserService: GetCurrentUserService,
     private val queryWorkspacePort: QueryWorkspacePort,
