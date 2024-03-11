@@ -7,11 +7,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.LoggerFactory
 import org.springframework.web.filter.OncePerRequestFilter
 
 class ExceptionFilter(
     private val objectMapper: ObjectMapper
 ) : OncePerRequestFilter() {
+    private val log = LoggerFactory.getLogger(this::class.simpleName)
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -22,14 +25,24 @@ class ExceptionFilter(
         } catch (ex: Exception) {
             when (ex) {
                 is BasicException -> {
+                    logErrorResponse(request, ex.errorCode)
                     writeErrorResponse(response, ex)
                 }
                 else -> {
                     ex.printStackTrace()
-                    writeErrorResponse(response, BasicException(ErrorCode.INTERNAL_ERROR))
+                    val errorCode = ErrorCode.INTERNAL_ERROR
+                    logErrorResponse(request, errorCode)
+                    writeErrorResponse(response, BasicException(errorCode))
                 }
             }
         }
+    }
+
+    private fun logErrorResponse(request: HttpServletRequest, errorCode: ErrorCode) {
+        log.error(request.method)
+        log.error(request.requestURI)
+        log.error(errorCode.msg)
+        log.error("${errorCode.code}")
     }
 
     private fun writeErrorResponse(response: HttpServletResponse, exception: BasicException) {
