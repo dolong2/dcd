@@ -30,5 +30,21 @@ class CreateContainerServiceImplTest : BehaviorSpec({
                 }
             }
         }
+
+        `when`("만약 명령이 성공하지 못할때") {
+            every {
+                commandPort.executeShellCommand(
+                    "docker create --network ${application.workspace.title.replace(' ', '_')} " +
+                            "--name ${application.name.lowercase()} " +
+                            "-p ${application.externalPort}:${application.port} ${application.name.lowercase()}:latest"
+                )
+            } returns 125
+
+            then("ContainerNotCreatedException이 발생해야함") {
+                shouldThrow<ContainerNotCreatedException> {
+                    createContainerService.createContainer(application, application.externalPort)
+                }
+            }
+        }
     }
 })
