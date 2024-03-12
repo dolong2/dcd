@@ -30,4 +30,19 @@ class ChangeApplicationStatusServiceImplTest : BehaviorSpec({
             }
         }
     }
+
+    given("정지된 애플리케이션이 주어지고") {
+        val application = spyk(ApplicationGenerator.generateApplication())
+
+        `when`("ApplicationStatus.RUNNING을 대입할때") {
+            val targetApplication = application.copy(status = ApplicationStatus.RUNNING)
+            every { application.copy(status = ApplicationStatus.RUNNING) } returns targetApplication
+            changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING)
+
+            then("애플리케이션의 상태를 STOPPED로 업데이트 해야함") {
+                application.status shouldBe ApplicationStatus.STOPPED
+                verify { commandApplicationPort.save(targetApplication) }
+            }
+        }
+    }
 })
