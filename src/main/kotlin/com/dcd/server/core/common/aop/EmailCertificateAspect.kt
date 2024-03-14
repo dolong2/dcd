@@ -20,8 +20,7 @@ class EmailCertificateAspect(
     private val queryUserPort: QueryUserPort
 ) {
     @Pointcut("execution(* com.dcd.server.core.domain.auth.usecase.SignUpUseCase.execute(..)) " + "&& args(signUpReqDto)")
-    fun signupUseCasePointcut(signUpReqDto: SignUpReqDto) {
-    }
+    fun signupUseCasePointcut(signUpReqDto: SignUpReqDto) {}
 
     @Pointcut("execution(* com.dcd.server.core.domain.auth.usecase.NonAuthChangePasswordUseCase.execute(..))" + "&& args(nonAuthChangePasswordReqDto)")
     fun changePasswordUseCasePointcut(nonAuthChangePasswordReqDto: NonAuthChangePasswordReqDto) {}
