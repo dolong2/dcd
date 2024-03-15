@@ -18,12 +18,11 @@ class WorkspaceValidateAspect(
     @Pointcut("@annotation(com.dcd.server.core.common.annotation.WorkspaceOwnerVerification)")
     fun verificationPointcut() {}
 
-    @Before("verificationPointcut() && args(applicationId, ..)")
-    fun validWorkspaceOwner(applicationId: String) {
-        println("testsesteststtstetetst")
+    @Before("verificationPointcut() && args(id, ..)")
+    fun validWorkspaceOwner(id: String) {
         val user = getCurrentUserService.getCurrentUser()
 
-        val application = queryApplicationPort.findById(applicationId)
+        val application = queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException()
 
         if (!application.workspace.owner.equals(user))
