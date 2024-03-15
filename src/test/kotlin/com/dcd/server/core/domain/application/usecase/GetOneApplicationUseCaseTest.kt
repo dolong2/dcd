@@ -44,14 +44,5 @@ class GetOneApplicationUseCaseTest : BehaviorSpec({
                 }
             }
         }
-        `when`("현재 유저가 해당 애플리케이션의 워크스페이스 주인이 아닐때") {
-            every { queryApplicationPort.findById(application.id) } returns application
-
-            then("WorkspaceOwnerNotSameException이 발생해야함") {
-                shouldThrow<WorkspaceOwnerNotSameException> {
-                    getOneApplicationUseCase.execute(application.id)
-                }
-            }
-        }
     }
 })

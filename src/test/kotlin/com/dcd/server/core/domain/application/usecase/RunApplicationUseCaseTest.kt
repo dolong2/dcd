@@ -34,7 +34,7 @@ class RunApplicationUseCaseTest : BehaviorSpec({
         val application = ApplicationGenerator.generateApplication(workspace = workspace)
         `when`("usecase를 실행할때") {
             every { queryApplicationPort.findById("testId") } returns application
-            val result = runApplicationUseCase.execute("testId")
+            runApplicationUseCase.execute("testId")
             then("애플리케이션 실행에 관한 service들이 실행되어야함") {
                 verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING) }
             }

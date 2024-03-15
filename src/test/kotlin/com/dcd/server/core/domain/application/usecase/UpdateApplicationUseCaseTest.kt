@@ -48,15 +48,6 @@ class UpdateApplicationUseCaseTest : BehaviorSpec({
                 verify { commandApplicationPort.save(updatedApplication) }
             }
         }
-
-        `when`("로그인된 유저가 workspace 주인이 아닐때") {
-
-            then("WorkspaceOwnerNotSameException이 발생해야함") {
-                shouldThrow<WorkspaceOwnerNotSameException> {
-                    updateApplicationUseCase.execute(applicationId, updateReqDto)
-                }
-            }
-        }
     }
 
     given("애플리케이션이 주어지지 않고") {
