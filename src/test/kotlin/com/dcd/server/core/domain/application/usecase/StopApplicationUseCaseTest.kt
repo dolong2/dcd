@@ -21,10 +21,9 @@ import util.workspace.WorkspaceGenerator
 class StopApplicationUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
     val stopContainerService = mockk<StopContainerService>(relaxUnitFun = true)
-    val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
     val changeApplicationStatusService = mockk<ChangeApplicationStatusService>(relaxUnitFun = true)
     val stopApplicationUseCase =
-        StopApplicationUseCase(queryApplicationPort, stopContainerService, validateWorkspaceOwnerService, changeApplicationStatusService)
+        StopApplicationUseCase(queryApplicationPort, stopContainerService, changeApplicationStatusService)
 
     given("애플리케이션 Id가 주어지고") {
         val applicationId = "testApplicationId"

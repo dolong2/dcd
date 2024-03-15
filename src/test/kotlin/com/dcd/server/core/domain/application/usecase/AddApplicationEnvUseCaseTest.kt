@@ -22,8 +22,7 @@ import java.util.*
 class AddApplicationEnvUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
     val commandApplicationPort = mockk<CommandApplicationPort>()
-    val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
-    val addApplicationEnvUseCase = AddApplicationEnvUseCase(queryApplicationPort, commandApplicationPort, validateWorkspaceOwnerService)
+    val addApplicationEnvUseCase = AddApplicationEnvUseCase(queryApplicationPort, commandApplicationPort)
 
     given("request가 주어지고") {
         val request = AddApplicationEnvReqDto(

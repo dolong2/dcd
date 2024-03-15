@@ -21,12 +21,10 @@ import util.workspace.WorkspaceGenerator
 class RunApplicationUseCaseTest : BehaviorSpec({
     val dockerRunService = mockk<DockerRunService>(relaxUnitFun = true)
     val queryApplicationPort = mockk<QueryApplicationPort>(relaxUnitFun = true)
-    val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
     val changeApplicationStatusService = mockk<ChangeApplicationStatusService>(relaxUnitFun = true)
     val runApplicationUseCase = RunApplicationUseCase(
         dockerRunService,
         queryApplicationPort,
-        validateWorkspaceOwnerService,
         changeApplicationStatusService
     )
 
@@ -36,9 +34,8 @@ class RunApplicationUseCaseTest : BehaviorSpec({
         val application = ApplicationGenerator.generateApplication(workspace = workspace)
         `when`("usecase를 실행할때") {
             every { queryApplicationPort.findById("testId") } returns application
-            val result = runApplicationUseCase.execute("testId")
+            runApplicationUseCase.execute("testId")
             then("애플리케이션 실행에 관한 service들이 실행되어야함") {
-                verify { validateWorkspaceOwnerService.validateOwner(workspace) }
                 verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING) }
             }
         }

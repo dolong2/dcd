@@ -23,15 +23,13 @@ import java.util.*
 
 class GetOneApplicationUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
-    val getCurrentUserService = mockk<GetCurrentUserService>()
-    val getOneApplicationUseCase = GetOneApplicationUseCase(queryApplicationPort, getCurrentUserService)
+    val getOneApplicationUseCase = GetOneApplicationUseCase(queryApplicationPort)
 
     given("애플리케이션이 주어지고") {
         val user = UserGenerator.generateUser()
         val application = ApplicationGenerator.generateApplication(workspace = WorkspaceGenerator.generateWorkspace(user = user))
         `when`("해당 애플리케이션이 있을때") {
             every { queryApplicationPort.findById(application.id) } returns application
-            every { getCurrentUserService.getCurrentUser() } returns user
             val result = getOneApplicationUseCase.execute(application.id)
             then("result는 application의 내용이랑 같아야함") {
                 result shouldBe application.toDto()
@@ -42,18 +40,6 @@ class GetOneApplicationUseCaseTest : BehaviorSpec({
 
             then("result는 application의 내용이랑 같아야함") {
                 shouldThrow<ApplicationNotFoundException> {
-                    getOneApplicationUseCase.execute(application.id)
-                }
-            }
-        }
-        `when`("현재 유저가 해당 애플리케이션의 워크스페이스 주인이 아닐때") {
-            val another = UserGenerator.generateUser(email = "another")
-
-            every { queryApplicationPort.findById(application.id) } returns application
-            every { getCurrentUserService.getCurrentUser() } returns another
-
-            then("WorkspaceOwnerNotSameException이 발생해야함") {
-                shouldThrow<WorkspaceOwnerNotSameException> {
                     getOneApplicationUseCase.execute(application.id)
                 }
             }
