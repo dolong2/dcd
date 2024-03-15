@@ -19,13 +19,9 @@ import util.workspace.WorkspaceGenerator
 class GetApplicationLogUseCaseTest : BehaviorSpec({
     val getContainerLogService = mockk<GetContainerLogService>()
     val queryApplicationPort = mockk<QueryApplicationPort>()
-    val getCurrentUserService = mockk<GetCurrentUserService>()
-    val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
     val getApplicationLogUseCase = GetApplicationLogUseCase(
         getContainerLogService,
-        queryApplicationPort,
-        getCurrentUserService,
-        validateWorkspaceOwnerService
+        queryApplicationPort
     )
 
     given("애플리케이션 id가 주어지고") {
@@ -48,8 +44,6 @@ class GetApplicationLogUseCaseTest : BehaviorSpec({
             val user = UserGenerator.generateUser(email = "thief")
 
             every { queryApplicationPort.findById(appId) } returns application
-            every { getCurrentUserService.getCurrentUser() } returns user
-            every { validateWorkspaceOwnerService.validateOwner(user, workspace) } throws WorkspaceOwnerNotSameException()
 
             then("유스케이스 실행시 WorkspaceOwnerNotSameException이 발생해야함") {
                 shouldThrow<WorkspaceOwnerNotSameException> {
@@ -62,7 +56,6 @@ class GetApplicationLogUseCaseTest : BehaviorSpec({
             val logs = listOf("testLogs")
 
             every { queryApplicationPort.findById(appId) } returns application
-            every { getCurrentUserService.getCurrentUser() } returns owner
             every { getContainerLogService.getLogs(application) } returns logs
 
             val response = getApplicationLogUseCase.execute(appId)

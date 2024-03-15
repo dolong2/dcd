@@ -26,10 +26,9 @@ import java.util.*
 class UpdateApplicationUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
     val commandApplicationPort = mockk<CommandApplicationPort>(relaxUnitFun = true)
-    val getCurrentUserService = mockk<GetCurrentUserService>()
 
     val updateApplicationUseCase =
-        UpdateApplicationUseCase(queryApplicationPort, commandApplicationPort, getCurrentUserService)
+        UpdateApplicationUseCase(queryApplicationPort, commandApplicationPort)
 
     val user = UserGenerator.generateUser()
     val workspace = WorkspaceGenerator.generateWorkspace(user = user)
@@ -40,7 +39,6 @@ class UpdateApplicationUseCaseTest : BehaviorSpec({
         val application = ApplicationGenerator.generateApplication(id = applicationId, workspace = workspace)
 
         `when`("usecase를 실행할때") {
-            every { getCurrentUserService.getCurrentUser() } returns user
             every { queryApplicationPort.findById(applicationId) } returns application
 
             updateApplicationUseCase.execute(applicationId, updateReqDto)
@@ -52,7 +50,6 @@ class UpdateApplicationUseCaseTest : BehaviorSpec({
         }
 
         `when`("로그인된 유저가 workspace 주인이 아닐때") {
-            every { getCurrentUserService.getCurrentUser() } returns user.copy(id = "another", name = "another", email = "another")
 
             then("WorkspaceOwnerNotSameException이 발생해야함") {
                 shouldThrow<WorkspaceOwnerNotSameException> {
@@ -79,7 +76,6 @@ class UpdateApplicationUseCaseTest : BehaviorSpec({
         val application = ApplicationGenerator.generateApplication(id = applicationId, workspace = workspace, status = ApplicationStatus.RUNNING)
 
         `when`("usecase를 실행할때") {
-            every { getCurrentUserService.getCurrentUser() } returns user
             every { queryApplicationPort.findById(applicationId) } returns application
 
             then("ReqDto의 내용이 반영된 애플리케이션을 저장해야함") {

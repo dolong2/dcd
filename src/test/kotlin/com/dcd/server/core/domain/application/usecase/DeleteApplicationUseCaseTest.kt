@@ -26,19 +26,16 @@ import java.lang.RuntimeException
 import java.util.*
 
 class DeleteApplicationUseCaseTest : BehaviorSpec({
-    val getCurrentUserService = mockk<GetCurrentUserService>()
     val commandApplicationPort = mockk<CommandApplicationPort>()
     val queryApplicationPort = mockk<QueryApplicationPort>()
-    val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
     val deleteContainerService = mockk<DeleteContainerService>(relaxUnitFun = true)
     val deleteImageService = mockk<DeleteImageService>(relaxUnitFun = true)
     val deleteApplicationUseCase =
-        DeleteApplicationUseCase(getCurrentUserService, commandApplicationPort, queryApplicationPort, validateWorkspaceOwnerService, deleteContainerService, deleteImageService)
+        DeleteApplicationUseCase(commandApplicationPort, queryApplicationPort, deleteContainerService, deleteImageService)
     given("애플리케이션 id가 주어지고") {
         val applicationId = "testId"
         val user = UserGenerator.generateUser()
         val application = ApplicationGenerator.generateApplication(workspace = WorkspaceGenerator.generateWorkspace(user = user))
-        every { getCurrentUserService.getCurrentUser() } returns user
         `when`("usecase를 실행할때") {
             every { commandApplicationPort.delete(application) } returns Unit
             every { queryApplicationPort.findById(applicationId) } returns application
@@ -58,7 +55,6 @@ class DeleteApplicationUseCaseTest : BehaviorSpec({
             }
         }
         `when`("현재 유저가 소유자가 아닐때") {
-            every { getCurrentUserService.getCurrentUser() } returns user.copy(id = "otherUser")
             then("RuntimeException이 발생해야함") {
                 shouldThrow<RuntimeException> {
                     deleteApplicationUseCase.execute(applicationId)
@@ -71,7 +67,6 @@ class DeleteApplicationUseCaseTest : BehaviorSpec({
         val applicationId = "testId"
         val user = UserGenerator.generateUser()
         val application = ApplicationGenerator.generateApplication(workspace = WorkspaceGenerator.generateWorkspace(user = user), status = ApplicationStatus.RUNNING)
-        every { getCurrentUserService.getCurrentUser() } returns user
         `when`("usecase를 실행할때") {
             every { commandApplicationPort.delete(application) } returns Unit
             every { queryApplicationPort.findById(applicationId) } returns application

@@ -22,8 +22,7 @@ import java.util.*
 class DeleteApplicationEnvUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
     val commandApplicationPort = mockk<CommandApplicationPort>()
-    val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
-    val deleteApplicationEnvUseCase = DeleteApplicationEnvUseCase(queryApplicationPort, commandApplicationPort, validateWorkspaceOwnerService)
+    val deleteApplicationEnvUseCase = DeleteApplicationEnvUseCase(queryApplicationPort, commandApplicationPort)
 
     given("애플리케이션 Id와 삭제할 key가 주어지고") {
         val applicationId = "testId"
