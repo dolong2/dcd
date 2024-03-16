@@ -1,10 +1,10 @@
 package com.dcd.server.core.common.aop
 
-import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
+import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Before
@@ -25,18 +25,14 @@ class WorkspaceValidateAspect(
     fun validWorkspaceOwner(id: String) {
         val user = getCurrentUserService.getCurrentUser()
 
-        try {
-            val workspace = queryWorkspacePort.findById(id)
-                ?: throw WorkspaceNotFoundException()
+        val workspace = (findWorkspace(id)
+            ?: throw WorkspaceNotFoundException())
 
-            if (!workspace.owner.equals(user))
-                throw WorkspaceOwnerNotSameException()
-        } catch (e: WorkspaceNotFoundException) {
-            val application = queryApplicationPort.findById(id)
-                ?: throw ApplicationNotFoundException()
-
-            if (!application.workspace.owner.equals(user))
-                throw WorkspaceOwnerNotSameException()
-        }
+        if (!workspace.owner.equals(user))
+            throw WorkspaceOwnerNotSameException()
     }
+
+    private fun findWorkspace(id: String): Workspace? =
+        queryWorkspacePort.findById(id)
+            ?: queryApplicationPort.findById(id)?.workspace
 }
