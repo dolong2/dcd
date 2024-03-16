@@ -1,5 +1,6 @@
 package com.dcd.server.core.common.aop
 
+import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
@@ -34,5 +35,7 @@ class WorkspaceValidateAspect(
 
     private fun findWorkspace(id: String): Workspace? =
         queryWorkspacePort.findById(id)
-            ?: queryApplicationPort.findById(id)?.workspace
+            ?: (queryApplicationPort.findById(id)
+                ?: throw ApplicationNotFoundException())
+                .workspace
 }
