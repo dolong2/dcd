@@ -24,9 +24,8 @@ import java.util.*
 
 class GetAllApplicationUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
-    val getCurrentUserService = mockk<GetCurrentUserService>()
     val queryWorkspacePort = mockk<QueryWorkspacePort>()
-    val getAllApplicationUseCase = GetAllApplicationUseCase(queryApplicationPort, getCurrentUserService, queryWorkspacePort)
+    val getAllApplicationUseCase = GetAllApplicationUseCase(queryApplicationPort, queryWorkspacePort)
 
     given("applicationList가 주어지고") {
         val user = UserGenerator.generateUser()
@@ -34,26 +33,12 @@ class GetAllApplicationUseCaseTest : BehaviorSpec({
         val application = ApplicationGenerator.generateApplication(workspace = workspace)
         val applicationList = listOf(application)
         `when`("usecase를 실행할때") {
-            every { getCurrentUserService.getCurrentUser() } returns user
             every { queryApplicationPort.findAllByWorkspace(workspace) } returns applicationList
             every { queryWorkspacePort.findById(workspace.id) } returns workspace
             val result = getAllApplicationUseCase.execute(workspace.id)
             val target = ApplicationListResDto(applicationList.map { it.toDto() })
             then("result는 target이랑 같아야함") {
                 result shouldBe target
-            }
-        }
-
-        `when`("실행한 유저가 워크스페이스의 주인이 아닐때") {
-            val another =
-                User(email = "another", password = "password", name = "another", roles = mutableListOf(Role.ROLE_USER))
-            every { getCurrentUserService.getCurrentUser() } returns another
-            every { queryApplicationPort.findAllByWorkspace(workspace) } returns applicationList
-            every { queryWorkspacePort.findById(workspace.id) } returns workspace
-            then("WorkspaceOwnerNotSameException이 발생해야함") {
-                shouldThrow<WorkspaceOwnerNotSameException> {
-                    getAllApplicationUseCase.execute(workspace.id)
-                }
             }
         }
     }

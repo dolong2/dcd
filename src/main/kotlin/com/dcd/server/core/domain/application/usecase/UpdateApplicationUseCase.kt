@@ -1,7 +1,7 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
-import com.dcd.server.core.common.annotation.WorkspaceOwnerVerification
+import com.dcd.server.core.common.annotation.ApplicationOwnerVerification
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
 import com.dcd.server.core.domain.application.exception.AlreadyRunningException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
@@ -14,7 +14,7 @@ class UpdateApplicationUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val commandApplicationPort: CommandApplicationPort,
 ) {
-    @WorkspaceOwnerVerification
+    @ApplicationOwnerVerification
     fun execute(id: String, updateApplicationReqDto: UpdateApplicationReqDto) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
