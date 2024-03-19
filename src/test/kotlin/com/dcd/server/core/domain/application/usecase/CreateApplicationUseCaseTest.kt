@@ -27,7 +27,6 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
     val queryUserPort = mockk<QueryUserPort>()
     val securityService = mockk<SecurityService>()
     val queryWorkspacePort = mockk<QueryWorkspacePort>()
-    val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
     val cloneApplicationByUrlService = mockk<CloneApplicationByUrlService>(relaxUnitFun = true)
     val modifyGradleService = mockk<ModifyGradleService>(relaxUnitFun = true)
     val createDockerFileService = mockk<CreateDockerFileService>(relaxUnitFun = true)
@@ -38,7 +37,6 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
     val createApplicationUseCase = CreateApplicationUseCase(
         commandApplicationPort,
         queryWorkspacePort,
-        validateWorkspaceOwnerService,
         cloneApplicationByUrlService,
         modifyGradleService,
         createDockerFileService,
@@ -70,7 +68,6 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
             then("repository의 save메서드가 실행되어야함") {
                 verify { commandApplicationPort.save(any()) }
                 verify { cloneApplicationByUrlService.cloneByApplication(any() as Application) }
-                verify { validateWorkspaceOwnerService.validateOwner(workspace) }
                 verify { modifyGradleService.modifyGradleByApplication(any() as Application) }
                 verify { createDockerFileService.createFileToApplication(any() as Application, request.version) }
                 verify { buildDockerImageService.buildImageByApplication(any() as Application) }
