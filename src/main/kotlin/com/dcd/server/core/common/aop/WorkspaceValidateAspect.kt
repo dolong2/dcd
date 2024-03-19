@@ -19,23 +19,18 @@ class WorkspaceValidateAspect(
     private val queryWorkspacePort: QueryWorkspacePort,
     private val queryApplicationPort: QueryApplicationPort
 ) {
-    @Pointcut("@annotation(com.dcd.server.core.common.annotation.WorkspaceOwnerVerification)")
+    @Pointcut("@annotation(com.dcd.server.core.common.annotation.ApplicationOwnerVerification)")
     fun verificationPointcut() {}
 
     @Before("verificationPointcut() && args(id, ..)")
     fun validWorkspaceOwner(id: String) {
         val user = getCurrentUserService.getCurrentUser()
 
-        val workspace = (findWorkspace(id)
-            ?: throw WorkspaceNotFoundException())
+        val application = (queryApplicationPort.findById(id)
+            ?: throw ApplicationNotFoundException())
 
-        if (!workspace.owner.equals(user))
+        val owner = application.workspace.owner
+        if (!owner.equals(user))
             throw WorkspaceOwnerNotSameException()
     }
-
-    private fun findWorkspace(id: String): Workspace? =
-        queryWorkspacePort.findById(id)
-            ?: (queryApplicationPort.findById(id)
-                ?: throw ApplicationNotFoundException())
-                .workspace
 }
