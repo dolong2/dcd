@@ -4,10 +4,7 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.usecase.*
 import com.dcd.server.presentation.domain.application.data.exetension.toDto
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
-import com.dcd.server.presentation.domain.application.data.request.AddApplicationEnvRequest
-import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
-import com.dcd.server.presentation.domain.application.data.request.GenerateSSLCertificateRequest
-import com.dcd.server.presentation.domain.application.data.request.UpdateApplicationRequest
+import com.dcd.server.presentation.domain.application.data.request.*
 import com.dcd.server.presentation.domain.application.data.response.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -23,6 +20,7 @@ class ApplicationWebAdapter(
     private val getOneApplicationUseCase: GetOneApplicationUseCase,
     private val addApplicationEnvUseCase: AddApplicationEnvUseCase,
     private val deleteApplicationEnvUseCase: DeleteApplicationEnvUseCase,
+    private val updateApplicationEnvUseCase: UpdateApplicationEnvUseCase,
     private val stopApplicationUseCase: StopApplicationUseCase,
     private val deleteApplicationUseCase: DeleteApplicationUseCase,
     private val updateApplicationUseCase: UpdateApplicationUseCase,
@@ -64,6 +62,11 @@ class ApplicationWebAdapter(
     @DeleteMapping("/{id}/env")
     fun deleteApplicationEnv(@PathVariable id: String, @RequestParam key: String): ResponseEntity<Void> =
         deleteApplicationEnvUseCase.execute(id, key)
+            .run { ResponseEntity.ok().build() }
+
+    @PatchMapping("/{applicationId}/env/{key}")
+    fun updateApplicationEnv(@PathVariable applicationId: String, @PathVariable key: String, @RequestBody updateApplicationEnvRequest: UpdateApplicationEnvRequest): ResponseEntity<Void> =
+        updateApplicationEnvUseCase.execute(applicationId, key, updateApplicationEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
     @PostMapping("/{id}/stop")

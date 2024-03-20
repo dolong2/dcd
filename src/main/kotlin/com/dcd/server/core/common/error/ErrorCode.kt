@@ -12,6 +12,7 @@ enum class ErrorCode(
     NOT_SUPPORTED_APPLICATION_TYPE("지원되는 애플리케이션 타입이 아님", 400),
     APPLICATION_ALREADY_RUNNING("해당 애플리케이션은 이미 실행중임", 400),
     APPLICATION_ALREADY_STOPPED("해당 애플리케이션은 이미 정지됨", 400),
+    ALREADY_EXISTS_APPLICATION_ENV("해당 키값을 가지는 환경변수가 이미 존재함", 400),
 
     UNAUTHORIZED("권한이 없음", 401),
     EXPIRED_TOKEN("토큰이 만료됨", 401),
