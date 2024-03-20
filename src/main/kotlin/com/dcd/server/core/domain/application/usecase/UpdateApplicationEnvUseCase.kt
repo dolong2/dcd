@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.application.usecase
 import com.dcd.server.core.common.annotation.ApplicationOwnerVerification
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationEnvReqDto
+import com.dcd.server.core.domain.application.exception.ApplicationEnvNotFoundException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -19,7 +20,7 @@ class UpdateApplicationEnvUseCase(
 
         val env = application.env
         if (env.containsKey(envKey).not())
-            throw RuntimeException()//해당 env를 찾을 수 없음
+            throw ApplicationEnvNotFoundException()
 
         val mutableEnv = env.toMutableMap()
         mutableEnv[envKey] = updateApplicationEnvReqDto.newValue
