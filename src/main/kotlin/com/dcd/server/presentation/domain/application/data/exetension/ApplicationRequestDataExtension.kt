@@ -1,13 +1,7 @@
 package com.dcd.server.presentation.domain.application.data.exetension
 
-import com.dcd.server.core.domain.application.dto.request.AddApplicationEnvReqDto
-import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDto
-import com.dcd.server.core.domain.application.dto.request.GenerateSSLCertificateReqDto
-import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
-import com.dcd.server.presentation.domain.application.data.request.AddApplicationEnvRequest
-import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
-import com.dcd.server.presentation.domain.application.data.request.GenerateSSLCertificateRequest
-import com.dcd.server.presentation.domain.application.data.request.UpdateApplicationRequest
+import com.dcd.server.core.domain.application.dto.request.*
+import com.dcd.server.presentation.domain.application.data.request.*
 
 fun AddApplicationEnvRequest.toDto(): AddApplicationEnvReqDto =
     AddApplicationEnvReqDto(
@@ -38,4 +32,9 @@ fun UpdateApplicationRequest.toDto(): UpdateApplicationReqDto =
 fun GenerateSSLCertificateRequest.toDto(): GenerateSSLCertificateReqDto =
     GenerateSSLCertificateReqDto(
         domain = this.domain
+    )
+
+fun UpdateApplicationEnvRequest.toDto(): UpdateApplicationEnvReqDto =
+    UpdateApplicationEnvReqDto(
+        newValue = this.newValue
     )
