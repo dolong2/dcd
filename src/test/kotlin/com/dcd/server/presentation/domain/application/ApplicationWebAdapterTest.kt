@@ -7,10 +7,7 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.usecase.*
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
-import com.dcd.server.presentation.domain.application.data.request.AddApplicationEnvRequest
-import com.dcd.server.presentation.domain.application.data.request.CreateApplicationRequest
-import com.dcd.server.presentation.domain.application.data.request.GenerateSSLCertificateRequest
-import com.dcd.server.presentation.domain.application.data.request.UpdateApplicationRequest
+import com.dcd.server.presentation.domain.application.data.request.*
 import com.dcd.server.presentation.domain.application.data.response.RunApplicationResponse
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -222,6 +219,20 @@ class ApplicationWebAdapterTest : BehaviorSpec({
                 verify { generateSSLCertificateUseCase.execute(testId, any() as GenerateSSLCertificateReqDto) }
             }
             then("result는 200 상태코드를 가져야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
+
+    given("애플리케이션 id와 UpdateApplicationEnvRequest가 주어지고") {
+        val testId = "testId"
+        val envKey = "testKey"
+        val request = UpdateApplicationEnvRequest(newValue = "newValue")
+
+        `when`("updateApplicationEnv 메서드를 실행할때") {
+            val result = applicationWebAdapter.updateApplicationEnv(testId, envKey, request)
+
+            then("상태코드는 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
             }
         }
