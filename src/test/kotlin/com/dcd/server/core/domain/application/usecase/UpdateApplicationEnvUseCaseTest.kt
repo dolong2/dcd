@@ -42,5 +42,15 @@ class UpdateApplicationEnvUseCaseTest : BehaviorSpec({
                 verify { commandApplicationPort.save(updatedApplication) }
             }
         }
+
+        `when`("해당 애플리케이션이 존재하지 않을때") {
+            every { queryApplicationPort.findById(applicationId) } returns null
+
+            then("ApplicationNotFoundException이 발생해야함") {
+                shouldThrow<ApplicationNotFoundException> {
+                    updateApplicationEnvUseCase.execute(applicationId, envKey, request)
+                }
+            }
+        }
     }
 })
