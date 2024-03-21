@@ -52,5 +52,20 @@ class UpdateApplicationEnvUseCaseTest : BehaviorSpec({
                 }
             }
         }
+
+        `when`("해당 키를 가지는 환경변수가 존재하지 않을때") {
+            val env = mapOf(Pair("NotTestKey", "value"))
+            val application = ApplicationGenerator.generateApplication(
+                id = applicationId,
+                env = env
+            )
+            every { queryApplicationPort.findById(applicationId) } returns application
+
+            then("ApplicationEnvNotFoundException가 발생해야함") {
+                shouldThrow<ApplicationEnvNotFoundException> {
+                    updateApplicationEnvUseCase.execute(applicationId, envKey, request)
+                }
+            }
+        }
     }
 })
