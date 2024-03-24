@@ -6,6 +6,7 @@ import com.dcd.server.infrastructure.global.jwt.properties.JwtProperty
 import com.dcd.server.infrastructure.global.security.auth.AdminDetailsService
 import com.dcd.server.infrastructure.global.security.auth.UserDetailsService
 import com.dcd.server.infrastructure.global.jwt.exception.TokenNotValidException
+import com.dcd.server.infrastructure.global.jwt.exception.TokenTypeNotValidException
 import com.dcd.server.infrastructure.global.security.auth.DeveloperDetailsService
 import com.dcd.server.infrastructure.global.security.exception.InvalidRoleException
 import io.jsonwebtoken.*
@@ -35,7 +36,7 @@ class ParseTokenAdapter(
         val claims = getClaims(token, jwtProperty.accessSecret)
 
         if(claims.header[Header.JWT_TYPE] != JwtPrefix.ACCESS)
-            throw RuntimeException()
+            throw TokenTypeNotValidException()
 
         val userDetails = getDetails(claims.body)
 
