@@ -42,11 +42,6 @@ class ParseTokenAdapter(
         return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
     }
 
-    fun getClaimsBody(token: String, secret: Key): String {
-        val claims = getClaims(token, secret)
-        return claims.body.id
-    }
-
     private fun getClaims(token: String, secret: Key): Jws<Claims> {
         return try {
             Jwts.parserBuilder()
