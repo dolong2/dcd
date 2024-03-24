@@ -6,6 +6,7 @@ import com.dcd.server.infrastructure.global.jwt.properties.JwtProperty
 import com.dcd.server.infrastructure.global.security.auth.AdminDetailsService
 import com.dcd.server.infrastructure.global.security.auth.UserDetailsService
 import com.dcd.server.infrastructure.global.jwt.exception.TokenNotValidException
+import com.dcd.server.infrastructure.global.jwt.exception.TokenTypeNotValidException
 import com.dcd.server.infrastructure.global.security.auth.DeveloperDetailsService
 import com.dcd.server.infrastructure.global.security.exception.InvalidRoleException
 import io.jsonwebtoken.*
@@ -25,7 +26,6 @@ class ParseTokenAdapter(
 ) {
     object JwtPrefix{
         const val ACCESS = "access"
-        const val REFRESH = "refresh"
         const val ROLE = "role"
         const val PREFIX = "Bearer "
     }
@@ -35,16 +35,11 @@ class ParseTokenAdapter(
         val claims = getClaims(token, jwtProperty.accessSecret)
 
         if(claims.header[Header.JWT_TYPE] != JwtPrefix.ACCESS)
-            throw RuntimeException()
+            throw TokenTypeNotValidException()
 
         val userDetails = getDetails(claims.body)
 
         return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
-    }
-
-    fun getClaimsBody(token: String, secret: Key): String {
-        val claims = getClaims(token, secret)
-        return claims.body.id
     }
 
     private fun getClaims(token: String, secret: Key): Jws<Claims> {
