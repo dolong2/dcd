@@ -35,9 +35,13 @@ class DeployApplicationUseCase(
         val version = application.version
         val externalPort = application.externalPort
 
-        if (application.applicationType == ApplicationType.SPRING_BOOT) {
+        val applicationType = application.applicationType
+        if (applicationType == ApplicationType.SPRING_BOOT) {
             cloneApplicationByUrlService.cloneByApplication(application)
             modifyGradleService.modifyGradleByApplication(application)
+        }
+        else if (applicationType == ApplicationType.NEST_JS) {
+            cloneApplicationByUrlService.cloneByApplication(application)
         }
 
         createDockerFileService.createFileToApplication(application, version)

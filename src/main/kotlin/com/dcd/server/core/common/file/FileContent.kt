@@ -10,6 +10,12 @@ object FileContent {
         getEnvString(env) +
         "CMD [\"java\",\"-jar\",\"build/libs/app.jar\"]"
 
+    fun getNestJsDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
+        "FROM node:${version}\n" +
+        "EXPOSE ${port}\n" +
+        getEnvString(env) +
+        "CMD [\"npm\",\"run\",\"start\"]"
+
     fun getMYSQLDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
         "FROM mysql:${version}\n" +
         "EXPOSE ${port}\n" +

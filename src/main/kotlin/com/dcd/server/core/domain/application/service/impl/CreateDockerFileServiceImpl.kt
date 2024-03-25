@@ -45,6 +45,9 @@ class CreateDockerFileServiceImpl(
 
             ApplicationType.REDIS ->
                 FileContent.getRedisDockerFileContent(version, application.port, application.env)
+
+            ApplicationType.NEST_JS ->
+                FileContent.getNestJsDockerFileContent(version, application.port, application.env)
         }
         file.writeText(fileContent)
         try {
