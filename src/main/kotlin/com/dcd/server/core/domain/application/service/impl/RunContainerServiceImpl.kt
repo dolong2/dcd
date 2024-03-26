@@ -6,16 +6,15 @@ import com.dcd.server.core.domain.application.exception.ApplicationNotFoundExcep
 import com.dcd.server.core.domain.application.exception.ContainerNotCreatedException
 import com.dcd.server.core.domain.application.exception.ContainerNotRunException
 import com.dcd.server.core.domain.application.model.Application
-import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import com.dcd.server.core.domain.application.service.DockerRunService
+import com.dcd.server.core.domain.application.service.RunContainerService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import org.springframework.stereotype.Service
 
 @Service
-class DockerRunServiceImpl(
+class RunContainerServiceImpl(
     private val queryApplicationPort: QueryApplicationPort,
     private val commandPort: CommandPort
-) : DockerRunService {
+) : RunContainerService {
     override fun runApplication(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
