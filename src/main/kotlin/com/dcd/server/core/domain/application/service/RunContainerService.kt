@@ -6,6 +6,4 @@ interface RunContainerService {
     fun runApplication(id: String)
 
     fun runApplication(application: Application)
-
-
 }
