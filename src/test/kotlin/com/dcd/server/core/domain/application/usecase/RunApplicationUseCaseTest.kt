@@ -1,16 +1,13 @@
 package com.dcd.server.core.domain.application.usecase
 
-import com.dcd.server.core.domain.application.dto.response.RunApplicationResDto
 import com.dcd.server.core.domain.application.exception.AlreadyRunningException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
-import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -19,11 +16,11 @@ import util.user.UserGenerator
 import util.workspace.WorkspaceGenerator
 
 class RunApplicationUseCaseTest : BehaviorSpec({
-    val dockerRunService = mockk<DockerRunService>(relaxUnitFun = true)
+    val runContainerService = mockk<RunContainerService>(relaxUnitFun = true)
     val queryApplicationPort = mockk<QueryApplicationPort>(relaxUnitFun = true)
     val changeApplicationStatusService = mockk<ChangeApplicationStatusService>(relaxUnitFun = true)
     val runApplicationUseCase = RunApplicationUseCase(
-        dockerRunService,
+        runContainerService,
         queryApplicationPort,
         changeApplicationStatusService
     )
@@ -67,7 +64,7 @@ class RunApplicationUseCaseTest : BehaviorSpec({
 
             runApplicationUseCase.execute(application.id)
             then("dockerRunService만 실행되어야함") {
-                verify { dockerRunService.runApplication(application) }
+                verify { runContainerService.runApplication(application) }
             }
         }
 
@@ -89,7 +86,7 @@ class RunApplicationUseCaseTest : BehaviorSpec({
 
             runApplicationUseCase.execute(application.id)
             then("dockerRunService만 실행되어야함") {
-                verify { dockerRunService.runApplication(application) }
+                verify { runContainerService.runApplication(application) }
             }
         }
 

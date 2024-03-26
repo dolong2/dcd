@@ -1,10 +1,7 @@
 package com.dcd.server.core.domain.application.service
 
 import com.dcd.server.core.common.command.CommandPort
-import com.dcd.server.core.domain.application.model.Application
-import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
-import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import com.dcd.server.core.domain.application.service.impl.DockerRunServiceImpl
+import com.dcd.server.core.domain.application.service.impl.RunContainerServiceImpl
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
@@ -16,7 +13,7 @@ import java.util.*
 class DockerRunServiceImplTest : BehaviorSpec({
     val commandPort = mockk<CommandPort>(relaxed = true)
     val queryApplicationPort = mockk<QueryApplicationPort>()
-    val service = DockerRunServiceImpl(queryApplicationPort, commandPort)
+    val service = RunContainerServiceImpl(queryApplicationPort, commandPort)
 
     given("애플리케이션id가 주어지고") {
         val appId = UUID.randomUUID().toString()
