@@ -10,7 +10,7 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 
 @UseCase
 class RunApplicationUseCase(
-    private val dockerRunService: DockerRunService,
+    private val runContainerService: RunContainerService,
     private val queryApplicationPort: QueryApplicationPort,
     private val changeApplicationStatusService: ChangeApplicationStatusService
 ) {
@@ -22,7 +22,7 @@ class RunApplicationUseCase(
         if (application.status == ApplicationStatus.RUNNING)
             throw AlreadyRunningException()
 
-        dockerRunService.runApplication(application)
+        runContainerService.runApplication(application)
 
         changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING)
     }
