@@ -7,6 +7,6 @@ data class WorkspaceResponse(
     val id: String,
     val title: String,
     val description: String,
-    val applicationList: List<ApplicationResponse>,
+    val applicationList: List<WorkspaceApplicationResponse>,
     val owner: UserResponse
 )
