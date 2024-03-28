@@ -5,6 +5,7 @@ import jakarta.persistence.*
 import java.util.*
 
 @Entity
+@Table(name = "user")
 class UserJpaEntity(
     @Id
     val id: String = UUID.randomUUID().toString(),
