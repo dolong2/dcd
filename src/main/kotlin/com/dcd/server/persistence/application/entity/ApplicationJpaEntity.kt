@@ -8,6 +8,7 @@ import jakarta.persistence.*
 
 
 @Entity
+@Table(name = "application")
 class ApplicationJpaEntity(
     @Id
     val id: String,
