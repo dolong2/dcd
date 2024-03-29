@@ -1,7 +1,7 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
-import com.dcd.server.core.common.annotation.ApplicationOwnerVerification
+import com.dcd.server.core.common.aop.annotation.ApplicationOwnerVerification
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
 import com.dcd.server.core.domain.application.exception.AlreadyRunningException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException

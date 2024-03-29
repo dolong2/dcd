@@ -1,7 +1,7 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
-import com.dcd.server.core.common.annotation.WorkspaceOwnerVerification
+import com.dcd.server.core.common.aop.annotation.WorkspaceOwnerVerification
 import com.dcd.server.core.domain.application.dto.extenstion.toEntity
 import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDto
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
