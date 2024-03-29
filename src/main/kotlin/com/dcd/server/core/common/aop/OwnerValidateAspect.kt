@@ -21,7 +21,7 @@ class OwnerValidateAspect(
     @Pointcut("@annotation(com.dcd.server.core.common.annotation.ApplicationOwnerVerification)")
     fun applicationOwnerVerificationPointcut() {}
 
-    @Pointcut("@annotation(com.dcd.server.core.common.annotation.WorkspaceOwnerVerification)")
+    @Pointcut("@annotation(com.dcd.server.core.common.aop.annotation.WorkspaceOwnerVerification)")
     fun workspaceOwnerVerificationPointcut() {}
 
     @Before("applicationOwnerVerificationPointcut() && args(id, ..)")
