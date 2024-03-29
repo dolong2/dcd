@@ -1,7 +1,7 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.ReadOnlyUseCase
-import com.dcd.server.core.common.annotation.ApplicationOwnerVerification
+import com.dcd.server.core.common.aop.annotation.ApplicationOwnerVerification
 import com.dcd.server.core.domain.application.dto.response.ApplicationLogResDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.service.GetContainerLogService

@@ -18,7 +18,7 @@ class OwnerValidateAspect(
     private val queryWorkspacePort: QueryWorkspacePort,
     private val queryApplicationPort: QueryApplicationPort
 ) {
-    @Pointcut("@annotation(com.dcd.server.core.common.annotation.ApplicationOwnerVerification)")
+    @Pointcut("@annotation(com.dcd.server.core.common.aop.annotation.ApplicationOwnerVerification)")
     fun applicationOwnerVerificationPointcut() {}
 
     @Pointcut("@annotation(com.dcd.server.core.common.aop.annotation.WorkspaceOwnerVerification)")
