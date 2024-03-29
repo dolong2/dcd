@@ -1,4 +1,4 @@
-package com.dcd.server.core.common.annotation
+package com.dcd.server.core.common.aop.annotation
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
