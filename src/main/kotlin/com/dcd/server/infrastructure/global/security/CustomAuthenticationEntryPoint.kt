@@ -23,12 +23,11 @@ class CustomAuthenticationEntryPoint(
         response: HttpServletResponse,
         authException: AuthenticationException
     ) {
-        log.error("==========Access Denied==========")
         val errorCode = ErrorCode.FORBIDDEN
-        val responseString = objectMapper.writeValueAsString(ErrorResponse(errorCode.code, errorCode.msg))
-        response.characterEncoding = "UTF-8"
+        val result = objectMapper.writeValueAsString(ErrorResponse(errorCode))
+        response.characterEncoding = Charsets.UTF_8.name()
         response.status = errorCode.code
         response.contentType = MediaType.APPLICATION_JSON_VALUE
-        response.writer.write(responseString)
+        response.writer.write(result)
     }
 }
