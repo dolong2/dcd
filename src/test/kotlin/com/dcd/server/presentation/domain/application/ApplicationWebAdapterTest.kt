@@ -11,7 +11,6 @@ import com.dcd.server.presentation.domain.application.data.request.*
 import com.dcd.server.presentation.domain.application.data.response.RunApplicationResponse
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -49,7 +48,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             every { createApplicationUseCase.execute("testWorkspaceId", any()) } returns Unit
             val result = applicationWebAdapter.createApplication("testWorkspaceId", request)
             then("상태코드가 201이여야함") {
-                result.statusCode shouldNotBe HttpStatus.CREATED
+                result.statusCode shouldBe HttpStatus.CREATED
             }
         }
     }
