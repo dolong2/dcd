@@ -17,7 +17,7 @@ object FileContent {
         "RUN npm run build\n" +
         "EXPOSE ${port}\n" +
         getEnvString(env) +
-        "CMD [\"npm\",\"run\",\"start\"]"
+        "CMD [\"npm\", \"start\"]"
 
     fun getMYSQLDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
         "FROM mysql:${version}\n" +
