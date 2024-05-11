@@ -14,6 +14,7 @@ object FileContent {
         "FROM node:${version}\n" +
         "COPY . .\n" +
         "RUN npm install\n" +
+        "RUN npm run build\n" +
         "EXPOSE ${port}\n" +
         getEnvString(env) +
         "CMD [\"npm\",\"run\",\"start\"]"
