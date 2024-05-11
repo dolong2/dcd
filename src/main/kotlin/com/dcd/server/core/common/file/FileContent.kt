@@ -13,6 +13,7 @@ object FileContent {
     fun getNestJsDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
         "FROM node:${version}\n" +
         "COPY . .\n" +
+        "RUN npm install\n" +
         "EXPOSE ${port}\n" +
         getEnvString(env) +
         "CMD [\"npm\",\"run\",\"start\"]"
