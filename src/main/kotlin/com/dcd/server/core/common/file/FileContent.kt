@@ -12,9 +12,12 @@ object FileContent {
 
     fun getNestJsDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
         "FROM node:${version}\n" +
+        "COPY . .\n" +
+        "RUN npm install\n" +
+        "RUN npm run build\n" +
         "EXPOSE ${port}\n" +
         getEnvString(env) +
-        "CMD [\"npm\",\"run\",\"start\"]"
+        "CMD [\"npm\", \"start\"]"
 
     fun getMYSQLDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
         "FROM mysql:${version}\n" +
