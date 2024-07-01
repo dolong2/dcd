@@ -1,5 +1,6 @@
 package com.dcd.server.presentation.domain.application
 
+import com.dcd.server.core.common.aop.annotation.WorkspaceOwnerVerification
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.usecase.*
 import com.dcd.server.presentation.domain.application.data.exetension.toDto
@@ -30,31 +31,40 @@ class ApplicationWebAdapter(
     private val deployApplicationUseCase: DeployApplicationUseCase
 ) {
     @PostMapping
-    fun createApplication(@PathVariable workspaceId: String, @Validated @RequestBody createApplicationRequest: CreateApplicationRequest): ResponseEntity<Void> =
+    @WorkspaceOwnerVerification
+    fun createApplication(
+        @PathVariable workspaceId: String,
+        @Validated @RequestBody createApplicationRequest: CreateApplicationRequest
+    ): ResponseEntity<Void> =
         createApplicationUseCase.execute(workspaceId, createApplicationRequest.toDto())
             .run { ResponseEntity(HttpStatus.CREATED) }
 
     @PostMapping("/{id}/run")
+    @WorkspaceOwnerVerification
     fun runApplication(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<Void> =
         runApplicationUseCase.execute(id)
             .run { ResponseEntity.ok().build() }
 
     @PostMapping("/{id}/deploy")
+    @WorkspaceOwnerVerification
     fun deployApplication(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<Void> =
         deployApplicationUseCase.execute(id)
             .run { ResponseEntity.ok().build() }
 
     @GetMapping
+    @WorkspaceOwnerVerification
     fun getAllApplication(@PathVariable workspaceId: String): ResponseEntity<ApplicationListResponse> =
         getAllApplicationUseCase.execute(workspaceId)
             .let { ResponseEntity.ok(it.toResponse()) }
 
     @GetMapping("/{id}")
+    @WorkspaceOwnerVerification
     fun getOneApplication(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<ApplicationResponse> =
         getOneApplicationUseCase.execute(id)
             .let { ResponseEntity.ok(it.toResponse()) }
 
     @PostMapping("/{id}/env")
+    @WorkspaceOwnerVerification
     fun addApplicationEnv(
         @PathVariable workspaceId: String,
         @PathVariable id: String,
@@ -64,6 +74,7 @@ class ApplicationWebAdapter(
             .run { ResponseEntity.ok().build() }
 
     @DeleteMapping("/{id}/env")
+    @WorkspaceOwnerVerification
     fun deleteApplicationEnv(
         @PathVariable workspaceId: String,
         @PathVariable id: String,
@@ -73,6 +84,7 @@ class ApplicationWebAdapter(
             .run { ResponseEntity.ok().build() }
 
     @PatchMapping("/{applicationId}/env/{key}")
+    @WorkspaceOwnerVerification
     fun updateApplicationEnv(
         @PathVariable workspaceId: String,
         @PathVariable applicationId: String,
@@ -83,16 +95,19 @@ class ApplicationWebAdapter(
             .run { ResponseEntity.ok().build() }
 
     @PostMapping("/{id}/stop")
+    @WorkspaceOwnerVerification
     fun stopApplication(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<Void> =
         stopApplicationUseCase.execute(id)
             .run { ResponseEntity.ok().build() }
 
     @DeleteMapping("/{id}")
+    @WorkspaceOwnerVerification
     fun deleteApplication(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<Void> =
         deleteApplicationUseCase.execute(id)
             .run { ResponseEntity.ok().build() }
 
     @PatchMapping("/{id}")
+    @WorkspaceOwnerVerification
     fun updateApplication(
         @PathVariable workspaceId: String,
         @PathVariable id: String,
@@ -102,11 +117,13 @@ class ApplicationWebAdapter(
             .run { ResponseEntity.ok().build() }
 
     @GetMapping("/version/{applicationType}")
+    @WorkspaceOwnerVerification
     fun getAvailableVersion(@PathVariable workspaceId: String, @PathVariable applicationType: ApplicationType): ResponseEntity<AvailableVersionResponse> =
         getAvailableVersionUseCase.execute(applicationType)
             .let { ResponseEntity.ok(it.toResponse()) }
 
     @PostMapping("/{id}/certificate")
+    @WorkspaceOwnerVerification
     fun generateSSLCertificate(
         @PathVariable workspaceId: String,
         @PathVariable id: String,
@@ -116,6 +133,7 @@ class ApplicationWebAdapter(
             .run { ResponseEntity.ok().build() }
 
     @GetMapping("/{id}/logs")
+    @WorkspaceOwnerVerification
     fun getApplicationLog(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<ApplicationLogResponse> =
         getApplicationLogUseCase.execute(id)
             .let { ResponseEntity.ok(it.toResponse()) }
