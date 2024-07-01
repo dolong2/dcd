@@ -35,12 +35,12 @@ class ApplicationWebAdapter(
             .run { ResponseEntity(HttpStatus.CREATED) }
 
     @PostMapping("/{id}/run")
-    fun runApplication(@PathVariable id: String, @PathVariable workspaceId: String): ResponseEntity<Void> =
+    fun runApplication(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<Void> =
         runApplicationUseCase.execute(id)
             .run { ResponseEntity.ok().build() }
 
     @PostMapping("/{id}/deploy")
-    fun deployApplication(@PathVariable id: String, @PathVariable workspaceId: String): ResponseEntity<Void> =
+    fun deployApplication(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<Void> =
         deployApplicationUseCase.execute(id)
             .run { ResponseEntity.ok().build() }
 
@@ -50,69 +50,73 @@ class ApplicationWebAdapter(
             .let { ResponseEntity.ok(it.toResponse()) }
 
     @GetMapping("/{id}")
-    fun getOneApplication(@PathVariable id: String, @PathVariable workspaceId: String): ResponseEntity<ApplicationResponse> =
+    fun getOneApplication(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<ApplicationResponse> =
         getOneApplicationUseCase.execute(id)
             .let { ResponseEntity.ok(it.toResponse()) }
 
     @PostMapping("/{id}/env")
     fun addApplicationEnv(
+        @PathVariable workspaceId: String,
         @PathVariable id: String,
-        @RequestBody addApplicationEnvRequest: AddApplicationEnvRequest,
-        @PathVariable workspaceId: String
+        @RequestBody addApplicationEnvRequest: AddApplicationEnvRequest
     ): ResponseEntity<Void> =
         addApplicationEnvUseCase.execute(id, addApplicationEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
     @DeleteMapping("/{id}/env")
-    fun deleteApplicationEnv(@PathVariable id: String, @RequestParam key: String, @PathVariable workspaceId: String): ResponseEntity<Void> =
+    fun deleteApplicationEnv(
+        @PathVariable workspaceId: String,
+        @PathVariable id: String,
+        @RequestParam key: String
+    ): ResponseEntity<Void> =
         deleteApplicationEnvUseCase.execute(id, key)
             .run { ResponseEntity.ok().build() }
 
     @PatchMapping("/{applicationId}/env/{key}")
     fun updateApplicationEnv(
+        @PathVariable workspaceId: String,
         @PathVariable applicationId: String,
         @PathVariable key: String,
-        @RequestBody updateApplicationEnvRequest: UpdateApplicationEnvRequest,
-        @PathVariable workspaceId: String
+        @RequestBody updateApplicationEnvRequest: UpdateApplicationEnvRequest
     ): ResponseEntity<Void> =
         updateApplicationEnvUseCase.execute(applicationId, key, updateApplicationEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
     @PostMapping("/{id}/stop")
-    fun stopApplication(@PathVariable id: String, @PathVariable workspaceId: String): ResponseEntity<Void> =
+    fun stopApplication(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<Void> =
         stopApplicationUseCase.execute(id)
             .run { ResponseEntity.ok().build() }
 
     @DeleteMapping("/{id}")
-    fun deleteApplication(@PathVariable id: String, @PathVariable workspaceId: String): ResponseEntity<Void> =
+    fun deleteApplication(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<Void> =
         deleteApplicationUseCase.execute(id)
             .run { ResponseEntity.ok().build() }
 
     @PatchMapping("/{id}")
     fun updateApplication(
+        @PathVariable workspaceId: String,
         @PathVariable id: String,
-        @RequestBody updateApplicationRequest: UpdateApplicationRequest,
-        @PathVariable workspaceId: String
+        @RequestBody updateApplicationRequest: UpdateApplicationRequest
     ): ResponseEntity<Void> =
         updateApplicationUseCase.execute(id, updateApplicationRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
     @GetMapping("/version/{applicationType}")
-    fun getAvailableVersion(@PathVariable applicationType: ApplicationType, @PathVariable workspaceId: String): ResponseEntity<AvailableVersionResponse> =
+    fun getAvailableVersion(@PathVariable workspaceId: String, @PathVariable applicationType: ApplicationType): ResponseEntity<AvailableVersionResponse> =
         getAvailableVersionUseCase.execute(applicationType)
             .let { ResponseEntity.ok(it.toResponse()) }
 
     @PostMapping("/{id}/certificate")
     fun generateSSLCertificate(
+        @PathVariable workspaceId: String,
         @PathVariable id: String,
-        @RequestBody generateSSLCertificateRequest: GenerateSSLCertificateRequest,
-        @PathVariable workspaceId: String
+        @RequestBody generateSSLCertificateRequest: GenerateSSLCertificateRequest
     ): ResponseEntity<Void> =
         generateSSLCertificateUseCase.execute(id, generateSSLCertificateRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
     @GetMapping("/{id}/logs")
-    fun getApplicationLog(@PathVariable id: String, @PathVariable workspaceId: String): ResponseEntity<ApplicationLogResponse> =
+    fun getApplicationLog(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<ApplicationLogResponse> =
         getApplicationLogUseCase.execute(id)
             .let { ResponseEntity.ok(it.toResponse()) }
 }
