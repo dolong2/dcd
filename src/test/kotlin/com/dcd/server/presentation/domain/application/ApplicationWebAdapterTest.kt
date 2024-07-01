@@ -33,6 +33,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     val deployApplicationUseCase = mockk<DeployApplicationUseCase>(relaxUnitFun = true)
     val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springRunApplicationUseCase, getAllApplicationUseCase, getOneApplicationUseCase, addApplicationEnvUseCase, deleteApplicationEnvUseCase, updateApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase, getAvailableVersionUseCase, generateSSLCertificateUseCase, getApplicationLogUseCase, deployApplicationUseCase)
 
+    val testWorkspaceId = "testWorkspaceId"
+
     given("CreateApplicationRequest가 주어지고") {
         val request = CreateApplicationRequest(
             name = "testName",
@@ -45,8 +47,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         )
 
         `when`("createApplication 메서드를 실행할때") {
-            every { createApplicationUseCase.execute("testWorkspaceId", any()) } returns Unit
-            val result = applicationWebAdapter.createApplication("testWorkspaceId", request)
+            every { createApplicationUseCase.execute(testWorkspaceId, any()) } returns Unit
+            val result = applicationWebAdapter.createApplication(testWorkspaceId, request)
             then("상태코드가 201이여야함") {
                 result.statusCode shouldBe HttpStatus.CREATED
             }
@@ -69,8 +71,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         val list = listOf(applicationResponse)
         val responseDto = ApplicationListResDto(list)
         `when`("getAllApplication 메서드를 실행할때") {
-            every { getAllApplicationUseCase.execute("testWorkspaceId") } returns responseDto
-            val response = applicationWebAdapter.getAllApplication("testWorkspaceId")
+            every { getAllApplicationUseCase.execute(testWorkspaceId) } returns responseDto
+            val response = applicationWebAdapter.getAllApplication(testWorkspaceId)
             then("응답바디는 targetResponse와 같아야하고 status는 200이여야함") {
                 val targetResponse = responseDto.toResponse()
                 response.body shouldBe targetResponse
@@ -95,7 +97,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         )
         `when`("getOneApplication 메서드를 실행할때") {
             every { getOneApplicationUseCase.execute(testId) } returns applicationResponse
-            val response = applicationWebAdapter.getOneApplication(testId)
+            val response = applicationWebAdapter.getOneApplication(testWorkspaceId, testId)
             then("응답바디는 targetResponse와 같아야하고 status는 200이여야함") {
                 val targetResponse = applicationResponse.toResponse()
                 response.body shouldBe targetResponse
@@ -111,7 +113,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         )
         `when`("addApplicationEnv메서드를 실행할때") {
             every { addApplicationEnvUseCase.execute(testId, any()) } returns Unit
-            val result = applicationWebAdapter.addApplicationEnv(testId, request)
+            val result = applicationWebAdapter.addApplicationEnv(testWorkspaceId, testId, request)
             then("status는 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
             }
@@ -123,7 +125,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         val key = "testKey"
         `when`("deleteApplicationEnv메서드를 실행할때") {
             every { deleteApplicationEnvUseCase.execute(testId, key) } returns Unit
-            val result = applicationWebAdapter.deleteApplicationEnv(testId, key)
+            val result = applicationWebAdapter.deleteApplicationEnv(testWorkspaceId, testId, key)
             then("status는 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
             }
@@ -134,7 +136,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         val testId = "testId"
         `when`("stopApplication 메서드를 실행할때") {
             every { stopApplicationUseCase.execute(testId) } returns Unit
-            val result = applicationWebAdapter.stopApplication(testId)
+            val result = applicationWebAdapter.stopApplication(testWorkspaceId, testId)
             then("status는 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
             }
@@ -142,7 +144,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
 
         `when`("deleteApplication 메서드를 실행할때") {
             every { deleteApplicationUseCase.execute(testId) } returns Unit
-            val result = applicationWebAdapter.deleteApplication(testId)
+            val result = applicationWebAdapter.deleteApplication(testWorkspaceId, testId)
             then("status는 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
             }
@@ -151,7 +153,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         `when`("getApplicationLog 메서드를 실행할때") {
             val logs = listOf("testLogs")
             every { getApplicationLogUseCase.execute(testId) } returns ApplicationLogResDto(logs)
-            val result = applicationWebAdapter.getApplicationLog(testId)
+            val result = applicationWebAdapter.getApplicationLog(testWorkspaceId, testId)
             then("status는 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
             }
@@ -161,14 +163,14 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         }
 
         `when`("runApplication 메서드를 실행할때") {
-            val result = applicationWebAdapter.runApplication(testId)
+            val result = applicationWebAdapter.runApplication(testWorkspaceId, testId)
             then("상태코드가 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
             }
         }
 
         `when`("deployApplication 메서드를 실행할때") {
-            val result = applicationWebAdapter.deployApplication(testId)
+            val result = applicationWebAdapter.deployApplication(testWorkspaceId, testId)
             then("상태코드가 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
             }
@@ -180,7 +182,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         val request = UpdateApplicationRequest(name = "update", description = null, applicationType = ApplicationType.SPRING_BOOT, githubUrl = null, version = "11", port = 8080)
 
         `when`("updateApplication 메서드를 실행할때") {
-            val result = applicationWebAdapter.updateApplication(testId, request)
+            val result = applicationWebAdapter.updateApplication(testWorkspaceId, testId, request)
 
             then("status는 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
@@ -198,7 +200,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             val availableVersionResDto = AvailableVersionResDto(version = listOf("11", "17"))
             every { getAvailableVersionUseCase.execute(applicationType) } returns availableVersionResDto
 
-            val result = applicationWebAdapter.getAvailableVersion(applicationType)
+            val result = applicationWebAdapter.getAvailableVersion(testWorkspaceId, applicationType)
             then("result의 바디는 availableVersionResDto랑 같아야함") {
                 result.body?.version shouldBe availableVersionResDto.version
             }
@@ -213,7 +215,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         val request = GenerateSSLCertificateRequest("test.domain.com")
 
         `when`("generateSSLCertificate 메서드를 실행할때") {
-            val result = applicationWebAdapter.generateSSLCertificate(testId, request)
+            val result = applicationWebAdapter.generateSSLCertificate(testWorkspaceId, testId, request)
 
             then("GenerateSSLCertificateUseCase를 실행해야함") {
                 verify { generateSSLCertificateUseCase.execute(testId, any() as GenerateSSLCertificateReqDto) }
@@ -230,7 +232,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         val request = UpdateApplicationEnvRequest(newValue = "newValue")
 
         `when`("updateApplicationEnv 메서드를 실행할때") {
-            val result = applicationWebAdapter.updateApplicationEnv(testId, envKey, request)
+            val result = applicationWebAdapter.updateApplicationEnv(testWorkspaceId, testId, envKey, request)
 
             then("상태코드는 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
