@@ -13,7 +13,6 @@ class GetAllApplicationUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val queryWorkspacePort: QueryWorkspacePort
 ) {
-    @WorkspaceOwnerVerification
     fun execute(workspaceId: String): ApplicationListResDto {
         val workspace = (queryWorkspacePort.findById(workspaceId)
             ?: throw WorkspaceNotFoundException())
