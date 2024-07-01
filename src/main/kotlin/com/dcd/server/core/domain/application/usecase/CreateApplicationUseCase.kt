@@ -1,7 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
-import com.dcd.server.core.common.aop.annotation.WorkspaceOwnerVerification
 import com.dcd.server.core.domain.application.dto.extenstion.toEntity
 import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDto
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
@@ -22,7 +21,6 @@ class CreateApplicationUseCase(
     private val createContainerService: CreateContainerService,
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService
 ) {
-    @WorkspaceOwnerVerification
     fun execute(workspaceId: String, createApplicationReqDto: CreateApplicationReqDto) {
         val workspace = queryWorkspacePort.findById(workspaceId)
             ?: throw WorkspaceNotFoundException()
