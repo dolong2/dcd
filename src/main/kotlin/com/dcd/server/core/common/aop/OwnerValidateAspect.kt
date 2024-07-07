@@ -32,7 +32,7 @@ class OwnerValidateAspect(
             ?: throw ApplicationNotFoundException())
 
         val owner = application.workspace.owner
-        if (!owner.equals(user))
+        if (owner.id != user.id)
             throw WorkspaceOwnerNotSameException()
     }
 
@@ -44,7 +44,7 @@ class OwnerValidateAspect(
             ?: throw WorkspaceNotFoundException())
 
         val owner = workspace.owner
-        if (!owner.equals(user))
+        if (owner.id != user.id)
             throw WorkspaceOwnerNotSameException()
     }
 }
