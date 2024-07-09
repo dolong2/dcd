@@ -9,7 +9,7 @@ import java.io.InputStreamReader
 @Service
 class GetContainerLogServiceImpl : GetContainerLogService {
     override fun getLogs(application: Application): List<String> {
-        val cmd = arrayOf("/bin/sh", "-c", "docker logs ${application.name}")
+        val cmd = arrayOf("/bin/sh", "-c", "docker logs ${application.name.lowercase()}")
         val p = Runtime.getRuntime().exec(cmd)
         val br = BufferedReader(InputStreamReader(p.inputStream))
         val result = br.readLines()
