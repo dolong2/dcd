@@ -1,7 +1,5 @@
 package com.dcd.server.core.common.aop
 
-import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
-import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
@@ -15,26 +13,10 @@ import org.springframework.stereotype.Component
 @Component
 class OwnerValidateAspect(
     private val getCurrentUserService: GetCurrentUserService,
-    private val queryWorkspacePort: QueryWorkspacePort,
-    private val queryApplicationPort: QueryApplicationPort
+    private val queryWorkspacePort: QueryWorkspacePort
 ) {
-    @Pointcut("@annotation(com.dcd.server.core.common.aop.annotation.ApplicationOwnerVerification)")
-    fun applicationOwnerVerificationPointcut() {}
-
     @Pointcut("@annotation(com.dcd.server.core.common.aop.annotation.WorkspaceOwnerVerification)")
     fun workspaceOwnerVerificationPointcut() {}
-
-    @Before("applicationOwnerVerificationPointcut() && args(id, ..)")
-    fun validApplicationOwner(id: String) {
-        val user = getCurrentUserService.getCurrentUser()
-
-        val application = (queryApplicationPort.findById(id)
-            ?: throw ApplicationNotFoundException())
-
-        val owner = application.workspace.owner
-        if (owner.id != user.id)
-            throw WorkspaceOwnerNotSameException()
-    }
 
     @Before("workspaceOwnerVerificationPointcut() && args(id, ..)")
     fun validWorkspaceOwner(id: String) {
