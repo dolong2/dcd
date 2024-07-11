@@ -1,7 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
-import com.dcd.server.core.common.aop.annotation.ApplicationOwnerVerification
 import com.dcd.server.core.domain.application.exception.AlreadyStoppedException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
@@ -15,7 +14,6 @@ class StopApplicationUseCase(
     private val stopContainerService: StopContainerService,
     private val changeApplicationStatusService: ChangeApplicationStatusService
 ) {
-    @ApplicationOwnerVerification
     fun execute(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
