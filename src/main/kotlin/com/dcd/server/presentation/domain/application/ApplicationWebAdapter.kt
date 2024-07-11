@@ -39,16 +39,16 @@ class ApplicationWebAdapter(
         createApplicationUseCase.execute(workspaceId, createApplicationRequest.toDto())
             .run { ResponseEntity(HttpStatus.CREATED) }
 
-    @PostMapping("/{id}/run")
+    @PostMapping("/{applicationId}/run")
     @WorkspaceOwnerVerification
-    fun runApplication(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<Void> =
-        runApplicationUseCase.execute(id)
+    fun runApplication(@PathVariable workspaceId: String, @PathVariable applicationId: String): ResponseEntity<Void> =
+        runApplicationUseCase.execute(applicationId)
             .run { ResponseEntity.ok().build() }
 
-    @PostMapping("/{id}/deploy")
+    @PostMapping("/{applicationId}/deploy")
     @WorkspaceOwnerVerification
-    fun deployApplication(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<Void> =
-        deployApplicationUseCase.execute(id)
+    fun deployApplication(@PathVariable workspaceId: String, @PathVariable applicationId: String): ResponseEntity<Void> =
+        deployApplicationUseCase.execute(applicationId)
             .run { ResponseEntity.ok().build() }
 
     @GetMapping
@@ -57,30 +57,30 @@ class ApplicationWebAdapter(
         getAllApplicationUseCase.execute(workspaceId)
             .let { ResponseEntity.ok(it.toResponse()) }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{applicationId}")
     @WorkspaceOwnerVerification
-    fun getOneApplication(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<ApplicationResponse> =
-        getOneApplicationUseCase.execute(id)
+    fun getOneApplication(@PathVariable workspaceId: String, @PathVariable applicationId: String): ResponseEntity<ApplicationResponse> =
+        getOneApplicationUseCase.execute(applicationId)
             .let { ResponseEntity.ok(it.toResponse()) }
 
-    @PostMapping("/{id}/env")
+    @PostMapping("/{applicationId}/env")
     @WorkspaceOwnerVerification
     fun addApplicationEnv(
         @PathVariable workspaceId: String,
-        @PathVariable id: String,
+        @PathVariable applicationId: String,
         @RequestBody addApplicationEnvRequest: AddApplicationEnvRequest
     ): ResponseEntity<Void> =
-        addApplicationEnvUseCase.execute(id, addApplicationEnvRequest.toDto())
+        addApplicationEnvUseCase.execute(applicationId, addApplicationEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
-    @DeleteMapping("/{id}/env")
+    @DeleteMapping("/{applicationId}/env")
     @WorkspaceOwnerVerification
     fun deleteApplicationEnv(
         @PathVariable workspaceId: String,
-        @PathVariable id: String,
+        @PathVariable applicationId: String,
         @RequestParam key: String
     ): ResponseEntity<Void> =
-        deleteApplicationEnvUseCase.execute(id, key)
+        deleteApplicationEnvUseCase.execute(applicationId, key)
             .run { ResponseEntity.ok().build() }
 
     @PatchMapping("/{applicationId}/env/{key}")
@@ -94,26 +94,26 @@ class ApplicationWebAdapter(
         updateApplicationEnvUseCase.execute(applicationId, key, updateApplicationEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
-    @PostMapping("/{id}/stop")
+    @PostMapping("/{applicationId}/stop")
     @WorkspaceOwnerVerification
-    fun stopApplication(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<Void> =
-        stopApplicationUseCase.execute(id)
+    fun stopApplication(@PathVariable workspaceId: String, @PathVariable applicationId: String): ResponseEntity<Void> =
+        stopApplicationUseCase.execute(applicationId)
             .run { ResponseEntity.ok().build() }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{applicationId}")
     @WorkspaceOwnerVerification
-    fun deleteApplication(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<Void> =
-        deleteApplicationUseCase.execute(id)
+    fun deleteApplication(@PathVariable workspaceId: String, @PathVariable applicationId: String): ResponseEntity<Void> =
+        deleteApplicationUseCase.execute(applicationId)
             .run { ResponseEntity.ok().build() }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{applicationId}")
     @WorkspaceOwnerVerification
     fun updateApplication(
         @PathVariable workspaceId: String,
-        @PathVariable id: String,
+        @PathVariable applicationId: String,
         @RequestBody updateApplicationRequest: UpdateApplicationRequest
     ): ResponseEntity<Void> =
-        updateApplicationUseCase.execute(id, updateApplicationRequest.toDto())
+        updateApplicationUseCase.execute(applicationId, updateApplicationRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
     @GetMapping("/version/{applicationType}")
@@ -122,19 +122,19 @@ class ApplicationWebAdapter(
         getAvailableVersionUseCase.execute(applicationType)
             .let { ResponseEntity.ok(it.toResponse()) }
 
-    @PostMapping("/{id}/certificate")
+    @PostMapping("/{applicationId}/certificate")
     @WorkspaceOwnerVerification
     fun generateSSLCertificate(
         @PathVariable workspaceId: String,
-        @PathVariable id: String,
+        @PathVariable applicationId: String,
         @RequestBody generateSSLCertificateRequest: GenerateSSLCertificateRequest
     ): ResponseEntity<Void> =
-        generateSSLCertificateUseCase.execute(id, generateSSLCertificateRequest.toDto())
+        generateSSLCertificateUseCase.execute(applicationId, generateSSLCertificateRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
-    @GetMapping("/{id}/logs")
+    @GetMapping("/{applicationId}/logs")
     @WorkspaceOwnerVerification
-    fun getApplicationLog(@PathVariable workspaceId: String, @PathVariable id: String): ResponseEntity<ApplicationLogResponse> =
-        getApplicationLogUseCase.execute(id)
+    fun getApplicationLog(@PathVariable workspaceId: String, @PathVariable applicationId: String): ResponseEntity<ApplicationLogResponse> =
+        getApplicationLogUseCase.execute(applicationId)
             .let { ResponseEntity.ok(it.toResponse()) }
 }
