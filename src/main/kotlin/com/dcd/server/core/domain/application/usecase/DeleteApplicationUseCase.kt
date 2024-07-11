@@ -1,7 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
-import com.dcd.server.core.common.aop.annotation.ApplicationOwnerVerification
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.exception.CanNotDeleteApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
@@ -17,7 +16,6 @@ class DeleteApplicationUseCase(
     private val deleteContainerService: DeleteContainerService,
     private val deleteImageService: DeleteImageService
 ) {
-    @ApplicationOwnerVerification
     fun execute(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())

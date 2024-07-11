@@ -1,6 +1,5 @@
 package com.dcd.server.core.domain.application.usecase
 
-import com.dcd.server.core.common.aop.annotation.ApplicationOwnerVerification
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationEnvReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationEnvNotFoundException
@@ -13,7 +12,6 @@ class UpdateApplicationEnvUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val commandApplicationPort: CommandApplicationPort
 ) {
-    @ApplicationOwnerVerification
     fun execute(applicationId: String, envKey: String, updateApplicationEnvReqDto: UpdateApplicationEnvReqDto) {
         val application = (queryApplicationPort.findById(applicationId)
             ?: throw ApplicationNotFoundException())
