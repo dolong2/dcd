@@ -106,7 +106,7 @@ class ApplicationWebAdapter(
         deleteApplicationUseCase.execute(applicationId)
             .run { ResponseEntity.ok().build() }
 
-    @PatchMapping("/{applicationId}")
+    @PutMapping("/{applicationId}")
     @WorkspaceOwnerVerification
     fun updateApplication(
         @PathVariable workspaceId: String,
