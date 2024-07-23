@@ -1,16 +1,11 @@
 name: "Todo"
-description: "해야할 것이 있나요??🤔"
+description: "신규 기능 개발 혹은 리펙토링 같은 상황에 사용"
 body:
 
   - type: textarea
     attributes:
-      label: Describe
+      label: Description
       description: |
-        [Description] 할일의 설명을 작성해주세요.
+        이번에 작업해야하는 내용을 간략하게 설명
       placeholder: |
-        회원가입 UI 작성
-  - type: textarea
-    attributes:
-      label: Additional
-      description: |
-        [추가사항] 별도로 알려줘야 할 사항이나 추가사항을 작성해주세요
+        deploy 커맨드를 추가합니다.
