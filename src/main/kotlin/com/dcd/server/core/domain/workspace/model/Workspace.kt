@@ -7,6 +7,6 @@ data class Workspace(
     val id: String = UUID.randomUUID().toString(),
     val title: String,
     val description: String,
-    val globalEnv: Map<String, String>,
+    val globalEnv: Map<String, String> = mapOf(),
     val owner: User
 )
