@@ -1,11 +1,7 @@
 package com.dcd.server.persistence.workspace.entity
 
 import com.dcd.server.persistence.user.entity.UserJpaEntity
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import java.util.UUID
 
 @Entity
@@ -15,6 +11,12 @@ class WorkspaceJpaEntity(
     val id: String = UUID.randomUUID().toString(),
     val title: String,
     val description: String,
+    @ElementCollection
+    @CollectionTable(name = "global_env_table",
+        joinColumns = [JoinColumn(name = "workspace_id", referencedColumnName = "id")])
+    @MapKeyColumn(name = "env_key")
+    @Column(name = "env_value")
+    val globalEnv: Map<String, String>,
     @ManyToOne
     @JoinColumn(name = "owner_id")
     val owner: UserJpaEntity

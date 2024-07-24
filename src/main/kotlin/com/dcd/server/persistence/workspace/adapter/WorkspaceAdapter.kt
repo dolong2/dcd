@@ -10,6 +10,7 @@ fun Workspace.toEntity(): WorkspaceJpaEntity =
         id = this.id,
         title = this.title,
         description = this.description,
+        globalEnv = this.globalEnv,
         owner = this.owner.toEntity()
     )
 
@@ -18,5 +19,6 @@ fun WorkspaceJpaEntity.toDomain(): Workspace =
         id = this.id,
         title = this.title,
         description = this.description,
+        globalEnv = this.globalEnv,
         owner = this.owner.toDomain()
     )
