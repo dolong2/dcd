@@ -29,6 +29,8 @@ class CreateDockerFileServiceImpl(
 
     private fun createFile(application: Application, version: String) {
         val name = application.name
+        val mutableEnv = application.env.toMutableMap()
+        mutableEnv.putAll(application.workspace.globalEnv)
 
         commandPort.executeShellCommand("mkdir $name")
 
