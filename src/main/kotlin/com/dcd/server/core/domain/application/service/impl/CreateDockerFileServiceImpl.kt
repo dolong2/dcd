@@ -37,19 +37,19 @@ class CreateDockerFileServiceImpl(
         val file = File("./$name/Dockerfile")
         val fileContent = when (application.applicationType) {
             ApplicationType.SPRING_BOOT ->
-                FileContent.getSpringBootDockerFileContent(name, version, application.port, application.env)
+                FileContent.getSpringBootDockerFileContent(name, version, application.port, mutableEnv)
 
             ApplicationType.MYSQL ->
-                FileContent.getMYSQLDockerFileContent(version, application.port, application.env)
+                FileContent.getMYSQLDockerFileContent(version, application.port, mutableEnv)
 
             ApplicationType.MARIA_DB ->
-                FileContent.getMARIADBDockerFileContent(version, application.port, application.env)
+                FileContent.getMARIADBDockerFileContent(version, application.port, mutableEnv)
 
             ApplicationType.REDIS ->
-                FileContent.getRedisDockerFileContent(version, application.port, application.env)
+                FileContent.getRedisDockerFileContent(version, application.port, mutableEnv)
 
             ApplicationType.NEST_JS ->
-                FileContent.getNestJsDockerFileContent(version, application.port, application.env)
+                FileContent.getNestJsDockerFileContent(version, application.port, mutableEnv)
         }
         file.writeText(fileContent)
         try {
