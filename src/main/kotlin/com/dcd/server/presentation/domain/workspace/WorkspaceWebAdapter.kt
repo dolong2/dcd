@@ -3,6 +3,7 @@ package com.dcd.server.presentation.domain.workspace
 import com.dcd.server.core.domain.workspace.usecase.*
 import com.dcd.server.presentation.domain.workspace.data.exetension.toDto
 import com.dcd.server.presentation.domain.workspace.data.exetension.toResponse
+import com.dcd.server.presentation.domain.workspace.data.request.AddGlobalEnvRequest
 import com.dcd.server.presentation.domain.workspace.data.request.CreateWorkspaceRequest
 import com.dcd.server.presentation.domain.workspace.data.request.UpdateWorkspaceRequest
 import com.dcd.server.presentation.domain.workspace.data.response.WorkspaceListResponse
@@ -17,7 +18,8 @@ class WorkspaceWebAdapter(
     private val getAllWorkspaceUseCase: GetAllWorkspaceUseCase,
     private val getWorkspaceUseCase: GetWorkspaceUseCase,
     private val deleteWorkspaceUseCase: DeleteWorkspaceUseCase,
-    private val updateWorkspaceUseCase: UpdateWorkspaceUseCase
+    private val updateWorkspaceUseCase: UpdateWorkspaceUseCase,
+    private val addGlobalEnvUseCase: AddGlobalEnvUseCase
 ) {
     @PostMapping
     fun createWorkspace(@RequestBody createWorkspaceRequest: CreateWorkspaceRequest): ResponseEntity<Void> =
@@ -42,5 +44,10 @@ class WorkspaceWebAdapter(
     @PutMapping("/{workspaceId}")
     fun updateWorkspace(@PathVariable workspaceId: String, @RequestBody updateWorkspaceRequest: UpdateWorkspaceRequest): ResponseEntity<Void> =
         updateWorkspaceUseCase.execute(workspaceId, updateWorkspaceRequest.toDto())
+            .run { ResponseEntity.ok().build() }
+
+    @PostMapping("/{workspaceId}/env")
+    fun addGlobalEnv(@PathVariable workspaceId: String, @RequestBody addGlobalEnvRequest: AddGlobalEnvRequest): ResponseEntity<Void> =
+        addGlobalEnvUseCase.execute(workspaceId, addGlobalEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
 }
