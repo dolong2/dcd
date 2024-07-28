@@ -70,7 +70,8 @@ class SecurityConfig(
                 it.requestMatchers(HttpMethod.GET, "/workspace").authenticated()
                 it.requestMatchers(HttpMethod.GET, "/workspace/{workspaceId}").authenticated()
                 it.requestMatchers(HttpMethod.DELETE, "/workspace/{workspaceId}").authenticated()
-                it.requestMatchers(HttpMethod.POST, "/workspace/{workspaceId}/env")
+                it.requestMatchers(HttpMethod.POST, "/workspace/{workspaceId}/env").authenticated()
+                it.requestMatchers(HttpMethod.DELETE, "/workspace/{workspaceId}/env").authenticated()
 
                 //user
                 it.requestMatchers(HttpMethod.GET, "/user/profile").authenticated()
