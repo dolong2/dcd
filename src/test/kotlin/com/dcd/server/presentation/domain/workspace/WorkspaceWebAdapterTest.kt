@@ -24,7 +24,8 @@ class WorkspaceWebAdapterTest : BehaviorSpec({
     val deleteWorkspaceUseCase = mockk<DeleteWorkspaceUseCase>(relaxUnitFun = true)
     val updateWorkspaceUseCase = mockk<UpdateWorkspaceUseCase>(relaxUnitFun = true)
     val addGlobalEnvUseCase = mockk<AddGlobalEnvUseCase>(relaxUnitFun = true)
-    val workspaceWebAdapter = WorkspaceWebAdapter(createWorkspaceUseCase, getAllWorkspaceUseCase, getWorkspaceUseCase, deleteWorkspaceUseCase, updateWorkspaceUseCase, addGlobalEnvUseCase)
+    val deleteGlobalEnvUseCase = mockk<DeleteGlobalEnvUseCase>(relaxUnitFun = true)
+    val workspaceWebAdapter = WorkspaceWebAdapter(createWorkspaceUseCase, getAllWorkspaceUseCase, getWorkspaceUseCase, deleteWorkspaceUseCase, updateWorkspaceUseCase, addGlobalEnvUseCase, deleteGlobalEnvUseCase)
 
     given("CreateWorkspaceRequest가 주어지고") {
         val request = CreateWorkspaceRequest(title = "test", description = "test description")

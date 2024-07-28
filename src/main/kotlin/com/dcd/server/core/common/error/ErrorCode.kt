@@ -30,6 +30,7 @@ enum class ErrorCode(
     USER_NOT_FOUND("해당 유저를 찾을 수 없음", 404),
     APPLICATION_NOT_FOUND("해당 애플리케이션을 찾을 수 없음", 404),
     APPLICATION_ENV_NOT_FOUND("해당 환경변수를 찾을 수 없음", 404),
+    GLOBAL_ENV_NOT_FOUND("해당 환경변수를 찾을 수 없음", 404),
     WORKSPACE_NOT_FOUND("해당 워크스페이스를 찾을 수 없음", 404),
 
     CONFLICT("해당 요청은 서버의 상태와 충돌됩니다.", 409),

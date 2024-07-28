@@ -19,7 +19,8 @@ class WorkspaceWebAdapter(
     private val getWorkspaceUseCase: GetWorkspaceUseCase,
     private val deleteWorkspaceUseCase: DeleteWorkspaceUseCase,
     private val updateWorkspaceUseCase: UpdateWorkspaceUseCase,
-    private val addGlobalEnvUseCase: AddGlobalEnvUseCase
+    private val addGlobalEnvUseCase: AddGlobalEnvUseCase,
+    private val deleteGlobalEnvUseCase: DeleteGlobalEnvUseCase
 ) {
     @PostMapping
     fun createWorkspace(@RequestBody createWorkspaceRequest: CreateWorkspaceRequest): ResponseEntity<Void> =
@@ -49,5 +50,10 @@ class WorkspaceWebAdapter(
     @PostMapping("/{workspaceId}/env")
     fun addGlobalEnv(@PathVariable workspaceId: String, @RequestBody addGlobalEnvRequest: AddGlobalEnvRequest): ResponseEntity<Void> =
         addGlobalEnvUseCase.execute(workspaceId, addGlobalEnvRequest.toDto())
+            .run { ResponseEntity.ok().build() }
+
+    @DeleteMapping("/{workspaceId}/env")
+    fun deleteGlobalEnv(@PathVariable workspaceId: String, @RequestParam key: String): ResponseEntity<Void> =
+        deleteGlobalEnvUseCase.execute(workspaceId, key)
             .run { ResponseEntity.ok().build() }
 }
