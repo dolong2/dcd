@@ -5,6 +5,7 @@ import com.dcd.server.presentation.domain.workspace.data.exetension.toDto
 import com.dcd.server.presentation.domain.workspace.data.exetension.toResponse
 import com.dcd.server.presentation.domain.workspace.data.request.AddGlobalEnvRequest
 import com.dcd.server.presentation.domain.workspace.data.request.CreateWorkspaceRequest
+import com.dcd.server.presentation.domain.workspace.data.request.UpdateGlobalEnvRequest
 import com.dcd.server.presentation.domain.workspace.data.request.UpdateWorkspaceRequest
 import com.dcd.server.presentation.domain.workspace.data.response.WorkspaceListResponse
 import com.dcd.server.presentation.domain.workspace.data.response.WorkspaceResponse
@@ -20,7 +21,8 @@ class WorkspaceWebAdapter(
     private val deleteWorkspaceUseCase: DeleteWorkspaceUseCase,
     private val updateWorkspaceUseCase: UpdateWorkspaceUseCase,
     private val addGlobalEnvUseCase: AddGlobalEnvUseCase,
-    private val deleteGlobalEnvUseCase: DeleteGlobalEnvUseCase
+    private val deleteGlobalEnvUseCase: DeleteGlobalEnvUseCase,
+    private val updateGlobalEnvUseCase: UpdateGlobalEnvUseCase
 ) {
     @PostMapping
     fun createWorkspace(@RequestBody createWorkspaceRequest: CreateWorkspaceRequest): ResponseEntity<Void> =
@@ -55,5 +57,10 @@ class WorkspaceWebAdapter(
     @DeleteMapping("/{workspaceId}/env")
     fun deleteGlobalEnv(@PathVariable workspaceId: String, @RequestParam key: String): ResponseEntity<Void> =
         deleteGlobalEnvUseCase.execute(workspaceId, key)
+            .run { ResponseEntity.ok().build() }
+
+    @PatchMapping("/{workspaceId}/env")
+    fun updateGlobalEnv(@PathVariable workspaceId: String, @RequestParam key: String, @RequestBody updateGlobalEnvRequest: UpdateGlobalEnvRequest): ResponseEntity<Void> =
+        updateGlobalEnvUseCase.execute(workspaceId, key, updateGlobalEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
 }
