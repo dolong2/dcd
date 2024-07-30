@@ -27,6 +27,7 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
+        enableCrossOsArchive: true
 
     - name: Build with Gradle
       run: ./gradlew clean build
