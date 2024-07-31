@@ -7,5 +7,6 @@ data class WorkspaceResDto(
     val title: String,
     val description: String,
     val applicationList: List<WorkspaceApplicationResDto>,
+    val globalEnv: Map<String, String>,
     val owner: UserResDto
 )

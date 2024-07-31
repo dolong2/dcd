@@ -17,6 +17,7 @@ fun WorkspaceResDto.toResponse(): WorkspaceResponse =
         title = this.title,
         description = this.description,
         applicationList = this.applicationList.map { it.toResponse() },
+        globalEnv = this.globalEnv,
         owner = this.owner.toResponse()
     )
 
