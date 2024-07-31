@@ -35,9 +35,10 @@ fun Workspace.toProfileDto(applicationList: List<ApplicationProfileResDto>): Wor
         applicationList = applicationList
     )
 
-fun Workspace.toSimpleDto(): WorkspaceSimpleResDto =
+fun Workspace.toSimpleDto(applicationList: List<Application>): WorkspaceSimpleResDto =
     WorkspaceSimpleResDto(
         id = this.id,
         title = this.title,
-        description = this.description
+        description = this.description,
+        applicationList = applicationList.map { it.toWorkspaceDto() }
     )

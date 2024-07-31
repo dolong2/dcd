@@ -24,7 +24,8 @@ fun WorkspaceSimpleResDto.toResponse(): WorkspaceSimpleResponse =
     WorkspaceSimpleResponse(
         id = this.id,
         title = this.title,
-        description = this.description
+        description = this.description,
+        applicationList = this.applicationList.map { it.toResponse() }
     )
 
 fun WorkspaceListResDto.toResponse(): WorkspaceListResponse =
