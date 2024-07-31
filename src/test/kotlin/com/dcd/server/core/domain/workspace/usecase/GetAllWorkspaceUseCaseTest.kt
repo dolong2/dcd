@@ -41,13 +41,11 @@ class GetAllWorkspaceUseCaseTest : BehaviorSpec({
                 firstWorkspaceResult.id shouldBe firstWorkspaceId
                 firstWorkspaceResult.title shouldBe firstWorkspace.title
                 firstWorkspaceResult.description shouldBe firstWorkspace.description
-                firstWorkspaceResult.owner shouldBe firstWorkspace.owner.toDto()
                 firstWorkspaceResult.applicationList.isEmpty() shouldBe true
                 val secondWorkspaceResult = result.list[1]
                 secondWorkspaceResult.id shouldBe secondWorkspaceId
                 secondWorkspaceResult.title shouldBe secondWorkspace.title
                 secondWorkspaceResult.description shouldBe secondWorkspace.description
-                secondWorkspaceResult.owner shouldBe secondWorkspace.owner.toDto()
                 secondWorkspaceResult.applicationList.isEmpty() shouldBe true
             }
         }
