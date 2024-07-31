@@ -4,6 +4,7 @@ import com.dcd.server.core.common.annotation.ReadOnlyUseCase
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.dto.extension.toDto
+import com.dcd.server.core.domain.workspace.dto.extension.toSimpleDto
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceListResDto
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 
@@ -17,7 +18,7 @@ class GetAllWorkspaceUseCase(
         val user = getCurrentUserService.getCurrentUser()
         val workspaceDtoList = queryWorkspacePort.findByUser(user).map {
             val applicationList = queryApplicationPort.findAllByWorkspace(it)
-            it.toDto(applicationList)
+            it.toSimpleDto(applicationList)
         }
         return WorkspaceListResDto(workspaceDtoList)
     }

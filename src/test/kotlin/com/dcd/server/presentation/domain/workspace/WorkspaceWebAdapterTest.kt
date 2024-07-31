@@ -62,7 +62,8 @@ class WorkspaceWebAdapterTest : BehaviorSpec({
             title = "testTitle",
             description = "testDescription",
             owner = userResponse,
-            applicationList = listOf()
+            applicationList = listOf(),
+            globalEnv = mapOf()
         )
         `when`("getOneWorkspace 메서드를 실행할때") {
             every { getWorkspaceUseCase.execute(workspaceResDto.id) } returns workspaceResDto
