@@ -51,5 +51,19 @@ class AddWorkspaceUseCaseTest : BehaviorSpec({
                 }
             }
         }
+
+        `when`("해당 워크스페이스의 소유자가 아닐때") {
+            val user = UserGenerator.generateUser()
+            every { getCurrentUserService.getCurrentUser() } returns user
+
+            val workspace = spyk(WorkspaceGenerator.generateWorkspace(id = testWorkspaceId))
+            every { queryWorkspacePort.findById(testWorkspaceId) } returns workspace
+
+            then("WorkspaceOwnerNotSameException이 발생해야함") {
+                shouldThrow<WorkspaceOwnerNotSameException> {
+                    addGlobalEnvUseCase.execute(testWorkspaceId, addGlobalEnvReqDto)
+                }
+            }
+        }
     }
 })
