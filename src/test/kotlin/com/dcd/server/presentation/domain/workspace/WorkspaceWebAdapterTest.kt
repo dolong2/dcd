@@ -1,12 +1,14 @@
 package com.dcd.server.presentation.domain.workspace
 
 import com.dcd.server.core.domain.user.dto.response.UserResDto
+import com.dcd.server.core.domain.workspace.dto.request.AddGlobalEnvReqDto
 import com.dcd.server.core.domain.workspace.dto.request.CreateWorkspaceReqDto
 import com.dcd.server.core.domain.workspace.dto.request.UpdateWorkspaceReqDto
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceListResDto
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceResDto
 import com.dcd.server.core.domain.workspace.usecase.*
 import com.dcd.server.presentation.domain.workspace.data.exetension.toResponse
+import com.dcd.server.presentation.domain.workspace.data.request.AddGlobalEnvRequest
 import com.dcd.server.presentation.domain.workspace.data.request.CreateWorkspaceRequest
 import com.dcd.server.presentation.domain.workspace.data.request.UpdateWorkspaceRequest
 import io.kotest.core.spec.style.BehaviorSpec
@@ -96,6 +98,20 @@ class WorkspaceWebAdapterTest : BehaviorSpec({
             then("200 코드가 반환되고, updateWorkspaceUseCase를 실행해야함") {
                 result.statusCode shouldBe HttpStatus.OK
                 verify { updateWorkspaceUseCase.execute(workspaceId, any() as UpdateWorkspaceReqDto) }
+            }
+        }
+    }
+
+    given("addGlobalEnvRequest가 주어지고") {
+        val workspaceId = UUID.randomUUID().toString()
+        val envList = mapOf("testKey" to "testValue")
+        val request = AddGlobalEnvRequest(envList)
+        `when`("addGlobalEnv 메서드를 실행할때") {
+            val result = workspaceWebAdapter.addGlobalEnv(workspaceId, request)
+
+            then("200 코드가 반환되고, addWorkspaceUseCase를 ") {
+                result.statusCode shouldBe HttpStatus.OK
+                verify { addGlobalEnvUseCase.execute(workspaceId, any() as AddGlobalEnvReqDto) }
             }
         }
     }
