@@ -116,7 +116,7 @@ class WorkspaceWebAdapterTest : BehaviorSpec({
         }
     }
 
-    given("deleteGlobalEnvRequest가 주어지고") {
+    given("envKey가 주어지고") {
         val workspaceId = UUID.randomUUID().toString()
         val key = "testKey"
 
