@@ -66,5 +66,18 @@ class DeleteGlobalEnvUseCaseTest : BehaviorSpec({
                 }
             }
         }
+
+        `when`("해당 워크스페이스의 유저가 로그인된 유저가 아닐때") {
+            val user = UserGenerator.generateUser()
+            val workspace = spyk(WorkspaceGenerator.generateWorkspace(id = workspaceId))
+            every { getCurrentUserService.getCurrentUser() } returns user
+            every { queryWorkspacePort.findById(workspaceId) } returns workspace
+
+            then("WorkspaceOwnerNotSameException이 발생해야함") {
+                shouldThrow<WorkspaceOwnerNotSameException> {
+                    deleteGlobalEnvUseCase.execute(workspaceId, key)
+                }
+            }
+        }
     }
 })
