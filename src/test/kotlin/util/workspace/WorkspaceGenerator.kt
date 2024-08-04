@@ -10,12 +10,14 @@ object WorkspaceGenerator {
         id: String = UUID.randomUUID().toString(),
         title: String = "testTitle",
         description: String = "testDescription",
-        user: User = UserGenerator.generateUser()
+        user: User = UserGenerator.generateUser(),
+        globalEnv: Map<String, String> = mapOf()
     ): Workspace =
         Workspace(
             id = id,
             title = title,
             description = description,
-            owner = user
+            owner = user,
+            globalEnv = globalEnv
         )
 }

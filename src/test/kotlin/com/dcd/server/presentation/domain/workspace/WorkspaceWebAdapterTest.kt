@@ -115,4 +115,18 @@ class WorkspaceWebAdapterTest : BehaviorSpec({
             }
         }
     }
+
+    given("envKey가 주어지고") {
+        val workspaceId = UUID.randomUUID().toString()
+        val key = "testKey"
+
+        `when`("deleteGlobalEnv 메서드를 실행할때") {
+            val result = workspaceWebAdapter.deleteGlobalEnv(workspaceId, key)
+
+            then("200 코드가 반환되고, deleteGlobalEnvUseCase를 실행해야함") {
+                result.statusCode shouldBe HttpStatus.OK
+                verify { deleteGlobalEnvUseCase.execute(workspaceId, key) }
+            }
+        }
+    }
 })

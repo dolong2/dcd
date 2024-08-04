@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.workspace.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
+import com.dcd.server.core.domain.workspace.exception.GlobalEnvNotFoundException
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
@@ -20,6 +21,9 @@ class DeleteGlobalEnvUseCase(
 
         if (workspace.owner.id != currentUser.id)
             throw WorkspaceOwnerNotSameException()
+
+        if (workspace.globalEnv.contains(key).not())
+            throw GlobalEnvNotFoundException()
 
         val updatedGlobalEnv = workspace.globalEnv.toMutableMap()
         updatedGlobalEnv.remove(key)
