@@ -41,5 +41,18 @@ class DeleteGlobalEnvUseCaseTest : BehaviorSpec({
                 verify { commandWorkspacePort.save(any() as Workspace) }
             }
         }
+
+        `when`("해당 워크스페이스가 존재하고, 해당 환경변수가 존재하지 않을때") {
+            val user = UserGenerator.generateUser()
+            val workspace = spyk(WorkspaceGenerator.generateWorkspace(id = workspaceId, user = user))
+            every { getCurrentUserService.getCurrentUser() } returns user
+            every { queryWorkspacePort.findById(workspaceId) } returns workspace
+
+            then("GlobalEnvNotFoundException이 발생해야함") {
+                shouldThrow<GlobalEnvNotFoundException> {
+                    deleteGlobalEnvUseCase.execute(workspaceId, key)
+                }
+            }
+        }
     }
 })
