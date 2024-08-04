@@ -16,7 +16,7 @@ import io.mockk.verify
 import util.user.UserGenerator
 import util.workspace.WorkspaceGenerator
 
-class AddWorkspaceUseCaseTest : BehaviorSpec({
+class AddGlobalEnvUseCaseTest : BehaviorSpec({
     val queryWorkspacePort = mockk<QueryWorkspacePort>(relaxUnitFun = true)
     val getCurrentUserService = mockk<GetCurrentUserService>()
     val commandWorkspacePort = mockk<CommandWorkspacePort>(relaxUnitFun = true)
