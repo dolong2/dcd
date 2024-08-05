@@ -2,9 +2,11 @@ package com.dcd.server.core.domain.workspace.usecase
 
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.dto.request.UpdateGlobalEnvReqDto
+import com.dcd.server.core.domain.workspace.exception.GlobalEnvNotFoundException
 import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
@@ -35,6 +37,19 @@ class UpdateGlobalEnvUseCaseTest : BehaviorSpec({
             then("해당 env를 수정후 저장해야함") {
                 verify { workspace.copy(globalEnv = mapOf(envKey to updateGlobalEnvReqDto.newValue)) }
                 verify { commandWorkspacePort.save(any() as Workspace) }
+            }
+        }
+
+        `when`("해당 env가 존재하지 않을때") {
+            val user = UserGenerator.generateUser()
+            every { getCurrentUserService.getCurrentUser() } returns user
+            val workspace = spyk(WorkspaceGenerator.generateWorkspace(id = testWorkspaceId, user = user))
+            every { queryWorkspacePort.findById(testWorkspaceId) } returns workspace
+
+            then("해당 env를 수정후 저장해야함") {
+                shouldThrow<GlobalEnvNotFoundException> {
+                    updateGlobalEnvUseCase.execute(testWorkspaceId, envKey, updateGlobalEnvReqDto)
+                }
             }
         }
     }
