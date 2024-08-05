@@ -3,18 +3,22 @@ package com.dcd.server.presentation.domain.workspace
 import com.dcd.server.core.domain.user.dto.response.UserResDto
 import com.dcd.server.core.domain.workspace.dto.request.AddGlobalEnvReqDto
 import com.dcd.server.core.domain.workspace.dto.request.CreateWorkspaceReqDto
+import com.dcd.server.core.domain.workspace.dto.request.UpdateGlobalEnvReqDto
 import com.dcd.server.core.domain.workspace.dto.request.UpdateWorkspaceReqDto
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceListResDto
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceResDto
 import com.dcd.server.core.domain.workspace.usecase.*
+import com.dcd.server.presentation.domain.workspace.data.exetension.toDto
 import com.dcd.server.presentation.domain.workspace.data.exetension.toResponse
 import com.dcd.server.presentation.domain.workspace.data.request.AddGlobalEnvRequest
 import com.dcd.server.presentation.domain.workspace.data.request.CreateWorkspaceRequest
+import com.dcd.server.presentation.domain.workspace.data.request.UpdateGlobalEnvRequest
 import com.dcd.server.presentation.domain.workspace.data.request.UpdateWorkspaceRequest
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
 import io.mockk.verify
 import org.springframework.http.HttpStatus
 import java.util.*
@@ -126,6 +130,22 @@ class WorkspaceWebAdapterTest : BehaviorSpec({
             then("200 코드가 반환되고, deleteGlobalEnvUseCase를 실행해야함") {
                 result.statusCode shouldBe HttpStatus.OK
                 verify { deleteGlobalEnvUseCase.execute(workspaceId, key) }
+            }
+        }
+    }
+
+    given("envKey, UpdateGlobalEnvRequest가 주어지고") {
+        val workspaceId = UUID.randomUUID().toString()
+        val key = "testKey"
+        val updateGlobalEnvRequest = spyk(UpdateGlobalEnvRequest("testValue"))
+
+        `when`("updateGlobalEnv 메서드를 실행할때") {
+            val result = workspaceWebAdapter.updateGlobalEnv(workspaceId, key, updateGlobalEnvRequest)
+
+            then("200이 반환되고, updateGlobalEnvUseCase를 실행해야함") {
+                result.statusCode shouldBe HttpStatus.OK
+                verify { updateGlobalEnvRequest.toDto() }
+                verify { updateGlobalEnvUseCase.execute(workspaceId, key, any() as UpdateGlobalEnvReqDto) }
             }
         }
     }
