@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.workspace.usecase
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.dto.request.UpdateGlobalEnvReqDto
 import com.dcd.server.core.domain.workspace.exception.GlobalEnvNotFoundException
+import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
 import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
@@ -46,8 +47,21 @@ class UpdateGlobalEnvUseCaseTest : BehaviorSpec({
             val workspace = spyk(WorkspaceGenerator.generateWorkspace(id = testWorkspaceId, user = user))
             every { queryWorkspacePort.findById(testWorkspaceId) } returns workspace
 
-            then("해당 env를 수정후 저장해야함") {
+            then("GlobalEnvNotFoundException이 발생해야함") {
                 shouldThrow<GlobalEnvNotFoundException> {
+                    updateGlobalEnvUseCase.execute(testWorkspaceId, envKey, updateGlobalEnvReqDto)
+                }
+            }
+        }
+
+        `when`("워크스페이스 소유자가 일치하지 않을때") {
+            val user = UserGenerator.generateUser()
+            every { getCurrentUserService.getCurrentUser() } returns user
+            val workspace = spyk(WorkspaceGenerator.generateWorkspace(id = testWorkspaceId))
+            every { queryWorkspacePort.findById(testWorkspaceId) } returns workspace
+
+            then("WorkspaceOwnerNotSameException이 발생해야함") {
+                shouldThrow<WorkspaceOwnerNotSameException> {
                     updateGlobalEnvUseCase.execute(testWorkspaceId, envKey, updateGlobalEnvReqDto)
                 }
             }
