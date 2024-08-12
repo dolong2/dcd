@@ -83,12 +83,12 @@ class ApplicationWebAdapter(
         deleteApplicationEnvUseCase.execute(applicationId, key)
             .run { ResponseEntity.ok().build() }
 
-    @PatchMapping("/{applicationId}/env/{key}")
+    @PatchMapping("/{applicationId}/env")
     @WorkspaceOwnerVerification
     fun updateApplicationEnv(
         @PathVariable workspaceId: String,
         @PathVariable applicationId: String,
-        @PathVariable key: String,
+        @RequestParam key: String,
         @RequestBody updateApplicationEnvRequest: UpdateApplicationEnvRequest
     ): ResponseEntity<Void> =
         updateApplicationEnvUseCase.execute(applicationId, key, updateApplicationEnvRequest.toDto())
