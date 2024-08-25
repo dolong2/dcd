@@ -8,5 +8,6 @@ data class User(
     val email: String,
     val password: String,
     val name: String,
-    val roles: MutableList<Role>
+    val roles: MutableList<Role>,
+    val status: Status
 )
