@@ -4,6 +4,7 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.auth.model.Role
+import com.dcd.server.core.domain.user.model.Status
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.persistence.application.adapter.toEntity
@@ -25,7 +26,8 @@ class ApplicationPersistenceAdapterTest : BehaviorSpec({
             email = "testEmail",
             password = "testPassword",
             name = "testName",
-            roles = mutableListOf(Role.ROLE_USER)
+            roles = mutableListOf(Role.ROLE_USER),
+            status = Status.CREATED
         )
         val workspace = Workspace(
             UUID.randomUUID().toString(),

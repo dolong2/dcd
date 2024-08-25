@@ -1,6 +1,7 @@
 package com.dcd.server.persistence.workspace
 
 import com.dcd.server.core.domain.auth.model.Role
+import com.dcd.server.core.domain.user.model.Status
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.persistence.user.adapter.toEntity
@@ -25,7 +26,8 @@ class WorkspacePersistenceAdapterTest : BehaviorSpec({
             email = "testEmail",
             password = "testPassword",
             name = "testName",
-            roles = mutableListOf(Role.ROLE_USER)
+            roles = mutableListOf(Role.ROLE_USER),
+            status = Status.CREATED
         )
 
         val workspace = Workspace(

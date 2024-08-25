@@ -3,6 +3,7 @@ package com.dcd.server.presentation.domain.user
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.dto.extension.toDto
 import com.dcd.server.core.domain.user.dto.response.UserProfileResDto
+import com.dcd.server.core.domain.user.model.Status
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.usecase.ChangePasswordUseCase
 import com.dcd.server.core.domain.user.usecase.GetUserProfileUseCase
@@ -22,7 +23,7 @@ class UserWebAdapterTest : BehaviorSpec({
 
     given("UserProfileResDto가 주어지고") {
         val user =
-            User(email = "email", password = "password", name = "testName", roles = mutableListOf(Role.ROLE_USER))
+            User(email = "another", password = "password", name = "another user", roles = mutableListOf(Role.ROLE_USER), status = Status.CREATED)
         val userProfileResDto = UserProfileResDto(user = user.toDto(), workspaces = listOf())
 
         `when`("getProfile 메서드를 실행할때") {

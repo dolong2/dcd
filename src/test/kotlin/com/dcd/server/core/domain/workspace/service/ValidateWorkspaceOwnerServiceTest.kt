@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.workspace.service
 
 import com.dcd.server.core.domain.auth.model.Role
+import com.dcd.server.core.domain.user.model.Status
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
@@ -29,7 +30,7 @@ class ValidateWorkspaceOwnerServiceTest : BehaviorSpec({
         }
         `when`("현재 인증된 유저가 workspace의 주인이 아닐때") {
             val another =
-                User(email = "another", password = "password", name = "another user", roles = mutableListOf(Role.ROLE_USER))
+                User(email = "another", password = "password", name = "another user", roles = mutableListOf(Role.ROLE_USER), status = Status.CREATED)
             then("WorkspaceOwnerNotSameException이 발생해야함") {
                 shouldThrow<WorkspaceOwnerNotSameException> {
                     service.validateOwner(another, workspace)
