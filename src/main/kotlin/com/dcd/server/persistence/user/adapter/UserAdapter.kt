@@ -9,7 +9,8 @@ fun User.toEntity(): UserJpaEntity =
         email = this.email,
         name = this.name,
         password = this.password,
-        roles = this.roles
+        roles = this.roles,
+        status = this.status
     )
 
 fun UserJpaEntity.toDomain(): User =
@@ -18,5 +19,6 @@ fun UserJpaEntity.toDomain(): User =
         email = this.email,
         name = this.name,
         password = this.password,
-        roles = this.roles
+        roles = this.roles,
+        status = this.status
     )
