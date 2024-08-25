@@ -1,6 +1,7 @@
 package com.dcd.server.persistence.user.entity
 
 import com.dcd.server.core.domain.auth.model.Role
+import com.dcd.server.core.domain.user.model.Status
 import jakarta.persistence.*
 import java.util.*
 
@@ -15,5 +16,7 @@ class UserJpaEntity(
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "Role", joinColumns = [JoinColumn(name = "user_id")])
-    val roles: MutableList<Role>
+    val roles: MutableList<Role>,
+    @Enumerated(EnumType.STRING)
+    val status: Status,
 )

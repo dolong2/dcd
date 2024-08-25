@@ -1,6 +1,7 @@
 package util.user
 
 import com.dcd.server.core.domain.auth.model.Role
+import com.dcd.server.core.domain.user.model.Status
 import com.dcd.server.core.domain.user.model.User
 
 object UserGenerator {
@@ -14,6 +15,7 @@ object UserGenerator {
             email = email,
             password = password,
             name = name,
-            roles = roles
+            roles = roles,
+            status = Status.CREATED
         )
 }

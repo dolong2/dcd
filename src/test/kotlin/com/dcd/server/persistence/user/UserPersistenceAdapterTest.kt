@@ -1,5 +1,7 @@
 package com.dcd.server.persistence.user
 
+import com.dcd.server.core.domain.auth.model.Role
+import com.dcd.server.core.domain.user.model.Status
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.persistence.user.adapter.toEntity
 import com.dcd.server.persistence.user.repository.UserRepository
@@ -19,7 +21,7 @@ class UserPersistenceAdapterTest : BehaviorSpec({
         val testEmail = "test"
         val testPassword = "test123!@#"
         val testName = "test"
-        val user = User(id = testUserId, email = testEmail, password = testPassword, name = testName, roles = mutableListOf())
+        val user = User(email = "another", password = "password", name = "another user", roles = mutableListOf(Role.ROLE_USER), status = Status.CREATED)
 
         `when`("save 메서드를 사용할때") {
             every { userRepository.save(any()) } answers { callOriginal() }
