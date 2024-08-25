@@ -17,5 +17,6 @@ class UserJpaEntity(
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "Role", joinColumns = [JoinColumn(name = "user_id")])
     val roles: MutableList<Role>,
+    @Enumerated(EnumType.STRING)
     val status: Status,
 )
