@@ -55,4 +55,17 @@ class UserWebAdapterTest : BehaviorSpec({
             }
         }
     }
+
+    given("UserId, Status가 주어지고") {
+        val userId = "testUserId"
+        val status = Status.CREATED
+
+        `when`("updateStatus 메서드를 실행할때") {
+            val response = userWebAdapter.updateStatus(userId, status)
+
+            then("응답코드는 200이여야함") {
+                response.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
 })
