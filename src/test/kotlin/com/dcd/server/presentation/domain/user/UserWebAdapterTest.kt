@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.user.dto.response.UserProfileResDto
 import com.dcd.server.core.domain.user.model.Status
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.usecase.ChangePasswordUseCase
+import com.dcd.server.core.domain.user.usecase.ChangeUserStatusUseCase
 import com.dcd.server.core.domain.user.usecase.GetUserProfileUseCase
 import com.dcd.server.presentation.domain.user.data.exetension.toResponse
 import com.dcd.server.presentation.domain.user.data.request.PasswordChangeRequest
@@ -18,8 +19,9 @@ import org.springframework.http.HttpStatus
 class UserWebAdapterTest : BehaviorSpec({
     val getUserProfileUseCase = mockk<GetUserProfileUseCase>()
     val changePasswordUseCase = mockk<ChangePasswordUseCase>(relaxUnitFun = true)
+    val changeUserStatusUseCase = mockk<ChangeUserStatusUseCase>(relaxUnitFun = true)
 
-    val userWebAdapter = UserWebAdapter(getUserProfileUseCase, changePasswordUseCase)
+    val userWebAdapter = UserWebAdapter(getUserProfileUseCase, changePasswordUseCase, changeUserStatusUseCase)
 
     given("UserProfileResDto가 주어지고") {
         val user =
@@ -49,6 +51,19 @@ class UserWebAdapterTest : BehaviorSpec({
             val response = userWebAdapter.changePassword(passwordChangeRequest)
 
             then("응답 코드는 200이여야함") {
+                response.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
+
+    given("UserId, Status가 주어지고") {
+        val userId = "testUserId"
+        val status = Status.CREATED
+
+        `when`("updateStatus 메서드를 실행할때") {
+            val response = userWebAdapter.updateStatus(userId, status)
+
+            then("응답코드는 200이여야함") {
                 response.statusCode shouldBe HttpStatus.OK
             }
         }
