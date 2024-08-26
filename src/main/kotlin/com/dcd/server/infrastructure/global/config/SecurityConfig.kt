@@ -77,6 +77,7 @@ class SecurityConfig(
                 //user
                 it.requestMatchers(HttpMethod.GET, "/user/profile").authenticated()
                 it.requestMatchers(HttpMethod.PATCH, "/user/password").authenticated()
+                it.requestMatchers(HttpMethod.PATCH, "/user/{userId}/status").hasRole("ADMIN")
 
                 //when url not set
                 it.anyRequest().denyAll()
