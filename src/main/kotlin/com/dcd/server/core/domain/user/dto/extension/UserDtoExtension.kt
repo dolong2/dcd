@@ -9,7 +9,8 @@ fun User.toDto(): UserResDto =
     UserResDto(
         id =  this.id,
         email = this.email,
-        name = this.name
+        name = this.name,
+        status = this.status
     )
 
 fun UserResDto.toProfileDto(workspaceList: List<WorkspaceProfileResDto>): UserProfileResDto =
