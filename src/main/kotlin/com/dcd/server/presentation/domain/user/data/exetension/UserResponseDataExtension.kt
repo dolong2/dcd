@@ -10,7 +10,8 @@ fun UserResDto.toResponse(): UserResponse =
     UserResponse(
         id = this.id,
         email = this.email,
-        name = this.name
+        name = this.name,
+        status = this.status
     )
 
 fun UserProfileResDto.toResponse(): UserProfileResponse =

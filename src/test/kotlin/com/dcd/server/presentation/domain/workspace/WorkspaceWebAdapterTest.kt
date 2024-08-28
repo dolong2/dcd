@@ -1,6 +1,7 @@
 package com.dcd.server.presentation.domain.workspace
 
 import com.dcd.server.core.domain.user.dto.response.UserResDto
+import com.dcd.server.core.domain.user.model.Status
 import com.dcd.server.core.domain.workspace.dto.request.AddGlobalEnvReqDto
 import com.dcd.server.core.domain.workspace.dto.request.CreateWorkspaceReqDto
 import com.dcd.server.core.domain.workspace.dto.request.UpdateGlobalEnvReqDto
@@ -61,7 +62,8 @@ class WorkspaceWebAdapterTest : BehaviorSpec({
         val userResponse = UserResDto(
             id = UUID.randomUUID().toString(),
             email = "testEmail",
-            name = "test"
+            name = "test",
+            status = Status.CREATED
         )
         val workspaceResDto = WorkspaceResDto(
             id = UUID.randomUUID().toString(),
