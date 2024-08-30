@@ -3,10 +3,12 @@ package com.dcd.server.presentation.domain.user
 import com.dcd.server.core.domain.user.model.Status
 import com.dcd.server.core.domain.user.usecase.ChangePasswordUseCase
 import com.dcd.server.core.domain.user.usecase.ChangeUserStatusUseCase
+import com.dcd.server.core.domain.user.usecase.GetUserByStatusUseCase
 import com.dcd.server.core.domain.user.usecase.GetUserProfileUseCase
 import com.dcd.server.presentation.domain.user.data.exetension.toDto
 import com.dcd.server.presentation.domain.user.data.exetension.toResponse
 import com.dcd.server.presentation.domain.user.data.request.PasswordChangeRequest
+import com.dcd.server.presentation.domain.user.data.response.UserListResponse
 import com.dcd.server.presentation.domain.user.data.response.UserProfileResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -22,7 +24,8 @@ import org.springframework.web.bind.annotation.RestController
 class UserWebAdapter(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val changePasswordUseCase: ChangePasswordUseCase,
-    private val changeUserStatusUseCase: ChangeUserStatusUseCase
+    private val changeUserStatusUseCase: ChangeUserStatusUseCase,
+    private val getUserStatusUseCase: GetUserByStatusUseCase
 ) {
     @GetMapping("/profile")
     fun getUserProfile(): ResponseEntity<UserProfileResponse> =
@@ -38,4 +41,9 @@ class UserWebAdapter(
     fun updateStatus(@PathVariable userId: String, @RequestParam status: Status): ResponseEntity<Void> =
         changeUserStatusUseCase.execute(userId, status)
             .run { ResponseEntity.ok().build() }
+
+    @GetMapping
+    fun getUserByStatus(@RequestParam status: Status): ResponseEntity<UserListResponse> =
+        getUserStatusUseCase.execute(status)
+            .let { ResponseEntity.ok(it.toResponse()) }
 }
