@@ -1,5 +1,6 @@
 package com.dcd.server.persistence.user
 
+import com.dcd.server.core.domain.user.model.Status
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.spi.UserPort
 import com.dcd.server.persistence.user.adapter.toDomain
@@ -29,4 +30,8 @@ class UserPersistenceAdapter(
 
     override fun exitsById(userId: String): Boolean =
         userRepository.existsById(userId)
+
+    override fun findByStatus(status: Status): List<User> =
+        userRepository.findAllByStatus(status)
+            .map { it.toDomain() }
 }
