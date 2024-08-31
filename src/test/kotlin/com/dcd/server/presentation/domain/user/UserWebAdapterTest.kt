@@ -2,6 +2,7 @@ package com.dcd.server.presentation.domain.user
 
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.dto.extension.toDto
+import com.dcd.server.core.domain.user.dto.response.UserListResDto
 import com.dcd.server.core.domain.user.dto.response.UserProfileResDto
 import com.dcd.server.core.domain.user.model.Status
 import com.dcd.server.core.domain.user.model.User
@@ -16,6 +17,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import org.springframework.http.HttpStatus
+import util.user.UserGenerator
 
 class UserWebAdapterTest : BehaviorSpec({
     val getUserProfileUseCase = mockk<GetUserProfileUseCase>()
@@ -67,6 +69,24 @@ class UserWebAdapterTest : BehaviorSpec({
 
             then("응답코드는 200이여야함") {
                 response.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
+
+    given("Status가 주어지고") {
+        val status = Status.CREATED
+
+        `when`("getUserByStatus 메서드를 실행할때") {
+            val user = UserGenerator.generateUser()
+            val userListResDto = UserListResDto(listOf(user.toDto()))
+
+            every { getUserByStatusUseCase.execute(status) } returns userListResDto
+
+            val response = userWebAdapter.getUserByStatus(status)
+
+            then("상태코드는 200이여야하고, 바디는 userListDto의 정보랑 같아야함") {
+                response.statusCode shouldBe HttpStatus.OK
+                response.body shouldBe userListResDto.toResponse()
             }
         }
     }
