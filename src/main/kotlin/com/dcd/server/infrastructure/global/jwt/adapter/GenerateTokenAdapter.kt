@@ -29,8 +29,8 @@ class GenerateTokenAdapter(
 
     override fun generateToken(userId: String, roles: List<Role>): TokenResDto =
         TokenResDto(
-            accessToken = generatedAccessToken(userId, roles),
-            refreshToken = generatedRefreshToken(userId),
+            accessToken = generateAccessToken(userId, roles),
+            refreshToken = generateRefreshToken(userId),
             accessTokenExp = LocalDateTime.now().withNano(0).plusSeconds(tokenTimeProperty.accessTime),
             refreshTokenExp = LocalDateTime.now().withNano(0).plusSeconds(tokenTimeProperty.refreshTime)
         )
