@@ -45,13 +45,8 @@ class GenerateTokenAdapter(
             .setExpiration(Date(System.currentTimeMillis() + tokenTimeProperty.accessTime * 1000))
             .compact()
 
-    private fun generatedRefreshToken(userId: String): String =
-        Jwts.builder()
-            .signWith(jwtProperty.refreshSecret)
-            .setHeaderParam(Header.JWT_TYPE, JwtPrefix.REFRESH)
-            .setIssuedAt(Date())
-            .setExpiration(Date(System.currentTimeMillis() + tokenTimeProperty.refreshTime * 1000))
-            .compact()
+    private fun generateRefreshToken(userId: String): String =
+        generateToken(jwtProperty.refreshSecret, JwtPrefix.REFRESH)
             .apply {
                 commandRefreshTokenPort
                     .save(RefreshToken(userId, this, tokenTimeProperty.refreshTime))
