@@ -10,6 +10,7 @@ import com.dcd.server.infrastructure.global.jwt.properties.TokenTimeProperty
 import io.jsonwebtoken.Header
 import io.jsonwebtoken.Jwts
 import org.springframework.stereotype.Component
+import java.security.Key
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.List
@@ -55,4 +56,18 @@ class GenerateTokenAdapter(
                 commandRefreshTokenPort
                     .save(RefreshToken(userId, this, tokenTimeProperty.refreshTime))
             }
+
+    private fun generateToken(secret: Key, jwtType: String, userId: String? = null, roles: List<Role>? = null): String =
+        Jwts.builder()
+            .signWith(secret)
+            .setHeaderParam(Header.JWT_TYPE, jwtType)
+            .setIssuedAt(Date())
+            .setExpiration(Date(System.currentTimeMillis() + tokenTimeProperty.refreshTime * 1000))
+            .apply {
+                if (userId != null)
+                    this.setId(userId)
+                if (roles != null)
+                    this.claim(JwtPrefix.ROLE, roles.map { it.name })
+            }
+            .compact()
 }
