@@ -10,6 +10,7 @@ import com.dcd.server.infrastructure.global.jwt.properties.TokenTimeProperty
 import io.jsonwebtoken.Header
 import io.jsonwebtoken.Jwts
 import org.springframework.stereotype.Component
+import java.security.Key
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.List
@@ -28,31 +29,33 @@ class GenerateTokenAdapter(
 
     override fun generateToken(userId: String, roles: List<Role>): TokenResDto =
         TokenResDto(
-            accessToken = generatedAccessToken(userId, roles),
-            refreshToken = generatedRefreshToken(userId),
+            accessToken = generateAccessToken(userId, roles),
+            refreshToken = generateRefreshToken(userId),
             accessTokenExp = LocalDateTime.now().withNano(0).plusSeconds(tokenTimeProperty.accessTime),
             refreshTokenExp = LocalDateTime.now().withNano(0).plusSeconds(tokenTimeProperty.refreshTime)
         )
 
-    private fun generatedAccessToken(userId: String, roles: List<Role>): String =
-        Jwts.builder()
-            .signWith(jwtProperty.accessSecret)
-            .setHeaderParam(Header.JWT_TYPE, JwtPrefix.ACCESS)
-            .setId(userId)
-            .claim(JwtPrefix.ROLE, roles.map { it.name })
-            .setIssuedAt(Date())
-            .setExpiration(Date(System.currentTimeMillis() + tokenTimeProperty.accessTime * 1000))
-            .compact()
+    private fun generateAccessToken(userId: String, roles: List<Role>): String =
+        generateToken(jwtProperty.accessSecret, JwtPrefix.ACCESS, userId, roles)
 
-    private fun generatedRefreshToken(userId: String): String =
-        Jwts.builder()
-            .signWith(jwtProperty.refreshSecret)
-            .setHeaderParam(Header.JWT_TYPE, JwtPrefix.REFRESH)
-            .setIssuedAt(Date())
-            .setExpiration(Date(System.currentTimeMillis() + tokenTimeProperty.refreshTime * 1000))
-            .compact()
+    private fun generateRefreshToken(userId: String): String =
+        generateToken(jwtProperty.refreshSecret, JwtPrefix.REFRESH)
             .apply {
                 commandRefreshTokenPort
                     .save(RefreshToken(userId, this, tokenTimeProperty.refreshTime))
             }
+
+    private fun generateToken(secret: Key, jwtType: String, userId: String? = null, roles: List<Role>? = null): String =
+        Jwts.builder()
+            .signWith(secret)
+            .setHeaderParam(Header.JWT_TYPE, jwtType)
+            .setIssuedAt(Date())
+            .setExpiration(Date(System.currentTimeMillis() + tokenTimeProperty.refreshTime * 1000))
+            .apply {
+                if (userId != null)
+                    this.setId(userId)
+                if (roles != null)
+                    this.claim(JwtPrefix.ROLE, roles.map { it.name })
+            }
+            .compact()
 }
