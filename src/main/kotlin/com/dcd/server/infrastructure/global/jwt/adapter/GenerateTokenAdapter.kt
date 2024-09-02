@@ -35,15 +35,8 @@ class GenerateTokenAdapter(
             refreshTokenExp = LocalDateTime.now().withNano(0).plusSeconds(tokenTimeProperty.refreshTime)
         )
 
-    private fun generatedAccessToken(userId: String, roles: List<Role>): String =
-        Jwts.builder()
-            .signWith(jwtProperty.accessSecret)
-            .setHeaderParam(Header.JWT_TYPE, JwtPrefix.ACCESS)
-            .setId(userId)
-            .claim(JwtPrefix.ROLE, roles.map { it.name })
-            .setIssuedAt(Date())
-            .setExpiration(Date(System.currentTimeMillis() + tokenTimeProperty.accessTime * 1000))
-            .compact()
+    private fun generateAccessToken(userId: String, roles: List<Role>): String =
+        generateToken(jwtProperty.accessSecret, JwtPrefix.ACCESS, userId, roles)
 
     private fun generateRefreshToken(userId: String): String =
         generateToken(jwtProperty.refreshSecret, JwtPrefix.REFRESH)
