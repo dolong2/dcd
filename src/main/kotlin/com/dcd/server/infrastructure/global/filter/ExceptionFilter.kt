@@ -38,10 +38,11 @@ class ExceptionFilter(
         }
     }
 
-    private fun logErrorResponse(request: HttpServletRequest, errorCode: ErrorCode) {
+    private fun logErrorResponse(request: HttpServletRequest, errorCode: ErrorCode, ex: Exception) {
         log.error(request.method)
         log.error(request.requestURI)
         log.error(errorCode.msg)
+        log.error(ex.message)
         log.error("${errorCode.code}")
     }
 
