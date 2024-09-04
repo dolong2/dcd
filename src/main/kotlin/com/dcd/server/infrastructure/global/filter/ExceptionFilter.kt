@@ -25,13 +25,13 @@ class ExceptionFilter(
         } catch (ex: Exception) {
             when (ex) {
                 is BasicException -> {
-                    logErrorResponse(request, ex.errorCode)
+                    logErrorResponse(request, ex.errorCode, ex)
                     writeErrorResponse(response, ex)
                 }
                 else -> {
                     ex.printStackTrace()
                     val errorCode = ErrorCode.INTERNAL_ERROR
-                    logErrorResponse(request, errorCode)
+                    logErrorResponse(request, errorCode, ex)
                     writeErrorResponse(response, BasicException(errorCode))
                 }
             }
