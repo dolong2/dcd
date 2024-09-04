@@ -25,23 +25,24 @@ class ExceptionFilter(
         } catch (ex: Exception) {
             when (ex) {
                 is BasicException -> {
-                    logErrorResponse(request, ex.errorCode)
+                    logErrorResponse(request, ex.errorCode, ex)
                     writeErrorResponse(response, ex)
                 }
                 else -> {
                     ex.printStackTrace()
                     val errorCode = ErrorCode.INTERNAL_ERROR
-                    logErrorResponse(request, errorCode)
+                    logErrorResponse(request, errorCode, ex)
                     writeErrorResponse(response, BasicException(errorCode))
                 }
             }
         }
     }
 
-    private fun logErrorResponse(request: HttpServletRequest, errorCode: ErrorCode) {
+    private fun logErrorResponse(request: HttpServletRequest, errorCode: ErrorCode, ex: Exception) {
         log.error(request.method)
         log.error(request.requestURI)
         log.error(errorCode.msg)
+        log.error(ex.message)
         log.error("${errorCode.code}")
     }
 
