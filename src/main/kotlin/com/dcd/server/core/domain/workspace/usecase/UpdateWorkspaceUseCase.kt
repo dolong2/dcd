@@ -19,7 +19,7 @@ class UpdateWorkspaceUseCase(
             ?: throw WorkspaceNotFoundException())
         val currentUser = getCurrentUserService.getCurrentUser()
 
-        if (workspace.owner.equals(currentUser).not())
+        if (workspace.owner.id != currentUser.id)
             throw WorkspaceOwnerNotSameException()
 
         val updatedWorkspace = workspace.copy(title = updateWorkspaceReqDto.title, description = updateWorkspaceReqDto.description)
