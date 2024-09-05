@@ -22,7 +22,7 @@ class GenerateSSLCertificateUseCase(
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
         val currentUser = getCurrentUserService.getCurrentUser()
-        if (currentUser.equals(application.workspace.owner).not())
+        if (currentUser.id != application.workspace.owner.id)
             throw WorkspaceOwnerNotSameException()
         val domain = generateSSLCertificateReqDto.domain
         val externalPort = getExternalPortService.getExternalPort(application.port)

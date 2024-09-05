@@ -12,13 +12,13 @@ class ValidateWorkspaceOwnerServiceImpl(
     private val getCurrentUserService: GetCurrentUserService
 ) : ValidateWorkspaceOwnerService{
     override fun validateOwner(user: User, workspace: Workspace) {
-        if (user.equals(workspace.owner).not())
+        if (user.id != workspace.owner.id)
             throw WorkspaceOwnerNotSameException()
     }
 
     override fun validateOwner(workspace: Workspace) {
         val user = getCurrentUserService.getCurrentUser()
-        if (user.equals(workspace.owner).not())
+        if (user.id != workspace.owner.id)
             throw WorkspaceOwnerNotSameException()
     }
 }
