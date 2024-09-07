@@ -1,18 +1,21 @@
 package com.dcd.server.core.common.command.adapter
 
 import com.dcd.server.core.common.command.CommandPort
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
 @Component
 class CommandAdapter : CommandPort {
+    private val log = LoggerFactory.getLogger(this::class.simpleName)
+
     override fun executeShellCommand(cmd: String): Int {
         val cmd = arrayOf("/bin/sh", "-c", cmd)
         val p = Runtime.getRuntime().exec(cmd)
         val br = BufferedReader(InputStreamReader(p.inputStream))
         br.readLines().forEach {
-            println("$it")
+            log.info("$it")
         }
         p.waitFor()
         val exitValue = p.exitValue()
