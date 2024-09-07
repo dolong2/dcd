@@ -4,7 +4,7 @@ import com.dcd.server.core.common.file.FileContent
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.impl.CreateDockerFileServiceImpl
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
-import com.dcd.server.infrastructure.common.command.CommandAdapter
+import com.dcd.server.core.common.command.adapter.CommandAdapter
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
