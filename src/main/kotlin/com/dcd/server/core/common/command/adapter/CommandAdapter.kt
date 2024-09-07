@@ -1,4 +1,4 @@
-package com.dcd.server.infrastructure.common.command
+package com.dcd.server.core.common.command.adapter
 
 import com.dcd.server.core.common.command.CommandPort
 import org.springframework.stereotype.Component
