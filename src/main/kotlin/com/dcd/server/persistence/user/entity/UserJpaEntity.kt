@@ -1,7 +1,7 @@
 package com.dcd.server.persistence.user.entity
 
 import com.dcd.server.core.domain.auth.model.Role
-import com.dcd.server.core.domain.user.model.Status
+import com.dcd.server.core.domain.user.model.enums.Status
 import jakarta.persistence.*
 import java.util.*
 

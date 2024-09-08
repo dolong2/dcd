@@ -4,7 +4,7 @@ import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.dto.extension.toDto
 import com.dcd.server.core.domain.user.dto.response.UserListResDto
 import com.dcd.server.core.domain.user.dto.response.UserProfileResDto
-import com.dcd.server.core.domain.user.model.Status
+import com.dcd.server.core.domain.user.model.enums.Status
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.usecase.ChangePasswordUseCase
 import com.dcd.server.core.domain.user.usecase.ChangeUserStatusUseCase

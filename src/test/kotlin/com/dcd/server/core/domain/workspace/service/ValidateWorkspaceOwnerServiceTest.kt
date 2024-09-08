@@ -1,11 +1,10 @@
 package com.dcd.server.core.domain.workspace.service
 
 import com.dcd.server.core.domain.auth.model.Role
-import com.dcd.server.core.domain.user.model.Status
+import com.dcd.server.core.domain.user.model.enums.Status
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
-import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.core.domain.workspace.service.impl.ValidateWorkspaceOwnerServiceImpl
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -13,7 +12,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import util.user.UserGenerator
 import util.workspace.WorkspaceGenerator
-import java.util.*
 
 class ValidateWorkspaceOwnerServiceTest : BehaviorSpec({
     val getCurrentUserService = mockk<GetCurrentUserService>()

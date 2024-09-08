@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.user.model
 
 import com.dcd.server.core.domain.auth.model.Role
+import com.dcd.server.core.domain.user.model.enums.Status
 import java.util.*
 
 data class User(

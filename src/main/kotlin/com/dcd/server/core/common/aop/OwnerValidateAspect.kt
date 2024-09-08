@@ -15,7 +15,7 @@ class OwnerValidateAspect(
     private val getCurrentUserService: GetCurrentUserService,
     private val queryWorkspacePort: QueryWorkspacePort
 ) {
-    @Pointcut("@annotation(com.dcd.server.core.common.aop.annotation.WorkspaceOwnerVerification)")
+    @Pointcut("@annotation(com.dcd.server.core.common.annotation.WorkspaceOwnerVerification)")
     fun workspaceOwnerVerificationPointcut() {}
 
     @Before("workspaceOwnerVerificationPointcut() && args(id, ..)")

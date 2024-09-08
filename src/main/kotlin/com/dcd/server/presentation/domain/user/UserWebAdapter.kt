@@ -1,6 +1,6 @@
 package com.dcd.server.presentation.domain.user
 
-import com.dcd.server.core.domain.user.model.Status
+import com.dcd.server.core.domain.user.model.enums.Status
 import com.dcd.server.core.domain.user.usecase.ChangePasswordUseCase
 import com.dcd.server.core.domain.user.usecase.ChangeUserStatusUseCase
 import com.dcd.server.core.domain.user.usecase.GetUserByStatusUseCase
