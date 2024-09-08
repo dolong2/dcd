@@ -9,13 +9,14 @@ object UserGenerator {
         email: String = "testEmail",
         password: String = "testPassword",
         name: String = "testName",
-        roles: MutableList<Role> = mutableListOf(Role.ROLE_USER)
+        roles: MutableList<Role> = mutableListOf(Role.ROLE_USER),
+        status: Status = Status.CREATED
     ): User =
         User(
             email = email,
             password = password,
             name = name,
             roles = roles,
-            status = Status.CREATED
+            status = status
         )
 }
