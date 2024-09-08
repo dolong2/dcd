@@ -2,7 +2,7 @@ package com.dcd.server.core.domain.user.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.auth.exception.UserNotFoundException
-import com.dcd.server.core.domain.user.model.Status
+import com.dcd.server.core.domain.user.model.enums.Status
 import com.dcd.server.core.domain.user.spi.CommandUserPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 

@@ -1,6 +1,6 @@
 package com.dcd.server.persistence.user.repository
 
-import com.dcd.server.core.domain.user.model.Status
+import com.dcd.server.core.domain.user.model.enums.Status
 import com.dcd.server.persistence.user.entity.UserJpaEntity
 import org.springframework.data.jpa.repository.JpaRepository
 

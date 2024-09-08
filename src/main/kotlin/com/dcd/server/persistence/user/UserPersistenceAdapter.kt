@@ -1,6 +1,6 @@
 package com.dcd.server.persistence.user
 
-import com.dcd.server.core.domain.user.model.Status
+import com.dcd.server.core.domain.user.model.enums.Status
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.spi.UserPort
 import com.dcd.server.persistence.user.adapter.toDomain
