@@ -1,7 +1,7 @@
 package com.dcd.server.presentation.domain.workspace
 
 import com.dcd.server.core.domain.user.dto.response.UserResDto
-import com.dcd.server.core.domain.user.model.Status
+import com.dcd.server.core.domain.user.model.enums.Status
 import com.dcd.server.core.domain.workspace.dto.request.AddGlobalEnvReqDto
 import com.dcd.server.core.domain.workspace.dto.request.CreateWorkspaceReqDto
 import com.dcd.server.core.domain.workspace.dto.request.UpdateGlobalEnvReqDto

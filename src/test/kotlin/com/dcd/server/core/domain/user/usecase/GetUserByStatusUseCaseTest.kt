@@ -1,7 +1,7 @@
 package com.dcd.server.core.domain.user.usecase
 
 import com.dcd.server.core.domain.user.dto.extension.toDto
-import com.dcd.server.core.domain.user.model.Status
+import com.dcd.server.core.domain.user.model.enums.Status
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe

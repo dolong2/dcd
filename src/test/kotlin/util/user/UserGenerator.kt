@@ -1,7 +1,7 @@
 package util.user
 
 import com.dcd.server.core.domain.auth.model.Role
-import com.dcd.server.core.domain.user.model.Status
+import com.dcd.server.core.domain.user.model.enums.Status
 import com.dcd.server.core.domain.user.model.User
 
 object UserGenerator {

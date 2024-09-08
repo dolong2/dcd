@@ -1,7 +1,7 @@
 package com.dcd.server.persistence.user
 
 import com.dcd.server.core.domain.auth.model.Role
-import com.dcd.server.core.domain.user.model.Status
+import com.dcd.server.core.domain.user.model.enums.Status
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.persistence.user.adapter.toEntity
 import com.dcd.server.persistence.user.repository.UserRepository
