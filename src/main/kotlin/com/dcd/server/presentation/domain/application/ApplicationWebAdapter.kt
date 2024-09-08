@@ -1,6 +1,6 @@
 package com.dcd.server.presentation.domain.application
 
-import com.dcd.server.core.common.aop.annotation.WorkspaceOwnerVerification
+import com.dcd.server.core.common.annotation.WorkspaceOwnerVerification
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.usecase.*
 import com.dcd.server.presentation.domain.application.data.exetension.toDto
