@@ -19,7 +19,6 @@ class BasicExceptionHandler {
         log.error(request.requestURI)
         val errorCode = ex.errorCode
         log.error(errorCode.msg)
-        log.error("${errorCode.code}")
         return ResponseEntity(
             ErrorResponse(errorCode),
             HttpStatus.valueOf(errorCode.code)

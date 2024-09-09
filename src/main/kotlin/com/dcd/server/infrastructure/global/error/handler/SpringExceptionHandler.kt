@@ -20,7 +20,6 @@ class SpringExceptionHandler{
         log.error(request.requestURI)
         val errorCode = ErrorCode.BAD_REQUEST
         log.error(errorCode.msg)
-        log.error("${errorCode.code}")
         return ResponseEntity(
             ErrorResponse(errorCode),
             HttpStatusCode.valueOf(errorCode.code)
