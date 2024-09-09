@@ -22,5 +22,7 @@ class RequestInfoLogFilter : OncePerRequestFilter() {
         log.info("request port: ${request.remotePort}")
 
         filterChain.doFilter(request, response)
+
+        log.info("response status: ${response.status}")
     }
 }
