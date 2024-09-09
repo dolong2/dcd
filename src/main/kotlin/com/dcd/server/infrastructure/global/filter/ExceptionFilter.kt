@@ -41,7 +41,6 @@ class ExceptionFilter(
     private fun logErrorResponse(errorCode: ErrorCode, ex: Exception) {
         log.error(errorCode.msg)
         log.error(ex.message)
-        log.error("${errorCode.code}")
     }
 
     private fun writeErrorResponse(response: HttpServletResponse, exception: BasicException) {
