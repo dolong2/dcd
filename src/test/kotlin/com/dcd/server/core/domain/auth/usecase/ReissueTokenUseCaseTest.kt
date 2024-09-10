@@ -10,6 +10,8 @@ import com.dcd.server.core.domain.auth.spi.JwtPort
 import com.dcd.server.core.domain.auth.spi.QueryRefreshTokenPort
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.spi.QueryUserPort
+import com.dcd.server.infrastructure.global.jwt.adapter.ParseTokenAdapter
+import com.dcd.server.infrastructure.global.jwt.exception.TokenTypeNotValidException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -24,8 +26,9 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
     val commandRefreshTokenPort = mockk<CommandRefreshTokenPort>()
     val jwtPort = mockk<JwtPort>()
     val queryUserPort = mockk<QueryUserPort>()
+    val parseTokenAdapter = mockk<ParseTokenAdapter>(relaxUnitFun = true)
     val reissueTokenUseCase =
-        ReissueTokenUseCase(queryRefreshTokenPort, commandRefreshTokenPort, jwtPort, queryUserPort)
+        ReissueTokenUseCase(queryRefreshTokenPort, commandRefreshTokenPort, jwtPort, queryUserPort, parseTokenAdapter)
 
     val userId = "testUserId"
     val token = "testRefreshToken"
@@ -41,6 +44,7 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
             every { queryUserPort.findById(userId) } returns user
             every { commandRefreshTokenPort.delete(refreshToken) } returns Unit
             every { jwtPort.generateToken(user.id, user.roles) } returns tokenResDto
+            every { parseTokenAdapter.getJwtType(token) } returns "REFRESH"
         }
 
         init()
@@ -68,6 +72,15 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
         `when`("토큰에 있는 유저가 없을때") {
             then("UserNotFoundException이 발생해야함") {
                 shouldThrow<UserNotFoundException> {
+                    reissueTokenUseCase.execute(token)
+                }
+            }
+        }
+
+        every { parseTokenAdapter.getJwtType(token) } returns "ACCESS"
+        `when`("해당 토큰이 REFRESH 타입이 아닐때") {
+            then("TokenTypeNotValidException이 발생해야함") {
+                shouldThrow<TokenTypeNotValidException> {
                     reissueTokenUseCase.execute(token)
                 }
             }
