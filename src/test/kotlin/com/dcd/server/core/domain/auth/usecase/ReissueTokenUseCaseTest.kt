@@ -10,6 +10,7 @@ import com.dcd.server.core.domain.auth.spi.JwtPort
 import com.dcd.server.core.domain.auth.spi.QueryRefreshTokenPort
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.spi.QueryUserPort
+import com.dcd.server.infrastructure.global.jwt.adapter.ParseTokenAdapter
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -24,8 +25,9 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
     val commandRefreshTokenPort = mockk<CommandRefreshTokenPort>()
     val jwtPort = mockk<JwtPort>()
     val queryUserPort = mockk<QueryUserPort>()
+    val parseTokenAdapter = mockk<ParseTokenAdapter>()
     val reissueTokenUseCase =
-        ReissueTokenUseCase(queryRefreshTokenPort, commandRefreshTokenPort, jwtPort, queryUserPort)
+        ReissueTokenUseCase(queryRefreshTokenPort, commandRefreshTokenPort, jwtPort, queryUserPort, parseTokenAdapter)
 
     val userId = "testUserId"
     val token = "testRefreshToken"
