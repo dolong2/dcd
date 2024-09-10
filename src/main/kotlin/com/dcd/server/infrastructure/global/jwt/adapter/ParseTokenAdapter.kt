@@ -26,6 +26,7 @@ class ParseTokenAdapter(
 ) {
     object JwtPrefix{
         const val ACCESS = "access"
+        const val REFRESH = "refresh"
         const val ROLE = "role"
         const val PREFIX = "Bearer "
     }
@@ -40,6 +41,12 @@ class ParseTokenAdapter(
         val userDetails = getDetails(claims.body)
 
         return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+    }
+
+    fun getJwtType(token: String): String {
+        val claims = getClaims(token, jwtProperty.refreshSecret)
+
+        return claims.header[Header.JWT_TYPE] as? String ?: ""
     }
 
     private fun getClaims(token: String, secret: Key): Jws<Claims> {
