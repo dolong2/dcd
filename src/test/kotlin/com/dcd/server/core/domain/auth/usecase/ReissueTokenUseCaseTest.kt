@@ -57,8 +57,8 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
             }
         }
 
-        every { queryRefreshTokenPort.findByToken(token) } returns null
         `when`("토큰을 찾지 못했을때") {
+            every { queryRefreshTokenPort.findByToken(token) } returns null
             then("ExpiredRefreshTokenException이 발생해야함") {
                 shouldThrow<ExpiredRefreshTokenException> {
                     reissueTokenUseCase.execute(token)
@@ -66,8 +66,8 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
             }
         }
 
-        every { queryUserPort.findById(userId) } returns null
         `when`("토큰에 있는 유저가 없을때") {
+            every { queryUserPort.findById(userId) } returns null
             then("UserNotFoundException이 발생해야함") {
                 shouldThrow<UserNotFoundException> {
                     reissueTokenUseCase.execute(token)
@@ -75,8 +75,8 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
             }
         }
 
-        every { parseTokenAdapter.getJwtType(token) } returns "ACCESS"
         `when`("해당 토큰이 REFRESH 타입이 아닐때") {
+            every { parseTokenAdapter.getJwtType(token) } returns "ACCESS"
             then("TokenTypeNotValidException이 발생해야함") {
                 shouldThrow<TokenTypeNotValidException> {
                     reissueTokenUseCase.execute(token)
