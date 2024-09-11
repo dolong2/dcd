@@ -39,16 +39,13 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
     given("리프레시 토큰이 주어지고") {
         val refreshToken = RefreshToken(userId, token, ttl)
 
-        fun init(){
+        `when`("아무 문제 없이 실행될때") {
             every { queryRefreshTokenPort.findByToken(token) } returns refreshToken
             every { queryUserPort.findById(userId) } returns user
             every { commandRefreshTokenPort.delete(refreshToken) } returns Unit
             every { jwtPort.generateToken(user.id, user.roles) } returns tokenResDto
             every { parseTokenAdapter.getJwtType(token) } returns "REFRESH"
-        }
 
-        init()
-        `when`("아무 문제 없이 실행될때") {
             val result = reissueTokenUseCase.execute(token)
             then("jwtPort에서 생성한 dto가 반환되어야함") {
                 verify { queryRefreshTokenPort.findByToken(token) }
@@ -58,8 +55,8 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
             }
         }
 
-        every { queryRefreshTokenPort.findByToken(token) } returns null
         `when`("토큰을 찾지 못했을때") {
+            every { queryRefreshTokenPort.findByToken(token) } returns null
             then("ExpiredRefreshTokenException이 발생해야함") {
                 shouldThrow<ExpiredRefreshTokenException> {
                     reissueTokenUseCase.execute(token)
@@ -67,9 +64,9 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
             }
         }
 
-        init()
-        every { queryUserPort.findById(userId) } returns null
         `when`("토큰에 있는 유저가 없을때") {
+            every { queryRefreshTokenPort.findByToken(token) } returns refreshToken
+            every { queryUserPort.findById(userId) } returns null
             then("UserNotFoundException이 발생해야함") {
                 shouldThrow<UserNotFoundException> {
                     reissueTokenUseCase.execute(token)
@@ -77,8 +74,12 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
             }
         }
 
-        every { parseTokenAdapter.getJwtType(token) } returns "ACCESS"
         `when`("해당 토큰이 REFRESH 타입이 아닐때") {
+            every { queryRefreshTokenPort.findByToken(token) } returns refreshToken
+            every { queryUserPort.findById(userId) } returns user
+            every { commandRefreshTokenPort.delete(refreshToken) } returns Unit
+            every { jwtPort.generateToken(user.id, user.roles) } returns tokenResDto
+            every { parseTokenAdapter.getJwtType(token) } returns "ACCESS"
             then("TokenTypeNotValidException이 발생해야함") {
                 shouldThrow<TokenTypeNotValidException> {
                     reissueTokenUseCase.execute(token)
