@@ -39,15 +39,13 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
     given("리프레시 토큰이 주어지고") {
         val refreshToken = RefreshToken(userId, token, ttl)
 
-        fun init(){
+        `when`("아무 문제 없이 실행될때") {
             every { queryRefreshTokenPort.findByToken(token) } returns refreshToken
             every { queryUserPort.findById(userId) } returns user
             every { commandRefreshTokenPort.delete(refreshToken) } returns Unit
             every { jwtPort.generateToken(user.id, user.roles) } returns tokenResDto
             every { parseTokenAdapter.getJwtType(token) } returns "REFRESH"
-        }
 
-        `when`("아무 문제 없이 실행될때") {
             val result = reissueTokenUseCase.execute(token)
             then("jwtPort에서 생성한 dto가 반환되어야함") {
                 verify { queryRefreshTokenPort.findByToken(token) }
@@ -67,6 +65,7 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
         }
 
         `when`("토큰에 있는 유저가 없을때") {
+            every { queryRefreshTokenPort.findByToken(token) } returns refreshToken
             every { queryUserPort.findById(userId) } returns null
             then("UserNotFoundException이 발생해야함") {
                 shouldThrow<UserNotFoundException> {
@@ -76,6 +75,10 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
         }
 
         `when`("해당 토큰이 REFRESH 타입이 아닐때") {
+            every { queryRefreshTokenPort.findByToken(token) } returns refreshToken
+            every { queryUserPort.findById(userId) } returns user
+            every { commandRefreshTokenPort.delete(refreshToken) } returns Unit
+            every { jwtPort.generateToken(user.id, user.roles) } returns tokenResDto
             every { parseTokenAdapter.getJwtType(token) } returns "ACCESS"
             then("TokenTypeNotValidException이 발생해야함") {
                 shouldThrow<TokenTypeNotValidException> {
