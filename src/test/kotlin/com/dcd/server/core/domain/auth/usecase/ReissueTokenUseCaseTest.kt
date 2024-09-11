@@ -47,7 +47,6 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
             every { parseTokenAdapter.getJwtType(token) } returns "REFRESH"
         }
 
-        init()
         `when`("아무 문제 없이 실행될때") {
             val result = reissueTokenUseCase.execute(token)
             then("jwtPort에서 생성한 dto가 반환되어야함") {
@@ -67,7 +66,6 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
             }
         }
 
-        init()
         every { queryUserPort.findById(userId) } returns null
         `when`("토큰에 있는 유저가 없을때") {
             then("UserNotFoundException이 발생해야함") {
