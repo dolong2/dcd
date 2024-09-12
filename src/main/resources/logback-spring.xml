@@ -28,4 +28,20 @@
         </encoder>
     </appender>
 
+    <logger name="ExceptionFilter" level="error" additivity="true">
+        <appender-ref ref="ERROR_APPENDER"/>
+    </logger>
+    <logger name="BasicExceptionHandler" level="error" additivity="true">
+        <appender-ref ref="ERROR_APPENDER"/>
+    </logger>
+    <logger name="SpringExceptionHandler" level="error" additivity="true">
+        <appender-ref ref="ERROR_APPENDER"/>
+    </logger>
+    <logger name="RequestInfoLogFilter" level="info" additivity="true">
+        <appender-ref ref="DEFAULT_REQUEST_APPENDER"/>
+    </logger>
+    <logger name="JwtReqFilter" level="info" additivity="true">
+        <appender-ref ref="DEFAULT_REQUEST_APPENDER"/>
+    </logger>
+
 </configuration>
