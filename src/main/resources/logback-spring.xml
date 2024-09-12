@@ -54,4 +54,7 @@
     <logger name="JwtReqFilter" level="info" additivity="true">
         <appender-ref ref="DEFAULT_REQUEST_APPENDER"/>
     </logger>
+    <logger name="CommandAdapter" level="info" additivity="true">
+        <appender-ref ref="COMMAND_APPENDER"/>
+    </logger>
 </configuration>
