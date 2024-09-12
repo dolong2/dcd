@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <property name="home" value="logs"/>
+
+    <appender name="DEFAULT_REQUEST_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/access-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>1GB</maxFileSize>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>utf8</charset>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>1GB</maxFileSize>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>utf8</charset>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="COMMAND_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/command-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>1GB</maxFileSize>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="ExceptionFilter" level="error" additivity="true">
+        <appender-ref ref="ERROR_APPENDER"/>
+    </logger>
+    <logger name="BasicExceptionHandler" level="error" additivity="true">
+        <appender-ref ref="ERROR_APPENDER"/>
+    </logger>
+    <logger name="SpringExceptionHandler" level="error" additivity="true">
+        <appender-ref ref="ERROR_APPENDER"/>
+    </logger>
+    <logger name="RequestInfoLogFilter" level="info" additivity="true">
+        <appender-ref ref="DEFAULT_REQUEST_APPENDER"/>
+    </logger>
+    <logger name="JwtReqFilter" level="info" additivity="true">
+        <appender-ref ref="DEFAULT_REQUEST_APPENDER"/>
+    </logger>
+    <logger name="CommandAdapter" level="info" additivity="true">
+        <appender-ref ref="COMMAND_APPENDER"/>
+    </logger>
+</configuration>
