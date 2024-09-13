@@ -43,7 +43,7 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
             every { queryRefreshTokenPort.findByToken(token) } returns refreshToken
             every { queryUserPort.findById(userId) } returns user
             every { commandRefreshTokenPort.delete(refreshToken) } returns Unit
-            every { jwtPort.generateToken(user.id, user.roles) } returns tokenResDto
+            every { jwtPort.generateToken(user.id) } returns tokenResDto
             every { parseTokenAdapter.getJwtType(token) } returns "REFRESH"
 
             val result = reissueTokenUseCase.execute(token)
@@ -78,7 +78,7 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
             every { queryRefreshTokenPort.findByToken(token) } returns refreshToken
             every { queryUserPort.findById(userId) } returns user
             every { commandRefreshTokenPort.delete(refreshToken) } returns Unit
-            every { jwtPort.generateToken(user.id, user.roles) } returns tokenResDto
+            every { jwtPort.generateToken(user.id) } returns tokenResDto
             every { parseTokenAdapter.getJwtType(token) } returns "ACCESS"
             then("TokenTypeNotValidException이 발생해야함") {
                 shouldThrow<TokenTypeNotValidException> {

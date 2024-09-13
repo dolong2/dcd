@@ -60,7 +60,6 @@ class ParseTokenAdapter(
     }
 
     private fun getDetails(body: Claims): UserDetails {
-        val roles = body[JwtPrefix.ROLE, List::class.java]
         val username = body.id
 
         return authDetailsService.loadUserByUsername(username)

@@ -18,6 +18,6 @@ class SignInUseCase(
         val user = (queryUserPort.findByEmail(signInReqDto.email)
             ?: throw UserNotFoundException()) // 해당 유저를 찾을 수 없음
         securityService.matchPassword(signInReqDto.password, user.password)
-        return jwtPort.generateToken(user.id, user.roles)
+        return jwtPort.generateToken(user.id)
     }
 }

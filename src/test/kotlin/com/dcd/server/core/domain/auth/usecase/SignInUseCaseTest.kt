@@ -36,7 +36,7 @@ class SignInUseCaseTest : BehaviorSpec({
 
         val tokenResDto = TokenResDto(accessToken, accessTokenExp, refreshToken, refreshTokenExp)
         `when`("usecase를 실행할때") {
-            every { jwtPort.generateToken(user.id, user.roles) } returns tokenResDto
+            every { jwtPort.generateToken(user.id) } returns tokenResDto
             every { queryUserPort.findByEmail(requestDto.email) } returns user
             every { securityService.matchPassword(requestDto.password, user.password) } returns Unit
             val result = signInUseCase.execute(requestDto)
