@@ -27,16 +27,16 @@ class GenerateTokenAdapter(
         const val ROLE = "role"
     }
 
-    override fun generateToken(userId: String, roles: List<Role>): TokenResDto =
+    override fun generateToken(userId: String): TokenResDto =
         TokenResDto(
-            accessToken = generateAccessToken(userId, roles),
+            accessToken = generateAccessToken(userId),
             refreshToken = generateRefreshToken(userId),
             accessTokenExp = LocalDateTime.now().withNano(0).plusSeconds(tokenTimeProperty.accessTime),
             refreshTokenExp = LocalDateTime.now().withNano(0).plusSeconds(tokenTimeProperty.refreshTime)
         )
 
-    private fun generateAccessToken(userId: String, roles: List<Role>): String =
-        generateToken(jwtProperty.accessSecret, JwtPrefix.ACCESS, userId, roles)
+    private fun generateAccessToken(userId: String): String =
+        generateToken(jwtProperty.accessSecret, JwtPrefix.ACCESS, userId)
 
     private fun generateRefreshToken(userId: String): String =
         generateToken(jwtProperty.refreshSecret, JwtPrefix.REFRESH)
@@ -45,7 +45,7 @@ class GenerateTokenAdapter(
                     .save(RefreshToken(userId, this, tokenTimeProperty.refreshTime))
             }
 
-    private fun generateToken(secret: Key, jwtType: String, userId: String? = null, roles: List<Role>? = null): String =
+    private fun generateToken(secret: Key, jwtType: String, userId: String? = null): String =
         Jwts.builder()
             .signWith(secret)
             .setHeaderParam(Header.JWT_TYPE, jwtType)
@@ -54,8 +54,6 @@ class GenerateTokenAdapter(
             .apply {
                 if (userId != null)
                     this.setId(userId)
-                if (roles != null)
-                    this.claim(JwtPrefix.ROLE, roles.map { it.name })
             }
             .compact()
 }

@@ -29,6 +29,6 @@ class ReissueTokenUseCase(
         val user = (queryUserPort.findById(refreshToken.userId)
             ?: throw UserNotFoundException())
         commandRefreshTokenPort.delete(refreshToken)
-        return jwtPort.generateToken(user.id, user.roles)
+        return jwtPort.generateToken(user.id)
     }
 }

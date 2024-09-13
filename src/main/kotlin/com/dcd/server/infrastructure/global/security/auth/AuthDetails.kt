@@ -1,19 +1,21 @@
 package com.dcd.server.infrastructure.global.security.auth
 
-import com.dcd.server.core.domain.auth.model.Role
+import com.dcd.server.core.domain.user.model.User
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-class DeveloperDetails (
-    private val memberId: String
-) : UserDetails {
+class AuthDetails(
+    private val user: User
+) : UserDetails{
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> =
-        mutableListOf(SimpleGrantedAuthority(Role.ROLE_DEVELOPER.name))
+        user.roles
+            .map { SimpleGrantedAuthority(it.name) }
+            .toMutableList()
 
     override fun getPassword(): String? = null
 
-    override fun getUsername(): String = memberId
+    override fun getUsername(): String = user.id
 
     override fun isAccountNonExpired(): Boolean = true
 
