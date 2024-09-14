@@ -23,7 +23,10 @@ class CustomAuthenticationEntryPoint(
         response: HttpServletResponse,
         authException: AuthenticationException
     ) {
+        log.error(request.method)
+        log.error(request.requestURI)
         val errorCode = ErrorCode.FORBIDDEN
+        log.error(errorCode.msg)
         val result = objectMapper.writeValueAsString(ErrorResponse(errorCode))
         response.characterEncoding = Charsets.UTF_8.name()
         response.status = errorCode.code
