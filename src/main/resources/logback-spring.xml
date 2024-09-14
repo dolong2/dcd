@@ -51,6 +51,9 @@
     <logger name="CustomAccessDeniedHandler" level="error" additivity="true">
         <appender-ref ref="ERROR_APPENDER"/>
     </logger>
+    <logger name="CustomAuthenticationEntryPoint" level="error" additivity="true">
+        <appender-ref ref="ERROR_APPENDER"/>
+    </logger>
     <logger name="RequestInfoLogFilter" level="info" additivity="true">
         <appender-ref ref="DEFAULT_REQUEST_APPENDER"/>
     </logger>
