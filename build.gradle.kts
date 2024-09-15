@@ -50,6 +50,10 @@ dependencies {
 
 	//mail
 	implementation("org.springframework.boot:spring-boot-starter-mail")
+
+	//coroutine
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.6.4")
 }
 
 tasks.withType<KotlinCompile> {
