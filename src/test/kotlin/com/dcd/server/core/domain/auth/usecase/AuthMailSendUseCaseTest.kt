@@ -3,9 +3,9 @@ package com.dcd.server.core.domain.auth.usecase
 import com.dcd.server.core.domain.auth.dto.request.EmailSendReqDto
 import com.dcd.server.core.domain.auth.service.EmailSendService
 import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
 
 class AuthMailSendUseCaseTest : BehaviorSpec({
     val emailSendService = mockk<EmailSendService>()
@@ -15,10 +15,10 @@ class AuthMailSendUseCaseTest : BehaviorSpec({
         val testEmail = "testEmail"
         val request = EmailSendReqDto(testEmail)
         `when`("execute메서드를 실행할때") {
-            every { emailSendService.sendEmail(testEmail) } returns Unit
+            coEvery { emailSendService.sendEmail(testEmail) } returns Unit
             useCase.execute(request)
             then("emailSendService의 sendEmail메서드를 실행해아함") {
-                verify { emailSendService.sendEmail(testEmail) }
+                coVerify { emailSendService.sendEmail(testEmail) }
             }
         }
     }
