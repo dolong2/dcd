@@ -12,7 +12,7 @@ class EmailSendServiceImpl(
     private val commandEmailAuthPort: CommandEmailAuthPort,
     private val emailSender: JavaMailSender,
 ) : EmailSendService{
-    override fun sendEmail(email: String) {
+    override suspend fun sendEmail(email: String) {
         val emailAuth = EmailAuth(email = email)
         val code = emailAuth.code
         val message = emailSender.createMimeMessage()
