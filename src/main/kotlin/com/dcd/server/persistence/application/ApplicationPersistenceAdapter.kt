@@ -25,6 +25,10 @@ class ApplicationPersistenceAdapter(
         applicationRepository.delete(application.toEntity())
     }
 
+    override fun saveAll(applicationList: List<Application>) {
+        applicationRepository.saveAll(applicationList.map { it.toEntity() })
+    }
+
     override fun findAllByWorkspace(workspace: Workspace): List<Application> =
         applicationRepository.findAllByWorkspace(workspace.toEntity())
             .map { it.toDomain() }
