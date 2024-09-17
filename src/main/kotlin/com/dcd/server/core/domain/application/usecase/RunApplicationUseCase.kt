@@ -6,13 +6,16 @@ import com.dcd.server.core.domain.application.exception.ApplicationNotFoundExcep
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @UseCase
 class RunApplicationUseCase(
     private val runContainerService: RunContainerService,
     private val queryApplicationPort: QueryApplicationPort,
     private val changeApplicationStatusService: ChangeApplicationStatusService
-) {
+): CoroutineScope by CoroutineScope(Dispatchers.IO) {
     fun execute(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
@@ -20,7 +23,9 @@ class RunApplicationUseCase(
         if (application.status == ApplicationStatus.RUNNING)
             throw AlreadyRunningException()
 
-        runContainerService.runApplication(application)
+        launch  {
+            runContainerService.runApplication(application)
+        }
 
         changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING)
     }

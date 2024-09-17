@@ -8,6 +8,7 @@ import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -64,7 +65,7 @@ class RunApplicationUseCaseTest : BehaviorSpec({
 
             runApplicationUseCase.execute(application.id)
             then("dockerRunService만 실행되어야함") {
-                verify { runContainerService.runApplication(application) }
+                coVerify { runContainerService.runApplication(application) }
             }
         }
 
@@ -86,7 +87,7 @@ class RunApplicationUseCaseTest : BehaviorSpec({
 
             runApplicationUseCase.execute(application.id)
             then("dockerRunService만 실행되어야함") {
-                verify { runContainerService.runApplication(application) }
+                coVerify { runContainerService.runApplication(application) }
             }
         }
 
