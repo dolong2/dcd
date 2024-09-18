@@ -7,13 +7,15 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.springframework.context.ApplicationEventPublisher
 import util.application.ApplicationGenerator
 import java.util.*
 
 class DockerRunServiceImplTest : BehaviorSpec({
     val commandPort = mockk<CommandPort>(relaxed = true)
     val queryApplicationPort = mockk<QueryApplicationPort>()
-    val service = RunContainerServiceImpl(queryApplicationPort, commandPort)
+    val eventListener = mockk<ApplicationEventPublisher>(relaxed = true)
+    val service = RunContainerServiceImpl(queryApplicationPort, commandPort, eventListener)
 
     given("애플리케이션id가 주어지고") {
         val appId = UUID.randomUUID().toString()

@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.application.service
 
 import com.dcd.server.core.common.command.CommandPort
+import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
 import com.dcd.server.core.domain.application.exception.ContainerNotCreatedException
 import com.dcd.server.core.domain.application.service.impl.CreateContainerServiceImpl
 import io.kotest.assertions.throwables.shouldThrow
@@ -8,11 +9,13 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.springframework.context.ApplicationEventPublisher
 import util.application.ApplicationGenerator
 
 class CreateContainerServiceImplTest : BehaviorSpec({
     val commandPort = mockk<CommandPort>(relaxed = true)
-    val createContainerService = CreateContainerServiceImpl(commandPort)
+    val eventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
+    val createContainerService = CreateContainerServiceImpl(commandPort, eventPublisher)
 
     given("애플리케이션이 주어지고") {
         val application = ApplicationGenerator.generateApplication()
@@ -39,11 +42,10 @@ class CreateContainerServiceImplTest : BehaviorSpec({
                             "-p ${application.externalPort}:${application.port} ${application.name.lowercase()}:latest"
                 )
             } returns 125
+            createContainerService.createContainer(application, application.externalPort)
 
             then("ContainerNotCreatedException이 발생해야함") {
-                shouldThrow<ContainerNotCreatedException> {
-                    createContainerService.createContainer(application, application.externalPort)
-                }
+                verify { eventPublisher.publishEvent(any() as ChangeApplicationStatusEvent) }
             }
         }
     }
