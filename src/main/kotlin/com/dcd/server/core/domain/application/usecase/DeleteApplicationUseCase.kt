@@ -20,7 +20,7 @@ class DeleteApplicationUseCase(
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
 
-        if (application.status == ApplicationStatus.RUNNING)
+        if (application.status == ApplicationStatus.RUNNING || application.status == ApplicationStatus.PENDING)
             throw CanNotDeleteApplicationException()
 
         deleteContainerService.deleteContainer(application)

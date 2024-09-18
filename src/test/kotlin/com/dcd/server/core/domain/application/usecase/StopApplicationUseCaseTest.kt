@@ -34,7 +34,7 @@ class StopApplicationUseCaseTest : BehaviorSpec({
             stopApplicationUseCase.execute(applicationId)
             then("deleteContainerService와 deleteApplicationDirectoryService가 실행되어야함") {
                 verify { stopContainerService.stopContainer(application) }
-                verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.STOPPED) }
+                verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.PENDING) }
             }
         }
         `when`("해당 애플리케이션이 존재하지 않을때") {

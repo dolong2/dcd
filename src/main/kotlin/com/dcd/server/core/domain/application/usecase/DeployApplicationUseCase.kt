@@ -24,7 +24,7 @@ class DeployApplicationUseCase(
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
 
-        if (application.status == ApplicationStatus.RUNNING)
+        if (application.status == ApplicationStatus.RUNNING || application.status == ApplicationStatus.PENDING)
             throw CanNotDeployApplicationException()
 
         deleteContainerService.deleteContainer(application)

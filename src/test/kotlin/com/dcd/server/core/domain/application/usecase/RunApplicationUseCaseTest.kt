@@ -34,7 +34,7 @@ class RunApplicationUseCaseTest : BehaviorSpec({
             every { queryApplicationPort.findById("testId") } returns application
             runApplicationUseCase.execute("testId")
             then("애플리케이션 실행에 관한 service들이 실행되어야함") {
-                verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING) }
+                verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.PENDING) }
             }
         }
 

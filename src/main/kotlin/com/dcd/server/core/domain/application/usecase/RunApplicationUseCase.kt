@@ -27,6 +27,6 @@ class RunApplicationUseCase(
             runContainerService.runApplication(application)
         }
 
-        changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING)
+        changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.PENDING)
     }
 }

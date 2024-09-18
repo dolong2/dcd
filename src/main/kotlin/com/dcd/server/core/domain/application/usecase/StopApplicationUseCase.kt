@@ -23,6 +23,6 @@ class StopApplicationUseCase(
 
         stopContainerService.stopContainer(application)
 
-        changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.STOPPED)
+        changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.PENDING)
     }
 }
