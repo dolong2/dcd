@@ -15,7 +15,7 @@ class ExistsPortServiceTest : BehaviorSpec({
         val testPort = 9999
         val commandPort = mockk<CommandPort>()
         every { queryApplicationPort.existsByExternalPort(testPort) } returns false
-        every { commandPort.executeShellCommandWithResult("lsof -i ${testPort}") } returns emptyList()
+        every { commandPort.executeShellCommandWithResult("lsof -i :${testPort}") } returns emptyList()
 
         val service = ExistsPortServiceImpl(queryApplicationPort, commandPort)
 
