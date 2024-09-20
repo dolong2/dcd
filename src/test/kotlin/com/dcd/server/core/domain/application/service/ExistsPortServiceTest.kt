@@ -23,7 +23,7 @@ class ExistsPortServiceTest : BehaviorSpec({
             val result = service.existsPort(9999)
             then("결과값은 false여야함") {
                 result shouldBe false
-                verify { commandPort.executeShellCommandWithResult("lsof -i ${testPort}") }
+                verify { commandPort.executeShellCommandWithResult("lsof -i :${testPort}") }
             }
         }
     }
