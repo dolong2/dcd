@@ -4,18 +4,16 @@ import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.GetApplicationVersionService
 import org.springframework.stereotype.Service
-import java.io.BufferedReader
-import java.io.InputStreamReader
 
 @Service
-class GetApplicationVersionServiceImpl : GetApplicationVersionService {
+class GetApplicationVersionServiceImpl(
+    private val commandPort: CommandPort
+) : GetApplicationVersionService {
     override fun getAvailableVersion(applicationType: ApplicationType): List<String> {
-        val cmd = arrayOf("/bin/sh", "-c", "docker images ${applicationType.name.lowercase()}")
-        val p = Runtime.getRuntime().exec(cmd)
-        val br = BufferedReader(InputStreamReader(p.inputStream))
+        val commandResult = commandPort.executeShellCommandWithResult("docker images ${applicationType.name.lowercase()}")
         val result = mutableListOf<String>()
         var first = true
-        br.readLines().forEach {
+        commandResult.forEach {
             if (first) first = !first
             else {
                 val split = it.replace(Regex("\\s{2,}"), " ").split(" ")
@@ -23,8 +21,6 @@ class GetApplicationVersionServiceImpl : GetApplicationVersionService {
                 result.add(tag)
             }
         }
-        p.waitFor()
-        p.destroy()
         return result
     }
 }
