@@ -4,6 +4,7 @@ import com.dcd.server.core.common.command.CommandPort
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.io.BufferedReader
+import java.io.IOException
 import java.io.InputStreamReader
 
 @Component
@@ -27,9 +28,14 @@ class CommandAdapter : CommandPort {
         val cmd = arrayOf("/bin/sh", "-c", cmd)
         val p = Runtime.getRuntime().exec(cmd)
         val br = BufferedReader(InputStreamReader(p.inputStream))
-        p.waitFor()
-        p.destroy()
-        return br.readLines()
+        try {
+            val result = br.readLines()
+            p.waitFor()
+            p.destroy()
+            return result
+        } catch (ex: IOException) {
+            return emptyList()
+        }
     }
 
 }

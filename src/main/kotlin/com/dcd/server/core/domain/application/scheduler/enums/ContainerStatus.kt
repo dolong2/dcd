@@ -1,7 +1,7 @@
 package com.dcd.server.core.domain.application.scheduler.enums
 
 enum class ContainerStatus(
-    val description: String
+    val value: String
 ) {
     EXITED("exited"),
     RUNNING("running"),
