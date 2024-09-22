@@ -30,7 +30,7 @@ object FileContent {
         getEnvString(env)
 
     fun getRedisDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
-        "FROM mariadb:${version}\n" +
+        "FROM redis:${version}\n" +
         "EXPOSE ${port}\n" +
         getEnvString(env)
 
