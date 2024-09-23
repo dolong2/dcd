@@ -11,6 +11,7 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -33,7 +34,7 @@ class StopApplicationUseCaseTest : BehaviorSpec({
             every { queryApplicationPort.findById(applicationId) } returns application
             stopApplicationUseCase.execute(applicationId)
             then("deleteContainerService와 deleteApplicationDirectoryService가 실행되어야함") {
-                verify { stopContainerService.stopContainer(application) }
+                coVerify { stopContainerService.stopContainer(application) }
                 verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.PENDING) }
             }
         }
