@@ -44,7 +44,7 @@ class ReissueTokenUseCaseTest : BehaviorSpec({
             every { queryUserPort.findById(userId) } returns user
             every { commandRefreshTokenPort.delete(refreshToken) } returns Unit
             every { jwtPort.generateToken(user.id) } returns tokenResDto
-            every { parseTokenAdapter.getJwtType(token) } returns "REFRESH"
+            every { parseTokenAdapter.getJwtType(token) } returns ParseTokenAdapter.JwtPrefix.REFRESH
 
             val result = reissueTokenUseCase.execute(token)
             then("jwtPort에서 생성한 dto가 반환되어야함") {
