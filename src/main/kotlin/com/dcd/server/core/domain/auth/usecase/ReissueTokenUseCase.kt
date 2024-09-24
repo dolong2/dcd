@@ -21,7 +21,7 @@ class ReissueTokenUseCase(
 ) {
     fun execute(token: String): TokenResDto {
         val jwtType = parseTokenAdapter.getJwtType(token)
-        if (jwtType != "REFRESH")
+        if (jwtType != ParseTokenAdapter.JwtPrefix.REFRESH)
             throw TokenTypeNotValidException()
 
         val refreshToken = (queryRefreshTokenPort.findByToken(token)
