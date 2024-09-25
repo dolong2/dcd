@@ -3,6 +3,6 @@ package com.dcd.server.core.domain.application.service
 import com.dcd.server.core.domain.application.model.Application
 
 interface BuildDockerImageService {
-    fun buildImageByApplicationId(id: String)
-    fun buildImageByApplication(application: Application)
+    suspend fun buildImageByApplicationId(id: String)
+    suspend fun buildImageByApplication(application: Application)
 }
