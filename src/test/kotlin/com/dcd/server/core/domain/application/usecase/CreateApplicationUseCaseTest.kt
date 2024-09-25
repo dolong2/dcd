@@ -15,6 +15,7 @@ import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerServic
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -67,12 +68,12 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
             createApplicationUseCase.execute(workspace.id, request)
             then("repository의 save메서드가 실행되어야함") {
                 verify { commandApplicationPort.save(any()) }
-                verify { cloneApplicationByUrlService.cloneByApplication(any() as Application) }
-                verify { modifyGradleService.modifyGradleByApplication(any() as Application) }
-                verify { createDockerFileService.createFileToApplication(any() as Application, request.version) }
-                verify { buildDockerImageService.buildImageByApplication(any() as Application) }
-                verify { getExternalPortService.getExternalPort(request.port) }
-                verify { deleteApplicationDirectoryService.deleteApplicationDirectory(any() as Application) }
+                coVerify { cloneApplicationByUrlService.cloneByApplication(any() as Application) }
+                coVerify { modifyGradleService.modifyGradleByApplication(any() as Application) }
+                coVerify { createDockerFileService.createFileToApplication(any() as Application, request.version) }
+                coVerify { buildDockerImageService.buildImageByApplication(any() as Application) }
+                coVerify { getExternalPortService.getExternalPort(request.port) }
+                coVerify { deleteApplicationDirectoryService.deleteApplicationDirectory(any() as Application) }
             }
         }
     }

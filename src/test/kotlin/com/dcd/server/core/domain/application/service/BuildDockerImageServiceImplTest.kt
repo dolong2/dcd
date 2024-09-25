@@ -10,9 +10,8 @@ import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.workspace.model.Workspace
 import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
+import org.springframework.context.ApplicationEventPublisher
 import util.application.ApplicationGenerator
 import util.user.UserGenerator
 import util.workspace.WorkspaceGenerator
@@ -21,7 +20,8 @@ import java.util.*
 class BuildDockerImageServiceImplTest : BehaviorSpec({
     val commandPort = mockk<CommandPort>(relaxed = true)
     val queryApplicationPort = mockk<QueryApplicationPort>()
-    val service = BuildDockerImageServiceImpl(commandPort, queryApplicationPort)
+    val eventPublisher = mockk<ApplicationEventPublisher>(relaxUnitFun = true)
+    val service = BuildDockerImageServiceImpl(commandPort, queryApplicationPort, eventPublisher)
 
     val user = UserGenerator.generateUser()
     given("애플리케이션id가 주어지고") {
@@ -34,8 +34,8 @@ class BuildDockerImageServiceImplTest : BehaviorSpec({
 
             service.buildImageByApplicationId(appId)
             then("commandPort가 실행되어야함") {
-                verify { commandPort.executeShellCommand("cd ./${application.name} && ./gradlew clean build") }
-                verify { commandPort.executeShellCommand("cd ./${application.name} && docker build -t ${application.name.lowercase()}:latest .") }
+                coVerify { commandPort.executeShellCommand("cd ./${application.name} && ./gradlew clean build") }
+                coVerify { commandPort.executeShellCommand("cd ./${application.name} && docker build -t ${application.name.lowercase()}:latest .") }
             }
         }
     }
@@ -48,8 +48,8 @@ class BuildDockerImageServiceImplTest : BehaviorSpec({
             service.buildImageByApplication(application)
 
             then("commandPort가 실행되어야함") {
-                verify { commandPort.executeShellCommand("cd ./${application.name} && ./gradlew clean build") }
-                verify { commandPort.executeShellCommand("cd ./${application.name} && docker build -t ${application.name.lowercase()}:latest .") }
+                coVerify { commandPort.executeShellCommand("cd ./${application.name} && ./gradlew clean build") }
+                coVerify { commandPort.executeShellCommand("cd ./${application.name} && docker build -t ${application.name.lowercase()}:latest .") }
             }
         }
     }

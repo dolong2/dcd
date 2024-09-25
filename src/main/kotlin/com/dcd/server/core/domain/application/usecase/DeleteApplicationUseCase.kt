@@ -8,6 +8,9 @@ import com.dcd.server.core.domain.application.service.DeleteContainerService
 import com.dcd.server.core.domain.application.service.DeleteImageService
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @UseCase
 class DeleteApplicationUseCase(
@@ -15,7 +18,7 @@ class DeleteApplicationUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val deleteContainerService: DeleteContainerService,
     private val deleteImageService: DeleteImageService
-) {
+) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
     fun execute(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
@@ -23,8 +26,10 @@ class DeleteApplicationUseCase(
         if (application.status == ApplicationStatus.RUNNING || application.status == ApplicationStatus.PENDING)
             throw CanNotDeleteApplicationException()
 
-        deleteContainerService.deleteContainer(application)
-        deleteImageService.deleteImage(application)
+        launch {
+            deleteContainerService.deleteContainer(application)
+            deleteImageService.deleteImage(application)
+        }
 
         commandApplicationPort.delete(application)
     }

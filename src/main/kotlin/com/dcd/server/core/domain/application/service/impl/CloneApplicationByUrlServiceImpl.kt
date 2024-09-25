@@ -5,6 +5,8 @@ import com.dcd.server.core.domain.application.exception.ApplicationNotFoundExcep
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.service.CloneApplicationByUrlService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 
 @Service
@@ -12,15 +14,19 @@ class CloneApplicationByUrlServiceImpl(
     private val queryApplicationPort: QueryApplicationPort,
     private val commandPort: CommandPort
 ) : CloneApplicationByUrlService {
-    override fun cloneById(id: String) {
-        val application = (queryApplicationPort.findById(id)
-            ?: throw ApplicationNotFoundException())
-        val githubUrl = application.githubUrl
-        commandPort.executeShellCommand("git clone $githubUrl ${application.name}")
+    override suspend fun cloneById(id: String) {
+        withContext(Dispatchers.IO) {
+            val application = (queryApplicationPort.findById(id)
+                ?: throw ApplicationNotFoundException())
+            val githubUrl = application.githubUrl
+            commandPort.executeShellCommand("git clone $githubUrl ${application.name}")
+        }
     }
 
-    override fun cloneByApplication(application: Application) {
-        val githubUrl = application.githubUrl
-        commandPort.executeShellCommand("git clone $githubUrl ${application.name}")
+    override suspend fun cloneByApplication(application: Application) {
+        withContext(Dispatchers.IO) {
+            val githubUrl = application.githubUrl
+            commandPort.executeShellCommand("git clone $githubUrl ${application.name}")
+        }
     }
 }

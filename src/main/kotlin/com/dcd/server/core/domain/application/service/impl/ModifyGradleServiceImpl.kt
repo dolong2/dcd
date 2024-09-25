@@ -5,6 +5,8 @@ import com.dcd.server.core.domain.application.exception.ApplicationNotFoundExcep
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.service.ModifyGradleService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 import java.io.BufferedWriter
 import java.io.File
@@ -14,13 +16,17 @@ import java.io.FileWriter
 class ModifyGradleServiceImpl(
     private val queryApplicationPort: QueryApplicationPort,
 ) : ModifyGradleService{
-    override fun modifyGradleByApplicationId(id: String) {
+    override suspend fun modifyGradleByApplicationId(id: String) {
         val application = queryApplicationPort.findById(id) ?: throw ApplicationNotFoundException()
-        modifyGradle(application)
+        withContext(Dispatchers.IO) {
+            modifyGradle(application)
+        }
     }
 
-    override fun modifyGradleByApplication(application: Application) {
-        modifyGradle(application)
+    override suspend fun modifyGradleByApplication(application: Application) {
+        withContext(Dispatchers.IO) {
+            modifyGradle(application)
+        }
     }
 
     private fun modifyGradle(application: Application) {
