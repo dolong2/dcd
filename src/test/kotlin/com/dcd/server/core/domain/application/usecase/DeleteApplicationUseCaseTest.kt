@@ -16,6 +16,7 @@ import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -42,8 +43,8 @@ class DeleteApplicationUseCaseTest : BehaviorSpec({
             deleteApplicationUseCase.execute(applicationId)
             then("commandApplicationPort의 delete메서드가 실행되어야함") {
                 verify { commandApplicationPort.delete(application) }
-                verify { deleteContainerService.deleteContainer(application) }
-                verify { deleteImageService.deleteImage(application) }
+                coVerify { deleteContainerService.deleteContainer(application) }
+                coVerify { deleteImageService.deleteImage(application) }
             }
         }
         `when`("application을 찾을 수 없을때") {

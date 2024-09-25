@@ -8,6 +8,9 @@ import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @UseCase
 class CreateApplicationUseCase(
@@ -20,7 +23,7 @@ class CreateApplicationUseCase(
     private val buildDockerImageService: BuildDockerImageService,
     private val createContainerService: CreateContainerService,
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService
-) {
+) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
     fun execute(workspaceId: String, createApplicationReqDto: CreateApplicationReqDto) {
         val workspace = queryWorkspacePort.findById(workspaceId)
             ?: throw WorkspaceNotFoundException()
@@ -32,19 +35,21 @@ class CreateApplicationUseCase(
 
         val version = application.version
 
-        val applicationType = application.applicationType
-        if (applicationType == ApplicationType.SPRING_BOOT) {
-            cloneApplicationByUrlService.cloneByApplication(application)
-            modifyGradleService.modifyGradleByApplication(application)
-        }
-        else if (applicationType == ApplicationType.NEST_JS) {
-            cloneApplicationByUrlService.cloneByApplication(application)
-        }
+        launch {
+            val applicationType = application.applicationType
+            if (applicationType == ApplicationType.SPRING_BOOT) {
+                cloneApplicationByUrlService.cloneByApplication(application)
+                modifyGradleService.modifyGradleByApplication(application)
+            }
+            else if (applicationType == ApplicationType.NEST_JS) {
+                cloneApplicationByUrlService.cloneByApplication(application)
+            }
 
-        createDockerFileService.createFileToApplication(application, version)
-        buildDockerImageService.buildImageByApplication(application)
-        createContainerService.createContainer(application, externalPort)
+            createDockerFileService.createFileToApplication(application, version)
+            buildDockerImageService.buildImageByApplication(application)
+            createContainerService.createContainer(application, externalPort)
 
-        deleteApplicationDirectoryService.deleteApplicationDirectory(application)
+            deleteApplicationDirectoryService.deleteApplicationDirectory(application)
+        }
     }
 }
