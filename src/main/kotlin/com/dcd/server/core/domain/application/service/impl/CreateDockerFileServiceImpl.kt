@@ -8,6 +8,8 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.CreateDockerFileService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 import java.io.File
 import java.io.IOException
@@ -17,14 +19,18 @@ class CreateDockerFileServiceImpl(
     private val queryApplicationPort: QueryApplicationPort,
     private val commandPort: CommandPort
 ) : CreateDockerFileService {
-    override fun createFileByApplicationId(id: String, version: String) {
+    override suspend fun createFileByApplicationId(id: String, version: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
-        createFile(application, version)
+        withContext(Dispatchers.IO) {
+            createFile(application, version)
+        }
     }
 
-    override fun createFileToApplication(application: Application, version: String) {
-        createFile(application, version)
+    override suspend fun createFileToApplication(application: Application, version: String) {
+        withContext(Dispatchers.IO) {
+            createFile(application, version)
+        }
     }
 
     private fun createFile(application: Application, version: String) {
