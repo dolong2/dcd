@@ -36,10 +36,11 @@ enum class ErrorCode(
     CONFLICT("해당 요청은 서버의 상태와 충돌됩니다.", 409),
     CAN_NOT_DEPLOY_APPLICATION("애플리케이션을 배포할 수 없습니다. 애플리케이션을 정지시킨 후 실행해주세요.", 409),
     CAN_NOT_DELETE_APPLICATION("애플리케이션을 삭제할 수 없습니다. 애플리케이션을 정지시킨 후 실행해주세요.", 409),
+    INVALID_APPLICATION_STATUS("애플리케이션 상태가 유효하지 않음", 409),
 
     CONTAINER_NOT_RUN("해당 애플리케이션을 실행할 수 없음", 500),
     CONTAINER_NOT_STOPPED("해당 애플리케이션을 정지할 수 없음", 500),
     CONTAINER_NOT_CREATED("해당 애플리케이션의 이미지를 컨테이너로 빌드할 수 없음", 500),
     IMAGE_NOT_BUILT("해당 애플리케이션을 이미지로 빌드할 수 없음", 500),
-    INTERNAL_ERROR("서버 내부 에러", 500)
+    INTERNAL_ERROR("서버 내부 에러", 500),
 }
