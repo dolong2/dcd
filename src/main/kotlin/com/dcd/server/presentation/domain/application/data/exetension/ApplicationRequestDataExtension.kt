@@ -38,3 +38,8 @@ fun UpdateApplicationEnvRequest.toDto(): UpdateApplicationEnvReqDto =
     UpdateApplicationEnvReqDto(
         newValue = this.newValue
     )
+
+fun ExecuteCommandRequest.toDto(): ExecuteCommandReqDto =
+    ExecuteCommandReqDto(
+        command = this.command
+    )

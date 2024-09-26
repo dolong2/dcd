@@ -52,3 +52,8 @@ fun WorkspaceApplicationResDto.toResponse(): WorkspaceApplicationResponse =
         externalPort = this.externalPort,
         status = this.status
     )
+
+fun CommandResultResDto.toResponse(): CommandResultResponse =
+    CommandResultResponse(
+        result = this.result
+    )
