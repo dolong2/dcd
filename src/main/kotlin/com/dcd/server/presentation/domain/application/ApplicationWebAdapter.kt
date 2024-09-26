@@ -28,7 +28,8 @@ class ApplicationWebAdapter(
     private val getAvailableVersionUseCase: GetAvailableVersionUseCase,
     private val generateSSLCertificateUseCase: GenerateSSLCertificateUseCase,
     private val getApplicationLogUseCase: GetApplicationLogUseCase,
-    private val deployApplicationUseCase: DeployApplicationUseCase
+    private val deployApplicationUseCase: DeployApplicationUseCase,
+    private val executeCommandUseCase: ExecuteCommandUseCase
 ) {
     @PostMapping
     @WorkspaceOwnerVerification
@@ -136,5 +137,11 @@ class ApplicationWebAdapter(
     @WorkspaceOwnerVerification
     fun getApplicationLog(@PathVariable workspaceId: String, @PathVariable applicationId: String): ResponseEntity<ApplicationLogResponse> =
         getApplicationLogUseCase.execute(applicationId)
+            .let { ResponseEntity.ok(it.toResponse()) }
+
+    @PostMapping("/{applicationId}/exec")
+    @WorkspaceOwnerVerification
+    fun execCommand(@PathVariable workspaceId: String, @PathVariable applicationId: String, @Validated @RequestBody executeCommandRequest: ExecuteCommandRequest): ResponseEntity<CommandResultResponse> =
+        executeCommandUseCase.execute(applicationId, executeCommandRequest.toDto())
             .let { ResponseEntity.ok(it.toResponse()) }
 }
