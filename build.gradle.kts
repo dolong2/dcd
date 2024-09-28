@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.ir.backend.js.compile
 
 plugins {
 	id("org.springframework.boot") version "3.1.3"
@@ -58,6 +59,7 @@ dependencies {
 
 	//docker
 	implementation("com.github.docker-java:docker-java:3.2.7")
+	implementation("com.github.docker-java:docker-java-transport-okhttp:3.2.12")
 }
 
 tasks.withType<KotlinCompile> {
