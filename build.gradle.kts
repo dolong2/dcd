@@ -58,8 +58,9 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.6.4")
 
 	//docker
-	implementation("com.github.docker-java:docker-java:3.2.7")
-	implementation("com.github.docker-java:docker-java-transport-okhttp:3.2.12")
+	implementation("com.github.docker-java:docker-java:3.4.0")
+	implementation("com.github.docker-java:docker-java-transport-okhttp:3.4.0")
+	implementation("com.squareup.okhttp3:okhttp:3.14.9")
 }
 
 tasks.withType<KotlinCompile> {
