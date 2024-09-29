@@ -28,5 +28,7 @@ class DockerClientConfig {
     }
 
     private fun getDockerConfig(): DockerClientConfig =
-        DefaultDockerClientConfig.createDefaultConfigBuilder().build()
+        DefaultDockerClientConfig.createDefaultConfigBuilder()
+            .withDockerHost("unix:///var/run/docker.sock")
+            .build()
 }
