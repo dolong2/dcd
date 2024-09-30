@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.ir.backend.js.compile
 
 plugins {
 	id("org.springframework.boot") version "3.1.3"
@@ -28,6 +29,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation ("org.springframework.boot:spring-boot-starter-websocket")
 
 	//database
 	runtimeOnly("com.mysql:mysql-connector-j")
@@ -54,6 +56,11 @@ dependencies {
 	//coroutine
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.6.4")
+
+	//docker
+	implementation("com.github.docker-java:docker-java:3.4.0")
+	implementation("com.github.docker-java:docker-java-transport-okhttp:3.4.0")
+	implementation("com.squareup.okhttp3:okhttp:3.14.9")
 }
 
 tasks.withType<KotlinCompile> {

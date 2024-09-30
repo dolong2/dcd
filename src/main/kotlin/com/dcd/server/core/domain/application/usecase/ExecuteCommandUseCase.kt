@@ -7,11 +7,19 @@ import com.dcd.server.core.domain.application.dto.response.CommandResultResDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.exception.InvalidApplicationStatusException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
+import com.dcd.server.core.domain.application.service.ExecContainerService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
+import com.dcd.server.infrastructure.global.jwt.adapter.ParseTokenAdapter
+import com.dcd.server.presentation.domain.application.exception.InvalidConnectionInfoException
+import org.springframework.web.socket.CloseStatus
+import org.springframework.web.socket.WebSocketSession
 
 @UseCase
 class ExecuteCommandUseCase(
     private val queryApplicationPort: QueryApplicationPort,
+    private val execContainerService: ExecContainerService,
+    private val parseTokenAdapter: ParseTokenAdapter,
     private val commandPort: CommandPort
 ) {
     fun execute(applicationId: String, executeCommandReqDto: ExecuteCommandReqDto): CommandResultResDto {
@@ -25,5 +33,20 @@ class ExecuteCommandUseCase(
             commandPort.executeShellCommandWithResult("docker exec ${application.name.lowercase()} ${executeCommandReqDto.command}")
 
         return CommandResultResDto(result)
+    }
+
+    fun execute(applicationId: String, session: WebSocketSession, cmd: String) {
+        val accessToken = (session.attributes["accessToken"] as? String
+            ?: throw InvalidConnectionInfoException("세션에 인증 정보가 존재하지 않음", CloseStatus.PROTOCOL_ERROR))
+
+        val userId = parseTokenAdapter.getAuthentication(accessToken).name
+
+        val application = (queryApplicationPort.findById(applicationId)
+            ?: throw ApplicationNotFoundException())
+
+        if (userId != application.workspace.owner.id)
+            throw WorkspaceOwnerNotSameException()
+
+        execContainerService.execCmd(application, session, cmd)
     }
 }

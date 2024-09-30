@@ -11,7 +11,7 @@ class WorkspaceJpaEntity(
     val id: String = UUID.randomUUID().toString(),
     val title: String,
     val description: String,
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "global_env_table",
         joinColumns = [JoinColumn(name = "workspace_id", referencedColumnName = "id")])
     @MapKeyColumn(name = "env_key")
