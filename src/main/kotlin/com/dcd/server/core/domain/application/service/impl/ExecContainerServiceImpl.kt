@@ -1,7 +1,7 @@
 package com.dcd.server.core.domain.application.service.impl
 
 import com.dcd.server.core.domain.application.model.Application
-import com.dcd.server.core.domain.application.service.AttachContainerService
+import com.dcd.server.core.domain.application.service.ExecContainerService
 import com.github.dockerjava.api.DockerClient
 import com.github.dockerjava.api.async.ResultCallback
 import com.github.dockerjava.api.model.Frame
@@ -11,9 +11,9 @@ import org.springframework.web.socket.WebSocketSession
 import java.io.*
 
 @Service
-class AttachContainerServiceImpl(
+class ExecContainerServiceImpl(
     private val dockerClient: DockerClient,
-) : AttachContainerService {
+) : ExecContainerService {
     override fun attachService(application: Application, session: WebSocketSession, cmd: String) {
         val containerName = application.name.lowercase()
 

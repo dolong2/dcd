@@ -7,7 +7,7 @@ import com.dcd.server.core.domain.application.dto.response.CommandResultResDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.exception.InvalidApplicationStatusException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
-import com.dcd.server.core.domain.application.service.AttachContainerService
+import com.dcd.server.core.domain.application.service.ExecContainerService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
 import com.dcd.server.infrastructure.global.jwt.adapter.ParseTokenAdapter
@@ -18,7 +18,7 @@ import org.springframework.web.socket.WebSocketSession
 @UseCase
 class ExecuteCommandUseCase(
     private val queryApplicationPort: QueryApplicationPort,
-    private val attachContainerService: AttachContainerService,
+    private val execContainerService: ExecContainerService,
     private val parseTokenAdapter: ParseTokenAdapter,
     private val commandPort: CommandPort
 ) {
@@ -47,6 +47,6 @@ class ExecuteCommandUseCase(
         if (userId != application.workspace.owner.id)
             throw WorkspaceOwnerNotSameException()
 
-        attachContainerService.attachService(application, session, cmd)
+        execContainerService.attachService(application, session, cmd)
     }
 }
