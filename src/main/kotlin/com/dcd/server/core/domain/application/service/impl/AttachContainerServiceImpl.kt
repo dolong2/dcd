@@ -19,16 +19,21 @@ class AttachContainerServiceImpl(
 
         val cmdArray = cmd.split(" ").toTypedArray()
 
+        if (cmd.contains("cd")) {
+            val newDir = cmdArray[1]
+            val currentDir = session.attributes["workingDir"] as? String ?: "/"
+            val updatedDir = updateWorkingDir(currentDir, newDir)
+            session.attributes["workingDir"] = updatedDir
+        }
+
+        val workingDir = session.attributes["workingDir"] as? String ?: "/"
+
         // Docker attach API 호출
         val execInstance = dockerClient.execCreateCmd(containerName)
             .withAttachStdout(true)
             .withAttachStderr(true)
             .withCmd(*cmdArray)
-            .withWorkingDir("/")
-            .apply {
-
-                session.attributes["workingDir"] = this.workingDir
-            }
+            .withWorkingDir(workingDir)
             .exec()
 
 
@@ -36,6 +41,19 @@ class AttachContainerServiceImpl(
             .withDetach(false)
             .exec(AttachResultCallback(session))
 
+    }
+
+    private fun updateWorkingDir(currentDir: String, newDir: String): String {
+        return when {
+            newDir == "/" -> "/"  // 루트 디렉토리로 이동
+            newDir == ".." -> currentDir.substringBeforeLast("/", "/")  // 상위 디렉토리로 이동
+            newDir.startsWith("/") -> newDir  // 절대 경로로 설정
+            else -> {
+                if (currentDir != "/")
+                    "$currentDir/$newDir"
+                else "/${newDir}"
+            }  // 현재 디렉토리에서 하위 디렉토리로 이동
+        }
     }
 
     class AttachResultCallback(
