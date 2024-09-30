@@ -59,20 +59,28 @@ class AttachContainerServiceImpl(
     class AttachResultCallback(
         private val session: WebSocketSession,
     ) : ResultCallback.Adapter<Frame>() {
+        override fun onStart(stream: Closeable?) {
+            if (session.isOpen)
+                session.sendMessage(TextMessage("cmd start"))
+            super.onStart(stream)
+        }
+
         override fun onNext(frame: Frame) {
-            println(frame.streamType)
-            try {
-                if (session.isOpen)
-                    // 프레임 데이터를 WebSocket을 통해 클라이언트에 전달
-                    session.sendMessage(TextMessage(frame.payload))
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
+            if (session.isOpen)
+                session.sendMessage(TextMessage(frame.payload))
         }
 
         override fun onError(throwable: Throwable) {
             throwable.printStackTrace()
             session.close()
+        }
+
+        override fun onComplete() {
+            if (session.isOpen) {
+                session.sendMessage(TextMessage("current dir = ${session.attributes["workingDir"] ?: "/"}"))
+                session.sendMessage(TextMessage("cmd end"))
+            }
+            super.onComplete()
         }
     }
 }
