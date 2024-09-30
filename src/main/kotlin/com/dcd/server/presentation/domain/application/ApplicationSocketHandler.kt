@@ -2,7 +2,7 @@ package com.dcd.server.presentation.domain.application
 
 import com.dcd.server.core.common.error.BasicException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
-import com.dcd.server.core.domain.application.usecase.EnterApplicationUseCase
+import com.dcd.server.core.domain.application.usecase.ExecuteCommandUseCase
 import com.dcd.server.presentation.domain.application.exception.InvalidConnectionInfoException
 import org.springframework.stereotype.Component
 import org.springframework.web.socket.CloseStatus
@@ -13,7 +13,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler
 
 @Component
 class ApplicationSocketHandler(
-    private val enterApplicationUseCase: EnterApplicationUseCase
+    private val executeCommandUseCase: ExecuteCommandUseCase
 ) : TextWebSocketHandler() {
     @Throws(Exception::class)
     override fun handleTextMessage(session: WebSocketSession, message: TextMessage) {
@@ -24,7 +24,7 @@ class ApplicationSocketHandler(
 
         try {
             // Docker attach API를 사용하여 컨테이너에 접속
-            enterApplicationUseCase.execute(applicationId, session, cmd)
+            executeCommandUseCase.execute(applicationId, session, cmd)
         } catch (ex: Exception) {
             handleTransportError(session, ex)
         }
