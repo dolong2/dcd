@@ -14,7 +14,7 @@ import java.io.*
 class ExecContainerServiceImpl(
     private val dockerClient: DockerClient,
 ) : ExecContainerService {
-    override fun attachService(application: Application, session: WebSocketSession, cmd: String) {
+    override fun execCmd(application: Application, session: WebSocketSession, cmd: String) {
         val containerName = application.name.lowercase()
 
         val cmdArray = cmd.split(" ").toTypedArray()
@@ -56,7 +56,7 @@ class ExecContainerServiceImpl(
         }
     }
 
-    class AttachResultCallback(
+    private class AttachResultCallback(
         private val session: WebSocketSession,
     ) : ResultCallback.Adapter<Frame>() {
         override fun onStart(stream: Closeable?) {

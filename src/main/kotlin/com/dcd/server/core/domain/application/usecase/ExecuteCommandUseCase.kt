@@ -47,6 +47,6 @@ class ExecuteCommandUseCase(
         if (userId != application.workspace.owner.id)
             throw WorkspaceOwnerNotSameException()
 
-        execContainerService.attachService(application, session, cmd)
+        execContainerService.execCmd(application, session, cmd)
     }
 }
