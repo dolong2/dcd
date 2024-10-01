@@ -24,6 +24,9 @@ class ExecContainerServiceImpl(
             val currentDir = session.attributes["workingDir"] as? String ?: "/"
             val updatedDir = updateWorkingDir(currentDir, newDir)
             session.attributes["workingDir"] = updatedDir
+            session.sendMessage(TextMessage("current dir = ${session.attributes["workingDir"] ?: "/"}"))
+            session.sendMessage(TextMessage("cmd end"))
+            return
         }
 
         val workingDir = session.attributes["workingDir"] as? String ?: "/"
@@ -40,7 +43,6 @@ class ExecContainerServiceImpl(
         dockerClient.execStartCmd(execInstance.id)
             .withDetach(false)
             .exec(AttachResultCallback(session))
-
     }
 
     private fun updateWorkingDir(currentDir: String, newDir: String): String {
