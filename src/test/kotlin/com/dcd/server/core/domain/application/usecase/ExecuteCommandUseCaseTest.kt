@@ -53,5 +53,17 @@ class ExecuteCommandUseCaseTest : BehaviorSpec({
                 }
             }
         }
+
+        `when`("execute 메서드를 실행할때") {
+            every { queryApplicationPort.findById(applicationId) } returns givenApplication
+            every { commandPort.executeShellCommandWithResult(executedCmd) } returns testCmdResult
+            val result = executeCommandUseCase.execute(applicationId, request)
+
+            then("testCmdResult가 응답에 있어야함") {
+                result.result shouldBe testCmdResult
+                verify { queryApplicationPort.findById(applicationId) }
+                verify { commandPort.executeShellCommandWithResult(executedCmd) }
+            }
+        }
     }
 })
