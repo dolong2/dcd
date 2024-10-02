@@ -1,11 +1,13 @@
 package com.dcd.server.presentation.domain.application
 
+import com.dcd.server.core.domain.application.dto.request.ExecuteCommandReqDto
 import com.dcd.server.core.domain.application.dto.request.GenerateSSLCertificateReqDto
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
 import com.dcd.server.core.domain.application.dto.response.*
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.usecase.*
+import com.dcd.server.presentation.domain.application.data.exetension.toDto
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
 import com.dcd.server.presentation.domain.application.data.request.*
 import com.dcd.server.presentation.domain.application.data.response.RunApplicationResponse
@@ -13,6 +15,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
 import io.mockk.verify
 import org.springframework.http.HttpStatus
 
@@ -239,5 +242,25 @@ class ApplicationWebAdapterTest : BehaviorSpec({
                 result.statusCode shouldBe HttpStatus.OK
             }
         }
+    }
+
+    given("애플리케이션 id와 ExecuteCmdRequest가 주어지고") {
+        val request = ExecuteCommandRequest(command = "test cmd")
+        val applicationId = "testApplicationId"
+
+        `when`("execCommand 메서드를 실행할때") {
+            val expectedResult = listOf("cmd result")
+            every { executeCommandUseCase.execute(applicationId, any() as ExecuteCommandReqDto) } returns CommandResultResDto(expectedResult)
+            val result = applicationWebAdapter.execCommand(testWorkspaceId, applicationId, request)
+
+            then("상태코드는 200이여야함") {
+                result.statusCode shouldBe HttpStatus.OK
+                result.body?.result shouldBe expectedResult
+            }
+            then("executeCommandUseCase가 실행되야함") {
+                verify { executeCommandUseCase.execute(applicationId, any() as ExecuteCommandReqDto) }
+            }
+        }
+
     }
 })
