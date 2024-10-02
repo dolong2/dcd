@@ -43,5 +43,15 @@ class ExecuteCommandUseCaseTest : BehaviorSpec({
                 }
             }
         }
+
+        `when`("애플리케이션의 상태가 올바르지 않을때") {
+            every { queryApplicationPort.findById(applicationId) } returns givenApplication.copy(status = ApplicationStatus.STOPPED)
+
+            then("InvalidApplicationStatusException이 발생해야함") {
+                shouldThrow<InvalidApplicationStatusException> {
+                    executeCommandUseCase.execute(applicationId, request)
+                }
+            }
+        }
     }
 })
