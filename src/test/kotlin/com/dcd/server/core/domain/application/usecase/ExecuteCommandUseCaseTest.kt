@@ -83,5 +83,15 @@ class ExecuteCommandUseCaseTest : BehaviorSpec({
         val givenToken = "${givenUser.id}"
         val givenWorkspace = WorkspaceGenerator.generateWorkspace(user = givenUser)
         val givenApplication = ApplicationGenerator.generateApplication(workspace = givenWorkspace, status = ApplicationStatus.RUNNING)
+
+        `when`("세션에 엑세스 토큰이 존재하지 않음") {
+            every { session.attributes["accessToken"] } returns null
+
+            then("InvalidConnectionInfoException이 발생해야함") {
+                shouldThrow<InvalidConnectionInfoException> {
+                    executeCommandUseCase.execute(testApplicationId, session, cmd)
+                }
+            }
+        }
     }
 })
