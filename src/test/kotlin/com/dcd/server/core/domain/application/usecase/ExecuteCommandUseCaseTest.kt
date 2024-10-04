@@ -8,13 +8,19 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.ExecContainerService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.infrastructure.global.jwt.adapter.ParseTokenAdapter
+import com.dcd.server.presentation.domain.application.exception.InvalidConnectionInfoException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
 import io.mockk.verify
+import org.springframework.security.core.Authentication
+import org.springframework.web.socket.WebSocketSession
 import util.application.ApplicationGenerator
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 
 class ExecuteCommandUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>(relaxUnitFun = true)
@@ -65,5 +71,17 @@ class ExecuteCommandUseCaseTest : BehaviorSpec({
                 verify { commandPort.executeShellCommandWithResult(executedCmd) }
             }
         }
+    }
+
+    given("애플리케이션 id, session, cmd가 주어지고") {
+        val testApplicationId = "testApplicationId"
+        val session = mockk<WebSocketSession>()
+        val cmd = "testCmd"
+
+        val givenUser = UserGenerator.generateUser()
+        val givenAuthentication = spyk<Authentication>()
+        val givenToken = "${givenUser.id}"
+        val givenWorkspace = WorkspaceGenerator.generateWorkspace(user = givenUser)
+        val givenApplication = ApplicationGenerator.generateApplication(workspace = givenWorkspace, status = ApplicationStatus.RUNNING)
     }
 })
