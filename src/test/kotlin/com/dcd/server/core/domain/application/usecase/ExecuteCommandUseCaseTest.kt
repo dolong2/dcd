@@ -93,5 +93,18 @@ class ExecuteCommandUseCaseTest : BehaviorSpec({
                 }
             }
         }
+
+        `when`("주어진 아이디를 가진 애플리케이션이 없을때") {
+            every { session.attributes["accessToken"] } returns givenToken
+            every { givenAuthentication.name } returns givenUser.id
+            every { parseTokenAdapter.getAuthentication(givenToken) } returns givenAuthentication
+            every { queryApplicationPort.findById(testApplicationId) } returns null
+
+            then("ApplicationNotFoundException이 발생해야함") {
+                shouldThrow<ApplicationNotFoundException> {
+                    executeCommandUseCase.execute(testApplicationId, session, cmd)
+                }
+            }
+        }
     }
 })
