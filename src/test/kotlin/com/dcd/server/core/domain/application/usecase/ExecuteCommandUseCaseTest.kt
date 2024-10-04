@@ -116,5 +116,15 @@ class ExecuteCommandUseCaseTest : BehaviorSpec({
                 }
             }
         }
+
+        `when`("execute 메서드를 실행할때") {
+            every { queryApplicationPort.findById(testApplicationId) } returns givenApplication
+            executeCommandUseCase.execute(testApplicationId, session, cmd)
+
+            then("testCmdResult가 응답에 있어야함") {
+                verify { queryApplicationPort.findById(testApplicationId) }
+                verify { execContainerService.execCmd(givenApplication, session, cmd) }
+            }
+        }
     }
 })
