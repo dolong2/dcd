@@ -44,6 +44,9 @@ class ExecuteCommandUseCase(
         val application = (queryApplicationPort.findById(applicationId)
             ?: throw ApplicationNotFoundException())
 
+        if (application.status != ApplicationStatus.RUNNING)
+            throw InvalidApplicationStatusException()
+
         if (userId != application.workspace.owner.id)
             throw WorkspaceOwnerNotSameException()
 
