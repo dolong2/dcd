@@ -39,7 +39,8 @@ class RunContainerServiceImpl(
                 eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application))
             }
 
-            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.RUNNING, application))
+            else
+                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.RUNNING, application))
         }
     }
 }
