@@ -5,6 +5,7 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.impl.BuildDockerImageServiceImpl
+import com.dcd.server.core.domain.application.spi.CheckExitValuePort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.User
@@ -20,8 +21,8 @@ import java.util.*
 class BuildDockerImageServiceImplTest : BehaviorSpec({
     val commandPort = mockk<CommandPort>(relaxed = true)
     val queryApplicationPort = mockk<QueryApplicationPort>()
-    val eventPublisher = mockk<ApplicationEventPublisher>(relaxUnitFun = true)
-    val service = BuildDockerImageServiceImpl(commandPort, queryApplicationPort, eventPublisher)
+    val checkExitValuePort = mockk<CheckExitValuePort>(relaxUnitFun = true)
+    val service = BuildDockerImageServiceImpl(commandPort, queryApplicationPort, checkExitValuePort)
 
     val user = UserGenerator.generateUser()
     given("애플리케이션id가 주어지고") {

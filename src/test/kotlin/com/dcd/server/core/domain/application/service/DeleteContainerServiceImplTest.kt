@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.application.service
 
 import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.application.service.impl.DeleteContainerServiceImpl
+import com.dcd.server.core.domain.application.spi.CheckExitValuePort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.mockk
 import io.mockk.verify
@@ -9,7 +10,8 @@ import util.application.ApplicationGenerator
 
 class DeleteContainerServiceImplTest : BehaviorSpec({
     val commandPort = mockk<CommandPort>(relaxed = true)
-    val service = DeleteContainerServiceImpl(commandPort)
+    val checkExitValuePort = mockk<CheckExitValuePort>(relaxUnitFun = true)
+    val service = DeleteContainerServiceImpl(commandPort, checkExitValuePort)
 
     given("애플리케이션이 주이지고") {
         val application = ApplicationGenerator.generateApplication()
