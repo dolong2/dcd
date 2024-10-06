@@ -63,4 +63,7 @@
     <logger name="CommandAdapter" level="info" additivity="true">
         <appender-ref ref="COMMAND_APPENDER"/>
     </logger>
+    <logger name="CheckExitValueAdapter" level="info" additivity="true">
+        <appender-ref ref="ERROR_ADAPTER"/>
+    </logger>
 </configuration>

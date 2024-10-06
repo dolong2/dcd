@@ -17,12 +17,15 @@ class CheckExitValueAdapter(
     private val log = LoggerFactory.getLogger(this::class.simpleName)
 
     override fun checkApplicationExitValue(exitValue: Int, application: Application) {
-        if (exitValue != 0)
+        if (exitValue != 0) {
+            log.error("${application.name} - $exitValue")
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application))
+        }
     }
 
     override fun checkApplicationExitValue(exitValue: Int, application: Application, coroutineScope: CoroutineScope) {
         if (exitValue != 0) {
+            log.error("${application.name} - $exitValue")
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application))
             coroutineScope.cancel()
         }
