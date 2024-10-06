@@ -5,6 +5,7 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.impl.DeleteApplicationDirectoryServiceImpl
+import com.dcd.server.core.domain.application.spi.CheckExitValuePort
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.workspace.model.Workspace
@@ -17,7 +18,8 @@ import java.util.*
 
 class DeleteApplicationDirectoryServiceImplTest : BehaviorSpec({
     val commandPort = mockk<CommandPort>(relaxed = true)
-    val service = DeleteApplicationDirectoryServiceImpl(commandPort)
+    val checkExitValuePort = mockk<CheckExitValuePort>(relaxUnitFun = true)
+    val service = DeleteApplicationDirectoryServiceImpl(commandPort, checkExitValuePort)
 
     given("애플리케이션이 주이지고") {
         val application = ApplicationGenerator.generateApplication()

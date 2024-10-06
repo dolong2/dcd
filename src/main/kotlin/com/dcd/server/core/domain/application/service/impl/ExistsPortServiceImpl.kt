@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service
 class ExistsPortServiceImpl (
     private val queryApplicationPort: QueryApplicationPort,
     private val commandPort: CommandPort
-)
-    : ExistsPortService {
+) : ExistsPortService {
     override fun existsPort(port: Int): Boolean {
         val commandResult = commandPort.executeShellCommandWithResult("lsof -i :${port}")
         return commandResult.isEmpty() && queryApplicationPort.existsByExternalPort(port)

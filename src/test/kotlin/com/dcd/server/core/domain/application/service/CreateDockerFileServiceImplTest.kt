@@ -5,18 +5,22 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.impl.CreateDockerFileServiceImpl
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.common.command.adapter.CommandAdapter
+import com.dcd.server.core.domain.application.spi.CheckExitValuePort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
+import org.springframework.context.ApplicationEventPublisher
 import util.application.ApplicationGenerator
 import java.io.File
 
 class CreateDockerFileServiceImplTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
     val commandPort = spyk(CommandAdapter())
-    val createDockerFileService = CreateDockerFileServiceImpl(queryApplicationPort, commandPort)
+    val eventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
+    val checkExitValuePort = mockk<CheckExitValuePort>(relaxUnitFun = true)
+    val createDockerFileService = CreateDockerFileServiceImpl(queryApplicationPort, commandPort, checkExitValuePort, eventPublisher)
 
     given("스프링 애플리케이션이 주어지고") {
         val application =
