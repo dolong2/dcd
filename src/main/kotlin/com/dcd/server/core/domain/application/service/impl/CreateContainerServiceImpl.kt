@@ -1,22 +1,18 @@
 package com.dcd.server.core.domain.application.service.impl
 
 import com.dcd.server.core.common.command.CommandPort
-import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
 import com.dcd.server.core.domain.application.model.Application
-import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.CreateContainerService
+import com.dcd.server.core.domain.application.spi.CheckExitValuePort
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.slf4j.LoggerFactory
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
 @Service
 class CreateContainerServiceImpl(
     private val commandPort: CommandPort,
-    private val eventPublisher: ApplicationEventPublisher
+    private val checkExitValuePort: CheckExitValuePort
 ) : CreateContainerService {
-    private val log = LoggerFactory.getLogger(this::class.simpleName)
     override suspend fun createContainer(application: Application, externalPort: Int) {
         withContext(Dispatchers.IO) {
             val cmd =
@@ -24,11 +20,10 @@ class CreateContainerServiceImpl(
                         "--name ${application.name.lowercase()} " +
                         "-p ${externalPort}:${application.port} ${application.name.lowercase()}:latest"
 
-            val exitValue = commandPort.executeShellCommand(cmd)
-            if (exitValue != 0) {
-                log.error("$exitValue")
-                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application))
-            }
+            commandPort.executeShellCommand(cmd)
+                .also {exitValue ->
+                    checkExitValuePort.checkApplicationExitValue(exitValue, application, this)
+                }
         }
     }
 }
