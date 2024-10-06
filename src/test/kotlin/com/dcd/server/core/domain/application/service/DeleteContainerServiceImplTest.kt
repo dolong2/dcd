@@ -20,7 +20,7 @@ class DeleteContainerServiceImplTest : BehaviorSpec({
             service.deleteContainer(application)
 
             then("commandPort가 실행되어야함") {
-                verify { commandPort.executeShellCommand("docker stop ${application.name.lowercase()} && docker rm ${application.name.lowercase()}") }
+                verify { commandPort.executeShellCommand("docker rm ${application.name.lowercase()}") }
             }
         }
     }
