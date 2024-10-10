@@ -21,7 +21,7 @@ fun CreateApplicationRequest.toDto(): CreateApplicationReqDto =
 
 fun UpdateApplicationRequest.toDto(): UpdateApplicationReqDto =
     UpdateApplicationReqDto(
-        name = this.name,
+        name = this.name.replace(" ", "-"),
         description = this.description,
         applicationType = this.applicationType,
         githubUrl = this.githubUrl,
