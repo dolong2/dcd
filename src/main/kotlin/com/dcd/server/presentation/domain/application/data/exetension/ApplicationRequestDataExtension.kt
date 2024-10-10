@@ -10,7 +10,7 @@ fun AddApplicationEnvRequest.toDto(): AddApplicationEnvReqDto =
 
 fun CreateApplicationRequest.toDto(): CreateApplicationReqDto =
     CreateApplicationReqDto(
-        name = this.name,
+        name = this.name.replace(" ", "-"),
         description = this.description,
         githubUrl = this.githubUrl,
         env = this.env,
