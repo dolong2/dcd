@@ -57,6 +57,7 @@ class DeployApplicationUseCase(
             createContainerService.createContainer(application, externalPort)
 
             deleteApplicationDirectoryService.deleteApplicationDirectory(application)
+            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.STOPPED, application))
         }
 
         eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, application))
