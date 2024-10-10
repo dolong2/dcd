@@ -30,7 +30,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
             createDockerFileService.createFileToApplication(application, application.version)
 
             then("애플리케이션의 이름을 가진 디렉토리를 생성해야함") {
-                verify { commandPort.executeShellCommand("mkdir ${application.name}") }
+                verify { commandPort.executeShellCommand("mkdir -p ${application.name}") }
             }
             then("실제로 애플리케이션 이름의 디렉토리가 생성되야함") {
                 commandPort.executeShellCommand("test -e ${application.name}") shouldBe 0
@@ -57,7 +57,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
             createDockerFileService.createFileToApplication(application, application.version)
 
             then("애플리케이션의 이름을 가진 디렉토리를 생성해야함") {
-                verify { commandPort.executeShellCommand("mkdir ${application.name}") }
+                verify { commandPort.executeShellCommand("mkdir -p ${application.name}") }
             }
             then("실제로 애플리케이션 이름의 디렉토리가 생성되야함") {
                 commandPort.executeShellCommand("test -e ${application.name}") shouldBe 0
@@ -83,7 +83,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
             createDockerFileService.createFileToApplication(application, application.version)
 
             then("애플리케이션의 이름을 가진 디렉토리를 생성해야함") {
-                verify { commandPort.executeShellCommand("mkdir ${application.name}") }
+                verify { commandPort.executeShellCommand("mkdir -p ${application.name}") }
             }
             then("실제로 애플리케이션 이름의 디렉토리가 생성되야함") {
                 commandPort.executeShellCommand("test -e ${application.name}") shouldBe 0
@@ -109,7 +109,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
             createDockerFileService.createFileToApplication(application, application.version)
 
             then("애플리케이션의 이름을 가진 디렉토리를 생성해야함") {
-                verify { commandPort.executeShellCommand("mkdir ${application.name}") }
+                verify { commandPort.executeShellCommand("mkdir -p ${application.name}") }
             }
             then("실제로 애플리케이션 이름의 디렉토리가 생성되야함") {
                 commandPort.executeShellCommand("test -e ${application.name}") shouldBe 0

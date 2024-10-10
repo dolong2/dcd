@@ -46,7 +46,7 @@ class CreateDockerFileServiceImpl(
         val mutableEnv = application.env.toMutableMap()
         mutableEnv.putAll(application.workspace.globalEnv)
 
-        commandPort.executeShellCommand("mkdir $name")
+        commandPort.executeShellCommand("mkdir -p $name")
             .also {exitValue ->
                 checkExitValuePort.checkApplicationExitValue(exitValue, application, coroutineScope)
             }
