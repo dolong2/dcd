@@ -19,7 +19,8 @@ fun CreateApplicationReqDto.toEntity(workspace: Workspace, externalPort: Int): A
         port = this.port,
         externalPort = externalPort,
         version = this.version,
-        status = ApplicationStatus.CREATED
+        status = ApplicationStatus.CREATED,
+        labels = this.labels
     )
 
 fun Application.toDto(): ApplicationResDto =
@@ -33,7 +34,8 @@ fun Application.toDto(): ApplicationResDto =
         port = this.port,
         externalPort = this.externalPort,
         version = this.version,
-        status = this.status
+        status = this.status,
+        labels = this.labels
     )
 
 fun Application.toProfileDto(): ApplicationProfileResDto =

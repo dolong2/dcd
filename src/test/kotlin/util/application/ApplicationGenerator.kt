@@ -17,7 +17,8 @@ object ApplicationGenerator {
         version: String = "17",
         workspace: Workspace = WorkspaceGenerator.generateWorkspace(),
         port: Int = 8080,
-        status: ApplicationStatus = ApplicationStatus.STOPPED
+        status: ApplicationStatus = ApplicationStatus.STOPPED,
+        labels: List<String> = listOf()
     ): Application =
         Application(
             id = id,
@@ -30,6 +31,7 @@ object ApplicationGenerator {
             workspace = workspace,
             port = port,
             externalPort = port,
-            status = status
+            status = status,
+            labels = labels
         )
 }

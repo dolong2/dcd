@@ -55,7 +55,8 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
             env = mapOf(),
             githubUrl = "testGithub",
             version = "17",
-            port = 8080
+            port = 8080,
+            labels = listOf()
         )
         val user = UserGenerator.generateUser()
         val workspace = WorkspaceGenerator.generateWorkspace(user = user)

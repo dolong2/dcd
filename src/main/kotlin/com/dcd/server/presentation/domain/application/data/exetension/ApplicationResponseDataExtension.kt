@@ -17,7 +17,8 @@ fun ApplicationResDto.toResponse(): ApplicationResponse =
         port = this.port,
         externalPort = this.externalPort,
         version = this.version,
-        status = this.status
+        status = this.status,
+        labels = this.labels
     )
 
 fun ApplicationListResDto.toResponse(): ApplicationListResponse =

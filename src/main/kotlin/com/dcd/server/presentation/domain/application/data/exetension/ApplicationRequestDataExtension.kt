@@ -16,7 +16,8 @@ fun CreateApplicationRequest.toDto(): CreateApplicationReqDto =
         env = this.env,
         applicationType = this.applicationType,
         port = this.port,
-        version = this.version
+        version = this.version,
+        labels = this.labels
     )
 
 fun UpdateApplicationRequest.toDto(): UpdateApplicationReqDto =

@@ -11,5 +11,6 @@ data class CreateApplicationRequest(
     val env: Map<String, String>,
     val applicationType: ApplicationType,
     val port: Int,
-    val version: String
+    val version: String,
+    val labels: List<String> = listOf()
 )

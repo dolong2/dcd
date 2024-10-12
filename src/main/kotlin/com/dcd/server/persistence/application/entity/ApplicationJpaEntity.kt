@@ -30,5 +30,9 @@ class ApplicationJpaEntity(
     val externalPort: Int,
     val version: String,
     @Enumerated(EnumType.STRING)
-    val status: ApplicationStatus
+    val status: ApplicationStatus,
+    @ElementCollection
+    @CollectionTable(name = "application_labels", joinColumns = [JoinColumn(name = "application_id")])
+    @Column(name = "label")
+    val labels: List<String>
 )
