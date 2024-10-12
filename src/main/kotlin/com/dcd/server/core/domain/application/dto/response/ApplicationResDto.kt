@@ -13,5 +13,6 @@ data class ApplicationResDto(
     val port: Int,
     val externalPort: Int,
     val version: String,
-    val status: ApplicationStatus
+    val status: ApplicationStatus,
+    val labels: List<String>
 )
