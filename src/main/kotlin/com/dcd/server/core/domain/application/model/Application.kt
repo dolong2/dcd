@@ -16,5 +16,6 @@ data class Application(
     val workspace: Workspace,
     val port: Int,
     val externalPort: Int,
-    val status: ApplicationStatus
+    val status: ApplicationStatus,
+    val labels: List<String>
 )
