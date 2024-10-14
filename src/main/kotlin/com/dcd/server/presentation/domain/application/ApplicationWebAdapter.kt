@@ -54,8 +54,11 @@ class ApplicationWebAdapter(
 
     @GetMapping
     @WorkspaceOwnerVerification
-    fun getAllApplication(@PathVariable workspaceId: String): ResponseEntity<ApplicationListResponse> =
-        getAllApplicationUseCase.execute(workspaceId)
+    fun getAllApplication(
+        @PathVariable workspaceId: String,
+        @RequestParam(required = false) labels: List<String>? = null
+    ): ResponseEntity<ApplicationListResponse> =
+        getAllApplicationUseCase.execute(workspaceId, labels)
             .let { ResponseEntity.ok(it.toResponse()) }
 
     @GetMapping("/{applicationId}")
