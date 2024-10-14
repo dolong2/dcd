@@ -12,15 +12,13 @@ class GetAllApplicationUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val queryWorkspacePort: QueryWorkspacePort
 ) {
-    fun execute(workspaceId: String): ApplicationListResDto {
+    fun execute(workspaceId: String, labels: List<String>?): ApplicationListResDto {
         val workspace = (queryWorkspacePort.findById(workspaceId)
             ?: throw WorkspaceNotFoundException())
 
         return ApplicationListResDto(
             queryApplicationPort
-                .findAllByWorkspace(
-                    workspace
-                )
+                .findAllByWorkspace(workspace, labels)
                 .map { it.toDto() }
         )
     }
