@@ -35,7 +35,7 @@ class GetAllApplicationUseCaseTest : BehaviorSpec({
         `when`("usecase를 실행할때") {
             every { queryApplicationPort.findAllByWorkspace(workspace) } returns applicationList
             every { queryWorkspacePort.findById(workspace.id) } returns workspace
-            val result = getAllApplicationUseCase.execute(workspace.id)
+            val result = getAllApplicationUseCase.execute(workspace.id, null)
             val target = ApplicationListResDto(applicationList.map { it.toDto() })
             then("result는 target이랑 같아야함") {
                 result shouldBe target

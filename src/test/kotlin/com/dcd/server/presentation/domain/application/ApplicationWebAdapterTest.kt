@@ -76,7 +76,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         val list = listOf(applicationResponse)
         val responseDto = ApplicationListResDto(list)
         `when`("getAllApplication 메서드를 실행할때") {
-            every { getAllApplicationUseCase.execute(testWorkspaceId) } returns responseDto
+            every { getAllApplicationUseCase.execute(testWorkspaceId, null) } returns responseDto
             val response = applicationWebAdapter.getAllApplication(testWorkspaceId)
             then("응답바디는 targetResponse와 같아야하고 status는 200이여야함") {
                 val targetResponse = responseDto.toResponse()

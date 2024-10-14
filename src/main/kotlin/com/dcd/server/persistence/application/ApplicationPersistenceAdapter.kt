@@ -29,9 +29,14 @@ class ApplicationPersistenceAdapter(
         applicationRepository.saveAll(applicationList.map { it.toEntity() })
     }
 
-    override fun findAllByWorkspace(workspace: Workspace): List<Application> =
-        applicationRepository.findAllByWorkspace(workspace.toEntity())
-            .map { it.toDomain() }
+    override fun findAllByWorkspace(workspace: Workspace, labels: List<String>?): List<Application> {
+        val applicationEntityList =
+            labels?.run {
+                applicationRepository.findAllByWorkspaceAndLabels(workspace.toEntity(), this)
+            } ?: applicationRepository.findAllByWorkspace(workspace.toEntity())
+
+        return applicationEntityList.map { it.toDomain() }
+    }
 
     override fun findById(id: String): Application? =
         applicationRepository.findByIdOrNull(id)
