@@ -52,6 +52,12 @@ class ApplicationWebAdapter(
         deployApplicationUseCase.execute(applicationId)
             .run { ResponseEntity.ok().build() }
 
+    @PostMapping("/deploy")
+    @WorkspaceOwnerVerification
+    fun deployApplicationWithLabels(@PathVariable workspaceId: String, @RequestParam labels: List<String>): ResponseEntity<Void> =
+        deployApplicationUseCase.execute(labels)
+            .run { ResponseEntity.ok().build() }
+
     @GetMapping
     @WorkspaceOwnerVerification
     fun getAllApplication(
