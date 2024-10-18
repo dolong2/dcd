@@ -13,6 +13,7 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import org.springframework.context.ApplicationEventPublisher
 
@@ -30,6 +31,17 @@ class DeployApplicationUseCase(
     private val eventPublisher: ApplicationEventPublisher,
     private val workspaceInfo: WorkspaceInfo
 ) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
+    private val deploymentChannel = Channel<Application>(capacity = Channel.UNLIMITED)
+    init {
+        repeat(3) {
+            launch {
+                for (application in deploymentChannel) {
+                    deployApplication(application)
+                }
+            }
+        }
+    }
+
     fun execute(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
@@ -37,7 +49,9 @@ class DeployApplicationUseCase(
         if (application.status == ApplicationStatus.RUNNING || application.status == ApplicationStatus.PENDING)
             throw CanNotDeployApplicationException()
 
-        deployApplication(application)
+        launch {
+            deployApplication(application)
+        }
 
         eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, application))
     }
@@ -49,37 +63,35 @@ class DeployApplicationUseCase(
         val applicationList = queryApplicationPort.findAllByWorkspace(workspace, labels)
 
         applicationList.forEach {
-            deployApplication(it)
+            deploymentChannel.trySend(it).isSuccess
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, it))
         }
     }
 
-    private fun deployApplication(application: Application) {
-        launch {
-            deleteContainerService.deleteContainer(application)
-            deleteImageService.deleteImage(application)
+    private suspend fun deployApplication(application: Application) {
+        deleteContainerService.deleteContainer(application)
+        deleteImageService.deleteImage(application)
 
-            val version = application.version
-            val externalPort = application.externalPort
+        val version = application.version
+        val externalPort = application.externalPort
 
-            val applicationType = application.applicationType
-            when(applicationType) {
-                ApplicationType.SPRING_BOOT -> {
-                    cloneApplicationByUrlService.cloneByApplication(application)
-                    modifyGradleService.modifyGradleByApplication(application)
-                }
-                ApplicationType.NEST_JS -> {
-                    cloneApplicationByUrlService.cloneByApplication(application)
-                }
-                else -> {}
+        val applicationType = application.applicationType
+        when(applicationType) {
+            ApplicationType.SPRING_BOOT -> {
+                cloneApplicationByUrlService.cloneByApplication(application)
+                modifyGradleService.modifyGradleByApplication(application)
             }
-
-            createDockerFileService.createFileToApplication(application, version)
-            buildDockerImageService.buildImageByApplication(application)
-            createContainerService.createContainer(application, externalPort)
-
-            deleteApplicationDirectoryService.deleteApplicationDirectory(application)
-            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.STOPPED, application))
+            ApplicationType.NEST_JS -> {
+                cloneApplicationByUrlService.cloneByApplication(application)
+            }
+            else -> {}
         }
+
+        createDockerFileService.createFileToApplication(application, version)
+        buildDockerImageService.buildImageByApplication(application)
+        createContainerService.createContainer(application, externalPort)
+
+        deleteApplicationDirectoryService.deleteApplicationDirectory(application)
+        eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.STOPPED, application))
     }
 }
