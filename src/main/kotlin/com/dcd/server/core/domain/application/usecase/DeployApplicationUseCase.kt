@@ -49,11 +49,12 @@ class DeployApplicationUseCase(
         if (application.status == ApplicationStatus.RUNNING || application.status == ApplicationStatus.PENDING)
             throw CanNotDeployApplicationException()
 
-        launch {
-            deployApplication(application)
-        }
+        val success = deploymentChannel.trySend(application).isSuccess
 
-        eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, application))
+        if (success)
+            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, application))
+        else
+            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application))
     }
 
     fun execute(labels: List<String>) {
