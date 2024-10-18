@@ -63,8 +63,15 @@ class DeployApplicationUseCase(
         val applicationList = queryApplicationPort.findAllByWorkspace(workspace, labels)
 
         applicationList.forEach {
-            deploymentChannel.trySend(it).isSuccess
-            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, it))
+            // 만약 애플리케이션의 상태가 배포할 수 없는 상태일때는 건너뜀
+            if (it.status == ApplicationStatus.RUNNING || it.status == ApplicationStatus.PENDING)
+                return@forEach
+
+            val success = deploymentChannel.trySend(it).isSuccess
+            if (success)
+                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, it))
+            else
+                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, it))
         }
     }
 
