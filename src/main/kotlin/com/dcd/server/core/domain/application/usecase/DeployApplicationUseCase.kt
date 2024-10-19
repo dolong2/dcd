@@ -11,10 +11,8 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
 import org.springframework.context.ApplicationEventPublisher
 
 @UseCase
@@ -31,30 +29,22 @@ class DeployApplicationUseCase(
     private val eventPublisher: ApplicationEventPublisher,
     private val workspaceInfo: WorkspaceInfo
 ) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
-    private val deploymentChannel = Channel<Application>(capacity = Channel.UNLIMITED)
-    init {
-        repeat(3) {
-            launch {
-                for (application in deploymentChannel) {
-                    deployApplication(application)
-                }
-            }
-        }
-    }
-
     fun execute(id: String) {
+        val job = SupervisorJob()
+        val executionScope = this + job
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
 
         if (application.status == ApplicationStatus.RUNNING || application.status == ApplicationStatus.PENDING)
             throw CanNotDeployApplicationException()
 
-        val success = deploymentChannel.trySend(application).isSuccess
+            executionScope.launch {
+                deployApplication(application)
+                job.complete()
+            }
 
-        if (success)
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, application))
-        else
-            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application))
+
     }
 
     fun execute(labels: List<String>) {
@@ -63,16 +53,32 @@ class DeployApplicationUseCase(
 
         val applicationList = queryApplicationPort.findAllByWorkspace(workspace, labels)
 
+        val deploymentChannel = Channel<Application>(capacity = Channel.UNLIMITED)
+        val job = SupervisorJob()
+        val scope = this + job
         applicationList.forEach {
             // 만약 애플리케이션의 상태가 배포할 수 없는 상태일때는 건너뜀
             if (it.status == ApplicationStatus.RUNNING || it.status == ApplicationStatus.PENDING)
                 return@forEach
 
-            val success = deploymentChannel.trySend(it).isSuccess
-            if (success)
-                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, it))
-            else
-                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, it))
+            // 배포 작업을 큐에 추가
+            deploymentChannel.trySend(it).isSuccess
+            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, it))
+        }
+
+        // 코루틴을 생성하여 작업 처리
+        repeat(3) {
+            scope.launch {
+                for (application in deploymentChannel) {
+                    deployApplication(application)
+                }
+            }
+        }
+
+        // 작업 완료 후 코루틴 스코프 종료
+        scope.launch {
+            deploymentChannel.close()
+            job.complete()
         }
     }
 
