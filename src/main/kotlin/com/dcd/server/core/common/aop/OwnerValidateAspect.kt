@@ -1,5 +1,6 @@
 package com.dcd.server.core.common.aop
 
+import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
@@ -13,7 +14,8 @@ import org.springframework.stereotype.Component
 @Component
 class OwnerValidateAspect(
     private val getCurrentUserService: GetCurrentUserService,
-    private val queryWorkspacePort: QueryWorkspacePort
+    private val queryWorkspacePort: QueryWorkspacePort,
+    private val workspaceInfo: WorkspaceInfo
 ) {
     @Pointcut("@annotation(com.dcd.server.core.common.annotation.WorkspaceOwnerVerification)")
     fun workspaceOwnerVerificationPointcut() {}
@@ -28,5 +30,7 @@ class OwnerValidateAspect(
         val owner = workspace.owner
         if (owner.id != user.id)
             throw WorkspaceOwnerNotSameException()
+
+        workspaceInfo.workspace = workspace
     }
 }

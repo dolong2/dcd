@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.exception.CanNotDeployApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
@@ -26,6 +27,7 @@ class DeployApplicationUseCaseTest : BehaviorSpec({
     val createContainerService = mockk<CreateContainerService>(relaxUnitFun = true)
     val deleteApplicationDirectoryService = mockk<DeleteApplicationDirectoryService>(relaxUnitFun = true)
     val eventPublisher = mockk<ApplicationEventPublisher>(relaxUnitFun = true)
+    val workspaceInfo = WorkspaceInfo()
     val deployApplicationUseCase = DeployApplicationUseCase(
         queryApplicationPort,
         deleteContainerService,
@@ -36,7 +38,8 @@ class DeployApplicationUseCaseTest : BehaviorSpec({
         buildDockerImageService,
         createContainerService,
         deleteApplicationDirectoryService,
-        eventPublisher
+        eventPublisher,
+        workspaceInfo
     )
 
     given("애플리케이션 id가 주어지고") {
