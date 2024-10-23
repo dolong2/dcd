@@ -43,19 +43,16 @@ class RunApplicationUseCase(
         val runChannel = Channel<Application>(capacity = Channel.UNLIMITED)
         val job = SupervisorJob()
         val scope = this + job
-        scope.launch {
-            applicationList.forEach {
-                if (it.status == ApplicationStatus.RUNNING)
-                    return@forEach
+        applicationList.forEach {
+            if (it.status == ApplicationStatus.RUNNING)
+                return@forEach
 
-                runChannel.trySend(it).isSuccess
-                changeApplicationStatusService.changeApplicationStatus(it, ApplicationStatus.PENDING)
-            }
-            runChannel.close()
+            runChannel.trySend(it).isSuccess
+            changeApplicationStatusService.changeApplicationStatus(it, ApplicationStatus.PENDING)
         }
 
         // 코루틴을 생성하여 작업 처리
-        List(3) {
+        repeat(3) {
             scope.launch {
                 for (application in runChannel) {
                     runContainerService.runApplication(application)
