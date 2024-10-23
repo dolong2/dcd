@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.exception.AlreadyRunningException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
@@ -20,10 +21,12 @@ class RunApplicationUseCaseTest : BehaviorSpec({
     val runContainerService = mockk<RunContainerService>(relaxUnitFun = true)
     val queryApplicationPort = mockk<QueryApplicationPort>(relaxUnitFun = true)
     val changeApplicationStatusService = mockk<ChangeApplicationStatusService>(relaxUnitFun = true)
+    val workspaceInfo = WorkspaceInfo()
     val runApplicationUseCase = RunApplicationUseCase(
         runContainerService,
         queryApplicationPort,
-        changeApplicationStatusService
+        changeApplicationStatusService,
+        workspaceInfo
     )
 
     val user = UserGenerator.generateUser()
