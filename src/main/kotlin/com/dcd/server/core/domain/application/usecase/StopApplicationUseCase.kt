@@ -43,13 +43,12 @@ class StopApplicationUseCase(
         val runChannel = Channel<Application>(capacity = Channel.UNLIMITED)
         val job = SupervisorJob()
         val scope = this + job
-        applicationList.forEach {
-            if (it.status != ApplicationStatus.RUNNING)
-                return@forEach
-
-            runChannel.trySend(it).isSuccess
-            changeApplicationStatusService.changeApplicationStatus(it, ApplicationStatus.PENDING)
-        }
+        applicationList
+            .filter { it.status == ApplicationStatus.RUNNING }
+            .forEach {
+                runChannel.trySend(it).isSuccess
+                changeApplicationStatusService.changeApplicationStatus(it, ApplicationStatus.PENDING)
+            }
 
         // 코루틴을 생성하여 작업 처리
         repeat(3) {
