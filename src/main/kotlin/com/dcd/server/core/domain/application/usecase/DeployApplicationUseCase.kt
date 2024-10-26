@@ -40,7 +40,6 @@ class DeployApplicationUseCase(
 
             executionScope.launch {
                 deployApplication(application)
-                job.complete()
             }
 
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, application))
@@ -78,7 +77,6 @@ class DeployApplicationUseCase(
         // 작업 완료 후 코루틴 스코프 종료
         scope.launch {
             deploymentChannel.close()
-            job.complete()
         }
     }
 
