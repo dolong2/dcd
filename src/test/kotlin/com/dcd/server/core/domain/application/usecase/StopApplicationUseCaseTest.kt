@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.exception.AlreadyStoppedException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
@@ -23,8 +24,9 @@ class StopApplicationUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
     val stopContainerService = mockk<StopContainerService>(relaxUnitFun = true)
     val changeApplicationStatusService = mockk<ChangeApplicationStatusService>(relaxUnitFun = true)
+    val workspaceInfo = WorkspaceInfo()
     val stopApplicationUseCase =
-        StopApplicationUseCase(queryApplicationPort, stopContainerService, changeApplicationStatusService)
+        StopApplicationUseCase(queryApplicationPort, stopContainerService, changeApplicationStatusService, workspaceInfo)
 
     given("애플리케이션 Id가 주어지고") {
         val applicationId = "testApplicationId"

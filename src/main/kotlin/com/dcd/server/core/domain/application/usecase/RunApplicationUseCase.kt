@@ -63,7 +63,6 @@ class RunApplicationUseCase(
         // 작업 완료 후 코루틴 스코프 종료
         scope.launch {
             runChannel.close()
-            job.complete()
         }
     }
 }

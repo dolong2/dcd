@@ -116,6 +116,12 @@ class ApplicationWebAdapter(
         stopApplicationUseCase.execute(applicationId)
             .run { ResponseEntity.ok().build() }
 
+    @PostMapping("/stop")
+    @WorkspaceOwnerVerification
+    fun stopApplication(@PathVariable workspaceId: String, @RequestParam labels: List<String>): ResponseEntity<Void> =
+        stopApplicationUseCase.execute(labels)
+            .run { ResponseEntity.ok().build() }
+
     @DeleteMapping("/{applicationId}")
     @WorkspaceOwnerVerification
     fun deleteApplication(@PathVariable workspaceId: String, @PathVariable applicationId: String): ResponseEntity<Void> =
