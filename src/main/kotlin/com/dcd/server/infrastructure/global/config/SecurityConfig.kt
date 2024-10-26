@@ -54,6 +54,7 @@ class SecurityConfig(
                 it.requestMatchers(HttpMethod.POST, "/{workspaceId}/application/{id}/run").authenticated()
                 it.requestMatchers(HttpMethod.POST, "/{workspaceId}/application/run").authenticated()
                 it.requestMatchers(HttpMethod.POST, "/{workspaceId}/application/{id}/stop").authenticated()
+                it.requestMatchers(HttpMethod.POST, "/{workspaceId}/application/stop").authenticated()
                 it.requestMatchers(HttpMethod.POST, "/{workspaceId}/application/{id}/deploy").authenticated()
                 it.requestMatchers(HttpMethod.POST, "/{workspaceId}/application/deploy").authenticated()
                 it.requestMatchers(HttpMethod.GET, "/{workspaceId}/application").authenticated()
