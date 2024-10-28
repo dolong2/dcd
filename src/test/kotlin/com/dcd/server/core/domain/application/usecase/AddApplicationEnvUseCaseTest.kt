@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.dto.request.AddApplicationEnvReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
@@ -22,7 +23,8 @@ import java.util.*
 class AddApplicationEnvUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
     val commandApplicationPort = mockk<CommandApplicationPort>()
-    val addApplicationEnvUseCase = AddApplicationEnvUseCase(queryApplicationPort, commandApplicationPort)
+    val workspaceInfo = WorkspaceInfo()
+    val addApplicationEnvUseCase = AddApplicationEnvUseCase(queryApplicationPort, commandApplicationPort, workspaceInfo)
 
     given("request가 주어지고") {
         val request = AddApplicationEnvReqDto(
