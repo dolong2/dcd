@@ -35,7 +35,7 @@ class AddApplicationEnvUseCase(
         val updatedApplicationList = applicationList.map { application ->
             val envMutable = application.env.toMutableMap()
             addApplicationEnvReqDto.envList.forEach {
-                if (envMutable.containsKey(it.key)) throw AlreadyExistsEnvException()
+                if (envMutable.containsKey(it.key)) return@forEach
 
                 envMutable[it.key] = it.value
             }
