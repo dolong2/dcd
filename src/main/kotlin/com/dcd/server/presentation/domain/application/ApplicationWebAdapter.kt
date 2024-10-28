@@ -89,6 +89,16 @@ class ApplicationWebAdapter(
         addApplicationEnvUseCase.execute(applicationId, addApplicationEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
+    @PostMapping("/env")
+    @WorkspaceOwnerVerification
+    fun addApplicationEnvWithLabels(
+        @PathVariable workspaceId: String,
+        @RequestParam labels: List<String>,
+        @RequestBody addApplicationEnvRequest: AddApplicationEnvRequest
+    ): ResponseEntity<Void> =
+        addApplicationEnvUseCase.execute(labels, addApplicationEnvRequest.toDto())
+            .run { ResponseEntity.ok().build() }
+
     @DeleteMapping("/{applicationId}/env")
     @WorkspaceOwnerVerification
     fun deleteApplicationEnv(
