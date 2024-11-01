@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationEnvReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationEnvNotFoundException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
@@ -16,7 +17,8 @@ import util.application.ApplicationGenerator
 class UpdateApplicationEnvUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
     val commandApplicationPort = mockk<CommandApplicationPort>(relaxUnitFun = true)
-    val updateApplicationEnvUseCase = UpdateApplicationEnvUseCase(queryApplicationPort, commandApplicationPort)
+    val workspaceInfo = WorkspaceInfo()
+    val updateApplicationEnvUseCase = UpdateApplicationEnvUseCase(queryApplicationPort, commandApplicationPort, workspaceInfo)
 
     given("애플리케이션 아이디와 수정할 환경변수값이 주어지고") {
         val applicationId = "testId"
