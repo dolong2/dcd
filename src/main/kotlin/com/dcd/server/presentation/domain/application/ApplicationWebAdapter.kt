@@ -120,6 +120,17 @@ class ApplicationWebAdapter(
         updateApplicationEnvUseCase.execute(applicationId, key, updateApplicationEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
+    @PatchMapping("/env")
+    @WorkspaceOwnerVerification
+    fun updateApplicationEnvWithLabels(
+        @PathVariable workspaceId: String,
+        @RequestParam labels: List<String>,
+        @RequestParam key: String,
+        @RequestBody updateApplicationEnvRequest: UpdateApplicationEnvRequest
+    ): ResponseEntity<Void> =
+        updateApplicationEnvUseCase.execute(labels, key, updateApplicationEnvRequest.toDto())
+            .run { ResponseEntity.ok().build() }
+
     @PostMapping("/{applicationId}/stop")
     @WorkspaceOwnerVerification
     fun stopApplication(@PathVariable workspaceId: String, @PathVariable applicationId: String): ResponseEntity<Void> =

@@ -67,6 +67,7 @@ class SecurityConfig(
                 it.requestMatchers(HttpMethod.POST, "/{workspaceId}/application/env").authenticated()
                 it.requestMatchers(HttpMethod.DELETE, "/{workspaceId}/application/{id}/env").authenticated()
                 it.requestMatchers(HttpMethod.PATCH, "/{workspaceId}/application/{applicationId}/env").authenticated()
+                it.requestMatchers(HttpMethod.PATCH, "/{workspaceId}/application/env").authenticated()
                 it.requestMatchers(HttpMethod.GET, "/{workspaceId}/application/version/{applicationType}").authenticated()
                 it.requestMatchers(HttpMethod.POST, "/{workspaceId}/application/{id}/exec").authenticated()
                 it.requestMatchers(HttpMethod.GET, "/application/exec").authenticated()
