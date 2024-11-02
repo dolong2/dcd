@@ -109,6 +109,16 @@ class ApplicationWebAdapter(
         deleteApplicationEnvUseCase.execute(applicationId, key)
             .run { ResponseEntity.ok().build() }
 
+    @DeleteMapping("/env")
+    @WorkspaceOwnerVerification
+    fun deleteApplicationEnvWithLabels(
+        @PathVariable workspaceId: String,
+        @RequestParam labels: List<String>,
+        @RequestParam key: String
+    ): ResponseEntity<Void> =
+        deleteApplicationEnvUseCase.execute(labels, key)
+            .run { ResponseEntity.ok().build() }
+
     @PatchMapping("/{applicationId}/env")
     @WorkspaceOwnerVerification
     fun updateApplicationEnv(
