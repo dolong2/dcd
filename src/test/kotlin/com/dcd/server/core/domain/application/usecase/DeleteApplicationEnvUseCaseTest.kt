@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.exception.ApplicationEnvNotFoundException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
@@ -22,7 +23,8 @@ import java.util.*
 class DeleteApplicationEnvUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
     val commandApplicationPort = mockk<CommandApplicationPort>()
-    val deleteApplicationEnvUseCase = DeleteApplicationEnvUseCase(queryApplicationPort, commandApplicationPort)
+    val workspaceInfo = WorkspaceInfo()
+    val deleteApplicationEnvUseCase = DeleteApplicationEnvUseCase(queryApplicationPort, commandApplicationPort, workspaceInfo)
 
     given("애플리케이션 Id와 삭제할 key가 주어지고") {
         val applicationId = "testId"
