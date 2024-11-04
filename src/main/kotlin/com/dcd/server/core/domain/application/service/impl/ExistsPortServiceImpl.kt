@@ -12,6 +12,6 @@ class ExistsPortServiceImpl (
 ) : ExistsPortService {
     override fun existsPort(port: Int): Boolean {
         val commandResult = commandPort.executeShellCommandWithResult("lsof -i :${port}")
-        return commandResult.isEmpty() && queryApplicationPort.existsByExternalPort(port)
+        return commandResult.isNotEmpty() || queryApplicationPort.existsByExternalPort(port)
     }
 }
