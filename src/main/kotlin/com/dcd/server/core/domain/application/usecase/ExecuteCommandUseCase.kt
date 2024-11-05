@@ -30,7 +30,7 @@ class ExecuteCommandUseCase(
             throw InvalidApplicationStatusException()
 
         val result =
-            commandPort.executeShellCommandWithResult("docker exec ${application.name.lowercase()} ${executeCommandReqDto.command}")
+            commandPort.executeShellCommandWithResult("docker exec ${application.name.lowercase()} sh -c '${executeCommandReqDto.command}'")
 
         return CommandResultResDto(result)
     }
