@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.application.dto.request.ExecuteCommandReqDto
 import com.dcd.server.core.domain.application.dto.response.CommandResultResDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.exception.InvalidApplicationStatusException
+import com.dcd.server.core.domain.application.exception.InvalidCmdException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.ExecContainerService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -23,6 +24,8 @@ class ExecuteCommandUseCase(
     private val commandPort: CommandPort
 ) {
     fun execute(applicationId: String, executeCommandReqDto: ExecuteCommandReqDto): CommandResultResDto {
+        validateCmd(executeCommandReqDto.command)
+
         val application = (queryApplicationPort.findById(applicationId)
             ?: throw ApplicationNotFoundException())
 
@@ -36,6 +39,8 @@ class ExecuteCommandUseCase(
     }
 
     fun execute(applicationId: String, session: WebSocketSession, cmd: String) {
+        validateCmd(cmd)
+
         val accessToken = (session.attributes["accessToken"] as? String
             ?: throw InvalidConnectionInfoException("세션에 인증 정보가 존재하지 않음", CloseStatus.PROTOCOL_ERROR))
 
@@ -51,5 +56,13 @@ class ExecuteCommandUseCase(
             throw WorkspaceOwnerNotSameException()
 
         execContainerService.execCmd(application, session, cmd)
+    }
+
+    private fun validateCmd(cmd: String) {
+        val forbiddenPatterns = listOf(";", "`", "$")
+        if (cmd.length > 100)
+            throw InvalidCmdException()
+        else if (forbiddenPatterns.any { cmd.contains(it) })
+            throw InvalidCmdException()
     }
 }
