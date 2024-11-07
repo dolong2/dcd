@@ -24,6 +24,8 @@ class ExecuteCommandUseCase(
     private val commandPort: CommandPort
 ) {
     fun execute(applicationId: String, executeCommandReqDto: ExecuteCommandReqDto): CommandResultResDto {
+        validateCmd(executeCommandReqDto.command)
+
         val application = (queryApplicationPort.findById(applicationId)
             ?: throw ApplicationNotFoundException())
 
@@ -37,6 +39,8 @@ class ExecuteCommandUseCase(
     }
 
     fun execute(applicationId: String, session: WebSocketSession, cmd: String) {
+        validateCmd(cmd)
+
         val accessToken = (session.attributes["accessToken"] as? String
             ?: throw InvalidConnectionInfoException("세션에 인증 정보가 존재하지 않음", CloseStatus.PROTOCOL_ERROR))
 
