@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.application.dto.request.ExecuteCommandReqDto
 import com.dcd.server.core.domain.application.dto.response.CommandResultResDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.exception.InvalidApplicationStatusException
+import com.dcd.server.core.domain.application.exception.InvalidCmdException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.ExecContainerService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -51,5 +52,13 @@ class ExecuteCommandUseCase(
             throw WorkspaceOwnerNotSameException()
 
         execContainerService.execCmd(application, session, cmd)
+    }
+
+    private fun validateCmd(cmd: String) {
+        val forbiddenPatterns = listOf(";", "`", "$")
+        if (cmd.length > 100)
+            throw InvalidCmdException()
+        else if (forbiddenPatterns.any { cmd.contains(it) })
+            throw InvalidCmdException()
     }
 }
