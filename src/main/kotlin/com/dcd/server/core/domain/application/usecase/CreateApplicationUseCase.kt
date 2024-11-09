@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.application.usecase
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.application.dto.extenstion.toEntity
 import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDto
+import com.dcd.server.core.domain.application.dto.response.CreateApplicationResDto
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
@@ -24,7 +25,7 @@ class CreateApplicationUseCase(
     private val createContainerService: CreateContainerService,
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService
 ) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
-    fun execute(workspaceId: String, createApplicationReqDto: CreateApplicationReqDto) {
+    fun execute(workspaceId: String, createApplicationReqDto: CreateApplicationReqDto): CreateApplicationResDto {
         val workspace = queryWorkspacePort.findById(workspaceId)
             ?: throw WorkspaceNotFoundException()
 
@@ -51,5 +52,7 @@ class CreateApplicationUseCase(
 
             deleteApplicationDirectoryService.deleteApplicationDirectory(application)
         }
+
+        return CreateApplicationResDto(application.id)
     }
 }
