@@ -36,9 +36,9 @@ class ApplicationWebAdapter(
     fun createApplication(
         @PathVariable workspaceId: String,
         @Validated @RequestBody createApplicationRequest: CreateApplicationRequest
-    ): ResponseEntity<Void> =
+    ): ResponseEntity<CreateApplicationResponse> =
         createApplicationUseCase.execute(workspaceId, createApplicationRequest.toDto())
-            .run { ResponseEntity(HttpStatus.CREATED) }
+            .let { ResponseEntity.ok(it.toResponse()) }
 
     @PostMapping("/{applicationId}/run")
     @WorkspaceOwnerVerification
