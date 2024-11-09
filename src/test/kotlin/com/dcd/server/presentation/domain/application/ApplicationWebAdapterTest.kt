@@ -51,10 +51,14 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         )
 
         `when`("createApplication 메서드를 실행할때") {
-            every { createApplicationUseCase.execute(testWorkspaceId, any()) } returns Unit
+            every { createApplicationUseCase.execute(testWorkspaceId, any()) } returns CreateApplicationResDto("testApplicationId")
             val result = applicationWebAdapter.createApplication(testWorkspaceId, request)
             then("상태코드가 201이여야함") {
+                verify { createApplicationUseCase.execute(testWorkspaceId, any()) }
                 result.statusCode shouldBe HttpStatus.CREATED
+            }
+            then("응답은 생성된 애플리케이션 아이디를 반환해야함") {
+                result.body?.applicationId shouldBe "testApplicationId"
             }
         }
     }

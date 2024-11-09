@@ -58,3 +58,8 @@ fun CommandResultResDto.toResponse(): CommandResultResponse =
     CommandResultResponse(
         result = this.result
     )
+
+fun CreateApplicationResDto.toResponse(): CreateApplicationResponse =
+    CreateApplicationResponse(
+        applicationId = this.applicationId
+    )
