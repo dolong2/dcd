@@ -7,8 +7,10 @@ import com.dcd.server.presentation.domain.workspace.data.request.AddGlobalEnvReq
 import com.dcd.server.presentation.domain.workspace.data.request.CreateWorkspaceRequest
 import com.dcd.server.presentation.domain.workspace.data.request.UpdateGlobalEnvRequest
 import com.dcd.server.presentation.domain.workspace.data.request.UpdateWorkspaceRequest
+import com.dcd.server.presentation.domain.workspace.data.response.CreateWorkspaceResponse
 import com.dcd.server.presentation.domain.workspace.data.response.WorkspaceListResponse
 import com.dcd.server.presentation.domain.workspace.data.response.WorkspaceResponse
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -25,9 +27,9 @@ class WorkspaceWebAdapter(
     private val updateGlobalEnvUseCase: UpdateGlobalEnvUseCase
 ) {
     @PostMapping
-    fun createWorkspace(@RequestBody createWorkspaceRequest: CreateWorkspaceRequest): ResponseEntity<Void> =
+    fun createWorkspace(@RequestBody createWorkspaceRequest: CreateWorkspaceRequest): ResponseEntity<CreateWorkspaceResponse> =
         createWorkspaceUseCase.execute(createWorkspaceRequest.toDto())
-            .run { ResponseEntity.ok().build() }
+            .run { ResponseEntity(this.toResponse(), HttpStatus.CREATED) }
 
     @GetMapping
     fun getAllWorkspace(): ResponseEntity<WorkspaceListResponse> =

@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.workspace.dto.request.AddGlobalEnvReqDto
 import com.dcd.server.core.domain.workspace.dto.request.CreateWorkspaceReqDto
 import com.dcd.server.core.domain.workspace.dto.request.UpdateGlobalEnvReqDto
 import com.dcd.server.core.domain.workspace.dto.request.UpdateWorkspaceReqDto
+import com.dcd.server.core.domain.workspace.dto.response.CreateWorkspaceResDto
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceListResDto
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceResDto
 import com.dcd.server.core.domain.workspace.usecase.*
@@ -38,10 +39,15 @@ class WorkspaceWebAdapterTest : BehaviorSpec({
     given("CreateWorkspaceRequest가 주어지고") {
         val request = CreateWorkspaceRequest(title = "test", description = "test description")
         `when`("createWorkspace메서드를 실행할때") {
+            val testWorkspaceId = "testWorkspaceId"
+            every { createWorkspaceUseCase.execute(any() as CreateWorkspaceReqDto) } returns CreateWorkspaceResDto(testWorkspaceId)
             val result = workspaceWebAdapter.createWorkspace(request)
             then("useCase를 실행해야함") {
                 verify { createWorkspaceUseCase.execute(any() as CreateWorkspaceReqDto) }
-                result.statusCode shouldBe  HttpStatus.OK
+                result.statusCode shouldBe  HttpStatus.CREATED
+            }
+            then("응답값은 testWorkspaceId를 반환해야함") {
+                result.body?.workspaceId shouldBe testWorkspaceId
             }
         }
     }
