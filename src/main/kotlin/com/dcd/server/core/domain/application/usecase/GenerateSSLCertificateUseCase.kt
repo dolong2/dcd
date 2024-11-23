@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.application.usecase
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.application.dto.request.GenerateSSLCertificateReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
+import com.dcd.server.core.domain.application.service.GenerateHttpConfigService
 import com.dcd.server.core.domain.application.service.GenerateSSLCertificateService
 import com.dcd.server.core.domain.application.service.GetExternalPortService
 import com.dcd.server.core.domain.application.service.PutSSLCertificateService
@@ -16,7 +17,8 @@ class GenerateSSLCertificateUseCase(
     private val getCurrentUserService: GetCurrentUserService,
     private val generateSSLCertificateService: GenerateSSLCertificateService,
     private val putSSLCertificateService: PutSSLCertificateService,
-    private val getExternalPortService: GetExternalPortService
+    private val getExternalPortService: GetExternalPortService,
+    private val generateHttpConfigService: GenerateHttpConfigService
 ) {
     fun execute(id: String, generateSSLCertificateReqDto: GenerateSSLCertificateReqDto) {
         val application = (queryApplicationPort.findById(id)
@@ -26,6 +28,7 @@ class GenerateSSLCertificateUseCase(
             throw WorkspaceOwnerNotSameException()
         val domain = generateSSLCertificateReqDto.domain
         val externalPort = getExternalPortService.getExternalPort(application.port)
+        generateHttpConfigService.generateWebServerConfig(application, domain)
         generateSSLCertificateService.generateSSL(domain)
         putSSLCertificateService.putSSLCertificate(domain, externalPort, application)
     }
