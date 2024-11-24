@@ -62,10 +62,10 @@ object FileContent {
 
     fun getApplicationHttpConfig(application: Application, domain: String): String =
         "server {" +
-            "\tlisten: 80\n" +
-            "\tserver-name: $domain\n" +
+            "\tlisten: 80;\n" +
+            "\tserver-name: $domain;\n\n" +
             "\tlocation / {\n" +
-                "\t\tproxy_pass: http://localhost:${application.externalPort}\n" +
+                "\t\tproxy_pass: http://localhost:${application.externalPort};\n" +
             "\t}\n" +
         "}"
 
