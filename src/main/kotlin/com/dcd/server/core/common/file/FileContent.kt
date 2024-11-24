@@ -1,5 +1,6 @@
 package com.dcd.server.core.common.file
 
+import com.dcd.server.core.domain.application.model.Application
 import java.lang.StringBuilder
 
 object FileContent {
@@ -58,6 +59,15 @@ object FileContent {
         "server.ssl.key-store=classpath:${name}.p12\n" +
         "server.ssl.key-store-type: PKC12\n" +
         "server.ssl.key-store-password: $password"
+
+    fun getApplicationHttpConfig(application: Application, domain: String): String =
+        "server {" +
+            "\tlisten: 80;\n" +
+            "\tserver-name: $domain;\n\n" +
+            "\tlocation / {\n" +
+                "\t\tproxy_pass: http://localhost:${application.externalPort};\n" +
+            "\t}\n" +
+        "}"
 
     private fun getEnvString(env: Map<String, String>): String {
         val envString = StringBuilder()

@@ -5,6 +5,7 @@ import com.dcd.server.core.domain.application.exception.ApplicationNotFoundExcep
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
+import com.dcd.server.core.domain.application.service.GenerateHttpConfigService
 import com.dcd.server.core.domain.application.service.GenerateSSLCertificateService
 import com.dcd.server.core.domain.application.service.GetExternalPortService
 import com.dcd.server.core.domain.application.service.PutSSLCertificateService
@@ -30,12 +31,14 @@ class GenerateSSLCertificateUseCaseTest : BehaviorSpec({
     val generateSSLCertificateService = mockk<GenerateSSLCertificateService>(relaxUnitFun = true)
     val putSSLCertificateService = mockk<PutSSLCertificateService>(relaxUnitFun = true)
     val getExternalPortService = mockk<GetExternalPortService>(relaxed = true)
+    val generateHttpConfigService = mockk<GenerateHttpConfigService>(relaxed = true)
     val generateSSLCertificateUseCase = GenerateSSLCertificateUseCase(
         queryApplicationPort,
         getCurrentUserService,
         generateSSLCertificateService,
         putSSLCertificateService,
-        getExternalPortService
+        getExternalPortService,
+        generateHttpConfigService
     )
 
     given("application id, GenerateSSLCertificateReqDto가 주어지고") {
