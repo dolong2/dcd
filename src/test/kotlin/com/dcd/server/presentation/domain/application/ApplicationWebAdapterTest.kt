@@ -32,10 +32,11 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     val updateApplicationUseCase = mockk<UpdateApplicationUseCase>(relaxUnitFun = true)
     val getAvailableVersionUseCase = mockk<GetAvailableVersionUseCase>()
     val generateSSLCertificateUseCase = mockk<GenerateSSLCertificateUseCase>(relaxUnitFun = true)
+    val setApplicationDomainUseCase = mockk<SetApplicationDomainUseCase>(relaxUnitFun = true)
     val getApplicationLogUseCase = mockk<GetApplicationLogUseCase>()
     val deployApplicationUseCase = mockk<DeployApplicationUseCase>(relaxUnitFun = true)
     val executeCommandUseCase = mockk<ExecuteCommandUseCase>(relaxUnitFun = true)
-    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springRunApplicationUseCase, getAllApplicationUseCase, getOneApplicationUseCase, addApplicationEnvUseCase, deleteApplicationEnvUseCase, updateApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase, getAvailableVersionUseCase, generateSSLCertificateUseCase, getApplicationLogUseCase, deployApplicationUseCase, executeCommandUseCase)
+    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springRunApplicationUseCase, getAllApplicationUseCase, getOneApplicationUseCase, addApplicationEnvUseCase, deleteApplicationEnvUseCase, updateApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase, getAvailableVersionUseCase, generateSSLCertificateUseCase, getApplicationLogUseCase, deployApplicationUseCase, executeCommandUseCase, setApplicationDomainUseCase)
 
     val testWorkspaceId = "testWorkspaceId"
 

@@ -29,7 +29,8 @@ class ApplicationWebAdapter(
     private val generateSSLCertificateUseCase: GenerateSSLCertificateUseCase,
     private val getApplicationLogUseCase: GetApplicationLogUseCase,
     private val deployApplicationUseCase: DeployApplicationUseCase,
-    private val executeCommandUseCase: ExecuteCommandUseCase
+    private val executeCommandUseCase: ExecuteCommandUseCase,
+    private val setApplicationDomainUseCase: SetApplicationDomainUseCase
 ) {
     @PostMapping
     @WorkspaceOwnerVerification
@@ -183,6 +184,16 @@ class ApplicationWebAdapter(
         @RequestBody generateSSLCertificateRequest: GenerateSSLCertificateRequest
     ): ResponseEntity<Void> =
         generateSSLCertificateUseCase.execute(applicationId, generateSSLCertificateRequest.toDto())
+            .run { ResponseEntity.ok().build() }
+
+    @PostMapping("/{applicationId}/domain")
+    @WorkspaceOwnerVerification
+    fun setApplicationDomain(
+        @PathVariable workspaceId: String,
+        @PathVariable applicationId: String,
+        @RequestBody setDomainRequest: SetDomainRequest
+    ): ResponseEntity<Void> =
+        setApplicationDomainUseCase.execute(applicationId, setDomainRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
     @GetMapping("/{applicationId}/logs")
