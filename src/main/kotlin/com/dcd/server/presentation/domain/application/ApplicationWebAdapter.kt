@@ -26,7 +26,6 @@ class ApplicationWebAdapter(
     private val deleteApplicationUseCase: DeleteApplicationUseCase,
     private val updateApplicationUseCase: UpdateApplicationUseCase,
     private val getAvailableVersionUseCase: GetAvailableVersionUseCase,
-    private val generateSSLCertificateUseCase: GenerateSSLCertificateUseCase,
     private val getApplicationLogUseCase: GetApplicationLogUseCase,
     private val deployApplicationUseCase: DeployApplicationUseCase,
     private val executeCommandUseCase: ExecuteCommandUseCase,
@@ -175,16 +174,6 @@ class ApplicationWebAdapter(
     fun getAvailableVersion(@PathVariable workspaceId: String, @PathVariable applicationType: ApplicationType): ResponseEntity<AvailableVersionResponse> =
         getAvailableVersionUseCase.execute(applicationType)
             .let { ResponseEntity.ok(it.toResponse()) }
-
-    @PostMapping("/{applicationId}/certificate")
-    @WorkspaceOwnerVerification
-    fun generateSSLCertificate(
-        @PathVariable workspaceId: String,
-        @PathVariable applicationId: String,
-        @RequestBody generateSSLCertificateRequest: GenerateSSLCertificateRequest
-    ): ResponseEntity<Void> =
-        generateSSLCertificateUseCase.execute(applicationId, generateSSLCertificateRequest.toDto())
-            .run { ResponseEntity.ok().build() }
 
     @PostMapping("/{applicationId}/domain")
     @WorkspaceOwnerVerification

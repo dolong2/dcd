@@ -1,21 +1,17 @@
 package com.dcd.server.presentation.domain.application
 
 import com.dcd.server.core.domain.application.dto.request.ExecuteCommandReqDto
-import com.dcd.server.core.domain.application.dto.request.GenerateSSLCertificateReqDto
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
 import com.dcd.server.core.domain.application.dto.response.*
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.usecase.*
-import com.dcd.server.presentation.domain.application.data.exetension.toDto
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
 import com.dcd.server.presentation.domain.application.data.request.*
-import com.dcd.server.presentation.domain.application.data.response.RunApplicationResponse
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.spyk
 import io.mockk.verify
 import org.springframework.http.HttpStatus
 
@@ -31,12 +27,11 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     val deleteApplicationUseCase = mockk<DeleteApplicationUseCase>()
     val updateApplicationUseCase = mockk<UpdateApplicationUseCase>(relaxUnitFun = true)
     val getAvailableVersionUseCase = mockk<GetAvailableVersionUseCase>()
-    val generateSSLCertificateUseCase = mockk<GenerateSSLCertificateUseCase>(relaxUnitFun = true)
     val setApplicationDomainUseCase = mockk<SetApplicationDomainUseCase>(relaxUnitFun = true)
     val getApplicationLogUseCase = mockk<GetApplicationLogUseCase>()
     val deployApplicationUseCase = mockk<DeployApplicationUseCase>(relaxUnitFun = true)
     val executeCommandUseCase = mockk<ExecuteCommandUseCase>(relaxUnitFun = true)
-    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springRunApplicationUseCase, getAllApplicationUseCase, getOneApplicationUseCase, addApplicationEnvUseCase, deleteApplicationEnvUseCase, updateApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase, getAvailableVersionUseCase, generateSSLCertificateUseCase, getApplicationLogUseCase, deployApplicationUseCase, executeCommandUseCase, setApplicationDomainUseCase)
+    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springRunApplicationUseCase, getAllApplicationUseCase, getOneApplicationUseCase, addApplicationEnvUseCase, deleteApplicationEnvUseCase, updateApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase, getAvailableVersionUseCase, getApplicationLogUseCase, deployApplicationUseCase, executeCommandUseCase, setApplicationDomainUseCase)
 
     val testWorkspaceId = "testWorkspaceId"
 
@@ -214,22 +209,6 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             val result = applicationWebAdapter.getAvailableVersion(testWorkspaceId, applicationType)
             then("result의 바디는 availableVersionResDto랑 같아야함") {
                 result.body?.version shouldBe availableVersionResDto.version
-            }
-            then("result는 200 상태코드를 가져야함") {
-                result.statusCode shouldBe HttpStatus.OK
-            }
-        }
-    }
-
-    given("애플리케이션 id와 GenerateSSLCertificateRequest가 주어지고") {
-        val testId ="testId"
-        val request = GenerateSSLCertificateRequest("test.domain.com")
-
-        `when`("generateSSLCertificate 메서드를 실행할때") {
-            val result = applicationWebAdapter.generateSSLCertificate(testWorkspaceId, testId, request)
-
-            then("GenerateSSLCertificateUseCase를 실행해야함") {
-                verify { generateSSLCertificateUseCase.execute(testId, any() as GenerateSSLCertificateReqDto) }
             }
             then("result는 200 상태코드를 가져야함") {
                 result.statusCode shouldBe HttpStatus.OK

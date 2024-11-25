@@ -30,11 +30,6 @@ fun UpdateApplicationRequest.toDto(): UpdateApplicationReqDto =
         port = this.port
     )
 
-fun GenerateSSLCertificateRequest.toDto(): GenerateSSLCertificateReqDto =
-    GenerateSSLCertificateReqDto(
-        domain = this.domain
-    )
-
 fun UpdateApplicationEnvRequest.toDto(): UpdateApplicationEnvReqDto =
     UpdateApplicationEnvReqDto(
         newValue = this.newValue
