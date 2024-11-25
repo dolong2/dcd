@@ -44,3 +44,8 @@ fun ExecuteCommandRequest.toDto(): ExecuteCommandReqDto =
     ExecuteCommandReqDto(
         command = this.command
     )
+
+fun SetDomainRequest.toDto(): SetDomainReqDto =
+    SetDomainReqDto(
+        domain = this.domain
+    )
