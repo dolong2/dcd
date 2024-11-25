@@ -1,5 +1,5 @@
 package com.dcd.server.presentation.domain.application.data.request
 
-data class GenerateSSLCertificateRequest(
+data class SetDomainRequest(
     val domain: String
 )

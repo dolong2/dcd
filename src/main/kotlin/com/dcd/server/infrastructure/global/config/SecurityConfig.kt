@@ -62,7 +62,7 @@ class SecurityConfig(
                 it.requestMatchers(HttpMethod.DELETE, "/{workspaceId}/application/{id}").authenticated()
                 it.requestMatchers(HttpMethod.PUT, "/{workspaceId}/application/{id}").authenticated()
                 it.requestMatchers(HttpMethod.GET, "/{workspaceId}/application/{id}/logs").authenticated()
-                it.requestMatchers(HttpMethod.POST, "/{workspaceId}/application/{id}/certificate").authenticated()
+                it.requestMatchers(HttpMethod.POST, "/{workspaceId}/application/{id}/domain").authenticated()
                 it.requestMatchers(HttpMethod.POST, "/{workspaceId}/application/{id}/env").authenticated()
                 it.requestMatchers(HttpMethod.POST, "/{workspaceId}/application/env").authenticated()
                 it.requestMatchers(HttpMethod.DELETE, "/{workspaceId}/application/{id}/env").authenticated()
