@@ -5,6 +5,7 @@ import com.dcd.server.core.domain.application.dto.request.SetDomainReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.exception.InvalidDomainFormatException
 import com.dcd.server.core.domain.application.service.GenerateHttpConfigService
+import com.dcd.server.core.domain.application.service.RebootNginxService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
@@ -13,7 +14,8 @@ import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameExcep
 class SetApplicationDomainUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val getCurrentUserService: GetCurrentUserService,
-    private val generateHttpConfigService: GenerateHttpConfigService
+    private val generateHttpConfigService: GenerateHttpConfigService,
+    private val rebootNginxService: RebootNginxService
 ) {
     fun execute(applicationId: String, setDomainReqDto: SetDomainReqDto) {
         val domain = setDomainReqDto.domain
@@ -29,5 +31,6 @@ class SetApplicationDomainUseCase(
             throw WorkspaceOwnerNotSameException()
 
         generateHttpConfigService.generateWebServerConfig(application, domain)
+        rebootNginxService.rebootNginx()
     }
 }
