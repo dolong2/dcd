@@ -9,6 +9,7 @@ services:
   db:
     container_name: dcd-db
     image: mariadb
+    platform: linux/amd64
     env_file: dcd-db.env
     ports:
       - 3307:3306
@@ -16,6 +17,7 @@ services:
     container_name: dcd-redis
     image: redis
     env_file: dcd-redis.env
+    platform: linux/amd64
     environment:
       - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
     ports:
