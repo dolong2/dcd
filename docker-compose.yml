@@ -1,0 +1,23 @@
+version: "3.8"
+
+networks:
+  default:
+    external:
+      name: dcd
+
+services:
+  db:
+    container_name: dcd-db
+    image: mariadb
+    env_file: dcd-db.env
+    ports:
+      - 3307:3306
+  redis:
+    container_name: dcd-redis
+    image: redis
+    env_file: dcd-redis.env
+    environment:
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    ports:
+      - 6378:6379
+    command: ["redis-server", "--requirepass", "$$REDIS_PASSWORD"]
