@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  db:
+    container_name: dcd-db
+    image: mariadb
+    env_file: dcd-db.env
+    ports:
+      - 3307:3306
