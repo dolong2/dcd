@@ -1,5 +1,10 @@
 version: "3.8"
 
+networks:
+  default:
+    external:
+      name: dcd
+
 services:
   db:
     container_name: dcd-db
