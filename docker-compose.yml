@@ -8,7 +8,8 @@ networks:
 services:
   db:
     container_name: dcd-db
-    image: linuxserver/mariadb:arm32v7-latest
+    image: yobasystems/alpine-mariadb:latest
+    platform: "linux/arm"
     env_file: dcd-db.env
     ports:
       - 3307:3306
