@@ -7,7 +7,6 @@ networks:
 
 services:
   db:
-    platform: linux/arm/v7
     container_name: dcd-db
     image: linuxserver/mariadb:arm32v7-latest
     env_file: dcd-db.env
