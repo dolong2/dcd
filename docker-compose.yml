@@ -15,7 +15,7 @@ services:
       - 3307:3306
   redis:
     container_name: dcd-redis
-    image: redis
+    image: redis:7.4.1-alpine
     env_file: dcd-redis.env
     platform: linux/arm64
     environment:
