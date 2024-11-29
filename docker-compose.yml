@@ -7,12 +7,14 @@ networks:
 
 services:
   db:
+    platform: linux/arm/v7
     container_name: dcd-db
     image: mariadb:11.7-rc
     env_file: dcd-db.env
     ports:
       - 3307:3306
   redis:
+    platform: linux/arm/v7
     container_name: dcd-redis
     image: redis:7.4.1-alpine
     env_file: dcd-redis.env
