@@ -24,6 +24,12 @@ class CreateContainerServiceImpl(
                 .also {exitValue ->
                     checkExitValuePort.checkApplicationExitValue(exitValue, application, this)
                 }
+
+            val dcdNetworkConnectCmd = "docker network connect dcd ${application.name.lowercase()}"
+            commandPort.executeShellCommand(dcdNetworkConnectCmd)
+                .also {exitValue ->
+                    checkExitValuePort.checkApplicationExitValue(exitValue, application, this)
+                }
         }
     }
 }
