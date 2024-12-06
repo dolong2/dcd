@@ -48,4 +48,7 @@ class ApplicationPersistenceAdapter(
     override fun findAllByStatus(status: ApplicationStatus): List<Application> =
         applicationRepository.findAllByStatus(status)
             .map { it.toDomain() }
+
+    override fun existsByName(name: String): Boolean =
+        applicationRepository.existsByName(name)
 }
