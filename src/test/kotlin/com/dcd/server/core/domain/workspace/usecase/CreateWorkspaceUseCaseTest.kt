@@ -7,6 +7,7 @@ import com.dcd.server.core.domain.workspace.dto.request.CreateWorkspaceReqDto
 import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.core.domain.workspace.service.CreateNetworkService
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
+import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
@@ -15,10 +16,11 @@ import util.user.UserGenerator
 
 class CreateWorkspaceUseCaseTest : BehaviorSpec({
     val commandWorkspacePort = mockk<CommandWorkspacePort>(relaxed = true)
+    val queryWorkspacePort = mockk<QueryWorkspacePort>()
     val getCurrentUserService = mockk<GetCurrentUserService>(relaxed = true)
     val createNetworkService = mockk<CreateNetworkService>(relaxed = true)
     val createWorkspaceUseCase =
-        CreateWorkspaceUseCase(commandWorkspacePort, getCurrentUserService, createNetworkService)
+        CreateWorkspaceUseCase(commandWorkspacePort, queryWorkspacePort, getCurrentUserService, createNetworkService)
 
     given("request가 주어지고") {
         val createWorkspaceReqDto = CreateWorkspaceReqDto(
@@ -28,6 +30,7 @@ class CreateWorkspaceUseCaseTest : BehaviorSpec({
         `when`("useCase를 실행할때") {
             val user = UserGenerator.generateUser()
             every { getCurrentUserService.getCurrentUser() } returns user
+            every { queryWorkspacePort.existsByTitle(createWorkspaceReqDto.title) } returns false
             createWorkspaceUseCase.execute(createWorkspaceReqDto)
             then("워크스페이스를 저장하고 네트워크를 생성해야함") {
                 verify { getCurrentUserService.getCurrentUser() }
