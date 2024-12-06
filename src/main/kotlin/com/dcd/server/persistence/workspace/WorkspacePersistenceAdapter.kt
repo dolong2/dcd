@@ -28,6 +28,9 @@ class WorkspacePersistenceAdapter(
         return workspaceRepository.findAllByOwner(user.toEntity()).map { it.toDomain() }
     }
 
+    override fun existsByTitle(title: String): Boolean =
+        workspaceRepository.existsByTitle(title)
+
     override fun save(workspace: Workspace) {
         workspaceRepository.save(workspace.toEntity())
     }
