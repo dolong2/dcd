@@ -4,9 +4,11 @@ import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.application.dto.extenstion.toEntity
 import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDto
 import com.dcd.server.core.domain.application.dto.response.CreateApplicationResDto
+import com.dcd.server.core.domain.application.exception.AlreadyExistsApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
+import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import kotlinx.coroutines.CoroutineScope
@@ -16,6 +18,7 @@ import kotlinx.coroutines.launch
 @UseCase
 class CreateApplicationUseCase(
     private val commandApplicationPort: CommandApplicationPort,
+    private val queryApplicationPort: QueryApplicationPort,
     private val queryWorkspacePort: QueryWorkspacePort,
     private val cloneApplicationByUrlService: CloneApplicationByUrlService,
     private val modifyGradleService: ModifyGradleService,
@@ -30,6 +33,9 @@ class CreateApplicationUseCase(
             ?: throw WorkspaceNotFoundException()
 
         val externalPort = getExternalPortService.getExternalPort(createApplicationReqDto.port)
+
+        if (queryApplicationPort.existsByName(createApplicationReqDto.name))
+            throw AlreadyExistsApplicationException()
 
         val application = createApplicationReqDto.toEntity(workspace, externalPort)
         commandApplicationPort.save(application)
