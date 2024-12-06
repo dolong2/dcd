@@ -7,5 +7,5 @@ interface QueryWorkspacePort {
     fun findById(id: String): Workspace?
     fun findAll(): List<Workspace>
     fun findByUser(user: User): List<Workspace>
-    fun existsByTitle(name: String): Boolean
+    fun existsByTitle(title: String): Boolean
 }
