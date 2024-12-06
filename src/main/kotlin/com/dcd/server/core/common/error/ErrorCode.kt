@@ -17,7 +17,8 @@ enum class ErrorCode(
     INVALID_CMD("올바르지 않은 커맨드 형식", 400),
     INVALID_DOMAIN_FORMAT("도매인 포맷이 올바르지 않음", 400),
     FAILURE_HTTP_CONFIG("Http 설정 생성에 실패함", 400),
-    ALREADY_EXISTS_APPLICATION("이미 존재하는 이름의 애플리케이션임", 400),
+    ALREADY_EXISTS_APPLICATION("이미 존재하는 이름의 애플리케이션", 400),
+    ALREADY_EXISTS_WORKSPACE("이미 존재하는 워크스페이스", 400),
 
     UNAUTHORIZED("권한이 없음", 401),
     EXPIRED_TOKEN("토큰이 만료됨", 401),
