@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
+import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.auth.exception.UserNotFoundException
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.User
@@ -25,6 +26,7 @@ import java.util.*
 
 class CreateApplicationUseCaseTest : BehaviorSpec({
     val commandApplicationPort = mockk<CommandApplicationPort>()
+    val queryApplicationPort = mockk<QueryApplicationPort>()
     val queryUserPort = mockk<QueryUserPort>()
     val securityService = mockk<SecurityService>()
     val queryWorkspacePort = mockk<QueryWorkspacePort>()
@@ -37,6 +39,7 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
     val deleteApplicationDirectoryService = mockk<DeleteApplicationDirectoryService>(relaxUnitFun = true)
     val createApplicationUseCase = CreateApplicationUseCase(
         commandApplicationPort,
+        queryApplicationPort,
         queryWorkspacePort,
         cloneApplicationByUrlService,
         modifyGradleService,
@@ -63,6 +66,7 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
         val id = user.id
         `when`("usecase를 실행하면") {
             every { securityService.getCurrentUserId() } returns id
+            every { queryApplicationPort.existsByName(request.name) } returns false
             every { queryUserPort.findById(id) } returns user
             every { commandApplicationPort.save(any()) } answers { callOriginal() }
             every { queryWorkspacePort.findById(workspace.id) } returns workspace
