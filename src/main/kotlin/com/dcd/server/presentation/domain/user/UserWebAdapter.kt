@@ -5,6 +5,7 @@ import com.dcd.server.core.domain.user.usecase.ChangePasswordUseCase
 import com.dcd.server.core.domain.user.usecase.ChangeUserStatusUseCase
 import com.dcd.server.core.domain.user.usecase.GetUserByStatusUseCase
 import com.dcd.server.core.domain.user.usecase.GetUserProfileUseCase
+import com.dcd.server.presentation.common.annotation.WebAdapter
 import com.dcd.server.presentation.domain.user.data.exetension.toDto
 import com.dcd.server.presentation.domain.user.data.exetension.toResponse
 import com.dcd.server.presentation.domain.user.data.request.PasswordChangeRequest
@@ -19,8 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-@RestController
-@RequestMapping("/user")
+@WebAdapter("/user")
 class UserWebAdapter(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val changePasswordUseCase: ChangePasswordUseCase,
