@@ -1,6 +1,7 @@
 package com.dcd.server.presentation.domain.auth
 
 import com.dcd.server.core.domain.auth.usecase.*
+import com.dcd.server.presentation.common.annotation.WebAdapter
 import com.dcd.server.presentation.domain.auth.data.exetension.toDto
 import com.dcd.server.presentation.domain.auth.data.exetension.toReissueResponse
 import com.dcd.server.presentation.domain.auth.data.exetension.toResponse
@@ -18,8 +19,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-@RestController
-@RequestMapping("/auth")
+@WebAdapter("/auth")
 class AuthWebAdapter(
     private val authMailSendUseCase: AuthMailSendUseCase,
     private val signUpUseCase: SignUpUseCase,

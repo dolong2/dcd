@@ -1,6 +1,7 @@
 package com.dcd.server.presentation.domain.workspace
 
 import com.dcd.server.core.domain.workspace.usecase.*
+import com.dcd.server.presentation.common.annotation.WebAdapter
 import com.dcd.server.presentation.domain.workspace.data.exetension.toDto
 import com.dcd.server.presentation.domain.workspace.data.exetension.toResponse
 import com.dcd.server.presentation.domain.workspace.data.request.AddGlobalEnvRequest
@@ -14,8 +15,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-@RestController
-@RequestMapping("/workspace")
+@WebAdapter("/workspace")
 class WorkspaceWebAdapter(
     private val createWorkspaceUseCase: CreateWorkspaceUseCase,
     private val getAllWorkspaceUseCase: GetAllWorkspaceUseCase,
