@@ -1,4 +1,4 @@
-package com.dcd.server.presentation.domain.application
+package com.dcd.server.infrastructure.global.socket
 
 import com.dcd.server.core.common.error.BasicException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
