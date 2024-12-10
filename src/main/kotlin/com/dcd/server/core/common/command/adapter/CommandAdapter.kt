@@ -16,7 +16,7 @@ class CommandAdapter : CommandPort {
         val p = Runtime.getRuntime().exec(cmd)
         val br = BufferedReader(InputStreamReader(p.inputStream))
         br.readLines().forEach {
-            log.info("$it")
+            log.info(it)
         }
         p.waitFor()
         val exitValue = p.exitValue()
@@ -32,6 +32,7 @@ class CommandAdapter : CommandPort {
             val result = br.readLines()
             p.waitFor()
             p.destroy()
+            log.info(result.joinToString("\n"))
             return result
         } catch (ex: IOException) {
             return emptyList()
