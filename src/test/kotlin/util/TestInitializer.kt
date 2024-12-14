@@ -40,8 +40,8 @@ class TestInitializer(
     }
 
     val afterTest: AfterEach = {
-        userRepository.deleteAll()
-        workspaceRepository.deleteAll()
         applicationRepository.deleteAll()
+        workspaceRepository.deleteAll()
+        userRepository.deleteAll()
     }
 }
