@@ -37,7 +37,7 @@ jobs:
 
     - name: create test env file
       run: |
-        cat << EOF > /src/main/resources/application-test.yml
+        cat << EOF > ./src/main/resources/application-test.yml
         ${{secrets.TEST_YML}}
         EOF
 
