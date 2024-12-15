@@ -37,16 +37,9 @@ jobs:
 
     - name: create test env file
       run: |
-        cat << EOF > test.env
-        ${{secrets.TEST_ENV}}
+        cat << EOF > /src/main/resources/application-test.yml
+        ${{secrets.TEST_YML}}
         EOF
 
-    - name: apply test env
-      run: |
-        set -a
-        source test.env
-        set +a
-      shell: bash
-
     - name: Build with Gradle
-      run: ./gradlew clean build -Dspring.profiles.active=test
+      run: ./gradlew clean build
