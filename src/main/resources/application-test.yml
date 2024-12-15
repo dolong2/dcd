@@ -13,7 +13,6 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
-      password: ${REDIS_PASSWORD}
 jwt:
   accessSecret: ${JWT_ACCESS_SECRET}
   refreshSecret: ${JWT_REFRESH_SECRET}
@@ -21,4 +20,4 @@ jwt:
     accessTime: ${JWT_ACCESS_TIME}
     refreshTime: ${JWT_REFRESH_TIME}
 server:
-  port: 8080
+  port: 8082
