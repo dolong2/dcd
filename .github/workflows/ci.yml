@@ -9,6 +9,12 @@ jobs:
   build-test:
     name: Build and Test
     runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6378:6379
     
     steps:
     - name: Checkout code
@@ -28,6 +34,12 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
         enableCrossOsArchive: true
+
+    - name: create test env file
+      run: |
+        cat << EOF > ./src/main/resources/application-test.yml
+        ${{secrets.TEST_YML}}
+        EOF
 
     - name: Build with Gradle
       run: ./gradlew clean build
