@@ -41,10 +41,10 @@ jobs:
         ${{secrets.TEST_ENV}}
         EOF
 
-    - name: apply test
+    - name: apply test env
       run: |
         set -a
-        source .env
+        source test.env
         set +a
       shell: bash
 
