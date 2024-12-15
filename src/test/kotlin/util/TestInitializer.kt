@@ -9,6 +9,7 @@ import com.dcd.server.persistence.workspace.adapter.toEntity
 import com.dcd.server.persistence.workspace.repository.WorkspaceRepository
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.ActiveProfiles
 import util.application.ApplicationGenerator
 import util.user.UserGenerator
@@ -20,11 +21,12 @@ import util.workspace.WorkspaceGenerator
 class TestInitializer(
     userRepository: UserRepository,
     workspaceRepository: WorkspaceRepository,
-    applicationRepository: ApplicationRepository
+    applicationRepository: ApplicationRepository,
+    passwordEncoder: PasswordEncoder
 ) {
     init {
-        val applicationOwner = UserGenerator.generateUser(email = "ownerEmail", name = "applicationOwner")
-        val testUser = UserGenerator.generateUser()
+        val applicationOwner = UserGenerator.generateUser(id = "user1", email = "ownerEmail", name = "applicationOwner", password = passwordEncoder.encode("testPassword"))
+        val testUser = UserGenerator.generateUser(id = "user2", password = passwordEncoder.encode("testPassword"))
 
         val workspace = WorkspaceGenerator.generateWorkspace(user = applicationOwner)
         val application = ApplicationGenerator.generateApplication(workspace = workspace)
