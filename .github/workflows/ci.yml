@@ -35,5 +35,18 @@ jobs:
           ${{ runner.os }}-gradle-
         enableCrossOsArchive: true
 
+    - name: create test env file
+      run: |
+        cat << EOF > test.env
+        ${{secrets.TEST_ENV}}
+        EOF
+
+    - name: apply test
+      run: |
+        set -a
+        source .env
+        set +a
+      shell: bash
+
     - name: Build with Gradle
       run: ./gradlew clean build
