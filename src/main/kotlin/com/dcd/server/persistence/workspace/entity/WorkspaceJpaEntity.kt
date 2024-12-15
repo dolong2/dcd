@@ -5,14 +5,14 @@ import jakarta.persistence.*
 import java.util.UUID
 
 @Entity
-@Table(name = "workspace")
+@Table(name = "workspace_entity")
 class WorkspaceJpaEntity(
     @Id
     val id: String = UUID.randomUUID().toString(),
     val title: String,
     val description: String,
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "global_env_table",
+    @CollectionTable(name = "global_env_entity",
         joinColumns = [JoinColumn(name = "workspace_id", referencedColumnName = "id")])
     @MapKeyColumn(name = "env_key")
     @Column(name = "env_value")

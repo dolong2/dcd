@@ -8,7 +8,7 @@ import jakarta.persistence.*
 
 
 @Entity
-@Table(name = "application")
+@Table(name = "application_entity")
 class ApplicationJpaEntity(
     @Id
     val id: String,
@@ -18,7 +18,7 @@ class ApplicationJpaEntity(
     val applicationType: ApplicationType,
     val githubUrl: String?,
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "application_env_table",
+    @CollectionTable(name = "application_env_entity",
         joinColumns = [JoinColumn(name = "application_id", referencedColumnName = "id")])
     @MapKeyColumn(name = "env_key")
     @Column(name = "env_value")
@@ -32,7 +32,7 @@ class ApplicationJpaEntity(
     @Enumerated(EnumType.STRING)
     val status: ApplicationStatus,
     @ElementCollection
-    @CollectionTable(name = "application_labels", joinColumns = [JoinColumn(name = "application_id")])
+    @CollectionTable(name = "application_label_entity", joinColumns = [JoinColumn(name = "application_id")])
     @Column(name = "label")
     val labels: List<String>
 )

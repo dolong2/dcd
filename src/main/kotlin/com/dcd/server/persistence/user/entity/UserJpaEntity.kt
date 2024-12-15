@@ -6,7 +6,7 @@ import jakarta.persistence.*
 import java.util.*
 
 @Entity
-@Table(name = "user")
+@Table(name = "user_entity")
 class UserJpaEntity(
     @Id
     val id: String = UUID.randomUUID().toString(),
@@ -15,7 +15,7 @@ class UserJpaEntity(
     val name: String,
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "Role", joinColumns = [JoinColumn(name = "user_id")])
+    @CollectionTable(name = "role_entity", joinColumns = [JoinColumn(name = "user_id")])
     val roles: MutableList<Role>,
     @Enumerated(EnumType.STRING)
     val status: Status,
