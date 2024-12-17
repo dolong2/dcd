@@ -21,10 +21,19 @@ import util.TestInitializer
 @SpringBootTest(classes = [ServerApplication::class])
 class SignOutUseCaseTest(
     private val signOutUseCase: SignOutUseCase,
+    @MockkBean
+    private val securityService: SecurityService,
+    private val commandRefreshTokenPort: CommandRefreshTokenPort,
     private val queryRefreshTokenPort: QueryRefreshTokenPort
 ) : BehaviorSpec({
 
     val targetUserId = "user1"
+
+    beforeContainer {
+        every { securityService.getCurrentUserId() } returns targetUserId
+        val refreshToken = RefreshToken(userId = targetUserId, token = "testToken", refreshTTL = 10L)
+        commandRefreshTokenPort.save(refreshToken)
+    }
 
     given("targetUserId가 주어지고") {
         `when`("useCase를 실행할때") {
