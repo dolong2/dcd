@@ -35,6 +35,10 @@ class SignOutUseCaseTest(
         commandRefreshTokenPort.save(refreshToken)
     }
 
+    afterContainer {
+        commandRefreshTokenPort.delete(queryRefreshTokenPort.findByUserId(targetUserId))
+    }
+
     given("targetUserId가 주어지고") {
         `when`("useCase를 실행할때") {
             signOutUseCase.execute()
