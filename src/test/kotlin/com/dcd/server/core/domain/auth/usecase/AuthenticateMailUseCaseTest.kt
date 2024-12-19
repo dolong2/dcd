@@ -1,26 +1,55 @@
 package com.dcd.server.core.domain.auth.usecase
 
+import com.dcd.server.ServerApplication
 import com.dcd.server.core.domain.auth.dto.request.CertificateMailReqDto
+import com.dcd.server.core.domain.auth.exception.ExpiredCodeException
+import com.dcd.server.core.domain.auth.exception.InvalidAuthCodeException
+import com.dcd.server.core.domain.auth.exception.NotFoundAuthCodeException
+import com.dcd.server.core.domain.auth.model.EmailAuth
 import com.dcd.server.core.domain.auth.service.VerifyEmailAuthService
+import com.dcd.server.core.domain.auth.spi.CommandEmailAuthPort
+import com.dcd.server.core.domain.auth.spi.QueryEmailAuthPort
+import com.ninjasquad.springmockk.SpykBean
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 
-class AuthenticateMailUseCaseTest : BehaviorSpec({
-    val verifyEmailAuthService = mockk<VerifyEmailAuthService>()
-    val useCase = AuthenticateMailUseCase(verifyEmailAuthService)
+@ActiveProfiles("test")
+@SpringBootTest(classes = [ServerApplication::class])
+class AuthenticateMailUseCaseTest(
+    private val authenticateMailUseCase: AuthenticateMailUseCase,
+    private val queryEmailAuthPort: QueryEmailAuthPort,
+    private val commandEmailAuthPort: CommandEmailAuthPort
+) : BehaviorSpec({
+    val targetEmail = "testEmail"
+    val targetCode = "testCode"
 
-    given("CertificateMailRequestDto가 주어지고") {
-        val testEmail = "testEmail"
-        val testCode = "testCode"
-        val request = CertificateMailReqDto(testEmail, testCode)
+    beforeContainer {
+        val emailAuth = EmailAuth(email = targetEmail, code = targetCode)
+        commandEmailAuthPort.save(emailAuth)
+    }
+
+    afterContainer {
+        commandEmailAuthPort.deleteByCode(targetCode)
+    }
+
+    given("이메일, 발급받은 코드가 주어지고") {
+        val request = CertificateMailReqDto(targetEmail, targetCode)
 
         `when`("실행할때") {
-            every { verifyEmailAuthService.verifyCode(request.email, request.code) } returns Unit
-            useCase.execute(request)
-            then("verifyEmailAuthService의 verifyCode가 실행되어야함") {
-                verify { verifyEmailAuthService.verifyCode(testEmail, testCode) }
+            authenticateMailUseCase.execute(request)
+
+            then("이메일 인증 엔티티의 인증 상태가 true로 변경되어야함") {
+                val expectedEmailAuth = queryEmailAuthPort.findByCode(targetCode)
+                expectedEmailAuth shouldNotBe  null
+                expectedEmailAuth?.certificate shouldBe true
+                expectedEmailAuth?.email shouldBe targetEmail
             }
         }
     }
