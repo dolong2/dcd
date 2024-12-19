@@ -14,11 +14,11 @@ class VerifyEmailAuthServiceImpl(
     private val commandEmailAuthPort: CommandEmailAuthPort
 ) : VerifyEmailAuthService {
     override fun verifyCode(email: String, code: String) {
-        if (!queryEmailAuthPort.existsByCodeAndEmail(email, code))
+        if (!queryEmailAuthPort.existsByCodeAndEmail(email, code)) {
             if (queryEmailAuthPort.existsByEmail(email))
                 throw InvalidAuthCodeException()
-            else
-                throw NotFoundAuthCodeException()
+            throw NotFoundAuthCodeException()
+        }
         val emailAuth = (queryEmailAuthPort.findByCode(code)
             ?: throw ExpiredCodeException())
         commandEmailAuthPort.save(emailAuth.copy(certificate = true))
