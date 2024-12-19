@@ -53,4 +53,18 @@ class AuthenticateMailUseCaseTest(
             }
         }
     }
+
+    given("발급받지 않은 코드가 주어지고") {
+        val invalidCode = "invalidCode"
+        val request = CertificateMailReqDto(targetEmail, invalidCode)
+
+        `when`("실행할때") {
+
+            then("InvalidAuthCodeException이 발생해야함") {
+                shouldThrow<InvalidAuthCodeException> {
+                    authenticateMailUseCase.execute(request)
+                }
+            }
+        }
+    }
 })
