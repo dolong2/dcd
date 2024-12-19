@@ -37,7 +37,7 @@ enum class ErrorCode(
     APPLICATION_ENV_NOT_FOUND("해당 환경변수를 찾을 수 없음", 404),
     GLOBAL_ENV_NOT_FOUND("해당 환경변수를 찾을 수 없음", 404),
     WORKSPACE_NOT_FOUND("해당 워크스페이스를 찾을 수 없음", 404),
-    AUTH_CODE_NOT_FOUND("인증 코드를 찾을 수 업습니다. 코드를 다시 전송 해주세요.", 404),
+    AUTH_CODE_NOT_FOUND("인증 코드를 찾을 수 없습니다. 코드를 다시 전송 해주세요.", 404),
 
     CONFLICT("해당 요청은 서버의 상태와 충돌됩니다.", 409),
     CAN_NOT_DEPLOY_APPLICATION("애플리케이션을 배포할 수 없습니다. 애플리케이션을 정지시킨 후 실행해주세요.", 409),
