@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.auth.service
 
 import com.dcd.server.core.domain.auth.exception.ExpiredCodeException
 import com.dcd.server.core.domain.auth.exception.InvalidAuthCodeException
+import com.dcd.server.core.domain.auth.exception.NotFoundAuthCodeException
 import com.dcd.server.core.domain.auth.model.EmailAuth
 import com.dcd.server.core.domain.auth.service.impl.VerifyEmailAuthServiceImpl
 import com.dcd.server.core.domain.auth.spi.CommandEmailAuthPort
@@ -26,13 +27,13 @@ class VerifyEmailAuthServiceImplTest : BehaviorSpec({
             every { queryEmailAuthPort.existsByEmail(testEmail) } returns false
             every { queryEmailAuthPort.findByCode(testCode) } returns null
             then("코드가 만료되었다면 ExpiredEmailAuthCodeException이 throw되야함") {
-                shouldThrow<ExpiredCodeException> {
+                shouldThrow<NotFoundAuthCodeException> {
                     serviceImpl.verifyCode(testEmail, testCode)
                 }
             }
 
             every { queryEmailAuthPort.existsByEmail(testEmail) } returns true
-            then("코드가 옳바르지 않으면 InvalidAuthCodeException이 throw되야함") {
+            then("코드가 올바르지 않으면 InvalidAuthCodeException이 throw되야함") {
                 shouldThrow<InvalidAuthCodeException> {
                     serviceImpl.verifyCode(testEmail, testCode)
                 }
@@ -42,7 +43,7 @@ class VerifyEmailAuthServiceImplTest : BehaviorSpec({
             every { queryEmailAuthPort.findByCode(testCode) } returns EmailAuth(testEmail, testCode, false)
             every { commandEmailAuthPort.save(any()) } answers { callOriginal() }
             serviceImpl.verifyCode(testEmail, testCode)
-            then("코드도 옳바르면 업데이트 되야함") {
+            then("코드도 올바르면 업데이트 되야함") {
                 verify { commandEmailAuthPort.save(any()) }
             }
         }
