@@ -3,18 +3,15 @@ package com.dcd.server.core.domain.application.usecase
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.service.GetContainerLogService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
-import com.dcd.server.core.domain.user.service.GetCurrentUserService
-import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
-import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import util.application.ApplicationGenerator
-import util.user.UserGenerator
-import util.workspace.WorkspaceGenerator
+import com.dcd.server.infrastructure.test.application.ApplicationGenerator
+import com.dcd.server.infrastructure.test.user.UserGenerator
+import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
 
 class GetApplicationLogUseCaseTest : BehaviorSpec({
     val getContainerLogService = mockk<GetContainerLogService>()

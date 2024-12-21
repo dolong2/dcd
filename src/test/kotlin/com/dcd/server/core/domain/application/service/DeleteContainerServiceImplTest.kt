@@ -6,7 +6,7 @@ import com.dcd.server.core.domain.application.spi.CheckExitValuePort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.mockk
 import io.mockk.verify
-import util.application.ApplicationGenerator
+import com.dcd.server.infrastructure.test.application.ApplicationGenerator
 
 class DeleteContainerServiceImplTest : BehaviorSpec({
     val commandPort = mockk<CommandPort>(relaxed = true)

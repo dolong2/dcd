@@ -2,16 +2,13 @@ package com.dcd.server.core.domain.application.service
 
 import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
-import com.dcd.server.core.domain.application.exception.ContainerNotStoppedException
-import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.impl.StopContainerServiceImpl
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
-import util.application.ApplicationGenerator
+import com.dcd.server.infrastructure.test.application.ApplicationGenerator
 
 class StopContainerServiceImplTest : BehaviorSpec({
     val commandPort = mockk<CommandPort>(relaxed = true)

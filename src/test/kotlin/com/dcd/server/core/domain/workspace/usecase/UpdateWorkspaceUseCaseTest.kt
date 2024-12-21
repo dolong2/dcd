@@ -1,7 +1,5 @@
 package com.dcd.server.core.domain.workspace.usecase
 
-import com.dcd.server.core.domain.auth.model.Role
-import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.service.GetCurrentUserService
 import com.dcd.server.core.domain.workspace.dto.request.UpdateWorkspaceReqDto
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
@@ -15,8 +13,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import util.user.UserGenerator
-import util.workspace.WorkspaceGenerator
+import com.dcd.server.infrastructure.test.user.UserGenerator
+import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
 import java.util.*
 
 class UpdateWorkspaceUseCaseTest : BehaviorSpec({

@@ -4,11 +4,9 @@ import com.dcd.server.core.domain.auth.dto.response.TokenResDto
 import com.dcd.server.core.domain.auth.exception.ExpiredRefreshTokenException
 import com.dcd.server.core.domain.auth.exception.UserNotFoundException
 import com.dcd.server.core.domain.auth.model.RefreshToken
-import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.auth.spi.CommandRefreshTokenPort
 import com.dcd.server.core.domain.auth.spi.JwtPort
 import com.dcd.server.core.domain.auth.spi.QueryRefreshTokenPort
-import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.infrastructure.global.jwt.adapter.ParseTokenAdapter
 import com.dcd.server.infrastructure.global.jwt.exception.TokenTypeNotValidException
@@ -18,7 +16,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import util.user.UserGenerator
+import com.dcd.server.infrastructure.test.user.UserGenerator
 import java.time.LocalDateTime
 
 class ReissueTokenUseCaseTest : BehaviorSpec({

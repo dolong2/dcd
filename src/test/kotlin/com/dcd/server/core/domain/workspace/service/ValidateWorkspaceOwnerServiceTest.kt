@@ -10,8 +10,8 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
-import util.user.UserGenerator
-import util.workspace.WorkspaceGenerator
+import com.dcd.server.infrastructure.test.user.UserGenerator
+import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
 
 class ValidateWorkspaceOwnerServiceTest : BehaviorSpec({
     val getCurrentUserService = mockk<GetCurrentUserService>()

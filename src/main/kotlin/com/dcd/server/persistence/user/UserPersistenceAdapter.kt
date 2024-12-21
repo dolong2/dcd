@@ -17,6 +17,10 @@ class UserPersistenceAdapter(
         userRepository.save(user.toEntity())
     }
 
+    override fun delete(user: User) {
+        userRepository.deleteById(user.id)
+    }
+
     override fun findById(id: String): User? =
         userRepository.findByIdOrNull(id)
             ?.toDomain()

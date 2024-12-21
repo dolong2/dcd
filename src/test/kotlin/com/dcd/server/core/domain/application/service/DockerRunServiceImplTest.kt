@@ -8,7 +8,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
-import util.application.ApplicationGenerator
+import com.dcd.server.infrastructure.test.application.ApplicationGenerator
 import java.util.*
 
 class DockerRunServiceImplTest : BehaviorSpec({

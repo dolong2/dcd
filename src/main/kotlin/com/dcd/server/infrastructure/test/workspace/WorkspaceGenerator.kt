@@ -1,8 +1,8 @@
-package util.workspace
+package com.dcd.server.infrastructure.test.workspace
 
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.workspace.model.Workspace
-import util.user.UserGenerator
+import com.dcd.server.infrastructure.test.user.UserGenerator
 import java.util.*
 
 object WorkspaceGenerator {

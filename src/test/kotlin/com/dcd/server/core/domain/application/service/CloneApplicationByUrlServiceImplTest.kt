@@ -1,22 +1,15 @@
 package com.dcd.server.core.domain.application.service
 
 import com.dcd.server.core.common.command.CommandPort
-import com.dcd.server.core.domain.application.model.Application
-import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
-import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.impl.CloneApplicationByUrlServiceImpl
 import com.dcd.server.core.domain.application.spi.CheckExitValuePort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
-import com.dcd.server.core.domain.auth.model.Role
-import com.dcd.server.core.domain.user.model.User
-import com.dcd.server.core.domain.workspace.model.Workspace
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import util.application.ApplicationGenerator
-import util.user.UserGenerator
-import util.workspace.WorkspaceGenerator
+import com.dcd.server.infrastructure.test.application.ApplicationGenerator
+import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
 import java.util.*
 
 class CloneApplicationByUrlServiceImplTest : BehaviorSpec({

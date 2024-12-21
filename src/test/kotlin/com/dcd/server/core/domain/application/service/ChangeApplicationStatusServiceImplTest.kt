@@ -1,6 +1,5 @@
 package com.dcd.server.core.domain.application.service
 
-import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.impl.ChangeApplicationStatusServiceImpl
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
@@ -10,7 +9,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import util.application.ApplicationGenerator
+import com.dcd.server.infrastructure.test.application.ApplicationGenerator
 
 class ChangeApplicationStatusServiceImplTest : BehaviorSpec({
     val commandApplicationPort = mockk<CommandApplicationPort>(relaxUnitFun = true)

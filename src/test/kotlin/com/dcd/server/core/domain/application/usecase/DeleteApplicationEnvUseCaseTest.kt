@@ -3,22 +3,14 @@ package com.dcd.server.core.domain.application.usecase
 import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.exception.ApplicationEnvNotFoundException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
-import com.dcd.server.core.domain.application.model.Application
-import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
-import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
-import com.dcd.server.core.domain.auth.model.Role
-import com.dcd.server.core.domain.user.model.User
-import com.dcd.server.core.domain.workspace.model.Workspace
-import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import util.application.ApplicationGenerator
-import java.util.*
+import com.dcd.server.infrastructure.test.application.ApplicationGenerator
 
 class DeleteApplicationEnvUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
