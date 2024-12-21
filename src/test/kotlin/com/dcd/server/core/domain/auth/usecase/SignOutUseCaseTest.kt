@@ -9,15 +9,10 @@ import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
-import util.TestInitializer
 
 @ActiveProfiles("test")
-@Import(TestInitializer::class)
 @SpringBootTest(classes = [ServerApplication::class])
 class SignOutUseCaseTest(
     private val signOutUseCase: SignOutUseCase,

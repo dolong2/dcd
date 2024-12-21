@@ -12,13 +12,10 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
-import util.TestInitializer
 import java.time.LocalDateTime
 
 @ActiveProfiles("test")
-@Import(TestInitializer::class)
 @SpringBootTest(classes = [ServerApplication::class])
 class SignInUseCaseTest(
     private val signInUseCase: SignInUseCase,
