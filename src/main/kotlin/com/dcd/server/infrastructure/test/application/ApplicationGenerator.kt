@@ -1,10 +1,10 @@
-package util.application
+package com.dcd.server.infrastructure.test.application
 
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.workspace.model.Workspace
-import util.workspace.WorkspaceGenerator
+import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
 
 object ApplicationGenerator {
     fun generateApplication(

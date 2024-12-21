@@ -12,7 +12,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import util.application.ApplicationGenerator
+import com.dcd.server.infrastructure.test.application.ApplicationGenerator
 
 class UpdateApplicationEnvUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()

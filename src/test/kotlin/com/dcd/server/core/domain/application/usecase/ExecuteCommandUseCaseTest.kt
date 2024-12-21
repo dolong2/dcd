@@ -18,9 +18,9 @@ import io.mockk.spyk
 import io.mockk.verify
 import org.springframework.security.core.Authentication
 import org.springframework.web.socket.WebSocketSession
-import util.application.ApplicationGenerator
-import util.user.UserGenerator
-import util.workspace.WorkspaceGenerator
+import com.dcd.server.infrastructure.test.application.ApplicationGenerator
+import com.dcd.server.infrastructure.test.user.UserGenerator
+import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
 
 class ExecuteCommandUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>(relaxUnitFun = true)

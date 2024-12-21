@@ -2,8 +2,6 @@ package com.dcd.server.core.domain.auth.usecase
 
 import com.dcd.server.core.domain.auth.dto.request.NonAuthChangePasswordReqDto
 import com.dcd.server.core.domain.auth.exception.UserNotFoundException
-import com.dcd.server.core.domain.auth.model.Role
-import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.spi.CommandUserPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import io.kotest.assertions.throwables.shouldThrow
@@ -12,7 +10,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.springframework.security.crypto.password.PasswordEncoder
-import util.user.UserGenerator
+import com.dcd.server.infrastructure.test.user.UserGenerator
 
 class NonAuthChangePasswordUseCaseTest : BehaviorSpec({
     val queryUserPort = mockk<QueryUserPort>()

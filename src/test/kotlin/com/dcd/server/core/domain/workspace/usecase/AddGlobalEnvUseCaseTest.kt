@@ -13,8 +13,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import util.user.UserGenerator
-import util.workspace.WorkspaceGenerator
+import com.dcd.server.infrastructure.test.user.UserGenerator
+import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
 
 class AddGlobalEnvUseCaseTest : BehaviorSpec({
     val queryWorkspacePort = mockk<QueryWorkspacePort>(relaxUnitFun = true)

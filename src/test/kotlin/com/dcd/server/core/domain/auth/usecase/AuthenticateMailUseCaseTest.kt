@@ -2,24 +2,22 @@ package com.dcd.server.core.domain.auth.usecase
 
 import com.dcd.server.ServerApplication
 import com.dcd.server.core.domain.auth.dto.request.CertificateMailReqDto
-import com.dcd.server.core.domain.auth.exception.ExpiredCodeException
 import com.dcd.server.core.domain.auth.exception.InvalidAuthCodeException
 import com.dcd.server.core.domain.auth.exception.NotFoundAuthCodeException
 import com.dcd.server.core.domain.auth.model.EmailAuth
-import com.dcd.server.core.domain.auth.service.VerifyEmailAuthService
 import com.dcd.server.core.domain.auth.spi.CommandEmailAuthPort
 import com.dcd.server.core.domain.auth.spi.QueryEmailAuthPort
-import com.ninjasquad.springmockk.SpykBean
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.extensions.spring.SpringTestExtension
+import io.kotest.extensions.spring.SpringTestLifecycleMode
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
+@Transactional
 @ActiveProfiles("test")
 @SpringBootTest(classes = [ServerApplication::class])
 class AuthenticateMailUseCaseTest(
@@ -27,15 +25,16 @@ class AuthenticateMailUseCaseTest(
     private val queryEmailAuthPort: QueryEmailAuthPort,
     private val commandEmailAuthPort: CommandEmailAuthPort
 ) : BehaviorSpec({
+    extensions(listOf(SpringTestExtension(SpringTestLifecycleMode.Root)))
     val targetEmail = "testEmail"
     val targetCode = "testCode"
 
-    beforeContainer {
+    beforeSpec {
         val emailAuth = EmailAuth(email = targetEmail, code = targetCode)
         commandEmailAuthPort.save(emailAuth)
     }
 
-    afterContainer {
+    afterSpec {
         commandEmailAuthPort.deleteByCode(targetCode)
     }
 
@@ -52,6 +51,7 @@ class AuthenticateMailUseCaseTest(
                 expectedEmailAuth?.email shouldBe targetEmail
             }
         }
+
     }
 
     given("발급받지 않은 코드가 주어지고") {

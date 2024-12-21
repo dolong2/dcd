@@ -7,22 +7,15 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
-import com.dcd.server.core.domain.auth.exception.UserNotFoundException
-import com.dcd.server.core.domain.auth.model.Role
-import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.spi.QueryUserPort
-import com.dcd.server.core.domain.workspace.model.Workspace
-import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import util.user.UserGenerator
-import util.workspace.WorkspaceGenerator
-import java.util.*
+import com.dcd.server.infrastructure.test.user.UserGenerator
+import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
 
 class CreateApplicationUseCaseTest : BehaviorSpec({
     val commandApplicationPort = mockk<CommandApplicationPort>()

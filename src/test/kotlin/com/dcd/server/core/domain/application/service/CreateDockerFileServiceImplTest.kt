@@ -12,7 +12,7 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
-import util.application.ApplicationGenerator
+import com.dcd.server.infrastructure.test.application.ApplicationGenerator
 import java.io.File
 
 class CreateDockerFileServiceImplTest : BehaviorSpec({
