@@ -2,15 +2,27 @@ package com.dcd.server.core.domain.auth.usecase
 
 import com.dcd.server.core.domain.auth.dto.request.NonAuthChangePasswordReqDto
 import com.dcd.server.core.domain.auth.exception.UserNotFoundException
-import com.dcd.server.core.domain.user.spi.CommandUserPort
+import com.dcd.server.core.domain.auth.model.EmailAuth
+import com.dcd.server.core.domain.auth.spi.CommandEmailAuthPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
 import org.springframework.security.crypto.password.PasswordEncoder
-import com.dcd.server.infrastructure.test.user.UserGenerator
+import io.kotest.matchers.shouldNotBe
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
+
+@Transactional
+@ActiveProfiles("test")
+@SpringBootTest
+class NonAuthChangePasswordUseCaseTest(
+    private val nonAuthChangePasswordUseCase: NonAuthChangePasswordUseCase,
+    private val queryUserPort: QueryUserPort,
+    private val passwordEncoder: PasswordEncoder,
+    private val commandEmailAuthPort: CommandEmailAuthPort
+) : BehaviorSpec({
+    val targetEmail = "testEmail"
 
 class NonAuthChangePasswordUseCaseTest : BehaviorSpec({
     val queryUserPort = mockk<QueryUserPort>()
