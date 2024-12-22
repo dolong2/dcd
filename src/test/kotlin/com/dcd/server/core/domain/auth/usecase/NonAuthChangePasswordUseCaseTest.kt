@@ -24,11 +24,14 @@ class NonAuthChangePasswordUseCaseTest(
 ) : BehaviorSpec({
     val targetEmail = "testEmail"
 
-class NonAuthChangePasswordUseCaseTest : BehaviorSpec({
-    val queryUserPort = mockk<QueryUserPort>()
-    val commandUserPort = mockk<CommandUserPort>(relaxUnitFun = true)
-    val passwordEncoder = mockk<PasswordEncoder>()
-    val nonAuthChangePasswordUseCase = NonAuthChangePasswordUseCase(queryUserPort, commandUserPort, passwordEncoder)
+    beforeSpec {
+        val emailAuth = EmailAuth(email = targetEmail, code = "testCode", certificate = true)
+        commandEmailAuthPort.save(emailAuth)
+    }
+
+    afterSpec {
+        commandEmailAuthPort.deleteByCode("testCode")
+    }
 
     given("유저와 NonAuthChangePasswordReqDto가 주어지고") {
         val user = UserGenerator.generateUser()
