@@ -34,22 +34,21 @@ class NonAuthChangePasswordUseCaseTest(
     }
 
     given("유저와 NonAuthChangePasswordReqDto가 주어지고") {
-        val user = UserGenerator.generateUser()
-        val nonAuthChangePasswordReqDto = NonAuthChangePasswordReqDto(email = "email", newPassword = "newPassword")
 
         `when`("유스케이스를 실행할때") {
-            every { queryUserPort.findByEmail(nonAuthChangePasswordReqDto.email) } returns user
-            every { passwordEncoder.encode(nonAuthChangePasswordReqDto.newPassword) } returns nonAuthChangePasswordReqDto.newPassword
-
+            val nonAuthChangePasswordReqDto = NonAuthChangePasswordReqDto(email = targetEmail, newPassword = "newPassword")
             nonAuthChangePasswordUseCase.execute(nonAuthChangePasswordReqDto)
 
             then("NonAuthChangePasswordReqDto의 새 패스워드를 가진 유저를 저장해야함") {
-                verify { commandUserPort.save(user.copy(password = nonAuthChangePasswordReqDto.newPassword)) }
+                val result = queryUserPort.findByEmail(targetEmail)
+                result shouldNotBe null
+                passwordEncoder.matches(nonAuthChangePasswordReqDto.newPassword, result?.password)
             }
         }
 
         `when`("해당 이메일을 가진 유저가 존재하지 않을때") {
-            every { queryUserPort.findByEmail(nonAuthChangePasswordReqDto.email) } returns null
+            val notFoundUserEmail = "notFoundUser"
+            val nonAuthChangePasswordReqDto = NonAuthChangePasswordReqDto(email = notFoundUserEmail, newPassword = "newPassword")
 
             then("UserNotFoundException이 발생해야함") {
                 shouldThrow<UserNotFoundException> {
