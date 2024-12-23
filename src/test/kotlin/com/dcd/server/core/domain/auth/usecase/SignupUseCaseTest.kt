@@ -52,6 +52,21 @@ class SignupUseCaseTest(
             }
         }
 
+        `when`("같은 유저가 존재할때") {
+            val emailAuth = EmailAuth(
+                email = testEmail,
+                certificate = true
+            )
+            commandEmailAuthPort.save(emailAuth)
+            val request = SignUpReqDto(testEmail, testPassword, testName)
+
+            then("AlreadyExistsUserException이 발생해야함") {
+                shouldThrow<AlreadyExistsUserException> {
+                    signUpUseCase.execute(request)
+                }
+            }
+        }
+
         `when`("같은 유저가 없을때 실행") {
             every { queryUserPort.existsByEmail(request.email) } returns false
             every { securityService.encodePassword(request.password) } returns "encodedPassword"
