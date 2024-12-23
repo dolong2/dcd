@@ -9,8 +9,10 @@ import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.persistence.auth.repository.EmailAuthRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 
@@ -21,7 +23,8 @@ class SignupUseCaseTest(
     private val signUpUseCase: SignUpUseCase,
     private val commandEmailAuthPort: CommandEmailAuthPort,
     private val emailAuthRepository: EmailAuthRepository,
-    private val queryUserPort: QueryUserPort
+    private val queryUserPort: QueryUserPort,
+    private val passwordEncoder: PasswordEncoder
 ) : BehaviorSpec({
 
     val targetEmail = "targetEmail"
@@ -68,12 +71,14 @@ class SignupUseCaseTest(
         }
 
         `when`("같은 유저가 없을때 실행") {
-            every { queryUserPort.existsByEmail(request.email) } returns false
-            every { securityService.encodePassword(request.password) } returns "encodedPassword"
-            every { commandUserPort.save(any()) } answers { callOriginal() }
+            val request = SignUpReqDto(targetEmail, testPassword, testName)
             signUpUseCase.execute(request)
             then("commandPort의 save메서드를 실행해야함") {
-                verify { commandUserPort.save(any()) }
+                val result = queryUserPort.findByEmail(targetEmail)
+                result shouldNotBe null
+                result?.email shouldBe targetEmail
+                result?.name shouldBe testName
+                passwordEncoder.matches(request.password, result?.password) shouldBe true
             }
         }
     }
