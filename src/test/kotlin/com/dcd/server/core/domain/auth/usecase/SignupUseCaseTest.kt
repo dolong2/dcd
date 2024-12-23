@@ -42,11 +42,11 @@ class SignupUseCaseTest(
         val testEmail = "testEmail"
         val testName = "testName"
         val testPassword = "testPassword"
-        val request = SignUpReqDto(testEmail, testPassword, testName)
-        `when`("이미 같은 유저가 있을때 실행") {
-            every { queryUserPort.existsByEmail(request.email) } returns true
-            then("AlreadyExistsUserException이 발생해야함") {
-                shouldThrow<AlreadyExistsUserException> {
+
+        `when`("이메일 인증을 하지 않은 유저가 실행할때") {
+            val request = SignUpReqDto(testEmail, testPassword, testName)
+            then("NotCertificateEmailException이 발생해야함") {
+                shouldThrow<NotCertificateEmailException> {
                     signUpUseCase.execute(request)
                 }
             }
