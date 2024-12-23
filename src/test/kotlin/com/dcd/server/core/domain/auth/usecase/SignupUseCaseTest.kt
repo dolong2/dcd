@@ -24,11 +24,19 @@ class SignupUseCaseTest(
     private val queryUserPort: QueryUserPort
 ) : BehaviorSpec({
 
-class SignupUseCaseTest : BehaviorSpec({
-    val queryUserPort = mockk<QueryUserPort>()
-    val commandUserPort = mockk<CommandUserPort>()
-    val securityService = mockk<SecurityService>()
-    val signUpUseCase = SignUpUseCase(securityService, commandUserPort, queryUserPort)
+    val targetEmail = "targetEmail"
+
+    beforeSpec {
+        val emailAuth = EmailAuth(
+            email = targetEmail,
+            certificate = true
+        )
+        commandEmailAuthPort.save(emailAuth)
+    }
+
+    afterSpec {
+        emailAuthRepository.deleteAll()
+    }
 
     given("signupRequest가 주어지고") {
         val testEmail = "testEmail"
