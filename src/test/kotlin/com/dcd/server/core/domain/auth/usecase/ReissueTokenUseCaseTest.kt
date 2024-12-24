@@ -6,29 +6,30 @@ import com.dcd.server.core.domain.auth.exception.UserNotFoundException
 import com.dcd.server.core.domain.auth.model.RefreshToken
 import com.dcd.server.core.domain.auth.spi.CommandRefreshTokenPort
 import com.dcd.server.core.domain.auth.spi.JwtPort
-import com.dcd.server.core.domain.auth.spi.QueryRefreshTokenPort
-import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.infrastructure.global.jwt.adapter.ParseTokenAdapter
 import com.dcd.server.infrastructure.global.jwt.exception.TokenTypeNotValidException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
+import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import com.dcd.server.infrastructure.test.user.UserGenerator
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
-class ReissueTokenUseCaseTest : BehaviorSpec({
-    val queryRefreshTokenPort = mockk<QueryRefreshTokenPort>()
-    val commandRefreshTokenPort = mockk<CommandRefreshTokenPort>()
-    val jwtPort = mockk<JwtPort>()
-    val queryUserPort = mockk<QueryUserPort>()
-    val parseTokenAdapter = mockk<ParseTokenAdapter>(relaxUnitFun = true)
-    val reissueTokenUseCase =
-        ReissueTokenUseCase(queryRefreshTokenPort, commandRefreshTokenPort, jwtPort, queryUserPort, parseTokenAdapter)
-
-    val userId = "testUserId"
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class ReissueTokenUseCaseTest(
+    private val reissueTokenUseCase: ReissueTokenUseCase,
+    @MockkBean
+    private val jwtPort: JwtPort,
+    @MockkBean
+    private val parseTokenAdapter: ParseTokenAdapter,
+    private val refreshTokenPort: CommandRefreshTokenPort
+) : BehaviorSpec({
+    val userId = "user2"
     val token = "testRefreshToken"
     val ttl = 1L
     val user = UserGenerator.generateUser()
