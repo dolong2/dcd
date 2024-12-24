@@ -31,12 +31,16 @@ class ReissueTokenUseCaseTest(
 ) : BehaviorSpec({
     val userId = "user2"
     val token = "testRefreshToken"
-    val ttl = 1L
-    val user = UserGenerator.generateUser()
-    val tokenResDto = TokenResDto("newAccessToken", LocalDateTime.of(2023, 9, 7, 8, 30), "newRefreshToken", LocalDateTime.of(2023, 9, 7, 8, 30))
+    val ttl = 10000L
 
     given("리프레시 토큰이 주어지고") {
+        val expectedAccessToken = "accessToken"
         val refreshToken = RefreshToken(userId, token, ttl)
+        val accessTokenExp = LocalDateTime.of(2023, 9, 5, 8, 3)
+        val refreshTokenExp = LocalDateTime.of(2023, 9, 5, 8, 3)
+
+        val targetTokenResDto = TokenResDto(expectedAccessToken, accessTokenExp, token, refreshTokenExp)
+
 
         `when`("아무 문제 없이 실행될때") {
             every { queryRefreshTokenPort.findByToken(token) } returns refreshToken
