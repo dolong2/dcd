@@ -74,11 +74,8 @@ class ReissueTokenUseCaseTest(
         }
 
         `when`("해당 토큰이 REFRESH 타입이 아닐때") {
-            every { queryRefreshTokenPort.findByToken(token) } returns refreshToken
-            every { queryUserPort.findById(userId) } returns user
-            every { commandRefreshTokenPort.delete(refreshToken) } returns Unit
-            every { jwtPort.generateToken(user.id) } returns tokenResDto
-            every { parseTokenAdapter.getJwtType(token) } returns "ACCESS"
+            every { parseTokenAdapter.getJwtType(token) } returns ParseTokenAdapter.JwtPrefix.ACCESS
+
             then("TokenTypeNotValidException이 발생해야함") {
                 shouldThrow<TokenTypeNotValidException> {
                     reissueTokenUseCase.execute(token)
