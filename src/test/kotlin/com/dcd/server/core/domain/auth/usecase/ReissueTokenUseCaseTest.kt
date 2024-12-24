@@ -43,18 +43,13 @@ class ReissueTokenUseCaseTest(
 
 
         `when`("아무 문제 없이 실행될때") {
-            every { queryRefreshTokenPort.findByToken(token) } returns refreshToken
-            every { queryUserPort.findById(userId) } returns user
-            every { commandRefreshTokenPort.delete(refreshToken) } returns Unit
-            every { jwtPort.generateToken(user.id) } returns tokenResDto
             every { parseTokenAdapter.getJwtType(token) } returns ParseTokenAdapter.JwtPrefix.REFRESH
+            every { jwtPort.generateToken("user2") } returns targetTokenResDto
+            refreshTokenPort.save(refreshToken)
 
             val result = reissueTokenUseCase.execute(token)
             then("jwtPort에서 생성한 dto가 반환되어야함") {
-                verify { queryRefreshTokenPort.findByToken(token) }
-                verify { queryUserPort.findById(userId) }
-                verify { commandRefreshTokenPort.delete(refreshToken) }
-                result shouldBe tokenResDto
+                result shouldBe targetTokenResDto
             }
         }
 
