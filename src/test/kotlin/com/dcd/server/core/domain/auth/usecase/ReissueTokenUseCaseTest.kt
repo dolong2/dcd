@@ -54,7 +54,6 @@ class ReissueTokenUseCaseTest(
         }
 
         `when`("토큰을 찾지 못했을때") {
-            every { queryRefreshTokenPort.findByToken(token) } returns null
             then("ExpiredRefreshTokenException이 발생해야함") {
                 shouldThrow<ExpiredRefreshTokenException> {
                     reissueTokenUseCase.execute(token)
@@ -63,11 +62,13 @@ class ReissueTokenUseCaseTest(
         }
 
         `when`("토큰에 있는 유저가 없을때") {
-            every { queryRefreshTokenPort.findByToken(token) } returns refreshToken
-            every { queryUserPort.findById(userId) } returns null
+            val notFoundToken = refreshToken.copy(userId = "notFoundUser", token = "notFoundRefreshToken", ttl)
+            refreshTokenPort.save(notFoundToken)
+            every { parseTokenAdapter.getJwtType(notFoundToken.token) } returns ParseTokenAdapter.JwtPrefix.REFRESH
+
             then("UserNotFoundException이 발생해야함") {
                 shouldThrow<UserNotFoundException> {
-                    reissueTokenUseCase.execute(token)
+                    reissueTokenUseCase.execute(notFoundToken.token)
                 }
             }
         }
