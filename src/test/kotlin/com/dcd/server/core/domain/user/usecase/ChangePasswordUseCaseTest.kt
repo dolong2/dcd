@@ -11,12 +11,16 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.springframework.security.crypto.password.PasswordEncoder
 import com.dcd.server.infrastructure.test.user.UserGenerator
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class ChangePasswordUseCaseTest : BehaviorSpec({
-    val getCurrentUserService = mockk<GetCurrentUserService>()
-    val commandUserPort = mockk<CommandUserPort>(relaxUnitFun = true)
-    val passwordEncoder = mockk<PasswordEncoder>()
-    val changePasswordUseCase = ChangePasswordUseCase(getCurrentUserService, commandUserPort, passwordEncoder)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class ChangePasswordUseCaseTest(
+    private val changePasswordUseCase: ChangePasswordUseCase
+) : BehaviorSpec({
 
     given("User, PasswordChangeReqDto가 주어지고") {
         val user = UserGenerator.generateUser()
