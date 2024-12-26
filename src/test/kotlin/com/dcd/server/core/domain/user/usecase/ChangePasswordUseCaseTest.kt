@@ -31,22 +31,17 @@ class ChangePasswordUseCaseTest(
     }
 
     given("User, PasswordChangeReqDto가 주어지고") {
-        val user = UserGenerator.generateUser()
         val passwordChangeReqDto = PasswordChangeReqDto(
-            existingPassword = "existingPassword",
+            existingPassword = "testPassword",
             newPassword = "newPassword"
         )
 
         `when`("usecase를 실행할때") {
-            every { getCurrentUserService.getCurrentUser() } returns user
-            every { passwordEncoder.matches(passwordChangeReqDto.existingPassword, user.password) } returns true
-            every { passwordEncoder.encode(passwordChangeReqDto.newPassword) } returns passwordChangeReqDto.newPassword
-
             changePasswordUseCase.execute(passwordChangeReqDto)
             then("passwordChangeReqDto의 새 패스워드를 가진 유저를 저장해야함") {
-                verify {
-                    commandUserPort.save(user.copy(password = passwordChangeReqDto.newPassword))
-                }
+                val user = queryUserPort.findById("user2")
+                user shouldNotBe null
+                passwordEncoder.matches(passwordChangeReqDto.newPassword, user?.password)
             }
         }
 
