@@ -46,8 +46,6 @@ class ChangePasswordUseCaseTest(
         }
 
         `when`("password가 일치하지 않을때") {
-            every { getCurrentUserService.getCurrentUser() } returns user
-            every { passwordEncoder.matches(passwordChangeReqDto.existingPassword, user.password) } returns false
 
             then("PasswordNotCorrectException이 발생해야함") {
                 shouldThrow<PasswordNotCorrectException> {
