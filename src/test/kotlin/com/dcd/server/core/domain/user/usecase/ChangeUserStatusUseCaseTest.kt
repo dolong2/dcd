@@ -19,16 +19,17 @@ class ChangeUserStatusUseCaseTest(
     private val queryUserPort: QueryUserPort
 ) : BehaviorSpec({
 
-        `when`("해당 유저가 존재할때") {
-            val user = UserGenerator.generateUser()
+    given("존재하는 유저의 아이디가 주어지고") {
+        val userId = "user1"
+        val status = Status.PENDING
 
-            every { queryUserPort.findById(userId) } returns user
-
+        `when`("유스케이스를 실행할때") {
             changeUserStatusUseCase.execute(userId, status)
 
-            then("user가 수정되고 저장됐는지 검사") {
-                verify { queryUserPort.findById(userId) }
-                verify { commandUserPort.save(user.copy(status = status)) }
+            then("유저의 상태는 PENDING으로 변경되어야함") {
+                val result = queryUserPort.findById(userId)
+                result shouldNotBe null
+                result?.status shouldBe status
             }
         }
 
