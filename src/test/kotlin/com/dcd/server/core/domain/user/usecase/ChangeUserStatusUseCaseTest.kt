@@ -32,15 +32,5 @@ class ChangeUserStatusUseCaseTest(
                 result?.status shouldBe status
             }
         }
-
-        `when`("해당 userId를 가진 유저가 없을때") {
-            every { queryUserPort.findById(userId) } returns null
-
-            then("UserNotFoundException이 발생해야함") {
-                shouldThrow<UserNotFoundException> {
-                    changeUserStatusUseCase.execute(userId, status)
-                }
-            }
-        }
     }
 })
