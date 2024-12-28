@@ -2,23 +2,22 @@ package com.dcd.server.core.domain.user.usecase
 
 import com.dcd.server.core.domain.auth.exception.UserNotFoundException
 import com.dcd.server.core.domain.user.model.enums.Status
-import com.dcd.server.core.domain.user.spi.CommandUserPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import com.dcd.server.infrastructure.test.user.UserGenerator
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class ChangeUserStatusUseCaseTest : BehaviorSpec({
-    val queryUserPort = mockk<QueryUserPort>()
-    val commandUserPort = mockk<CommandUserPort>(relaxUnitFun = true)
-    val changeUserStatusUseCase = ChangeUserStatusUseCase(queryUserPort, commandUserPort)
-
-    given("userId, 변경할 status가 주어지고") {
-        val userId = "testUserId"
-        val status = Status.CREATED
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class ChangeUserStatusUseCaseTest(
+    private val changeUserStatusUseCase: ChangeUserStatusUseCase,
+    private val queryUserPort: QueryUserPort
+) : BehaviorSpec({
 
         `when`("해당 유저가 존재할때") {
             val user = UserGenerator.generateUser()
