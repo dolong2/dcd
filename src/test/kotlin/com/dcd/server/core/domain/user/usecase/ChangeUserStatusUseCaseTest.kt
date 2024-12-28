@@ -33,4 +33,17 @@ class ChangeUserStatusUseCaseTest(
             }
         }
     }
+
+    given("존재하지 않는 유저의 아이디가 주어지고") {
+        val userId = "notFoundUser"
+        val status = Status.PENDING
+
+        `when`("유스케케이스를 실행할때") {
+            then("UserNotFoundException이 발생해야함") {
+                shouldThrow<UserNotFoundException> {
+                    changeUserStatusUseCase.execute(userId, status)
+                }
+            }
+        }
+    }
 })
