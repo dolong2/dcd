@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.user.usecase
 
 import com.dcd.server.core.domain.auth.exception.UserNotFoundException
 import com.dcd.server.core.domain.user.model.enums.Status
+import com.dcd.server.core.domain.user.spi.CommandUserPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -16,7 +17,8 @@ import org.springframework.transaction.annotation.Transactional
 @ActiveProfiles("test")
 class ChangeUserStatusUseCaseTest(
     private val changeUserStatusUseCase: ChangeUserStatusUseCase,
-    private val queryUserPort: QueryUserPort
+    private val queryUserPort: QueryUserPort,
+    private val commandUserPort: CommandUserPort
 ) : BehaviorSpec({
 
     given("존재하는 유저의 아이디가 주어지고") {
@@ -44,6 +46,13 @@ class ChangeUserStatusUseCaseTest(
                     changeUserStatusUseCase.execute(userId, status)
                 }
             }
+        }
+    }
+
+    afterSpec {
+        val userList = queryUserPort.findByStatus(Status.PENDING)
+        userList.forEach {
+            commandUserPort.save(it.copy(status = Status.CREATED))
         }
     }
 })
