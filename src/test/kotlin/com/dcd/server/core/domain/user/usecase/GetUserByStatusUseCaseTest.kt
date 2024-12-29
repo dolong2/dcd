@@ -20,6 +20,13 @@ class GetUserByStatusUseCaseTest(
 
     given("조회할 status가 주어지고") {
         val status = Status.CREATED
+    beforeSpec {
+        commandUserPort.save(pendingUser)
+    }
+    afterSpec {
+        commandUserPort.delete(pendingUser)
+    }
+
 
         `when`("execute 메서드를 실행할때") {
             val userList = listOf(UserGenerator.generateUser())
