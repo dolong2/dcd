@@ -1,18 +1,22 @@
 package com.dcd.server.core.domain.user.usecase
 
-import com.dcd.server.core.domain.user.dto.extension.toDto
 import com.dcd.server.core.domain.user.model.enums.Status
-import com.dcd.server.core.domain.user.spi.QueryUserPort
+import com.dcd.server.core.domain.user.spi.CommandUserPort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
 import com.dcd.server.infrastructure.test.user.UserGenerator
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class GetUserByStatusUseCaseTest : BehaviorSpec({
-    val queryUserPort = mockk<QueryUserPort>()
-    val getUserByStatusUseCase = GetUserByStatusUseCase(queryUserPort)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class GetUserByStatusUseCaseTest(
+    private val getUserByStatusUseCase: GetUserByStatusUseCase,
+    private val commandUserPort: CommandUserPort
+) : BehaviorSpec({
+    val pendingUser = UserGenerator.generateUser(status = Status.PENDING)
 
     given("조회할 status가 주어지고") {
         val status = Status.CREATED
