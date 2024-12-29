@@ -18,8 +18,6 @@ class GetUserByStatusUseCaseTest(
 ) : BehaviorSpec({
     val pendingUser = UserGenerator.generateUser(status = Status.PENDING)
 
-    given("조회할 status가 주어지고") {
-        val status = Status.CREATED
     beforeSpec {
         commandUserPort.save(pendingUser)
     }
@@ -27,15 +25,17 @@ class GetUserByStatusUseCaseTest(
         commandUserPort.delete(pendingUser)
     }
 
+    given("CREATED status가 주어지고") {
+        val givenStatus = Status.CREATED
 
         `when`("execute 메서드를 실행할때") {
-            val userList = listOf(UserGenerator.generateUser())
-            every { queryUserPort.findByStatus(status) } returns userList
-            val result = getUserByStatusUseCase.execute(status)
+            val result = getUserByStatusUseCase.execute(givenStatus)
 
-            then("result는 유저의 정보를 가지고 있어야함") {
-                verify { queryUserPort.findByStatus(status) }
-                result.list shouldBe userList.map { it.toDto() }
+            then("주어진 status를 가지고 있는 유저가 조회되어야함") {
+                result.list.size shouldBe 2
+                result.list.forEach {
+                    it.status shouldBe givenStatus
+                }
             }
         }
     }
