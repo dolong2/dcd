@@ -39,4 +39,19 @@ class GetUserByStatusUseCaseTest(
             }
         }
     }
+
+    given("PENDING status가 주어지고") {
+        val givenStatus = Status.PENDING
+
+        `when`("execute 메서드를 실행할때") {
+            val result = getUserByStatusUseCase.execute(givenStatus)
+
+            then("주어진 status를 가지고 있는 유저가 조회되어야함") {
+                result.list.size shouldBe 1
+                result.list.forEach {
+                    it.status shouldBe givenStatus
+                }
+            }
+        }
+    }
 })
