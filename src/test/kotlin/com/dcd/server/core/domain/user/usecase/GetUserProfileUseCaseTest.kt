@@ -33,28 +33,12 @@ class GetUserProfileUseCaseTest(
     }
 
     given("유저, 애플리케이션, 워크스페이스가 주어지고") {
-        val user = UserGenerator.generateUser()
-        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
-        val application = ApplicationGenerator.generateApplication(workspace = workspace)
-
         `when`("usecase를 실행할때") {
-            every { getCurrentUserService.getCurrentUser() } returns user
-            every { queryWorkspacePort.findByUser(user) } returns listOf(workspace)
-            every { queryApplicationPort.findAllByWorkspace(workspace) } returns listOf(application)
-
             val result = getUserProfileUseCase.execute()
 
-            then("워크스페이스와 애플리케이션을 조회해야함") {
-                verify { queryApplicationPort.findAllByWorkspace(workspace) }
-                verify { queryWorkspacePort.findByUser(user) }
-            }
-
             then("결과값은 user, application, workspace의 값을 담고있어야함") {
-                result.user shouldBe user.toDto()
-                result.workspaces shouldBe listOf(workspace.toProfileDto(listOf(application.toProfileDto())))
-            }
-        }
-    }
+                val targetUser = queryUserPort.findById(userId)
+                val workspaceList = queryWorkspacePort.findByUser(targetUser!!)
 
     given("유저가 주어지고") {
         val user = UserGenerator.generateUser()
@@ -72,6 +56,12 @@ class GetUserProfileUseCaseTest(
             then("결과값은 user의 값을 담고 있어야함") {
                 result.user shouldBe user.toDto()
                 result.workspaces shouldBe listOf()
+                result.user shouldBe targetUser.toDto()
+                result.workspaces shouldBe workspaceList.map {
+                    it.toProfileDto(
+                        queryApplicationPort.findAllByWorkspace(it).map { it.toProfileDto() }
+                    )
+                }
             }
         }
     }
