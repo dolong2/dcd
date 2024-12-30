@@ -3,24 +3,34 @@ package com.dcd.server.core.domain.user.usecase
 import com.dcd.server.core.domain.application.dto.extenstion.toProfileDto
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.dto.extension.toDto
-import com.dcd.server.core.domain.user.service.GetCurrentUserService
+import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.dto.extension.toProfileDto
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.dcd.server.infrastructure.global.security.auth.AuthDetailsService
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import com.dcd.server.infrastructure.test.application.ApplicationGenerator
-import com.dcd.server.infrastructure.test.user.UserGenerator
-import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class GetUserProfileUseCaseTest : BehaviorSpec({
-    val getCurrentUserService = mockk<GetCurrentUserService>()
-    val queryWorkspacePort = mockk<QueryWorkspacePort>()
-    val queryApplicationPort = mockk<QueryApplicationPort>()
-
-    val getUserProfileUseCase = GetUserProfileUseCase(getCurrentUserService, queryWorkspacePort, queryApplicationPort)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class GetUserProfileUseCaseTest(
+    private val getUserProfileUseCase: GetUserProfileUseCase,
+    private val authDetailsService: AuthDetailsService,
+    private val queryUserPort: QueryUserPort,
+    private val queryWorkspacePort: QueryWorkspacePort,
+    private val queryApplicationPort: QueryApplicationPort
+) : BehaviorSpec({
+    val userId = "user1"
+    beforeTest {
+        val userDetails = authDetailsService.loadUserByUsername(userId)
+        val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        SecurityContextHolder.getContext().authentication = authenticationToken
+    }
 
     given("유저, 애플리케이션, 워크스페이스가 주어지고") {
         val user = UserGenerator.generateUser()
