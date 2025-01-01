@@ -9,8 +9,6 @@ import com.dcd.server.core.domain.auth.spi.CommandEmailAuthPort
 import com.dcd.server.core.domain.auth.spi.QueryEmailAuthPort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.extensions.spring.SpringTestExtension
-import io.kotest.extensions.spring.SpringTestLifecycleMode
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.context.SpringBootTest
@@ -25,7 +23,6 @@ class AuthenticateMailUseCaseTest(
     private val queryEmailAuthPort: QueryEmailAuthPort,
     private val commandEmailAuthPort: CommandEmailAuthPort
 ) : BehaviorSpec({
-    extensions(listOf(SpringTestExtension(SpringTestLifecycleMode.Root)))
     val targetEmail = "testEmail"
     val targetCode = "testCode"
 
