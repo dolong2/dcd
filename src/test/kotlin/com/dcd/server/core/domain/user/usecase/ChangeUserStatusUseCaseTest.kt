@@ -48,11 +48,4 @@ class ChangeUserStatusUseCaseTest(
             }
         }
     }
-
-    afterSpec {
-        val userList = queryUserPort.findByStatus(Status.PENDING)
-        userList.forEach {
-            commandUserPort.save(it.copy(status = Status.CREATED))
-        }
-    }
 })

@@ -5,7 +5,6 @@ import com.dcd.server.core.domain.auth.dto.request.SignUpReqDto
 import com.dcd.server.core.domain.auth.exception.AlreadyExistsUserException
 import com.dcd.server.core.domain.auth.model.EmailAuth
 import com.dcd.server.core.domain.auth.spi.CommandEmailAuthPort
-import com.dcd.server.core.domain.user.spi.CommandUserPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.persistence.auth.repository.EmailAuthRepository
 import io.kotest.assertions.throwables.shouldThrow
@@ -25,8 +24,7 @@ class SignupUseCaseTest(
     private val commandEmailAuthPort: CommandEmailAuthPort,
     private val emailAuthRepository: EmailAuthRepository,
     private val queryUserPort: QueryUserPort,
-    private val passwordEncoder: PasswordEncoder,
-    private val commandUserPort: CommandUserPort
+    private val passwordEncoder: PasswordEncoder
 ) : BehaviorSpec({
 
     val targetEmail = "targetEmail"
@@ -41,7 +39,6 @@ class SignupUseCaseTest(
 
     afterSpec {
         emailAuthRepository.deleteAll()
-        commandUserPort.delete(queryUserPort.findByEmail(targetEmail)!!)
     }
 
     given("signupRequest가 주어지고") {
