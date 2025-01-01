@@ -21,9 +21,6 @@ class GetUserByStatusUseCaseTest(
     beforeSpec {
         commandUserPort.save(pendingUser)
     }
-    afterSpec {
-        commandUserPort.delete(pendingUser)
-    }
 
     given("CREATED status가 주어지고") {
         val givenStatus = Status.CREATED
