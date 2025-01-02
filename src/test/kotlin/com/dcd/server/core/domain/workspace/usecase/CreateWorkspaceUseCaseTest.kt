@@ -40,14 +40,13 @@ class CreateWorkspaceUseCaseTest(
             description = "test workspace description"
         )
         `when`("useCase를 실행할때") {
-            val user = UserGenerator.generateUser()
-            every { getCurrentUserService.getCurrentUser() } returns user
-            every { queryWorkspacePort.existsByTitle(createWorkspaceReqDto.title) } returns false
             createWorkspaceUseCase.execute(createWorkspaceReqDto)
             then("워크스페이스를 저장하고 네트워크를 생성해야함") {
-                verify { getCurrentUserService.getCurrentUser() }
-                verify { commandWorkspacePort.save(any() as Workspace) }
-                verify { createNetworkService.createNetwork(createWorkspaceReqDto.title) }
+                val user = queryUserPort.findById(userId)!!
+                val workspaceList = queryWorkspacePort.findByUser(user)
+                workspaceList.size shouldBe 2
+                workspaceList.map { it.title } shouldContain createWorkspaceReqDto.title
+                workspaceList.map { it.description } shouldContain createWorkspaceReqDto.description
             }
         }
     }
