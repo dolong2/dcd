@@ -1,24 +1,33 @@
 package com.dcd.server.core.domain.workspace.usecase
 
-import com.dcd.server.core.domain.user.service.GetCurrentUserService
+import com.dcd.server.core.common.command.CommandPort
+import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.dto.request.CreateWorkspaceReqDto
-import com.dcd.server.core.domain.workspace.model.Workspace
-import com.dcd.server.core.domain.workspace.service.CreateNetworkService
-import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.dcd.server.infrastructure.global.security.auth.AuthDetailsService
 import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import com.dcd.server.infrastructure.test.user.UserGenerator
+import com.ninjasquad.springmockk.MockkBean
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.shouldBe
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class CreateWorkspaceUseCaseTest : BehaviorSpec({
-    val commandWorkspacePort = mockk<CommandWorkspacePort>(relaxed = true)
-    val queryWorkspacePort = mockk<QueryWorkspacePort>()
-    val getCurrentUserService = mockk<GetCurrentUserService>(relaxed = true)
-    val createNetworkService = mockk<CreateNetworkService>(relaxed = true)
-    val createWorkspaceUseCase =
-        CreateWorkspaceUseCase(commandWorkspacePort, queryWorkspacePort, getCurrentUserService, createNetworkService)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class CreateWorkspaceUseCaseTest(
+    private val createWorkspaceUseCase: CreateWorkspaceUseCase,
+    private val authDetailsService: AuthDetailsService,
+    private val queryWorkspacePort: QueryWorkspacePort,
+    private val queryUserPort: QueryUserPort,
+    @MockkBean(relaxed = true)
+    private val commandPort: CommandPort
+) : BehaviorSpec({
+    val userId = "user1"
+
 
     given("request가 주어지고") {
         val createWorkspaceReqDto = CreateWorkspaceReqDto(
