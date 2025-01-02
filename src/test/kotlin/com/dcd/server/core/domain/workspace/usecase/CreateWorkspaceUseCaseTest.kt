@@ -28,6 +28,11 @@ class CreateWorkspaceUseCaseTest(
 ) : BehaviorSpec({
     val userId = "user1"
 
+    beforeContainer {
+        val userDetails = authDetailsService.loadUserByUsername(userId)
+        val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        SecurityContextHolder.getContext().authentication = authenticationToken
+    }
 
     given("request가 주어지고") {
         val createWorkspaceReqDto = CreateWorkspaceReqDto(
