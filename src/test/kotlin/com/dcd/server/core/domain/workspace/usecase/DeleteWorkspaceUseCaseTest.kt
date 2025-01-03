@@ -1,51 +1,60 @@
 package com.dcd.server.core.domain.workspace.usecase
 
-import com.dcd.server.core.domain.user.service.GetCurrentUserService
+import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
-import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.dcd.server.infrastructure.global.security.auth.AuthDetailsService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import com.dcd.server.infrastructure.test.user.UserGenerator
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
-import java.util.*
+import io.kotest.matchers.shouldBe
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class DeleteWorkspaceUseCaseTest : BehaviorSpec({
-    val commandWorkspacePort = mockk<CommandWorkspacePort>(relaxUnitFun = true)
-    val queryWorkspacePort = mockk<QueryWorkspacePort>()
-    val getCurrentUserService = mockk<GetCurrentUserService>()
-    val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
-    val deleteWorkspaceUseCase = DeleteWorkspaceUseCase(commandWorkspacePort, queryWorkspacePort, getCurrentUserService, validateWorkspaceOwnerService)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class DeleteWorkspaceUseCaseTest(
+    private val deleteWorkspaceUseCase: DeleteWorkspaceUseCase,
+    private val authDetailsService: AuthDetailsService,
+    private val queryWorkspacePort: QueryWorkspacePort,
+    private val commandWorkspacePort: CommandWorkspacePort,
+    private val queryUserPort: QueryUserPort
+) : BehaviorSpec({
+    val userId = "user1"
+    val workspaceId = "testWorkspaceId"
 
-    given("workspaceId가 주어지고") {
-        val workspaceId = UUID.randomUUID().toString()
+    beforeContainer {
+        val userDetails = authDetailsService.loadUserByUsername(userId)
+        val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        SecurityContextHolder.getContext().authentication = authenticationToken
+    }
 
-        `when`("해당 id를 가진 workspace가 있을때") {
-            val user = UserGenerator.generateUser()
-            val workspace = WorkspaceGenerator.generateWorkspace(user = user)
+    given("워크스페이스 아이디를 가진 워크스페이스가 주어지고") {
+        val user = queryUserPort.findById(userId)!!
+        val workspace = WorkspaceGenerator.generateWorkspace(id = workspaceId, user = user)
+        commandWorkspacePort.save(workspace)
 
-            every { getCurrentUserService.getCurrentUser() } returns user
-            every { queryWorkspacePort.findById(workspaceId) } returns workspace
-
+        `when`("유스케이스를 실행하면") {
             deleteWorkspaceUseCase.execute(workspaceId)
-            then("delete 메서드를 호출해야함") {
-                verify { commandWorkspacePort.delete(workspace) }
+
+            then("워크스페이스가 조회되지 않아야함") {
+                queryWorkspacePort.findById(workspaceId) shouldBe null
             }
         }
+    }
 
-        `when`("해당 id를 가진 workspace가 없을때") {
-            every { queryWorkspacePort.findById(workspaceId) } returns null
-
+    given("워크스페이스 아이디를 가진 워크스페이스가 주어지지 않고") {
+        `when`("유스케이스를 실행할때") {
             then("WorkspaceNotFoundException이 발생해야함") {
                 shouldThrow<WorkspaceNotFoundException> {
                     deleteWorkspaceUseCase.execute(workspaceId)
                 }
             }
         }
-
     }
 })
