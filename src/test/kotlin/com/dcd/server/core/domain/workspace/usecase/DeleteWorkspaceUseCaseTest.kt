@@ -28,8 +28,11 @@ class DeleteWorkspaceUseCaseTest(
     val userId = "user1"
     val workspaceId = "testWorkspaceId"
 
-    given("workspaceId가 주어지고") {
-        val workspaceId = UUID.randomUUID().toString()
+    beforeContainer {
+        val userDetails = authDetailsService.loadUserByUsername(userId)
+        val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        SecurityContextHolder.getContext().authentication = authenticationToken
+    }
 
         `when`("해당 id를 가진 workspace가 있을때") {
             val user = UserGenerator.generateUser()
