@@ -34,16 +34,16 @@ class DeleteWorkspaceUseCaseTest(
         SecurityContextHolder.getContext().authentication = authenticationToken
     }
 
-        `when`("해당 id를 가진 workspace가 있을때") {
-            val user = UserGenerator.generateUser()
-            val workspace = WorkspaceGenerator.generateWorkspace(user = user)
+    given("워크스페이스 아이디를 가진 워크스페이스가 주어지고") {
+        val user = queryUserPort.findById(userId)!!
+        val workspace = WorkspaceGenerator.generateWorkspace(id = workspaceId, user = user)
+        commandWorkspacePort.save(workspace)
 
-            every { getCurrentUserService.getCurrentUser() } returns user
-            every { queryWorkspacePort.findById(workspaceId) } returns workspace
-
+        `when`("유스케이스를 실행하면") {
             deleteWorkspaceUseCase.execute(workspaceId)
-            then("delete 메서드를 호출해야함") {
-                verify { commandWorkspacePort.delete(workspace) }
+
+            then("워크스페이스가 조회되지 않아야함") {
+                queryWorkspacePort.findById(workspaceId) shouldBe null
             }
         }
 
