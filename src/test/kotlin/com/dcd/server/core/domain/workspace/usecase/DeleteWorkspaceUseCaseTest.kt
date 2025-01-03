@@ -1,25 +1,32 @@
 package com.dcd.server.core.domain.workspace.usecase
 
-import com.dcd.server.core.domain.user.service.GetCurrentUserService
+import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
-import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.dcd.server.infrastructure.global.security.auth.AuthDetailsService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import com.dcd.server.infrastructure.test.user.UserGenerator
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
-import java.util.*
+import io.kotest.matchers.shouldBe
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class DeleteWorkspaceUseCaseTest : BehaviorSpec({
-    val commandWorkspacePort = mockk<CommandWorkspacePort>(relaxUnitFun = true)
-    val queryWorkspacePort = mockk<QueryWorkspacePort>()
-    val getCurrentUserService = mockk<GetCurrentUserService>()
-    val validateWorkspaceOwnerService = mockk<ValidateWorkspaceOwnerService>(relaxUnitFun = true)
-    val deleteWorkspaceUseCase = DeleteWorkspaceUseCase(commandWorkspacePort, queryWorkspacePort, getCurrentUserService, validateWorkspaceOwnerService)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class DeleteWorkspaceUseCaseTest(
+    private val deleteWorkspaceUseCase: DeleteWorkspaceUseCase,
+    private val authDetailsService: AuthDetailsService,
+    private val queryWorkspacePort: QueryWorkspacePort,
+    private val commandWorkspacePort: CommandWorkspacePort,
+    private val queryUserPort: QueryUserPort
+) : BehaviorSpec({
+    val userId = "user1"
+    val workspaceId = "testWorkspaceId"
 
     given("workspaceId가 주어지고") {
         val workspaceId = UUID.randomUUID().toString()
