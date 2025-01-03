@@ -46,16 +46,15 @@ class DeleteWorkspaceUseCaseTest(
                 queryWorkspacePort.findById(workspaceId) shouldBe null
             }
         }
+    }
 
-        `when`("해당 id를 가진 workspace가 없을때") {
-            every { queryWorkspacePort.findById(workspaceId) } returns null
-
+    given("워크스페이스 아이디를 가진 워크스페이스가 주어지지 않고") {
+        `when`("유스케이스를 실행할때") {
             then("WorkspaceNotFoundException이 발생해야함") {
                 shouldThrow<WorkspaceNotFoundException> {
                     deleteWorkspaceUseCase.execute(workspaceId)
                 }
             }
         }
-
     }
 })
