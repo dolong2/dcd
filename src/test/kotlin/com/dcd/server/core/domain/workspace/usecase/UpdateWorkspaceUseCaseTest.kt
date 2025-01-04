@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.workspace.usecase
 import com.dcd.server.core.domain.user.spi.CommandUserPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.dto.request.UpdateWorkspaceReqDto
+import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
@@ -57,16 +58,6 @@ class UpdateWorkspaceUseCaseTest(
             }
         }
 
-        `when`("주어진 아이디를 가진 워크스페이스가 없을때") {
-            every { queryWorkspacePort.findById(workspaceId) } returns null
-
-            then("WorkspaceNotFoundException이 발생해야함") {
-                shouldThrow<WorkspaceNotFoundException> {
-                    updateWorkspaceUseCase.execute(workspaceId, reqDto)
-                }
-            }
-        }
-
         `when`("워크스페이스의 유저와 로그인된 유저가 다를때") {
             val user = UserGenerator.generateUser()
             commandUserPort.save(user)
@@ -82,5 +73,17 @@ class UpdateWorkspaceUseCaseTest(
             }
         }
 
+    }
+
+    given("UpdateWorkspaceReqDto만 주어지고") {
+        val request = UpdateWorkspaceReqDto(title = "test title", description = "test description")
+
+        `when`("유스케이스를 실행하면") {
+            then("WorkspaceNotFoundException이 발생해야함") {
+                shouldThrow<WorkspaceNotFoundException> {
+                    updateWorkspaceUseCase.execute(workspaceId, request)
+                }
+            }
+        }
     }
 })
