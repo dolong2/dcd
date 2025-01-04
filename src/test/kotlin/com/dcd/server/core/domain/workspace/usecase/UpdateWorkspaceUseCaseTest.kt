@@ -1,27 +1,37 @@
 package com.dcd.server.core.domain.workspace.usecase
 
-import com.dcd.server.core.domain.user.service.GetCurrentUserService
+import com.dcd.server.core.domain.user.spi.CommandUserPort
+import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.dto.request.UpdateWorkspaceReqDto
-import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
-import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.dcd.server.infrastructure.global.security.auth.AuthDetailsService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.spyk
-import io.mockk.verify
 import com.dcd.server.infrastructure.test.user.UserGenerator
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
-import java.util.*
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class UpdateWorkspaceUseCaseTest : BehaviorSpec({
-    val commandWorkspacePort = mockk<CommandWorkspacePort>(relaxUnitFun = true)
-    val queryWorkspacePort = mockk<QueryWorkspacePort>(relaxUnitFun = true)
-    val getCurrentUserService = mockk<GetCurrentUserService>(relaxUnitFun = true)
-    val updateWorkspaceUseCase = UpdateWorkspaceUseCase(commandWorkspacePort, queryWorkspacePort, getCurrentUserService)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class UpdateWorkspaceUseCaseTest(
+    private val updateWorkspaceUseCase: UpdateWorkspaceUseCase,
+    private val authDetailsService: AuthDetailsService,
+    private val queryWorkspacePort: QueryWorkspacePort,
+    private val commandWorkspacePort: CommandWorkspacePort,
+    private val queryUserPort: QueryUserPort,
+    private val commandUserPort: CommandUserPort
+) : BehaviorSpec({
+    val userId = "user1"
+    val workspaceId = "testWorkspaceId"
 
     given("워크스페이스 아이디와 UpdateReqDto가 주어지고") {
         val workspaceId = UUID.randomUUID().toString()
