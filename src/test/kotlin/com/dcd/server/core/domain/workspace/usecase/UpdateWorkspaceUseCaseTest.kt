@@ -39,16 +39,6 @@ class UpdateWorkspaceUseCaseTest(
         SecurityContextHolder.getContext().authentication = authenticationToken
     }
 
-        `when`("해당 아이디를 가진 워크스페이스가 있을때") {
-            val user = UserGenerator.generateUser()
-            val workspace = spyk(
-                Workspace(
-                    id = workspaceId,
-                    title = "workspace",
-                    description = "test workspace",
-                    owner = user
-                )
-            )
     given("워크스페이스, UpdateWorkspaceReqDto가 주어지고") {
         val user = queryUserPort.findById(userId)!!
         val workspace = WorkspaceGenerator.generateWorkspace(id = workspaceId, user = user)
@@ -56,10 +46,14 @@ class UpdateWorkspaceUseCaseTest(
 
         val request = UpdateWorkspaceReqDto(title = "test title", description = "test description")
 
-            updateWorkspaceUseCase.execute(workspaceId, reqDto)
-            then("commandWorkspacePort의 save 메서드가 실행되어야함") {
-                verify { workspace.copy(title = reqDto.title, description = reqDto.description) }
-                verify { commandWorkspacePort.save(any() as Workspace) }
+        `when`("유스케이스를 실행할때") {
+            updateWorkspaceUseCase.execute(workspaceId, request)
+
+            then("워크스페이스의 이름과 설명이 변경되어야함") {
+                val result = queryWorkspacePort.findById(workspaceId)
+                result shouldNotBe null
+                result?.title shouldBe request.title
+                result?.description shouldBe request.description
             }
         }
 
