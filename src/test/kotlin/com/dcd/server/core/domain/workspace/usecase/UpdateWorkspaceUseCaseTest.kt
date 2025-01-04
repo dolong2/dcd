@@ -33,9 +33,6 @@ class UpdateWorkspaceUseCaseTest(
     val userId = "user1"
     val workspaceId = "testWorkspaceId"
 
-    given("워크스페이스 아이디와 UpdateReqDto가 주어지고") {
-        val workspaceId = UUID.randomUUID().toString()
-        val reqDto = UpdateWorkspaceReqDto(title = "test title", description = "test description")
     beforeContainer {
         val userDetails = authDetailsService.loadUserByUsername(userId)
         val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
@@ -52,9 +49,12 @@ class UpdateWorkspaceUseCaseTest(
                     owner = user
                 )
             )
+    given("워크스페이스, UpdateWorkspaceReqDto가 주어지고") {
+        val user = queryUserPort.findById(userId)!!
+        val workspace = WorkspaceGenerator.generateWorkspace(id = workspaceId, user = user)
+        commandWorkspacePort.save(workspace)
 
-            every { queryWorkspacePort.findById(workspaceId) } returns workspace
-            every { getCurrentUserService.getCurrentUser() } returns user
+        val request = UpdateWorkspaceReqDto(title = "test title", description = "test description")
 
             updateWorkspaceUseCase.execute(workspaceId, reqDto)
             then("commandWorkspacePort의 save 메서드가 실행되어야함") {
