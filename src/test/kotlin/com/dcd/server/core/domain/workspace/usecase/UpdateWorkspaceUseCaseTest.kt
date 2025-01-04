@@ -36,6 +36,11 @@ class UpdateWorkspaceUseCaseTest(
     given("워크스페이스 아이디와 UpdateReqDto가 주어지고") {
         val workspaceId = UUID.randomUUID().toString()
         val reqDto = UpdateWorkspaceReqDto(title = "test title", description = "test description")
+    beforeContainer {
+        val userDetails = authDetailsService.loadUserByUsername(userId)
+        val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        SecurityContextHolder.getContext().authentication = authenticationToken
+    }
 
         `when`("해당 아이디를 가진 워크스페이스가 있을때") {
             val user = UserGenerator.generateUser()
