@@ -49,13 +49,15 @@ class GetWorkspaceUseCaseTest(
                 result.applicationList.isEmpty() shouldBe true
             }
         }
+    }
 
-        `when`("해당 id를 가진 workspace가 없을때") {
-            every { queryWorkspacePort.findById(workspaceId) } returns null
-            then("WorkspaceNotFoundException이 발생해야함") {
+    given("workspace가 주어지지 않고") {
+
+        `when`("유스케이스를 실행할때") {
+
+            then("에러가 발생해야함") {
                 shouldThrow<WorkspaceNotFoundException> {
                     getWorkspaceUseCase.execute(workspaceId)
-                    verify { queryWorkspacePort.findById(workspaceId) }
                 }
             }
         }
