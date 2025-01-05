@@ -1,23 +1,31 @@
 package com.dcd.server.core.domain.workspace.usecase
 
-import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.dto.extension.toDto
+import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
-import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
+import com.dcd.server.infrastructure.global.security.auth.AuthDetailsService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import com.dcd.server.infrastructure.test.user.UserGenerator
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
-import java.util.*
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class GetWorkspaceUseCaseTest : BehaviorSpec({
-    val queryWorkspacePort = mockk<QueryWorkspacePort>()
-    val queryApplicationPort = mockk<QueryApplicationPort>()
-    val getWorkspaceUseCase = GetWorkspaceUseCase(queryWorkspacePort, queryApplicationPort)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class GetWorkspaceUseCaseTest(
+    private val getWorkspaceUseCase: GetWorkspaceUseCase,
+    private val authDetailsService: AuthDetailsService,
+    private val queryUserPort: QueryUserPort,
+    private val commandWorkspacePort: CommandWorkspacePort
+) : BehaviorSpec({
+    val userId = "user1"
+    val workspaceId = "testWorkspaceId"
 
     given("workspaceId, workspace가 주어지고") {
         val workspaceId = UUID.randomUUID().toString()
