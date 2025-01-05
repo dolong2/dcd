@@ -30,6 +30,12 @@ class GetWorkspaceUseCaseTest(
     given("workspaceId, workspace가 주어지고") {
         val workspaceId = UUID.randomUUID().toString()
         val user = UserGenerator.generateUser()
+    beforeContainer {
+        val userDetails = authDetailsService.loadUserByUsername(userId)
+        val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        SecurityContextHolder.getContext().authentication = authenticationToken
+    }
+
         val workspace = WorkspaceGenerator.generateWorkspace(id = workspaceId, user = user)
 
         `when`("해당 id를 가진 workspace가 있을때") {
