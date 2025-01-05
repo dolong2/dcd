@@ -37,14 +37,11 @@ class GetWorkspaceUseCaseTest(
     }
 
         val workspace = WorkspaceGenerator.generateWorkspace(id = workspaceId, user = user)
+        commandWorkspacePort.save(workspace)
 
         `when`("해당 id를 가진 workspace가 있을때") {
-            every { queryWorkspacePort.findById(workspaceId) } returns workspace
-            every { queryApplicationPort.findAllByWorkspace(workspace) } returns listOf()
             val result = getWorkspaceUseCase.execute(workspaceId)
-            then("queryWorkspacePort가 실행되어야함") {
-                verify { queryWorkspacePort.findById(workspaceId) }
-            }
+
             then("result는 워크스페이스의 정보를 담고 있어야함") {
                 result.id shouldBe workspaceId
                 result.title shouldBe workspace.title
