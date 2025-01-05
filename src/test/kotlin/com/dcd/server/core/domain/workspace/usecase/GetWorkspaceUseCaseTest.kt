@@ -27,15 +27,14 @@ class GetWorkspaceUseCaseTest(
     val userId = "user1"
     val workspaceId = "testWorkspaceId"
 
-    given("workspaceId, workspace가 주어지고") {
-        val workspaceId = UUID.randomUUID().toString()
-        val user = UserGenerator.generateUser()
     beforeContainer {
         val userDetails = authDetailsService.loadUserByUsername(userId)
         val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
         SecurityContextHolder.getContext().authentication = authenticationToken
     }
 
+    given("workspace가 주어지고") {
+        val user = queryUserPort.findById(userId)!!
         val workspace = WorkspaceGenerator.generateWorkspace(id = workspaceId, user = user)
         commandWorkspacePort.save(workspace)
 
