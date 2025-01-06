@@ -35,9 +35,11 @@ class GetAllWorkspaceUseCaseTest(
     given("2개의 워크스페이스가 주어지고") {
         val user = queryUserPort.findById(userId)!!
         val firstWorkspace = WorkspaceGenerator.generateWorkspace(id = firstWorkspaceId, user = user)
-        val secondWorkspaceId = UUID.randomUUID().toString()
         val secondWorkspace = WorkspaceGenerator.generateWorkspace(id = secondWorkspaceId, user = user)
         val workspaceList = listOf(firstWorkspace, secondWorkspace)
+        workspaceList.forEach {
+            commandWorkspacePort.save(it)
+        }
 
         `when`("해당 user가 workspace를 여러개 가지고 있을때") {
             every { getCurrentUserService.getCurrentUser() } returns user
