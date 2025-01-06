@@ -60,4 +60,14 @@ class GetAllWorkspaceUseCaseTest(
         }
     }
 
+    given("워크스페이스가 하나도 주어지지 않고") {
+
+        `when`("유스케이스를 실행할때") {
+            val result = getAllWorkspaceUseCase.execute()
+
+            then("아무것도 조회되지 않아야함") {
+                result.list.isEmpty() shouldBe true
+            }
+        }
+    }
 })
