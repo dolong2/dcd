@@ -13,9 +13,6 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
-    given("workspaceId, workspace, workspaceList, user가 주어지고") {
-        val user = UserGenerator.generateUser()
-        val firstWorkspaceId = UUID.randomUUID().toString()
 @Transactional
 @SpringBootTest
 @ActiveProfiles("test")
@@ -28,6 +25,12 @@ class GetAllWorkspaceUseCaseTest(
     val userId = "user2"
     val firstWorkspaceId = UUID.randomUUID().toString()
     val secondWorkspaceId = UUID.randomUUID().toString()
+
+    beforeContainer {
+        val userDetails = authDetailsService.loadUserByUsername(userId)
+        val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        SecurityContextHolder.getContext().authentication = authenticationToken
+    }
 
         val firstWorkspace = WorkspaceGenerator.generateWorkspace(id = firstWorkspaceId, user = user)
         val secondWorkspaceId = UUID.randomUUID().toString()
