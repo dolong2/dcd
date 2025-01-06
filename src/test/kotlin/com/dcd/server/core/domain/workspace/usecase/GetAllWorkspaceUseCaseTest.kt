@@ -41,19 +41,16 @@ class GetAllWorkspaceUseCaseTest(
             commandWorkspacePort.save(it)
         }
 
-        `when`("해당 user가 workspace를 여러개 가지고 있을때") {
-            every { getCurrentUserService.getCurrentUser() } returns user
-            every { queryWorkspacePort.findByUser(user) } returns workspaceList
-            every { queryApplicationPort.findAllByWorkspace(firstWorkspace) } returns listOf()
-            every { queryApplicationPort.findAllByWorkspace(secondWorkspace) } returns listOf()
-
+        `when`("유스케이스를 실행할때") {
             val result = getAllWorkspaceUseCase.execute()
+
             then("주어진 workspace가 전부 반환되어야함") {
                 val firstWorkspaceResult = result.list[0]
                 firstWorkspaceResult.id shouldBe firstWorkspaceId
                 firstWorkspaceResult.title shouldBe firstWorkspace.title
                 firstWorkspaceResult.description shouldBe firstWorkspace.description
                 firstWorkspaceResult.applicationList.isEmpty() shouldBe true
+
                 val secondWorkspaceResult = result.list[1]
                 secondWorkspaceResult.id shouldBe secondWorkspaceId
                 secondWorkspaceResult.title shouldBe secondWorkspace.title
