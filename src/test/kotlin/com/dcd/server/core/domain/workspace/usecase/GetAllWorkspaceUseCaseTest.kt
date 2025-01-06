@@ -1,25 +1,34 @@
 package com.dcd.server.core.domain.workspace.usecase
 
-import com.dcd.server.core.domain.application.spi.QueryApplicationPort
-import com.dcd.server.core.domain.user.service.GetCurrentUserService
-import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.dcd.server.core.domain.user.spi.QueryUserPort
+import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
+import com.dcd.server.infrastructure.global.security.auth.AuthDetailsService
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.every
-import io.mockk.mockk
-import com.dcd.server.infrastructure.test.user.UserGenerator
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
-
-class GetAllWorkspaceUseCaseTest : BehaviorSpec({
-    val getCurrentUserService = mockk<GetCurrentUserService>()
-    val queryWorkspacePort = mockk<QueryWorkspacePort>()
-    val queryApplicationPort = mockk<QueryApplicationPort>()
-    val getAllWorkspaceUseCase = GetAllWorkspaceUseCase(getCurrentUserService, queryWorkspacePort, queryApplicationPort)
 
     given("workspaceId, workspace, workspaceList, user가 주어지고") {
         val user = UserGenerator.generateUser()
         val firstWorkspaceId = UUID.randomUUID().toString()
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class GetAllWorkspaceUseCaseTest(
+    private val getAllWorkspaceUseCase: GetAllWorkspaceUseCase,
+    private val authDetailsService: AuthDetailsService,
+    private val queryUserPort: QueryUserPort,
+    private val commandWorkspacePort: CommandWorkspacePort
+) : BehaviorSpec({
+    val userId = "user2"
+    val firstWorkspaceId = UUID.randomUUID().toString()
+    val secondWorkspaceId = UUID.randomUUID().toString()
+
         val firstWorkspace = WorkspaceGenerator.generateWorkspace(id = firstWorkspaceId, user = user)
         val secondWorkspaceId = UUID.randomUUID().toString()
         val secondWorkspace = WorkspaceGenerator.generateWorkspace(id = secondWorkspaceId, user = user)
