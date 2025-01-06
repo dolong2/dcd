@@ -32,6 +32,8 @@ class GetAllWorkspaceUseCaseTest(
         SecurityContextHolder.getContext().authentication = authenticationToken
     }
 
+    given("2개의 워크스페이스가 주어지고") {
+        val user = queryUserPort.findById(userId)!!
         val firstWorkspace = WorkspaceGenerator.generateWorkspace(id = firstWorkspaceId, user = user)
         val secondWorkspaceId = UUID.randomUUID().toString()
         val secondWorkspace = WorkspaceGenerator.generateWorkspace(id = secondWorkspaceId, user = user)
