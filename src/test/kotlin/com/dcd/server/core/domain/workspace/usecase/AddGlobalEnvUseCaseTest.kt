@@ -1,29 +1,51 @@
 package com.dcd.server.core.domain.workspace.usecase
 
-import com.dcd.server.core.domain.user.service.GetCurrentUserService
+import com.dcd.server.core.domain.user.spi.CommandUserPort
+import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.dto.request.AddGlobalEnvReqDto
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
-import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.dcd.server.infrastructure.global.security.auth.AuthDetailsService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.spyk
-import io.mockk.verify
 import com.dcd.server.infrastructure.test.user.UserGenerator
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class AddGlobalEnvUseCaseTest : BehaviorSpec({
-    val queryWorkspacePort = mockk<QueryWorkspacePort>(relaxUnitFun = true)
-    val getCurrentUserService = mockk<GetCurrentUserService>()
-    val commandWorkspacePort = mockk<CommandWorkspacePort>(relaxUnitFun = true)
-    val addGlobalEnvUseCase = AddGlobalEnvUseCase(queryWorkspacePort, getCurrentUserService, commandWorkspacePort)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class AddGlobalEnvUseCaseTest(
+    private val addGlobalEnvUseCase: AddGlobalEnvUseCase,
+    private val authDetailsService: AuthDetailsService,
+    private val queryUserPort: QueryUserPort,
+    private val queryWorkspacePort: QueryWorkspacePort,
+    private val commandWorkspacePort: CommandWorkspacePort,
+    private val commandUserPort: CommandUserPort
+) : BehaviorSpec({
+    val userId = "user2"
+    val targetWorkspaceId = "testWorkspaceId"
+
+    beforeContainer {
+        val userDetails = authDetailsService.loadUserByUsername(userId)
+        val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        SecurityContextHolder.getContext().authentication = authenticationToken
 
     given("request가 주어지고") {
         val testWorkspaceId = "testWorkspaceId"
+        val user = queryUserPort.findById(userId)!!
+        val workspace = WorkspaceGenerator.generateWorkspace(id = targetWorkspaceId, user = user)
+        commandWorkspacePort.save(workspace)
+    }
+
         val testEnvList = mapOf("testKey" to "testValue")
         val addGlobalEnvReqDto = AddGlobalEnvReqDto(testEnvList)
 
