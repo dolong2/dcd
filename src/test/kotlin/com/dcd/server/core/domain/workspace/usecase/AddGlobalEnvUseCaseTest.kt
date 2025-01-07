@@ -73,4 +73,19 @@ class AddGlobalEnvUseCaseTest(
             }
         }
     }
+
+    given("존재하지 않은 워크스페이스 아이디가 주어지고") {
+        val givenWorkspaceId = "notFoundWorkspace"
+        val testEnvList = mapOf("testKey" to "testValue")
+        val addGlobalEnvReqDto = AddGlobalEnvReqDto(testEnvList)
+
+        `when`("유스케이스를 실행할때") {
+
+            then("WorkspaceNotFoundException이 발생해야함") {
+                shouldThrow<WorkspaceNotFoundException> {
+                    addGlobalEnvUseCase.execute(givenWorkspaceId, addGlobalEnvReqDto)
+                }
+            }
+        }
+    }
 })
