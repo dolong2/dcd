@@ -39,13 +39,12 @@ class AddGlobalEnvUseCaseTest(
         val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
         SecurityContextHolder.getContext().authentication = authenticationToken
 
-    given("request가 주어지고") {
-        val testWorkspaceId = "testWorkspaceId"
         val user = queryUserPort.findById(userId)!!
         val workspace = WorkspaceGenerator.generateWorkspace(id = targetWorkspaceId, user = user)
         commandWorkspacePort.save(workspace)
     }
 
+    given("추가할 env가 주어지고") {
         val testEnvList = mapOf("testKey" to "testValue")
         val addGlobalEnvReqDto = AddGlobalEnvReqDto(testEnvList)
 
