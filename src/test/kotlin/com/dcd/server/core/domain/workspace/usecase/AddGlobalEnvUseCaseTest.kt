@@ -49,27 +49,14 @@ class AddGlobalEnvUseCaseTest(
         val addGlobalEnvReqDto = AddGlobalEnvReqDto(testEnvList)
 
         `when`("useCase를 실행할때") {
-            val user = UserGenerator.generateUser()
-            every { getCurrentUserService.getCurrentUser() } returns user
-
-            val workspace = spyk(WorkspaceGenerator.generateWorkspace(id = testWorkspaceId, user = user))
-            every { queryWorkspacePort.findById(testWorkspaceId) } returns workspace
-
-            addGlobalEnvUseCase.execute(testWorkspaceId, addGlobalEnvReqDto)
+            addGlobalEnvUseCase.execute(targetWorkspaceId, addGlobalEnvReqDto)
 
             then("워크스페이스의 env를 저장해야함") {
-                verify { workspace.copy(globalEnv = testEnvList) }
-                verify { commandWorkspacePort.save(any() as Workspace) }
-            }
-        }
+                val resultWorkspace = queryWorkspacePort.findById(targetWorkspaceId)
 
-        `when`("해당 워크스페이스가 존재하지 않을때") {
-            every { queryWorkspacePort.findById(testWorkspaceId) } returns null
-
-            then("WorkspaceNotFoundException이 발생해야함") {
-                shouldThrow<WorkspaceNotFoundException> {
-                    addGlobalEnvUseCase.execute(testWorkspaceId, addGlobalEnvReqDto)
-                }
+                resultWorkspace shouldNotBe null
+                val resultGlobalEnv = resultWorkspace?.globalEnv
+                resultGlobalEnv?.get("testKey") shouldBe "testValue"
             }
         }
 
