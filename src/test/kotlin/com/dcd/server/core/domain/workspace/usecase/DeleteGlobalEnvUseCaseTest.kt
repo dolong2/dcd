@@ -83,4 +83,18 @@ class DeleteGlobalEnvUseCaseTest(
             }
         }
     }
+
+    given("워크스페이스가 존재하지 않을때") {
+        val notFoundWorkspaceId = "notFoundWorkspaceId"
+        val key = "testEnvKey"
+
+        `when`("유스케이스를 실행하면") {
+
+            then("에러가 발생해야함") {
+                shouldThrow<WorkspaceNotFoundException> {
+                    deleteGlobalEnvUseCase.execute(notFoundWorkspaceId, key)
+                }
+            }
+        }
+    }
 })
