@@ -44,22 +44,16 @@ class DeleteGlobalEnvUseCaseTest(
         commandWorkspacePort.save(workspace)
     }
 
-    given("workspaceId, 삭제할 환경변수의 키값이 주어지고") {
-        val workspaceId = UUID.randomUUID().toString()
+    given("삭제할 환경변수의 키값이 주어지고") {
         val key = "testEnvKey"
 
-        `when`("해당 워크스페이스가 존재하고, 해당 환경변수가 존재할때") {
-            val env = mapOf(key to "testValue")
-            val user = UserGenerator.generateUser()
-            val workspace = spyk(WorkspaceGenerator.generateWorkspace(id = workspaceId, globalEnv = env, user = user))
-            every { getCurrentUserService.getCurrentUser() } returns user
-            every { queryWorkspacePort.findById(workspaceId) } returns workspace
+        `when`("유스케이스를 실행할때") {
+            deleteGlobalEnvUseCase.execute(targetWorkspaceId, key)
 
-            deleteGlobalEnvUseCase.execute(workspaceId, key)
-
-            then("해당 키가 삭제된 워크스페이스를 저장해야함") {
-                verify { workspace.copy(globalEnv = mapOf()) }
-                verify { commandWorkspacePort.save(any() as Workspace) }
+            then("해당 키를 가진 전역 환경변수가 삭제되야함") {
+                val result = queryWorkspacePort.findById(targetWorkspaceId)
+                result shouldNotBe null
+                result?.globalEnv?.get(key) shouldBe null
             }
         }
 
