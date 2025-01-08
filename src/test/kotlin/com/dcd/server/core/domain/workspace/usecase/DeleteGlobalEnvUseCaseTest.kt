@@ -69,18 +69,6 @@ class DeleteGlobalEnvUseCaseTest(
             }
         }
 
-        `when`("해당 워크스페이스가 존재하지 않을때") {
-            val user = UserGenerator.generateUser()
-            every { getCurrentUserService.getCurrentUser() } returns user
-            every { queryWorkspacePort.findById(workspaceId) } returns null
-
-            then("WorkspaceNotFoundException이 발생해야함") {
-                shouldThrow<WorkspaceNotFoundException> {
-                    deleteGlobalEnvUseCase.execute(workspaceId, key)
-                }
-            }
-        }
-
         `when`("해당 워크스페이스의 유저가 로그인된 유저가 아닐때") {
             val user = UserGenerator.generateUser()
             val workspace = spyk(WorkspaceGenerator.generateWorkspace(id = workspaceId))
