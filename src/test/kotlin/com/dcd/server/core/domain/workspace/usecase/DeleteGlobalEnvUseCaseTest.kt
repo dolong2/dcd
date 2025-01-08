@@ -34,10 +34,15 @@ class DeleteGlobalEnvUseCaseTest(
     val userId = "user2"
     val targetWorkspaceId = "testWorkspaceId"
 
-    val queryWorkspacePort = mockk<QueryWorkspacePort>(relaxUnitFun = true)
-    val getCurrentUserService = mockk<GetCurrentUserService>()
-    val commandWorkspacePort = mockk<CommandWorkspacePort>(relaxUnitFun = true)
-    val deleteGlobalEnvUseCase = DeleteGlobalEnvUseCase(queryWorkspacePort, getCurrentUserService, commandWorkspacePort)
+    beforeContainer {
+        val userDetails = authDetailsService.loadUserByUsername(userId)
+        val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        SecurityContextHolder.getContext().authentication = authenticationToken
+
+        val user = queryUserPort.findById(userId)!!
+        val workspace = WorkspaceGenerator.generateWorkspace(id = targetWorkspaceId, user = user, globalEnv = mapOf("testEnvKey" to "test"))
+        commandWorkspacePort.save(workspace)
+    }
 
     given("workspaceId, 삭제할 환경변수의 키값이 주어지고") {
         val workspaceId = UUID.randomUUID().toString()
