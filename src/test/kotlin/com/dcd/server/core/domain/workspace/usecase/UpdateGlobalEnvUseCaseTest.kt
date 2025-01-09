@@ -84,13 +84,18 @@ class UpdateGlobalEnvUseCaseTest(
                 }
             }
         }
+    }
 
-        `when`("워크스페이스가 존재하지 않을때") {
-            every { queryWorkspacePort.findById(testWorkspaceId) } returns null
+    given("워크스페이스가 존재하지 않을때") {
+        val notFoundWorkspaceId = "notFoundWorkspaceId"
+        val envKey = "testEnvKey"
+        val updateGlobalEnvReqDto = UpdateGlobalEnvReqDto(newValue = "updatedValue")
 
-            then("WorkspaceOwnerNotSameException이 발생해야함") {
+        `when`("유스케이스를 실행하면") {
+
+            then("WorkspaceNotFoundException이 발생해야함") {
                 shouldThrow<WorkspaceNotFoundException> {
-                    updateGlobalEnvUseCase.execute(testWorkspaceId, envKey, updateGlobalEnvReqDto)
+                    updateGlobalEnvUseCase.execute(notFoundWorkspaceId, envKey, updateGlobalEnvReqDto)
                 }
             }
         }
