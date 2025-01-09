@@ -1,27 +1,40 @@
 package com.dcd.server.core.domain.workspace.usecase
 
-import com.dcd.server.core.domain.user.service.GetCurrentUserService
+import com.dcd.server.core.domain.user.spi.CommandUserPort
+import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.dto.request.UpdateGlobalEnvReqDto
 import com.dcd.server.core.domain.workspace.exception.GlobalEnvNotFoundException
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
-import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.dcd.server.infrastructure.global.security.auth.AuthDetailsService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.spyk
-import io.mockk.verify
 import com.dcd.server.infrastructure.test.user.UserGenerator
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class UpdateGlobalEnvUseCaseTest : BehaviorSpec({
-    val queryWorkspacePort = mockk<QueryWorkspacePort>()
-    val getCurrentUserService = mockk<GetCurrentUserService>()
-    val commandWorkspacePort = mockk<CommandWorkspacePort>(relaxUnitFun = true)
-    val updateGlobalEnvUseCase = UpdateGlobalEnvUseCase(queryWorkspacePort, getCurrentUserService, commandWorkspacePort)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class UpdateGlobalEnvUseCaseTest(
+    private val updateGlobalEnvUseCase: UpdateGlobalEnvUseCase,
+    private val authDetailsService: AuthDetailsService,
+    private val queryUserPort: QueryUserPort,
+    private val commandWorkspacePort: CommandWorkspacePort,
+    private val queryWorkspacePort: QueryWorkspacePort,
+    private val commandUserPort: CommandUserPort
+) : BehaviorSpec({
+    val userId = "user1"
+    val targetWorkspaceId = "testWorkspaceId"
+
 
     given("workspaceId, envKey, updateGlobalEnvReqDto가 주어지고") {
         val testWorkspaceId = "testWorkspaceId"
