@@ -35,6 +35,15 @@ class UpdateGlobalEnvUseCaseTest(
     val userId = "user1"
     val targetWorkspaceId = "testWorkspaceId"
 
+    beforeContainer {
+        val userDetails = authDetailsService.loadUserByUsername(userId)
+        val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        SecurityContextHolder.getContext().authentication = authenticationToken
+
+        val user = queryUserPort.findById(userId)!!
+        val workspace = WorkspaceGenerator.generateWorkspace(id = targetWorkspaceId, user = user, globalEnv = mapOf("testEnvKey" to "test"))
+        commandWorkspacePort.save(workspace)
+    }
 
     given("workspaceId, envKey, updateGlobalEnvReqDto가 주어지고") {
         val testWorkspaceId = "testWorkspaceId"
