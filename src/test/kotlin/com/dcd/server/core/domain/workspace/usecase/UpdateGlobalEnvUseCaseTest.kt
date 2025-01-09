@@ -46,21 +46,17 @@ class UpdateGlobalEnvUseCaseTest(
     }
 
     given("workspaceId, envKey, updateGlobalEnvReqDto가 주어지고") {
-        val testWorkspaceId = "testWorkspaceId"
         val envKey = "testEnvKey"
         val updateGlobalEnvReqDto = UpdateGlobalEnvReqDto(newValue = "updatedValue")
 
         `when`("유스케이스가 예외없이 실행할때") {
-            val user = UserGenerator.generateUser()
-            every { getCurrentUserService.getCurrentUser() } returns user
-            val workspace = spyk(WorkspaceGenerator.generateWorkspace(id = testWorkspaceId, user = user, globalEnv = mapOf("testEnvKey" to "dcd")))
-            every { queryWorkspacePort.findById(testWorkspaceId) } returns workspace
-
-            updateGlobalEnvUseCase.execute(testWorkspaceId, envKey, updateGlobalEnvReqDto)
+            updateGlobalEnvUseCase.execute(targetWorkspaceId, envKey, updateGlobalEnvReqDto)
 
             then("해당 env를 수정후 저장해야함") {
-                verify { workspace.copy(globalEnv = mapOf(envKey to updateGlobalEnvReqDto.newValue)) }
-                verify { commandWorkspacePort.save(any() as Workspace) }
+                val result = queryWorkspacePort.findById(targetWorkspaceId)!!
+
+                result shouldNotBe null
+                result.globalEnv[envKey] shouldBe updateGlobalEnvReqDto.newValue
             }
         }
 
