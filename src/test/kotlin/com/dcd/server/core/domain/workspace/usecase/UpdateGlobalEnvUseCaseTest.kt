@@ -61,14 +61,12 @@ class UpdateGlobalEnvUseCaseTest(
         }
 
         `when`("해당 env가 존재하지 않을때") {
-            val user = UserGenerator.generateUser()
-            every { getCurrentUserService.getCurrentUser() } returns user
-            val workspace = spyk(WorkspaceGenerator.generateWorkspace(id = testWorkspaceId, user = user))
-            every { queryWorkspacePort.findById(testWorkspaceId) } returns workspace
+            val targetWorkspace = queryWorkspacePort.findById(targetWorkspaceId)!!
+            commandWorkspacePort.save(targetWorkspace.copy(globalEnv = mapOf()))
 
             then("GlobalEnvNotFoundException이 발생해야함") {
                 shouldThrow<GlobalEnvNotFoundException> {
-                    updateGlobalEnvUseCase.execute(testWorkspaceId, envKey, updateGlobalEnvReqDto)
+                    updateGlobalEnvUseCase.execute(targetWorkspaceId, envKey, updateGlobalEnvReqDto)
                 }
             }
         }
