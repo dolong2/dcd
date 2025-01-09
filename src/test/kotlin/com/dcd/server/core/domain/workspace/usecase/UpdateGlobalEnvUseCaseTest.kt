@@ -73,13 +73,14 @@ class UpdateGlobalEnvUseCaseTest(
 
         `when`("워크스페이스 소유자가 일치하지 않을때") {
             val user = UserGenerator.generateUser()
-            every { getCurrentUserService.getCurrentUser() } returns user
-            val workspace = spyk(WorkspaceGenerator.generateWorkspace(id = testWorkspaceId))
-            every { queryWorkspacePort.findById(testWorkspaceId) } returns workspace
+            commandUserPort.save(user)
+            val userDetails = authDetailsService.loadUserByUsername(user.id)
+            val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+            SecurityContextHolder.getContext().authentication = authenticationToken
 
             then("WorkspaceOwnerNotSameException이 발생해야함") {
                 shouldThrow<WorkspaceOwnerNotSameException> {
-                    updateGlobalEnvUseCase.execute(testWorkspaceId, envKey, updateGlobalEnvReqDto)
+                    updateGlobalEnvUseCase.execute(targetWorkspaceId, envKey, updateGlobalEnvReqDto)
                 }
             }
         }
