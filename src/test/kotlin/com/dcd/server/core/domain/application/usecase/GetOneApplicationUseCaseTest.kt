@@ -34,12 +34,15 @@ class GetOneApplicationUseCaseTest(
                 result shouldBe application.toDto()
             }
         }
-        `when`("해당 애플리케이션이 없을때") {
-            every { queryApplicationPort.findById(application.id) } returns null
+    }
 
-            then("result는 application의 내용이랑 같아야함") {
+    given("애플리케이션이 주어지지 않고") {
+
+        `when`("유스케이스를 실행하면") {
+
+            then("에러가 발생해야함") {
                 shouldThrow<ApplicationNotFoundException> {
-                    getOneApplicationUseCase.execute(application.id)
+                    getOneApplicationUseCase.execute("notFoundId")
                 }
             }
         }
