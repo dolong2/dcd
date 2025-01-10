@@ -2,19 +2,27 @@ package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.domain.application.dto.extenstion.toDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
-import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.application.spi.CommandApplicationPort
+import com.dcd.server.core.domain.user.spi.QueryUserPort
+import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.every
-import io.mockk.mockk
 import com.dcd.server.infrastructure.test.application.ApplicationGenerator
-import com.dcd.server.infrastructure.test.user.UserGenerator
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class GetOneApplicationUseCaseTest : BehaviorSpec({
-    val queryApplicationPort = mockk<QueryApplicationPort>()
-    val getOneApplicationUseCase = GetOneApplicationUseCase(queryApplicationPort)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class GetOneApplicationUseCaseTest(
+    private val getOneApplicationUseCase: GetOneApplicationUseCase,
+    private val commandApplicationPort: CommandApplicationPort,
+    private val queryUserPort: QueryUserPort,
+    private val commandWorkspacePort: CommandWorkspacePort
+) : BehaviorSpec({
 
     given("애플리케이션이 주어지고") {
         val user = UserGenerator.generateUser()
