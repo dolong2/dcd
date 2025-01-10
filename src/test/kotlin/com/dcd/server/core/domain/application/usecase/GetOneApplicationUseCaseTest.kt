@@ -7,9 +7,9 @@ import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.matchers.shouldBe
 import com.dcd.server.infrastructure.test.application.ApplicationGenerator
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import io.kotest.matchers.equality.shouldBeEqualToComparingFields
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
@@ -25,13 +25,17 @@ class GetOneApplicationUseCaseTest(
 ) : BehaviorSpec({
 
     given("애플리케이션이 주어지고") {
-        val user = UserGenerator.generateUser()
-        val application = ApplicationGenerator.generateApplication(workspace = WorkspaceGenerator.generateWorkspace(user = user))
+        val user = queryUserPort.findById("user2")!!
+        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
+        commandWorkspacePort.save(workspace)
+        val application = ApplicationGenerator.generateApplication(workspace = workspace)
+        commandApplicationPort.save(application)
+
         `when`("해당 애플리케이션이 있을때") {
-            every { queryApplicationPort.findById(application.id) } returns application
             val result = getOneApplicationUseCase.execute(application.id)
+
             then("result는 application의 내용이랑 같아야함") {
-                result shouldBe application.toDto()
+                result shouldBeEqualToComparingFields application.toDto()
             }
         }
     }
