@@ -33,13 +33,10 @@ class GetAllApplicationUseCaseTest(
     }
 
     given("applicationList가 주어지고") {
-        val user = UserGenerator.generateUser()
-        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
-        val application = ApplicationGenerator.generateApplication(workspace = workspace)
-        val applicationList = listOf(application)
+        val workspace = queryWorkspacePort.findByUser(queryUserPort.findById(userId)!!).first()
+        val applicationList = queryApplicationPort.findAllByWorkspace(workspace)
+
         `when`("usecase를 실행할때") {
-            every { queryApplicationPort.findAllByWorkspace(workspace) } returns applicationList
-            every { queryWorkspacePort.findById(workspace.id) } returns workspace
             val result = getAllApplicationUseCase.execute(workspace.id, null)
             val target = ApplicationListResDto(applicationList.map { it.toDto() })
             then("result는 target이랑 같아야함") {
