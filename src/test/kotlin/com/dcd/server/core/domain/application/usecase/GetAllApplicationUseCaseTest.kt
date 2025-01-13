@@ -26,6 +26,11 @@ class GetAllApplicationUseCaseTest(
 ) : BehaviorSpec({
     val userId = "user1"
 
+    beforeContainer {
+        val userDetails = authDetailsService.loadUserByUsername(userId)
+        val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        SecurityContextHolder.getContext().authentication = authenticationToken
+    }
 
     given("applicationList가 주어지고") {
         val user = UserGenerator.generateUser()
