@@ -34,17 +34,12 @@ class DeleteApplicationUseCaseTest(
     }
 
     given("애플리케이션 id가 주어지고") {
-        val applicationId = "testId"
-        val user = UserGenerator.generateUser()
-        val application = ApplicationGenerator.generateApplication(workspace = WorkspaceGenerator.generateWorkspace(user = user))
+
         `when`("usecase를 실행할때") {
-            every { commandApplicationPort.delete(application) } returns Unit
-            every { queryApplicationPort.findById(applicationId) } returns application
-            deleteApplicationUseCase.execute(applicationId)
-            then("commandApplicationPort의 delete메서드가 실행되어야함") {
-                verify { commandApplicationPort.delete(application) }
-                coVerify { deleteContainerService.deleteContainer(application) }
-                coVerify { deleteImageService.deleteImage(application) }
+            deleteApplicationUseCase.execute(targetApplicationId)
+
+            then("해당 아이디를 가진 애플리케이션이 지워져야함") {
+                queryApplicationPort.findById(targetApplicationId) shouldBe null
             }
         }
         `when`("application을 찾을 수 없을때") {
