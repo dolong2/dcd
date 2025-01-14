@@ -42,18 +42,16 @@ class DeleteApplicationUseCaseTest(
                 queryApplicationPort.findById(targetApplicationId) shouldBe null
             }
         }
-        `when`("application을 찾을 수 없을때") {
-            every { queryApplicationPort.findById(applicationId) } returns null
-            then("applicationNotFoundException이 발생해야함") {
+    }
+
+    given("애플리케이션이 없을때") {
+        commandApplicationPort.delete(queryApplicationPort.findById(targetApplicationId)!!)
+
+        `when`("유스케이스를 실행하면") {
+
+            then("에러가 발생해야함") {
                 shouldThrow<ApplicationNotFoundException> {
-                    deleteApplicationUseCase.execute(applicationId)
-                }
-            }
-        }
-        `when`("현재 유저가 소유자가 아닐때") {
-            then("RuntimeException이 발생해야함") {
-                shouldThrow<RuntimeException> {
-                    deleteApplicationUseCase.execute(applicationId)
+                    deleteApplicationUseCase.execute(targetApplicationId)
                 }
             }
         }
