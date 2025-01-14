@@ -3,28 +3,30 @@ package com.dcd.server.core.domain.application.usecase
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.exception.CanNotDeleteApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
-import com.dcd.server.core.domain.application.service.DeleteContainerService
-import com.dcd.server.core.domain.application.service.DeleteImageService
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.user.spi.QueryUserPort
+import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import com.dcd.server.infrastructure.test.application.ApplicationGenerator
-import com.dcd.server.infrastructure.test.user.UserGenerator
-import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
-import java.lang.RuntimeException
+import io.kotest.matchers.shouldBe
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class DeleteApplicationUseCaseTest : BehaviorSpec({
-    val commandApplicationPort = mockk<CommandApplicationPort>()
-    val queryApplicationPort = mockk<QueryApplicationPort>()
-    val deleteContainerService = mockk<DeleteContainerService>(relaxUnitFun = true)
-    val deleteImageService = mockk<DeleteImageService>(relaxUnitFun = true)
-    val deleteApplicationUseCase =
-        DeleteApplicationUseCase(commandApplicationPort, queryApplicationPort, deleteContainerService, deleteImageService)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class DeleteApplicationUseCaseTest(
+    private val deleteApplicationUseCase: DeleteApplicationUseCase,
+    private val queryWorkspacePort: QueryWorkspacePort,
+    private val queryUserPort: QueryUserPort,
+    private val queryApplicationPort: QueryApplicationPort,
+    private val commandApplicationPort: CommandApplicationPort
+) : BehaviorSpec({
+    val targetUserId = "user1"
+    var targetApplicationId = ""
+
     given("애플리케이션 id가 주어지고") {
         val applicationId = "testId"
         val user = UserGenerator.generateUser()
