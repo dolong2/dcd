@@ -27,6 +27,12 @@ class DeleteApplicationUseCaseTest(
     val targetUserId = "user1"
     var targetApplicationId = ""
 
+    beforeSpec {
+        val user = queryUserPort.findById(targetUserId)!!
+        val workspace = queryWorkspacePort.findByUser(user).first()
+        targetApplicationId = queryApplicationPort.findAllByWorkspace(workspace).first().id
+    }
+
     given("애플리케이션 id가 주어지고") {
         val applicationId = "testId"
         val user = UserGenerator.generateUser()
