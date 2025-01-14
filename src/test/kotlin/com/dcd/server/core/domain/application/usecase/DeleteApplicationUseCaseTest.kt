@@ -58,15 +58,13 @@ class DeleteApplicationUseCaseTest(
     }
 
     given("이미 실행중인 애플리케이션이 주어지고") {
-        val applicationId = "testId"
-        val user = UserGenerator.generateUser()
-        val application = ApplicationGenerator.generateApplication(workspace = WorkspaceGenerator.generateWorkspace(user = user), status = ApplicationStatus.RUNNING)
+        val targetApplication = queryApplicationPort.findById(targetApplicationId)!!
+        commandApplicationPort.save(targetApplication.copy(status = ApplicationStatus.RUNNING))
+
         `when`("usecase를 실행할때") {
-            every { commandApplicationPort.delete(application) } returns Unit
-            every { queryApplicationPort.findById(applicationId) } returns application
-            then("commandApplicationPort의 delete메서드가 실행되어야함") {
+            then("에러가 발생해야함") {
                 shouldThrow<CanNotDeleteApplicationException> {
-                    deleteApplicationUseCase.execute(applicationId)
+                    deleteApplicationUseCase.execute(targetApplicationId)
                 }
             }
         }
