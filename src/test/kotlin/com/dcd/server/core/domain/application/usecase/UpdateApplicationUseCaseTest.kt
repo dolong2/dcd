@@ -53,14 +53,14 @@ class UpdateApplicationUseCaseTest(
         }
     }
 
-    given("애플리케이션이 주어지지 않고") {
+    given("존재하지 않는 애플리케이션 아이디가 주어지고") {
+        val notFoundApplicationId = "notFoundApplicationId"
 
         `when`("usecase를 실행할때") {
-            every { queryApplicationPort.findById(applicationId) } returns null
 
             then("ApplicationNotFoundException이 발생해야함") {
                 shouldThrow<ApplicationNotFoundException> {
-                    updateApplicationUseCase.execute(applicationId, updateReqDto)
+                    updateApplicationUseCase.execute(notFoundApplicationId, updateReqDto)
                 }
             }
         }
