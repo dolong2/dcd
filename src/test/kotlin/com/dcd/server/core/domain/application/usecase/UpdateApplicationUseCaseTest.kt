@@ -51,6 +51,17 @@ class UpdateApplicationUseCaseTest(
                 result?.version shouldBe updateReqDto.version
             }
         }
+
+        `when`("애플리케이션이 실행중이라면") {
+            val targetApplication = queryApplicationPort.findById(applicationId)!!
+            commandApplicationPort.save(targetApplication.copy(status = ApplicationStatus.RUNNING))
+
+            then("에러가 발생해야함") {
+                shouldThrow<AlreadyRunningException> {
+                    updateApplicationUseCase.execute(applicationId, updateReqDto)
+                }
+            }
+        }
     }
 
     given("존재하지 않는 애플리케이션 아이디가 주어지고") {
@@ -61,20 +72,6 @@ class UpdateApplicationUseCaseTest(
             then("ApplicationNotFoundException이 발생해야함") {
                 shouldThrow<ApplicationNotFoundException> {
                     updateApplicationUseCase.execute(notFoundApplicationId, updateReqDto)
-                }
-            }
-        }
-    }
-
-    given("실행중인 애플리케이션이 주어지고") {
-        val application = ApplicationGenerator.generateApplication(id = applicationId, workspace = workspace, status = ApplicationStatus.RUNNING)
-
-        `when`("usecase를 실행할때") {
-            every { queryApplicationPort.findById(applicationId) } returns application
-
-            then("ReqDto의 내용이 반영된 애플리케이션을 저장해야함") {
-                shouldThrow<AlreadyRunningException> {
-                    updateApplicationUseCase.execute(applicationId, updateReqDto)
                 }
             }
         }
