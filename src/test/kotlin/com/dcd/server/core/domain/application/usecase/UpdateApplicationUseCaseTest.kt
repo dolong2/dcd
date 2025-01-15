@@ -31,17 +31,24 @@ class UpdateApplicationUseCaseTest(
 
     val updateReqDto = UpdateApplicationReqDto(name = "updated application", description = "dldl", applicationType = ApplicationType.SPRING_BOOT, githubUrl = null, version = "11", port = 8080)
 
-    given("애플리케이션이 주어지고") {
-        val application = ApplicationGenerator.generateApplication(id = applicationId, workspace = workspace)
+    given("애플리케이션 아이디가 주어지고") {
+        val targetUser = queryUserPort.findById(targetUserId)!!
+        val workspace = queryWorkspacePort.findByUser(targetUser).first()
+        val applicationList = queryApplicationPort.findAllByWorkspace(workspace)
+        val applicationId = applicationList.first().id
 
         `when`("usecase를 실행할때") {
-            every { queryApplicationPort.findById(applicationId) } returns application
-
             updateApplicationUseCase.execute(applicationId, updateReqDto)
 
             then("ReqDto의 내용이 반영된 애플리케이션을 저장해야함") {
-                val updatedApplication = application.copy(name = updateReqDto.name, description = updateReqDto.description, applicationType = updateReqDto.applicationType, githubUrl = updateReqDto.githubUrl, version = updateReqDto.version, port = updateReqDto.port)
-                verify { commandApplicationPort.save(updatedApplication) }
+                val result = queryApplicationPort.findById(applicationId)
+                result shouldNotBe null
+                result?.name shouldBe updateReqDto.name
+                result?.description shouldBe updateReqDto.description
+                result?.applicationType shouldBe updateReqDto.applicationType
+                result?.port shouldBe updateReqDto.port
+                result?.githubUrl shouldBe updateReqDto.githubUrl
+                result?.version shouldBe updateReqDto.version
             }
         }
     }
