@@ -7,25 +7,28 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.user.spi.QueryUserPort
+import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import com.dcd.server.infrastructure.test.application.ApplicationGenerator
-import com.dcd.server.infrastructure.test.user.UserGenerator
-import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class UpdateApplicationUseCaseTest : BehaviorSpec({
-    val queryApplicationPort = mockk<QueryApplicationPort>()
-    val commandApplicationPort = mockk<CommandApplicationPort>(relaxUnitFun = true)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class UpdateApplicationUseCaseTest(
+    private val updateApplicationUseCase: UpdateApplicationUseCase,
+    private val queryUserPort: QueryUserPort,
+    private val queryWorkspacePort: QueryWorkspacePort,
+    private val queryApplicationPort: QueryApplicationPort,
+    private val commandApplicationPort: CommandApplicationPort
+) : BehaviorSpec({
+    val targetUserId = "user1"
 
-    val updateApplicationUseCase =
-        UpdateApplicationUseCase(queryApplicationPort, commandApplicationPort)
-
-    val user = UserGenerator.generateUser()
-    val workspace = WorkspaceGenerator.generateWorkspace(user = user)
-    val applicationId = "testId"
     val updateReqDto = UpdateApplicationReqDto(name = "updated application", description = "dldl", applicationType = ApplicationType.SPRING_BOOT, githubUrl = null, version = "11", port = 8080)
 
     given("애플리케이션이 주어지고") {
