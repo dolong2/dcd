@@ -56,11 +56,16 @@ class DeleteApplicationEnvUseCaseTest(
                 }
             }
         }
-        `when`("해당 애플리케이션이 없을때") {
-            every { queryApplicationPort.findById(applicationId) } returns null
-            then("ApplicationNotFoundException이 발생해야함") {
+    }
+
+    given("존재하지 않는 애플리케이션의 아이디가 주어지고") {
+        val notFoundApplicationId = "notFoundApplicationId"
+
+        `when`("유스케이스를 실행하면") {
+
+            then("에러가 발생해야함") {
                 shouldThrow<ApplicationNotFoundException> {
-                    deleteApplicationEnvUseCase.execute(applicationId, key)
+                    deleteApplicationEnvUseCase.execute(notFoundApplicationId, key)
                 }
             }
         }
