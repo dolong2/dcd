@@ -1,22 +1,37 @@
 package com.dcd.server.core.domain.application.usecase
 
-import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.exception.ApplicationEnvNotFoundException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.user.spi.QueryUserPort
+import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
 import com.dcd.server.infrastructure.test.application.ApplicationGenerator
+import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import io.kotest.matchers.shouldBe
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
 class DeleteApplicationEnvUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
     val commandApplicationPort = mockk<CommandApplicationPort>()
     val workspaceInfo = WorkspaceInfo()
     val deleteApplicationEnvUseCase = DeleteApplicationEnvUseCase(queryApplicationPort, commandApplicationPort, workspaceInfo)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class DeleteApplicationEnvUseCaseTest(
+    private val deleteApplicationEnvUseCase: DeleteApplicationEnvUseCase,
+    private val commandApplicationPort: CommandApplicationPort,
+    private val queryUserPort: QueryUserPort,
+    private val commandWorkspacePort: CommandWorkspacePort,
+    private val queryApplicationPort: QueryApplicationPort
+) : BehaviorSpec({
+    val applicationId = "testId"
+    val key = "testKey"
 
     given("애플리케이션 Id와 삭제할 key가 주어지고") {
         val applicationId = "testId"
