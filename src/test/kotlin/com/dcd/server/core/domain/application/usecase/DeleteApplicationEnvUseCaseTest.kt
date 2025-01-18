@@ -46,9 +46,10 @@ class DeleteApplicationEnvUseCaseTest(
                 application?.env?.get("testKey") shouldBe null
             }
         }
+
         `when`("해당 환경변수가 없을떄") {
-            every { queryApplicationPort.findById(applicationId) } returns application
             val notExistsKey = "not exists"
+
             then("ApplicationEnvNotFoundException이 발생해야함") {
                 shouldThrow<ApplicationEnvNotFoundException> {
                     deleteApplicationEnvUseCase.execute(applicationId, notExistsKey)
