@@ -37,15 +37,13 @@ class DeleteApplicationEnvUseCaseTest(
     }
 
     given("애플리케이션 Id와 삭제할 key가 주어지고") {
-        val applicationId = "testId"
-        val key = "testKey"
-        val application = ApplicationGenerator.generateApplication(env = mapOf(Pair("testKey", "testValue")))
+
         `when`("usecase를 실행할때") {
-            every { queryApplicationPort.findById(applicationId) } returns application
-            every { commandApplicationPort.save(any()) } answers { callOriginal() }
             deleteApplicationEnvUseCase.execute(applicationId, key)
+
             then("commandApplicationPort의 save메서드가 실행되어야함") {
-                verify { commandApplicationPort.save(any()) }
+                val application = queryApplicationPort.findById(applicationId)
+                application?.env?.get("testKey") shouldBe null
             }
         }
         `when`("해당 환경변수가 없을떄") {
