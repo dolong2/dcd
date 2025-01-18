@@ -15,11 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 
-class DeleteApplicationEnvUseCaseTest : BehaviorSpec({
-    val queryApplicationPort = mockk<QueryApplicationPort>()
-    val commandApplicationPort = mockk<CommandApplicationPort>()
-    val workspaceInfo = WorkspaceInfo()
-    val deleteApplicationEnvUseCase = DeleteApplicationEnvUseCase(queryApplicationPort, commandApplicationPort, workspaceInfo)
 @Transactional
 @SpringBootTest
 @ActiveProfiles("test")
@@ -32,6 +27,14 @@ class DeleteApplicationEnvUseCaseTest(
 ) : BehaviorSpec({
     val applicationId = "testId"
     val key = "testKey"
+
+    beforeContainer {
+        val user = queryUserPort.findById("user2")!!
+        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
+        commandWorkspacePort.save(workspace)
+        val application = ApplicationGenerator.generateApplication(id = applicationId, env = mapOf(Pair("testKey", "testValue")), workspace = workspace)
+        commandApplicationPort.save(application)
+    }
 
     given("애플리케이션 Id와 삭제할 key가 주어지고") {
         val applicationId = "testId"
