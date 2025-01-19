@@ -54,4 +54,18 @@ class UpdateApplicationEnvUseCaseTest(
             }
         }
     }
+
+    given("존재하지 않는 애플리케이션 환경변수 키가 주어지고") {
+        val notFoundKey = "nfEnvKey"
+        val request = UpdateApplicationEnvReqDto(newValue = "newValue")
+
+        `when`("유스케이스를 실행하면") {
+
+            then("에러가 발생해야함") {
+                shouldThrow<ApplicationEnvNotFoundException> {
+                    updateApplicationEnvUseCase.execute(applicationId, notFoundKey, request)
+                }
+            }
+        }
+    }
 })
