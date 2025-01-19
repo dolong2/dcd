@@ -31,6 +31,14 @@ class UpdateApplicationEnvUseCaseTest(
     val applicationId = "testId"
     val key = "testKey"
 
+    beforeContainer {
+        val user = queryUserPort.findById("user2")!!
+        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
+        commandWorkspacePort.save(workspace)
+        val application = ApplicationGenerator.generateApplication(id = applicationId, env = mapOf(Pair("testKey", "testValue")), workspace = workspace)
+        commandApplicationPort.save(application)
+    }
+
     given("애플리케이션 아이디와 수정할 환경변수값이 주어지고") {
         val applicationId = "testId"
         val envKey = "testKey"
