@@ -68,4 +68,18 @@ class UpdateApplicationEnvUseCaseTest(
             }
         }
     }
+
+    given("존재하지 않는 애플리케이션 아이디가 존재하고") {
+        val notFoundAppId = "nfAppId"
+        val request = UpdateApplicationEnvReqDto(newValue = "newValue")
+
+        `when`("유스케이스를 실행하면") {
+
+            then("에러가 발생해야함") {
+                shouldThrow<ApplicationNotFoundException> {
+                    updateApplicationEnvUseCase.execute(notFoundAppId, key, request)
+                }
+            }
+        }
+    }
 })
