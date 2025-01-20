@@ -27,6 +27,13 @@ class CreateApplicationUseCaseTest(
     var targetWorkspaceId = ""
 
     given("CreateApplicationReqDto와 유저가 주어지고") {
+    beforeSpec {
+        val user = queryUserPort.findById("user2")!!
+        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
+        commandWorkspacePort.save(workspace)
+        targetWorkspaceId = workspace.id
+    }
+
         val request = CreateApplicationReqDto(
             name = "testName",
             description = "testDescription",
