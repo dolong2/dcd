@@ -1,50 +1,63 @@
 package com.dcd.server.core.domain.application.usecase
 
-import com.dcd.server.core.common.service.SecurityService
 import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDto
-import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.exception.AlreadyExistsApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import com.dcd.server.core.domain.application.service.*
-import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
-import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
+import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import com.dcd.server.infrastructure.test.user.UserGenerator
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.cancel
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class CreateApplicationUseCaseTest : BehaviorSpec({
-    val commandApplicationPort = mockk<CommandApplicationPort>()
-    val queryApplicationPort = mockk<QueryApplicationPort>()
-    val queryUserPort = mockk<QueryUserPort>()
-    val securityService = mockk<SecurityService>()
-    val queryWorkspacePort = mockk<QueryWorkspacePort>()
-    val cloneApplicationByUrlService = mockk<CloneApplicationByUrlService>(relaxUnitFun = true)
-    val modifyGradleService = mockk<ModifyGradleService>(relaxUnitFun = true)
-    val createDockerFileService = mockk<CreateDockerFileService>(relaxUnitFun = true)
-    val getExternalPortService = mockk<GetExternalPortService>(relaxed = true)
-    val buildDockerImageService = mockk<BuildDockerImageService>(relaxUnitFun = true)
-    val createContainerService = mockk<CreateContainerService>(relaxUnitFun = true)
-    val deleteApplicationDirectoryService = mockk<DeleteApplicationDirectoryService>(relaxUnitFun = true)
-    val createApplicationUseCase = CreateApplicationUseCase(
-        commandApplicationPort,
-        queryApplicationPort,
-        queryWorkspacePort,
-        cloneApplicationByUrlService,
-        modifyGradleService,
-        createDockerFileService,
-        getExternalPortService,
-        buildDockerImageService,
-        createContainerService,
-        deleteApplicationDirectoryService
-    )
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class CreateApplicationUseCaseTest(
+    private val createApplicationUseCase: CreateApplicationUseCase,
+    private val queryUserPort: QueryUserPort,
+    private val commandWorkspacePort: CommandWorkspacePort,
+    private val queryApplicationPort: QueryApplicationPort
+) : BehaviorSpec({
+    var targetWorkspaceId = ""
 
-    given("CreateApplicationReqDto와 유저가 주어지고") {
+    beforeContainer {
+        val user = queryUserPort.findById("user2")!!
+        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
+        commandWorkspacePort.save(workspace)
+        targetWorkspaceId = workspace.id
+    }
+
+    given("새로 생성할 애플리케이션 요청이 주어지고") {
         val request = CreateApplicationReqDto(
+            name = "testCreateApplication",
+            description = "testDescription",
+            applicationType = ApplicationType.SPRING_BOOT,
+            env = mapOf(),
+            githubUrl = "testGithub",
+            version = "17",
+            port = 8080,
+            labels = listOf()
+        )
+
+        `when`("usecase를 실행하면") {
+            createApplicationUseCase.execute(targetWorkspaceId, request)
+            createApplicationUseCase.coroutineContext.cancel()
+
+            then("요청의 이름을 가진 애플리케이션이 존재해야함") {
+                queryApplicationPort.existsByName(request.name) shouldBe true
+            }
+        }
+    }
+
+    given("이미 존재하는 애플리케이션 이름이 주어지고") {
+        val existsApplicationRequest = CreateApplicationReqDto(
             name = "testName",
             description = "testDescription",
             applicationType = ApplicationType.SPRING_BOOT,
@@ -54,24 +67,36 @@ class CreateApplicationUseCaseTest : BehaviorSpec({
             port = 8080,
             labels = listOf()
         )
-        val user = UserGenerator.generateUser()
-        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
-        val id = user.id
+
         `when`("usecase를 실행하면") {
-            every { securityService.getCurrentUserId() } returns id
-            every { queryApplicationPort.existsByName(request.name) } returns false
-            every { queryUserPort.findById(id) } returns user
-            every { commandApplicationPort.save(any()) } answers { callOriginal() }
-            every { queryWorkspacePort.findById(workspace.id) } returns workspace
-            createApplicationUseCase.execute(workspace.id, request)
-            then("repository의 save메서드가 실행되어야함") {
-                verify { commandApplicationPort.save(any()) }
-                coVerify { cloneApplicationByUrlService.cloneByApplication(any() as Application) }
-                coVerify { modifyGradleService.modifyGradleByApplication(any() as Application) }
-                coVerify { createDockerFileService.createFileToApplication(any() as Application, request.version) }
-                coVerify { buildDockerImageService.buildImageByApplication(any() as Application) }
-                coVerify { getExternalPortService.getExternalPort(request.port) }
-                coVerify { deleteApplicationDirectoryService.deleteApplicationDirectory(any() as Application) }
+
+            then("에러가 발생해야함") {
+                shouldThrow<AlreadyExistsApplicationException> {
+                    createApplicationUseCase.execute(targetWorkspaceId, existsApplicationRequest)
+                }
+            }
+        }
+    }
+
+    given("존재하지 않는 워크스페이스 아이디가 주어지고") {
+        val notFoundWorkspaceId = "notFoundWorkspaceId"
+        val request = CreateApplicationReqDto(
+            name = "testCreateApplication",
+            description = "testDescription",
+            applicationType = ApplicationType.SPRING_BOOT,
+            env = mapOf(),
+            githubUrl = "testGithub",
+            version = "17",
+            port = 8080,
+            labels = listOf()
+        )
+
+        `when`("usecase를 실행하면") {
+
+            then("에러가 발생해야함") {
+                shouldThrow<WorkspaceNotFoundException> {
+                    createApplicationUseCase.execute(notFoundWorkspaceId, request)
+                }
             }
         }
     }
