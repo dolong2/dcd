@@ -27,7 +27,7 @@ class CreateApplicationUseCaseTest(
 ) : BehaviorSpec({
     var targetWorkspaceId = ""
 
-    beforeSpec {
+    beforeContainer {
         val user = queryUserPort.findById("user2")!!
         val workspace = WorkspaceGenerator.generateWorkspace(user = user)
         commandWorkspacePort.save(workspace)
