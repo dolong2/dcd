@@ -1,47 +1,30 @@
 package com.dcd.server.core.domain.application.usecase
 
-import com.dcd.server.core.common.service.SecurityService
 import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDto
-import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.exception.AlreadyExistsApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import com.dcd.server.core.domain.application.service.*
-import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
-import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
+import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import com.dcd.server.infrastructure.test.user.UserGenerator
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class CreateApplicationUseCaseTest : BehaviorSpec({
-    val commandApplicationPort = mockk<CommandApplicationPort>()
-    val queryApplicationPort = mockk<QueryApplicationPort>()
-    val queryUserPort = mockk<QueryUserPort>()
-    val securityService = mockk<SecurityService>()
-    val queryWorkspacePort = mockk<QueryWorkspacePort>()
-    val cloneApplicationByUrlService = mockk<CloneApplicationByUrlService>(relaxUnitFun = true)
-    val modifyGradleService = mockk<ModifyGradleService>(relaxUnitFun = true)
-    val createDockerFileService = mockk<CreateDockerFileService>(relaxUnitFun = true)
-    val getExternalPortService = mockk<GetExternalPortService>(relaxed = true)
-    val buildDockerImageService = mockk<BuildDockerImageService>(relaxUnitFun = true)
-    val createContainerService = mockk<CreateContainerService>(relaxUnitFun = true)
-    val deleteApplicationDirectoryService = mockk<DeleteApplicationDirectoryService>(relaxUnitFun = true)
-    val createApplicationUseCase = CreateApplicationUseCase(
-        commandApplicationPort,
-        queryApplicationPort,
-        queryWorkspacePort,
-        cloneApplicationByUrlService,
-        modifyGradleService,
-        createDockerFileService,
-        getExternalPortService,
-        buildDockerImageService,
-        createContainerService,
-        deleteApplicationDirectoryService
-    )
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class CreateApplicationUseCaseTest(
+    private val createApplicationUseCase: CreateApplicationUseCase,
+    private val queryUserPort: QueryUserPort,
+    private val commandWorkspacePort: CommandWorkspacePort,
+    private val queryApplicationPort: QueryApplicationPort
+) : BehaviorSpec({
+    var targetWorkspaceId = ""
 
     given("CreateApplicationReqDto와 유저가 주어지고") {
         val request = CreateApplicationReqDto(
