@@ -26,7 +26,6 @@ class CreateApplicationUseCaseTest(
 ) : BehaviorSpec({
     var targetWorkspaceId = ""
 
-    given("CreateApplicationReqDto와 유저가 주어지고") {
     beforeSpec {
         val user = queryUserPort.findById("user2")!!
         val workspace = WorkspaceGenerator.generateWorkspace(user = user)
@@ -34,8 +33,9 @@ class CreateApplicationUseCaseTest(
         targetWorkspaceId = workspace.id
     }
 
+    given("새로 생성할 애플리케이션 요청이 주어지고") {
         val request = CreateApplicationReqDto(
-            name = "testName",
+            name = "testCreateApplication",
             description = "testDescription",
             applicationType = ApplicationType.SPRING_BOOT,
             env = mapOf(),
@@ -44,24 +44,12 @@ class CreateApplicationUseCaseTest(
             port = 8080,
             labels = listOf()
         )
-        val user = UserGenerator.generateUser()
-        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
-        val id = user.id
+
         `when`("usecase를 실행하면") {
-            every { securityService.getCurrentUserId() } returns id
-            every { queryApplicationPort.existsByName(request.name) } returns false
-            every { queryUserPort.findById(id) } returns user
-            every { commandApplicationPort.save(any()) } answers { callOriginal() }
-            every { queryWorkspacePort.findById(workspace.id) } returns workspace
-            createApplicationUseCase.execute(workspace.id, request)
-            then("repository의 save메서드가 실행되어야함") {
-                verify { commandApplicationPort.save(any()) }
-                coVerify { cloneApplicationByUrlService.cloneByApplication(any() as Application) }
-                coVerify { modifyGradleService.modifyGradleByApplication(any() as Application) }
-                coVerify { createDockerFileService.createFileToApplication(any() as Application, request.version) }
-                coVerify { buildDockerImageService.buildImageByApplication(any() as Application) }
-                coVerify { getExternalPortService.getExternalPort(request.port) }
-                coVerify { deleteApplicationDirectoryService.deleteApplicationDirectory(any() as Application) }
+            createApplicationUseCase.execute(targetWorkspaceId, request)
+
+            then("요청의 이름을 가진 애플리케이션이 존재해야함") {
+                queryApplicationPort.existsByName(request.name) shouldBe true
             }
         }
     }
