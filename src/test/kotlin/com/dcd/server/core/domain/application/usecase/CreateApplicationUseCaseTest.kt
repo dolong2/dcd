@@ -75,4 +75,27 @@ class CreateApplicationUseCaseTest(
             }
         }
     }
+
+    given("존재하지 않는 워크스페이스 아이디가 주어지고") {
+        val notFoundWorkspaceId = "notFoundWorkspaceId"
+        val request = CreateApplicationReqDto(
+            name = "testCreateApplication",
+            description = "testDescription",
+            applicationType = ApplicationType.SPRING_BOOT,
+            env = mapOf(),
+            githubUrl = "testGithub",
+            version = "17",
+            port = 8080,
+            labels = listOf()
+        )
+
+        `when`("usecase를 실행하면") {
+
+            then("에러가 발생해야함") {
+                shouldThrow<WorkspaceNotFoundException> {
+                    createApplicationUseCase.execute(notFoundWorkspaceId, request)
+                }
+            }
+        }
+    }
 })
