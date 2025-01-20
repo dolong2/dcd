@@ -11,6 +11,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.cancel
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
@@ -47,6 +48,7 @@ class CreateApplicationUseCaseTest(
 
         `when`("usecase를 실행하면") {
             createApplicationUseCase.execute(targetWorkspaceId, request)
+            createApplicationUseCase.coroutineContext.cancel()
 
             then("요청의 이름을 가진 애플리케이션이 존재해야함") {
                 queryApplicationPort.existsByName(request.name) shouldBe true
