@@ -53,4 +53,26 @@ class CreateApplicationUseCaseTest(
             }
         }
     }
+
+    given("이미 존재하는 애플리케이션 이름이 주어지고") {
+        val existsApplicationRequest = CreateApplicationReqDto(
+            name = "testName",
+            description = "testDescription",
+            applicationType = ApplicationType.SPRING_BOOT,
+            env = mapOf(),
+            githubUrl = "testGithub",
+            version = "17",
+            port = 8080,
+            labels = listOf()
+        )
+
+        `when`("usecase를 실행하면") {
+
+            then("에러가 발생해야함") {
+                shouldThrow<AlreadyExistsApplicationException> {
+                    createApplicationUseCase.execute(targetWorkspaceId, existsApplicationRequest)
+                }
+            }
+        }
+    }
 })
