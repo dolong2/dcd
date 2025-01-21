@@ -52,19 +52,26 @@ class SecurityServiceImplTest(
         }
     }
 
-    given("rawPassword와 encodedPassword가 주어지고") {
+    given("일반 패스워드와 암호화된 패스워드가 주어지고") {
         val rawPassword = "rawPassword"
-        val encodedPassword = "encodedPassword"
-        every { securityPort.isCorrectPassword(rawPassword, encodedPassword) } returns true
-        `when`("securityPort에서 true를 반환하면") {
+        val encodedPassword = passwordEncoder.encode(rawPassword)
+
+        `when`("패스워드가 일치하는지 검사하면") {
             val result = securityServiceImpl.matchPassword(rawPassword, encodedPassword)
-            then("결과값은 Unit이여야함") {
+
+            then("에러없이 Unit을 반환해야함") {
                 result shouldBe Unit
             }
         }
-        every { securityPort.isCorrectPassword(rawPassword, encodedPassword) } returns false
-        `when`("securityPort에서 false를 반환하면") {
-            then("PasswordNotCorrectException이 발생해야함") {
+    }
+
+    given("일반 패스워드와 암호화되지 않은 패스워드가 주어지고") {
+        val rawPassword = "rawPassword"
+        val encodedPassword = "incorrectPassword"
+
+        `when`("패스워드가 일치하는지 검사하면") {
+
+            then("에러가 발생해야함") {
                 shouldThrow<PasswordNotCorrectException> {
                     securityServiceImpl.matchPassword(rawPassword, encodedPassword)
                 }
