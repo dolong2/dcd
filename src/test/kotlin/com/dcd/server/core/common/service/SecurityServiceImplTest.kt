@@ -23,6 +23,12 @@ class SecurityServiceImplTest(
 ) : BehaviorSpec({
     val targetUserId = "user2"
 
+    beforeContainer {
+        val userDetails = authDetailsService.loadUserByUsername(targetUserId)
+        val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        SecurityContextHolder.getContext().authentication = authenticationToken
+    }
+
     given("현재 유저 id가 주어지고") {
         val testUserId = "testUserId"
         every { securityPort.getCurrentUserId() } returns testUserId
