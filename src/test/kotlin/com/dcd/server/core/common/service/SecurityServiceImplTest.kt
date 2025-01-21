@@ -42,12 +42,12 @@ class SecurityServiceImplTest(
 
     given("rawPassword가 주어지고") {
         val rawPassword = "rawPassword"
-        val encodedPassword = "encodedPassword"
-        every { securityPort.encodeRawPassword(rawPassword) } returns encodedPassword
+
         `when`("securityPort에서 인코딩된 패스워드를 반환할때") {
             val result = securityServiceImpl.encodePassword(rawPassword)
+
             then("결과값은 encodedPassword여야함") {
-                result shouldBe encodedPassword
+                passwordEncoder.matches(rawPassword, result) shouldBe true
             }
         }
     }
