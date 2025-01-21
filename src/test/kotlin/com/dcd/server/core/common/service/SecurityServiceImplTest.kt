@@ -30,12 +30,12 @@ class SecurityServiceImplTest(
     }
 
     given("현재 유저 id가 주어지고") {
-        val testUserId = "testUserId"
-        every { securityPort.getCurrentUserId() } returns testUserId
-        `when`("securityPort에서 주어진 id를 반환할때") {
+
+        `when`("현재 로그인된 유저의 아이디를 조회할때") {
             val result = securityServiceImpl.getCurrentUserId()
+
             then("결과값은 반환된 유저 id여야함") {
-                result shouldBe testUserId
+                result shouldBe targetUserId
             }
         }
     }
