@@ -2,16 +2,26 @@ package com.dcd.server.core.common.service
 
 import com.dcd.server.core.common.service.exception.PasswordNotCorrectException
 import com.dcd.server.core.common.service.impl.SecurityServiceImpl
-import com.dcd.server.core.common.spi.SecurityPort
+import com.dcd.server.infrastructure.global.security.auth.AuthDetailsService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.every
-import io.mockk.mockk
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class SecurityServiceImplTest : BehaviorSpec({
-    val securityPort = mockk<SecurityPort>()
-    val securityServiceImpl = SecurityServiceImpl(securityPort)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class SecurityServiceImplTest(
+    private val securityServiceImpl: SecurityServiceImpl,
+    private val authDetailsService: AuthDetailsService,
+    private val passwordEncoder: PasswordEncoder
+) : BehaviorSpec({
+    val targetUserId = "user2"
 
     given("현재 유저 id가 주어지고") {
         val testUserId = "testUserId"
