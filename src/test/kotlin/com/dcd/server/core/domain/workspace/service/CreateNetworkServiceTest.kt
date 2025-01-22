@@ -2,13 +2,21 @@ package com.dcd.server.core.domain.workspace.service
 
 import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.workspace.service.impl.CreateNetworkServiceImpl
+import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.mockk
 import io.mockk.verify
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class CreateNetworkServiceTest : BehaviorSpec({
-    val commandPort = mockk<CommandPort>(relaxed = true)
-    val createNetworkService = CreateNetworkServiceImpl(commandPort)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class CreateNetworkServiceTest(
+    private val createNetworkService: CreateNetworkServiceImpl,
+    @MockkBean(relaxed = true)
+    private val commandPort: CommandPort
+) : BehaviorSpec({
 
     given("생성할 네트워크 제목을 주어지고") {
         val testNetworkTitle = "test network"
