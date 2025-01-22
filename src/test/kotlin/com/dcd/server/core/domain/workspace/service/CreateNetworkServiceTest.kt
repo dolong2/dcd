@@ -9,12 +9,14 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 
-class CreateNetworkServiceTest : BehaviorSpec({
-    val commandPort = mockk<CommandPort>(relaxed = true)
-    val createNetworkService = CreateNetworkServiceImpl(commandPort)
 @Transactional
 @SpringBootTest
 @ActiveProfiles("test")
+class CreateNetworkServiceTest(
+    private val createNetworkService: CreateNetworkServiceImpl,
+    @MockkBean(relaxed = true)
+    private val commandPort: CommandPort
+) : BehaviorSpec({
 
     given("생성할 네트워크 제목을 주어지고") {
         val testNetworkTitle = "test network"
