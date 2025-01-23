@@ -71,4 +71,19 @@ class ValidateWorkspaceOwnerServiceTest(
             }
         }
     }
+
+    given("시큐리티 컨텍스트에 소유자가 아닌 유저가 주어지고") {
+        val userDetails = authDetailsService.loadUserByUsername(otherUser.id)
+        val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        SecurityContextHolder.getContext().authentication = authenticationToken
+
+        `when`("validateOwner 메서드를 실행하면") {
+
+            then("에러가 발생해야함") {
+                shouldThrow<WorkspaceOwnerNotSameException> {
+                    validateWorkspaceOwnerServiceImpl.validateOwner(workspace)
+                }
+            }
+        }
+    }
 })
