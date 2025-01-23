@@ -29,6 +29,11 @@ class ValidateWorkspaceOwnerServiceTest(
     val otherUser = UserGenerator.generateUser()
     val workspace = WorkspaceGenerator.generateWorkspace(user = owner)
 
+    beforeContainer {
+        commandUserPort.save(owner)
+        commandUserPort.save(otherUser)
+        commandWorkspacePort.save(workspace)
+    }
 
     given("user와 workspace가 주어지고") {
         val user = UserGenerator.generateUser()
