@@ -70,6 +70,8 @@ class ValidateWorkspaceOwnerServiceTest(
                 result shouldBe Unit
             }
         }
+
+        SecurityContextHolder.getContext().authentication = null
     }
 
     given("시큐리티 컨텍스트에 소유자가 아닌 유저가 주어지고") {
@@ -85,5 +87,7 @@ class ValidateWorkspaceOwnerServiceTest(
                 }
             }
         }
+
+        SecurityContextHolder.getContext().authentication = null
     }
 })
