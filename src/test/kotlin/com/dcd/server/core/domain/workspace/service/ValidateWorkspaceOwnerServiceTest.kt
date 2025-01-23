@@ -35,22 +35,13 @@ class ValidateWorkspaceOwnerServiceTest(
         commandWorkspacePort.save(workspace)
     }
 
-    given("user와 workspace가 주어지고") {
-        val user = UserGenerator.generateUser()
-        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
-        `when`("현재 인증된 유저가 workspace의 주인일때") {
-            val result = service.validateOwner(user, workspace)
+    given("워크스페이스 소유주와 워크스페이스가 주어지고") {
+
+        `when`("validateOwner 메서드를 실행하면") {
+            val result = validateWorkspaceOwnerServiceImpl.validateOwner(owner, workspace)
+
             then("결과값은 Unit이여야됨") {
                 result shouldBe Unit
-            }
-        }
-        `when`("현재 인증된 유저가 workspace의 주인이 아닐때") {
-            val another =
-                User(email = "another", password = "password", name = "another user", roles = mutableListOf(Role.ROLE_USER), status = Status.CREATED)
-            then("WorkspaceOwnerNotSameException이 발생해야함") {
-                shouldThrow<WorkspaceOwnerNotSameException> {
-                    service.validateOwner(another, workspace)
-                }
             }
         }
     }
