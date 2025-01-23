@@ -45,4 +45,16 @@ class ValidateWorkspaceOwnerServiceTest(
             }
         }
     }
+
+    given("워크스페이스 소유주가 아닌 유저와 워크스페이스가 주어지고") {
+
+        `when`("validateOwner 메서드를 실행하면") {
+
+            then("에러가 발생해야함") {
+                shouldThrow<WorkspaceOwnerNotSameException> {
+                    validateWorkspaceOwnerServiceImpl.validateOwner(otherUser, workspace)
+                }
+            }
+        }
+    }
 })
