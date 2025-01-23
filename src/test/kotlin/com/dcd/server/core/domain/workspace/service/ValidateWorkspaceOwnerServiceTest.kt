@@ -1,39 +1,93 @@
 package com.dcd.server.core.domain.workspace.service
 
-import com.dcd.server.core.domain.auth.model.Role
-import com.dcd.server.core.domain.user.model.enums.Status
-import com.dcd.server.core.domain.user.model.User
-import com.dcd.server.core.domain.user.service.GetCurrentUserService
+import com.dcd.server.core.domain.user.spi.CommandUserPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
 import com.dcd.server.core.domain.workspace.service.impl.ValidateWorkspaceOwnerServiceImpl
+import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
+import com.dcd.server.infrastructure.global.security.auth.AuthDetailsService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.mockk
 import com.dcd.server.infrastructure.test.user.UserGenerator
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class ValidateWorkspaceOwnerServiceTest : BehaviorSpec({
-    val getCurrentUserService = mockk<GetCurrentUserService>()
-    val service = ValidateWorkspaceOwnerServiceImpl(getCurrentUserService)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class ValidateWorkspaceOwnerServiceTest(
+    private val validateWorkspaceOwnerServiceImpl: ValidateWorkspaceOwnerServiceImpl,
+    private val commandUserPort: CommandUserPort,
+    private val commandWorkspacePort: CommandWorkspacePort,
+    private val authDetailsService: AuthDetailsService
+) : BehaviorSpec({
+    val owner = UserGenerator.generateUser()
+    val otherUser = UserGenerator.generateUser()
+    val workspace = WorkspaceGenerator.generateWorkspace(user = owner)
 
-    given("user와 workspace가 주어지고") {
-        val user = UserGenerator.generateUser()
-        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
-        `when`("현재 인증된 유저가 workspace의 주인일때") {
-            val result = service.validateOwner(user, workspace)
+    beforeContainer {
+        commandUserPort.save(owner)
+        commandUserPort.save(otherUser)
+        commandWorkspacePort.save(workspace)
+    }
+
+    given("워크스페이스 소유주와 워크스페이스가 주어지고") {
+
+        `when`("validateOwner 메서드를 실행하면") {
+            val result = validateWorkspaceOwnerServiceImpl.validateOwner(owner, workspace)
+
             then("결과값은 Unit이여야됨") {
                 result shouldBe Unit
             }
         }
-        `when`("현재 인증된 유저가 workspace의 주인이 아닐때") {
-            val another =
-                User(email = "another", password = "password", name = "another user", roles = mutableListOf(Role.ROLE_USER), status = Status.CREATED)
-            then("WorkspaceOwnerNotSameException이 발생해야함") {
+    }
+
+    given("워크스페이스 소유주가 아닌 유저와 워크스페이스가 주어지고") {
+
+        `when`("validateOwner 메서드를 실행하면") {
+
+            then("에러가 발생해야함") {
                 shouldThrow<WorkspaceOwnerNotSameException> {
-                    service.validateOwner(another, workspace)
+                    validateWorkspaceOwnerServiceImpl.validateOwner(otherUser, workspace)
                 }
             }
         }
+    }
+
+    given("시큐리티 컨텍스트에 소유자가 주어지고") {
+        val userDetails = authDetailsService.loadUserByUsername(owner.id)
+        val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        SecurityContextHolder.getContext().authentication = authenticationToken
+
+        `when`("validateOwner 메서드를 실행하면") {
+            val result = validateWorkspaceOwnerServiceImpl.validateOwner(workspace)
+
+            then("결과값은 Unit이여야함") {
+                result shouldBe Unit
+            }
+        }
+
+        SecurityContextHolder.getContext().authentication = null
+    }
+
+    given("시큐리티 컨텍스트에 소유자가 아닌 유저가 주어지고") {
+        val userDetails = authDetailsService.loadUserByUsername(otherUser.id)
+        val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        SecurityContextHolder.getContext().authentication = authenticationToken
+
+        `when`("validateOwner 메서드를 실행하면") {
+
+            then("에러가 발생해야함") {
+                shouldThrow<WorkspaceOwnerNotSameException> {
+                    validateWorkspaceOwnerServiceImpl.validateOwner(workspace)
+                }
+            }
+        }
+
+        SecurityContextHolder.getContext().authentication = null
     }
 })
