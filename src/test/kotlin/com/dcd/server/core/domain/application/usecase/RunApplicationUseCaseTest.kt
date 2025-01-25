@@ -61,23 +61,15 @@ class RunApplicationUseCaseTest(
         }
     }
 
-    given("mysql application, runApplicationReqDto가 주어지고") {
-        val application = ApplicationGenerator.generateApplication(workspace = workspace, applicationType = ApplicationType.MYSQL)
+    given("이미 애플리케이션이 실행중이고") {
+        val target = queryApplicationPort.findById(targetApplicationId)!!
+        commandApplicationPort.save(target.copy(status = ApplicationStatus.RUNNING))
 
-        `when`("usecase를 실행하면") {
-            every { queryApplicationPort.findById(application.id) } returns application
+        `when`("유스케이스를 실행할때") {
 
-            runApplicationUseCase.execute(application.id)
-            then("dockerRunService만 실행되어야함") {
-                coVerify { runContainerService.runApplication(application) }
-            }
-        }
-
-        `when`("해당 애플리케이션이 이미 실행된 있는 상태일때") {
-            every { queryApplicationPort.findById("testId") } returns application.copy(status = ApplicationStatus.RUNNING)
-            then("AlreadyRunningException이 발생해야됨") {
+            then("에러가 발생해야함") {
                 shouldThrow<AlreadyRunningException> {
-                    runApplicationUseCase.execute("testId")
+                    runApplicationUseCase.execute(targetApplicationId)
                 }
             }
         }
