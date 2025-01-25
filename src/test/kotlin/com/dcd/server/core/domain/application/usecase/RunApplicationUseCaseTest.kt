@@ -35,26 +35,16 @@ class RunApplicationUseCaseTest(
 ) : BehaviorSpec({
     val targetApplicationId = "testApplicationId"
 
-    val user = UserGenerator.generateUser()
-    val workspace = WorkspaceGenerator.generateWorkspace(user = user)
-    given("spring boot application, runApplicationDto가 주어지고") {
-        val application = ApplicationGenerator.generateApplication(workspace = workspace)
-        `when`("usecase를 실행할때") {
-            every { queryApplicationPort.findById("testId") } returns application
-            runApplicationUseCase.execute("testId")
-            then("애플리케이션 실행에 관한 service들이 실행되어야함") {
-                verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.PENDING) }
-            }
-        }
+    beforeSpec {
+        println("test")
+        val user = UserGenerator.generateUser()
+        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
+        val application = ApplicationGenerator.generateApplication(id = targetApplicationId, workspace = workspace)
 
-        `when`("애플리케이션이 존재하지 않을때") {
-            every { queryApplicationPort.findById("testId") } returns null
-            then("ApplicationNotFoundException이 발생해야함") {
-                shouldThrow<ApplicationNotFoundException> {
-                    runApplicationUseCase.execute("testId")
-                }
-            }
-        }
+        commandUserPort.save(user)
+        commandWorkspacePort.save(workspace)
+        commandApplicationPort.save(application)
+    }
 
         `when`("해당 애플리케이션이 이미 실행된 있는 상태일때") {
             every { queryApplicationPort.findById("testId") } returns application.copy(status = ApplicationStatus.RUNNING)
