@@ -46,12 +46,17 @@ class RunApplicationUseCaseTest(
         commandApplicationPort.save(application)
     }
 
-        `when`("해당 애플리케이션이 이미 실행된 있는 상태일때") {
-            every { queryApplicationPort.findById("testId") } returns application.copy(status = ApplicationStatus.RUNNING)
-            then("AlreadyRunningException이 발생해야됨") {
-                shouldThrow<AlreadyRunningException> {
-                    runApplicationUseCase.execute("testId")
-                }
+    given("애플리케이션 아이디가 주어지고") {
+
+        `when`("유스케이스를 실행할때") {
+            runApplicationUseCase.execute(targetApplicationId)
+
+            then("타겟 애플리케이션 상태가 보류로 변경되고 컨테이너를 실행해야함") {
+                val targetApplication = queryApplicationPort.findById(targetApplicationId)
+                targetApplication shouldNotBe null
+                targetApplication!!.status shouldBe ApplicationStatus.PENDING
+
+                coVerify { commandPort.executeShellCommand("docker start ${targetApplication.name.lowercase()}") }
             }
         }
     }
