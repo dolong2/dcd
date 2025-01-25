@@ -75,23 +75,14 @@ class RunApplicationUseCaseTest(
         }
     }
 
-    given("redis application, runApplicationReqDto가 주어지고") {
-        val application = ApplicationGenerator.generateApplication(applicationType = ApplicationType.REDIS)
+    given("존재하지 않는 애플리케이션 아이디가 주어지고") {
+        val notFoundApplicationId = "notFoundApplicationId"
 
-        `when`("usecase를 실행하면") {
-            every { queryApplicationPort.findById(application.id) } returns application
+        `when`("유스케이스를 실행할때") {
 
-            runApplicationUseCase.execute(application.id)
-            then("dockerRunService만 실행되어야함") {
-                coVerify { runContainerService.runApplication(application) }
-            }
-        }
-
-        `when`("해당 애플리케이션이 이미 실행된 있는 상태일때") {
-            every { queryApplicationPort.findById("testId") } returns application.copy(status = ApplicationStatus.RUNNING)
-            then("AlreadyRunningException이 발생해야됨") {
-                shouldThrow<AlreadyRunningException> {
-                    runApplicationUseCase.execute("testId")
+            then("에러가 발생해야함") {
+                shouldThrow<ApplicationNotFoundException> {
+                    runApplicationUseCase.execute(notFoundApplicationId)
                 }
             }
         }
