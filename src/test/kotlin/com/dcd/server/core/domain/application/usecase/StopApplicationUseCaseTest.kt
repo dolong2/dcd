@@ -46,15 +46,20 @@ class StopApplicationUseCaseTest(
     }
 
     given("애플리케이션 Id가 주어지고") {
-        val applicationId = "testApplicationId"
-        val user = UserGenerator.generateUser()
-        val application = ApplicationGenerator.generateApplication(id = applicationId, workspace = WorkspaceGenerator.generateWorkspace(user = user), status = ApplicationStatus.RUNNING)
-        `when`("유스케이스가 오류없이 동작할때") {
-            every { queryApplicationPort.findById(applicationId) } returns application
-            stopApplicationUseCase.execute(applicationId)
-            then("deleteContainerService와 deleteApplicationDirectoryService가 실행되어야함") {
-                coVerify { stopContainerService.stopContainer(application) }
-                verify { changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.PENDING) }
+
+        `when`("유스케이스를 실행할때") {
+            stopApplicationUseCase.execute(targetApplicationId)
+
+            then("컨테이너를 정지시켜야함") {
+                val targetApplication = queryApplicationPort.findById(targetApplicationId)
+                targetApplication shouldNotBe null
+                targetApplication!!.status shouldBe ApplicationStatus.PENDING
+
+                coVerify { commandPort.executeShellCommand("docker stop ${targetApplication.name.lowercase()}") }
+            }
+        }
+    }
+
             }
         }
         `when`("해당 애플리케이션이 존재하지 않을때") {
