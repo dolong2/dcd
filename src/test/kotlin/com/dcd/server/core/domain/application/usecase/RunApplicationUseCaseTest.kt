@@ -36,7 +36,6 @@ class RunApplicationUseCaseTest(
     val targetApplicationId = "testApplicationId"
 
     beforeSpec {
-        println("test")
         val user = UserGenerator.generateUser()
         val workspace = WorkspaceGenerator.generateWorkspace(user = user)
         val application = ApplicationGenerator.generateApplication(id = targetApplicationId, workspace = workspace)
