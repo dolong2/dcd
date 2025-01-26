@@ -60,11 +60,20 @@ class StopApplicationUseCaseTest(
         }
     }
 
+    given("애플리케이션이 정지되어있고") {
+        val target = queryApplicationPort.findById(targetApplicationId)!!
+        commandApplicationPort.save(target.copy(status = ApplicationStatus.STOPPED))
+
+        `when`("유스케이스를 실행할때") {
+
+            then("에러가 발생해야함") {
+                shouldThrow<AlreadyStoppedException> {
+                    stopApplicationUseCase.execute(targetApplicationId)
+                }
             }
         }
-        `when`("해당 애플리케이션이 존재하지 않을때") {
-            every { queryApplicationPort.findById(applicationId) } returns null
-            then("ApplicationNotFoundException이 발생해야함") {
+    }
+
                 shouldThrow<ApplicationNotFoundException> {
                     stopApplicationUseCase.execute(applicationId)
                 }
