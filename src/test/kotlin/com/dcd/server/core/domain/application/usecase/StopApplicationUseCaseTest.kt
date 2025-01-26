@@ -1,29 +1,40 @@
 package com.dcd.server.core.domain.application.usecase
 
-import com.dcd.server.core.common.data.WorkspaceInfo
+import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.application.exception.AlreadyStoppedException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
-import com.dcd.server.core.domain.application.service.ChangeApplicationStatusService
-import com.dcd.server.core.domain.application.service.StopContainerService
+import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.user.spi.CommandUserPort
+import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
 import com.dcd.server.infrastructure.test.application.ApplicationGenerator
 import com.dcd.server.infrastructure.test.user.UserGenerator
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import com.ninjasquad.springmockk.MockkBean
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class StopApplicationUseCaseTest : BehaviorSpec({
-    val queryApplicationPort = mockk<QueryApplicationPort>()
-    val stopContainerService = mockk<StopContainerService>(relaxUnitFun = true)
-    val changeApplicationStatusService = mockk<ChangeApplicationStatusService>(relaxUnitFun = true)
-    val workspaceInfo = WorkspaceInfo()
-    val stopApplicationUseCase =
-        StopApplicationUseCase(queryApplicationPort, stopContainerService, changeApplicationStatusService, workspaceInfo)
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class StopApplicationUseCaseTest(
+    private val stopApplicationUseCase: StopApplicationUseCase,
+    @MockkBean(relaxed = true)
+    private val commandPort: CommandPort,
+    private val queryApplicationPort: QueryApplicationPort,
+    private val commandUserPort: CommandUserPort,
+    private val commandWorkspacePort: CommandWorkspacePort,
+    private val commandApplicationPort: CommandApplicationPort
+) : BehaviorSpec({
+    val targetApplicationId = "testApplicationId"
+
 
     given("애플리케이션 Id가 주어지고") {
         val applicationId = "testApplicationId"
