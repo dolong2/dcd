@@ -51,19 +51,16 @@ class GetApplicationLogUseCaseTest(
                 result.logs shouldContain "test logs"
             }
         }
+    }
 
-        `when`("해당 애플리케이션이 존재하고, 로그인된 유저가 워크스페이스의 권한을 가지고 있을때") {
-            val logs = listOf("testLogs")
+    given("존재하지 않는 애플리케이션 id가 주어지고") {
+        val notFoundApplicationId = "notFoundApplicationId"
+        `when`("유스케이스를 실행할때") {
 
-            every { queryApplicationPort.findById(appId) } returns application
-            every { getContainerLogService.getLogs(application) } returns logs
-
-            val response = getApplicationLogUseCase.execute(appId)
-            then("유스케이스의 반환값은 logs를 가지고 있어야함") {
-                response.logs shouldBe logs
-            }
-            then("유스케이스는 getContainerLogService를 실행해야함") {
-                verify { getContainerLogService.getLogs(application) }
+            then("에러가 발생해야함") {
+                shouldThrow<ApplicationNotFoundException> {
+                    getApplicationLogUseCase.execute(notFoundApplicationId)
+                }
             }
         }
     }
