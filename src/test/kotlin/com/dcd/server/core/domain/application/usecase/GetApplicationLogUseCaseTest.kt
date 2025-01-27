@@ -47,7 +47,7 @@ class GetApplicationLogUseCaseTest(
         `when`("유스케이스를 실행할때") {
             val result = getApplicationLogUseCase.execute(targetApplicationId)
 
-            then("유스케이스 실행시 ApplicationNotFoundException이 발생해야함") {
+            then("로그가 조회되어야함") {
                 result.logs shouldContain "test logs"
             }
         }
