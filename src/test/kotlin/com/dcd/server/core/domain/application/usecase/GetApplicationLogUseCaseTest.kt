@@ -1,25 +1,35 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
-import com.dcd.server.core.domain.application.service.GetContainerLogService
-import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.application.spi.CommandApplicationPort
+import com.dcd.server.core.domain.user.spi.CommandUserPort
+import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
 import com.dcd.server.infrastructure.test.application.ApplicationGenerator
 import com.dcd.server.infrastructure.test.user.UserGenerator
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import com.ninjasquad.springmockk.MockkBean
+import io.kotest.matchers.collections.shouldContain
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class GetApplicationLogUseCaseTest : BehaviorSpec({
-    val getContainerLogService = mockk<GetContainerLogService>()
-    val queryApplicationPort = mockk<QueryApplicationPort>()
-    val getApplicationLogUseCase = GetApplicationLogUseCase(
-        getContainerLogService,
-        queryApplicationPort
-    )
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class GetApplicationLogUseCaseTest(
+    private val getApplicationLogUseCase: GetApplicationLogUseCase,
+    @MockkBean
+    private val commandPort: CommandPort,
+    private val commandUserPort: CommandUserPort,
+    private val commandWorkspacePort: CommandWorkspacePort,
+    private val commandApplicationPort: CommandApplicationPort
+) : BehaviorSpec({
+    val targetApplicationId = "testApplicationId"
+
 
     given("애플리케이션 id가 주어지고") {
         val appId = "testApplicationId"
