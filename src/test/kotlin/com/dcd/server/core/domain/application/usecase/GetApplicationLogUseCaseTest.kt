@@ -30,6 +30,17 @@ class GetApplicationLogUseCaseTest(
 ) : BehaviorSpec({
     val targetApplicationId = "testApplicationId"
 
+    beforeSpec {
+        val user = UserGenerator.generateUser()
+        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
+        val application = ApplicationGenerator.generateApplication(id = targetApplicationId, workspace = workspace)
+        val expectedResult = listOf("test logs")
+        every { commandPort.executeShellCommandWithResult("docker logs ${application.name.lowercase()}") } returns expectedResult
+
+        commandUserPort.save(user)
+        commandWorkspacePort.save(workspace)
+        commandApplicationPort.save(application)
+    }
 
     given("애플리케이션 id가 주어지고") {
         val appId = "testApplicationId"
