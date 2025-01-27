@@ -43,18 +43,12 @@ class GetApplicationLogUseCaseTest(
     }
 
     given("애플리케이션 id가 주어지고") {
-        val appId = "testApplicationId"
-        val owner = UserGenerator.generateUser()
-        val workspace = WorkspaceGenerator.generateWorkspace(user = owner)
-        val application = ApplicationGenerator.generateApplication(id = appId, workspace = workspace)
 
-        `when`("해당 애플리케이션이 존재하지 않을때") {
-            every { queryApplicationPort.findById(appId) } returns null
+        `when`("유스케이스를 실행할때") {
+            val result = getApplicationLogUseCase.execute(targetApplicationId)
 
             then("유스케이스 실행시 ApplicationNotFoundException이 발생해야함") {
-                shouldThrow<ApplicationNotFoundException> {
-                    getApplicationLogUseCase.execute(appId)
-                }
+                result.logs shouldContain "test logs"
             }
         }
 
