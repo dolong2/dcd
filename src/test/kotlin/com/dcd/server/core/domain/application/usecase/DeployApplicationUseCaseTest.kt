@@ -1,45 +1,42 @@
 package com.dcd.server.core.domain.application.usecase
 
-import com.dcd.server.core.common.data.WorkspaceInfo
-import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
-import com.dcd.server.core.domain.application.exception.CanNotDeployApplicationException
+import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
-import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
+import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
-import io.kotest.assertions.throwables.shouldThrow
+import com.dcd.server.core.domain.user.spi.CommandUserPort
+import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
-import org.springframework.context.ApplicationEventPublisher
 import com.dcd.server.infrastructure.test.application.ApplicationGenerator
+import com.dcd.server.infrastructure.test.user.UserGenerator
+import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import com.ninjasquad.springmockk.MockkBean
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
-class DeployApplicationUseCaseTest : BehaviorSpec({
-    val queryApplicationPort = mockk<QueryApplicationPort>()
-    val deleteContainerService = mockk<DeleteContainerService>(relaxUnitFun = true)
-    val deleteImageService = mockk<DeleteImageService>(relaxUnitFun = true)
-    val cloneApplicationByUrlService = mockk<CloneApplicationByUrlService>(relaxUnitFun = true)
-    val modifyGradleService = mockk<ModifyGradleService>(relaxUnitFun = true)
-    val createDockerFileService = mockk<CreateDockerFileService>(relaxUnitFun = true)
-    val buildDockerImageService = mockk<BuildDockerImageService>(relaxUnitFun = true)
-    val createContainerService = mockk<CreateContainerService>(relaxUnitFun = true)
-    val deleteApplicationDirectoryService = mockk<DeleteApplicationDirectoryService>(relaxUnitFun = true)
-    val eventPublisher = mockk<ApplicationEventPublisher>(relaxUnitFun = true)
-    val workspaceInfo = WorkspaceInfo()
-    val deployApplicationUseCase = DeployApplicationUseCase(
-        queryApplicationPort,
-        deleteContainerService,
-        deleteImageService,
-        cloneApplicationByUrlService,
-        modifyGradleService,
-        createDockerFileService,
-        buildDockerImageService,
-        createContainerService,
-        deleteApplicationDirectoryService,
-        eventPublisher,
-        workspaceInfo
-    )
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class DeployApplicationUseCaseTest(
+    private val deployApplicationUseCase: DeployApplicationUseCase,
+    @MockkBean(relaxed = true)
+    private val commandPort: CommandPort,
+    @MockkBean(relaxUnitFun = true)
+    private val modifyGradleService: ModifyGradleService,
+    @MockkBean(relaxUnitFun = true)
+    private val createDockerFileService: CreateDockerFileService,
+    private val commandUserPort: CommandUserPort,
+    private val commandWorkspacePort: CommandWorkspacePort,
+    private val commandApplicationPort: CommandApplicationPort,
+    private val queryApplicationPort: QueryApplicationPort
+) : BehaviorSpec({
+    val targetApplicationId = "testApplicationId"
+
 
     given("애플리케이션 id가 주어지고") {
         val applicationId = "testApplicationId"
