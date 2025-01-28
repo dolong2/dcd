@@ -37,6 +37,15 @@ class DeployApplicationUseCaseTest(
 ) : BehaviorSpec({
     val targetApplicationId = "testApplicationId"
 
+    beforeSpec {
+        val user = UserGenerator.generateUser()
+        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
+        val application = ApplicationGenerator.generateApplication(id = targetApplicationId, workspace = workspace)
+
+        commandUserPort.save(user)
+        commandWorkspacePort.save(workspace)
+        commandApplicationPort.save(application)
+    }
 
     given("애플리케이션 id가 주어지고") {
         val applicationId = "testApplicationId"
