@@ -1,6 +1,8 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.command.CommandPort
+import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
+import com.dcd.server.core.domain.application.exception.CanNotDeployApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
@@ -13,6 +15,7 @@ import com.dcd.server.infrastructure.test.application.ApplicationGenerator
 import com.dcd.server.infrastructure.test.user.UserGenerator
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
 import com.ninjasquad.springmockk.MockkBean
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.context.SpringBootTest
@@ -82,6 +85,34 @@ class DeployApplicationUseCaseTest(
             then("에러가 발생해야함") {
                 shouldThrow<ApplicationNotFoundException> {
                     deployApplicationUseCase.execute(notFoundApplicationId)
+                }
+            }
+        }
+    }
+
+    given("이미 애플리케이션이 실행중이고") {
+        val target = queryApplicationPort.findById(targetApplicationId)!!
+        commandApplicationPort.save(target.copy(status = ApplicationStatus.RUNNING))
+
+        `when`("유스케이스를 실행할때") {
+
+            then("에러가 발생해야함") {
+                shouldThrow<CanNotDeployApplicationException> {
+                    deployApplicationUseCase.execute(targetApplicationId)
+                }
+            }
+        }
+    }
+
+    given("애플리케이션이 다른 작업중이고") {
+        val target = queryApplicationPort.findById(targetApplicationId)!!
+        commandApplicationPort.save(target.copy(status = ApplicationStatus.PENDING))
+
+        `when`("유스케이스를 실행할때") {
+
+            then("에러가 발생해야함") {
+                shouldThrow<CanNotDeployApplicationException> {
+                    deployApplicationUseCase.execute(targetApplicationId)
                 }
             }
         }
