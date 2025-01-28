@@ -48,32 +48,28 @@ class DeployApplicationUseCaseTest(
     }
 
     given("애플리케이션 id가 주어지고") {
-        val applicationId = "testApplicationId"
 
         `when`("주어진 id의 애플리케이션이 spring boot 타입의 애플리케이션일때") {
-            val application = ApplicationGenerator.generateApplication(
-                id = applicationId,
-                applicationType = ApplicationType.SPRING_BOOT
-            )
-            every { queryApplicationPort.findById(applicationId) } returns application
+            deployApplicationUseCase.execute(targetApplicationId)
 
-            deployApplicationUseCase.execute(applicationId)
+            then("애플리케이션이 보류 상태로 바뀌고 여러 배포 커맨드를 실행해야함") {
+                val result = queryApplicationPort.findById(targetApplicationId)
 
-            then("이미지와 컨테이너를 삭제하는 서비스를 실행해야함") {
-                coVerify { deleteContainerService.deleteContainer(application) }
-                coVerify { deleteImageService.deleteImage(application) }
-            }
-            then("애플리케이션을 클론하고, 그래들 파일을 수정해야함") {
-                coVerify { cloneApplicationByUrlService.cloneByApplication(application) }
-                coVerify { modifyGradleService.modifyGradleByApplication(application) }
-            }
-            then("도커파일을 생성하고, 이미지를 빌드하고, 컨테이너를 생성해야함") {
-                coVerify { createDockerFileService.createFileToApplication(application, application.version) }
-                coVerify { buildDockerImageService.buildImageByApplication(application) }
-                coVerify { createContainerService.createContainer(application, application.externalPort) }
-            }
-            then("생성된 애플리케이션 디렉토리를 제거해야함") {
-                coVerify { deleteApplicationDirectoryService.deleteApplicationDirectory(application) }
+                result shouldNotBe null
+                result!!.status shouldBe ApplicationStatus.PENDING
+
+                coVerify { commandPort.executeShellCommand("docker rm ${result.name.lowercase()}") }
+                coVerify { commandPort.executeShellCommand("docker rmi ${result.name.lowercase()}") }
+                coVerify { commandPort.executeShellCommand("git clone ${result.githubUrl} ${result.name}") }
+                coVerify { commandPort.executeShellCommand("cd ./${result.name} && docker build -t ${result.name.lowercase()}:latest .") }
+                coVerify {
+                    commandPort.executeShellCommand(
+                        "docker create --network ${result.workspace.title.replace(' ', '_')} " +
+                            "--name ${result.name.lowercase()} " +
+                            "-p ${result.externalPort}:${result.port} ${result.name.lowercase()}:latest"
+                    )
+                }
+                coVerify { commandPort.executeShellCommand("rm -rf ${result.name}") }
             }
         }
 
