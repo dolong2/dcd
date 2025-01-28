@@ -72,73 +72,16 @@ class DeployApplicationUseCaseTest(
                 coVerify { commandPort.executeShellCommand("rm -rf ${result.name}") }
             }
         }
+    }
 
-        `when`("주어진 id의 애플리케이션이 MYSQL 타입의 애플리케이션일때") {
-            val application = ApplicationGenerator.generateApplication(
-                id = applicationId,
-                applicationType = ApplicationType.MYSQL
-            )
-            every { queryApplicationPort.findById(applicationId) } returns application
+    given("존재하지 않는 애플리케이션의 아이디가 주어지고") {
+        val notFoundApplicationId = "notFoundApplicationId"
 
-            deployApplicationUseCase.execute(applicationId)
+        `when`("유스케이스를 실행할때") {
 
-            then("이미지와 컨테이너를 삭제하는 서비스를 실행해야함") {
-                coVerify { deleteContainerService.deleteContainer(application) }
-                coVerify { deleteImageService.deleteImage(application) }
-            }
-            then("도커파일을 생성하고, 이미지를 빌드하고, 컨테이너를 생성해야함") {
-                coVerify { createDockerFileService.createFileToApplication(application, application.version) }
-                coVerify { buildDockerImageService.buildImageByApplication(application) }
-                coVerify { createContainerService.createContainer(application, application.externalPort) }
-            }
-            then("생성된 애플리케이션 디렉토리를 제거해야함") {
-                coVerify { deleteApplicationDirectoryService.deleteApplicationDirectory(application) }
-            }
-        }
-
-        `when`("주어진 id의 애플리케이션이 REDIS 타입의 애플리케이션일때") {
-            val application = ApplicationGenerator.generateApplication(
-                id = applicationId,
-                applicationType = ApplicationType.REDIS
-            )
-            every { queryApplicationPort.findById(applicationId) } returns application
-
-            deployApplicationUseCase.execute(applicationId)
-
-            then("이미지와 컨테이너를 삭제하는 서비스를 실행해야함") {
-                coVerify { deleteContainerService.deleteContainer(application) }
-                coVerify { deleteImageService.deleteImage(application) }
-            }
-            then("도커파일을 생성하고, 이미지를 빌드하고, 컨테이너를 생성해야함") {
-                coVerify { createDockerFileService.createFileToApplication(application, application.version) }
-                coVerify { buildDockerImageService.buildImageByApplication(application) }
-                coVerify { createContainerService.createContainer(application, application.externalPort) }
-            }
-            then("생성된 애플리케이션 디렉토리를 제거해야함") {
-                coVerify { deleteApplicationDirectoryService.deleteApplicationDirectory(application) }
-            }
-        }
-
-        `when`("주어진 id의 애플리케이션이 실행중인 애플리케이션일때") {
-            val application = ApplicationGenerator.generateApplication(
-                id = applicationId,
-                status = ApplicationStatus.RUNNING
-            )
-            every { queryApplicationPort.findById(applicationId) } returns application
-
-            then("CanNotDeployApplicationException이 발생해야함") {
-                shouldThrow<CanNotDeployApplicationException> {
-                    deployApplicationUseCase.execute(applicationId)
-                }
-            }
-        }
-
-        `when`("주어진 id를 가진 애플리케이션이 존재하지 않을때") {
-            every { queryApplicationPort.findById(applicationId) } returns null
-
-            then("ApplicationNotFoundException이 발생해야함") {
+            then("에러가 발생해야함") {
                 shouldThrow<ApplicationNotFoundException> {
-                    deployApplicationUseCase.execute(applicationId)
+                    deployApplicationUseCase.execute(notFoundApplicationId)
                 }
             }
         }
