@@ -38,12 +38,11 @@ class DeployApplicationUseCase(
         if (application.status == ApplicationStatus.RUNNING || application.status == ApplicationStatus.PENDING)
             throw CanNotDeployApplicationException()
 
-            executionScope.launch {
-                deployApplication(application)
-            }
+        executionScope.launch {
+            deployApplication(application)
+        }
 
-            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, application))
-
+        eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, application))
     }
 
     fun execute(labels: List<String>) {
