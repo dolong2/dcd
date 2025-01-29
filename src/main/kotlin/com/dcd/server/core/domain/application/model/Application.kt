@@ -18,4 +18,10 @@ data class Application(
     val externalPort: Int,
     val status: ApplicationStatus,
     val labels: List<String>
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        val application = (other as? Application
+            ?: return false)
+        return this.id == application.id
+    }
+}
