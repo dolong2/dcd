@@ -13,8 +13,7 @@ data class User(
     val status: Status
 ) {
     override fun equals(other: Any?): Boolean {
-        val user = (other as? User
-            ?: return false)
-        return this.id == user.id
+        if (other !is User) return false
+        return this.id == other.id
     }
 }

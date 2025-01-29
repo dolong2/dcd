@@ -20,8 +20,7 @@ data class Application(
     val labels: List<String>
 ) {
     override fun equals(other: Any?): Boolean {
-        val application = (other as? Application
-            ?: return false)
-        return this.id == application.id
+        if (other !is Application) return false
+        return this.id == other.id
     }
 }

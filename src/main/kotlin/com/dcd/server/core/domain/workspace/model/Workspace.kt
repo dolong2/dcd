@@ -11,9 +11,7 @@ data class Workspace(
     val owner: User
 ) {
     override fun equals(other: Any?): Boolean {
-        val workspace = other as? Workspace
-            ?: return false
-
-        return this.id == workspace.id
+        if (other !is Workspace) return false
+        return this.id == other.id
     }
 }
