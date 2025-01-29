@@ -28,7 +28,7 @@ class OwnerValidateAspect(
             ?: throw WorkspaceNotFoundException())
 
         val owner = workspace.owner
-        if (owner.id != user.id)
+        if (owner != user)
             throw WorkspaceOwnerNotSameException()
 
         workspaceInfo.workspace = workspace
