@@ -14,4 +14,8 @@ data class Workspace(
         if (other !is Workspace) return false
         return this.id == other.id
     }
+
+    override fun hashCode(): Int {
+        return this.id.hashCode()
+    }
 }

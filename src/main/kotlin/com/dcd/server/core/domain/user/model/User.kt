@@ -16,4 +16,8 @@ data class User(
         if (other !is User) return false
         return this.id == other.id
     }
+
+    override fun hashCode(): Int {
+        return this.id.hashCode()
+    }
 }

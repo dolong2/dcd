@@ -23,4 +23,8 @@ data class Application(
         if (other !is Application) return false
         return this.id == other.id
     }
+
+    override fun hashCode(): Int {
+        return this.id.hashCode()
+    }
 }
