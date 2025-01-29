@@ -11,4 +11,10 @@ data class User(
     val name: String,
     val roles: MutableList<Role>,
     val status: Status
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        val user = (other as? User
+            ?: return false)
+        return this.id == user.id
+    }
+}
