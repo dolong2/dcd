@@ -9,4 +9,11 @@ data class Workspace(
     val description: String,
     val globalEnv: Map<String, String> = mapOf(),
     val owner: User
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        val workspace = other as? Workspace
+            ?: return false
+
+        return this.id == workspace.id
+    }
+}
