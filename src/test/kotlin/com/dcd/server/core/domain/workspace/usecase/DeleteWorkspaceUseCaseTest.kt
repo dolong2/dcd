@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.workspace.usecase
 
+import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
@@ -8,6 +9,7 @@ import com.dcd.server.infrastructure.global.security.auth.AuthDetailsService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -23,7 +25,9 @@ class DeleteWorkspaceUseCaseTest(
     private val authDetailsService: AuthDetailsService,
     private val queryWorkspacePort: QueryWorkspacePort,
     private val commandWorkspacePort: CommandWorkspacePort,
-    private val queryUserPort: QueryUserPort
+    private val queryUserPort: QueryUserPort,
+    @MockkBean(relaxed = true)
+    private val commandPort: CommandPort
 ) : BehaviorSpec({
     val userId = "user1"
     val workspaceId = "testWorkspaceId"
@@ -44,6 +48,7 @@ class DeleteWorkspaceUseCaseTest(
 
             then("워크스페이스가 조회되지 않아야함") {
                 queryWorkspacePort.findById(workspaceId) shouldBe null
+                commandPort.executeShellCommand("docker network rm ${workspace.title.replace(" ", "_")}")
             }
         }
     }
