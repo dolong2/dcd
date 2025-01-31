@@ -51,7 +51,13 @@ class WorkspaceWebAdapter(
             .let { ResponseEntity.ok().build() }
 
     @PutMapping("/{workspaceId}")
-    fun updateWorkspace(@PathVariable workspaceId: String, @RequestBody updateWorkspaceRequest: UpdateWorkspaceRequest): ResponseEntity<Void> =
+    fun updateWorkspace(
+        @PathVariable
+        workspaceId: String,
+        @Validated
+        @RequestBody
+        updateWorkspaceRequest: UpdateWorkspaceRequest
+    ): ResponseEntity<Void> =
         updateWorkspaceUseCase.execute(workspaceId, updateWorkspaceRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
