@@ -13,6 +13,7 @@ import com.dcd.server.presentation.domain.workspace.data.response.WorkspaceListR
 import com.dcd.server.presentation.domain.workspace.data.response.WorkspaceResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @WebAdapter("/workspace")
@@ -27,7 +28,10 @@ class WorkspaceWebAdapter(
     private val updateGlobalEnvUseCase: UpdateGlobalEnvUseCase
 ) {
     @PostMapping
-    fun createWorkspace(@RequestBody createWorkspaceRequest: CreateWorkspaceRequest): ResponseEntity<CreateWorkspaceResponse> =
+    fun createWorkspace(
+        @Validated
+        @RequestBody createWorkspaceRequest: CreateWorkspaceRequest
+    ): ResponseEntity<CreateWorkspaceResponse> =
         createWorkspaceUseCase.execute(createWorkspaceRequest.toDto())
             .run { ResponseEntity(this.toResponse(), HttpStatus.CREATED) }
 
@@ -47,7 +51,13 @@ class WorkspaceWebAdapter(
             .let { ResponseEntity.ok().build() }
 
     @PutMapping("/{workspaceId}")
-    fun updateWorkspace(@PathVariable workspaceId: String, @RequestBody updateWorkspaceRequest: UpdateWorkspaceRequest): ResponseEntity<Void> =
+    fun updateWorkspace(
+        @PathVariable
+        workspaceId: String,
+        @Validated
+        @RequestBody
+        updateWorkspaceRequest: UpdateWorkspaceRequest
+    ): ResponseEntity<Void> =
         updateWorkspaceUseCase.execute(workspaceId, updateWorkspaceRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
