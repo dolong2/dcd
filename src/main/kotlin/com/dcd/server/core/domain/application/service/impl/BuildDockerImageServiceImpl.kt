@@ -20,20 +20,20 @@ class BuildDockerImageServiceImpl(
     override suspend fun buildImageByApplicationId(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
-        val name = application.name
+        val directoryName = application.name
         withContext(Dispatchers.IO) {
             val exitValue = when (application.applicationType) {
                 ApplicationType.SPRING_BOOT -> {
-                    commandPort.executeShellCommand("cd ./$name && ./gradlew clean build")
+                    commandPort.executeShellCommand("cd ./$directoryName && ./gradlew clean build")
                         .run {
                             if (this == 0)
-                                commandPort.executeShellCommand("cd ./$name && docker build -t ${name.lowercase()}:latest .")
+                                commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
                             else this
                         }
                 }
 
                 else -> {
-                    commandPort.executeShellCommand("cd ./$name && docker build -t ${name.lowercase()}:latest .")
+                    commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
                 }
             }
             checkExitValuePort.checkApplicationExitValue(exitValue, application, this)
@@ -41,15 +41,15 @@ class BuildDockerImageServiceImpl(
     }
 
     override suspend fun buildImageByApplication(application: Application) {
-        val name = application.name
+        val directoryName = application.name
         withContext(Dispatchers.IO) {
             val exitValue = when(application.applicationType) {
                 ApplicationType.SPRING_BOOT -> {
-                    commandPort.executeShellCommand("cd ./$name && ./gradlew clean build")
-                    commandPort.executeShellCommand("cd ./$name && docker build -t ${name.lowercase()}:latest .")
+                    commandPort.executeShellCommand("cd ./$directoryName && ./gradlew clean build")
+                    commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
                 }
                 else -> {
-                    commandPort.executeShellCommand("cd ./$name && docker build -t ${name.lowercase()}:latest .")
+                    commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
                 }
             }
             checkExitValuePort.checkApplicationExitValue(exitValue, application, this)

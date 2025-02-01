@@ -15,7 +15,7 @@ class DeleteImageServiceImpl(
 ) : DeleteImageService {
     override suspend fun deleteImage(application: Application) {
         withContext(Dispatchers.IO) {
-            commandPort.executeShellCommand("docker rmi ${application.name.lowercase()}")
+            commandPort.executeShellCommand("docker rmi ${application.containerName}")
                 .also {exitValue ->
                     if (exitValue != 0 && exitValue != 1)
                         checkExitValuePort.checkApplicationExitValue(exitValue, application, this)

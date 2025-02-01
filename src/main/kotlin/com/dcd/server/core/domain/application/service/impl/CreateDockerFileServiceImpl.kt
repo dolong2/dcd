@@ -42,19 +42,19 @@ class CreateDockerFileServiceImpl(
     }
 
     private fun createFile(application: Application, version: String, coroutineScope: CoroutineScope) {
-        val name = application.name
+        val directoryName = application.name
         val mutableEnv = application.env.toMutableMap()
         mutableEnv.putAll(application.workspace.globalEnv)
 
-        commandPort.executeShellCommand("mkdir -p $name")
+        commandPort.executeShellCommand("mkdir -p $directoryName")
             .also {exitValue ->
                 checkExitValuePort.checkApplicationExitValue(exitValue, application, coroutineScope)
             }
 
-        val file = File("./$name/Dockerfile")
+        val file = File("./$directoryName/Dockerfile")
         val fileContent = when (application.applicationType) {
             ApplicationType.SPRING_BOOT ->
-                FileContent.getSpringBootDockerFileContent(name, version, application.port, mutableEnv)
+                FileContent.getSpringBootDockerFileContent(directoryName, version, application.port, mutableEnv)
 
             ApplicationType.MYSQL ->
                 FileContent.getMYSQLDockerFileContent(version, application.port, mutableEnv)

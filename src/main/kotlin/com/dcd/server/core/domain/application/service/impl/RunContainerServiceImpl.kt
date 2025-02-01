@@ -33,7 +33,7 @@ class RunContainerServiceImpl(
 
     private suspend fun run(application: Application) {
         withContext(Dispatchers.IO) {
-            val exitValue = commandPort.executeShellCommand("docker start ${application.name.lowercase()}")
+            val exitValue = commandPort.executeShellCommand("docker start ${application.containerName}")
             if (exitValue != 0) {
                 log.error("$exitValue")
                 eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application))
