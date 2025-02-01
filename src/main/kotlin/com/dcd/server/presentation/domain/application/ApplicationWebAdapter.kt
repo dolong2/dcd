@@ -125,7 +125,7 @@ class ApplicationWebAdapter(
         @PathVariable workspaceId: String,
         @PathVariable applicationId: String,
         @RequestParam key: String,
-        @RequestBody updateApplicationEnvRequest: UpdateApplicationEnvRequest
+        @Validated @RequestBody updateApplicationEnvRequest: UpdateApplicationEnvRequest
     ): ResponseEntity<Void> =
         updateApplicationEnvUseCase.execute(applicationId, key, updateApplicationEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
