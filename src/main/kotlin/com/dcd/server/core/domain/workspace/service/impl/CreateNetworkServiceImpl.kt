@@ -9,6 +9,6 @@ class CreateNetworkServiceImpl(
     private val commandPort: CommandPort
 ) : CreateNetworkService {
     override fun createNetwork(networkTitle: String) {
-        commandPort.executeShellCommand("docker network create --driver bridge ${networkTitle.replace(' ', '_')}")
+        commandPort.executeShellCommand("docker network create --driver bridge $networkTitle")
     }
 }
