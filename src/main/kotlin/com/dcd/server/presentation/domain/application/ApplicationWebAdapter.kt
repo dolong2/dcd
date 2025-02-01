@@ -125,7 +125,7 @@ class ApplicationWebAdapter(
         @PathVariable workspaceId: String,
         @PathVariable applicationId: String,
         @RequestParam key: String,
-        @Validated @RequestBody updateApplicationEnvRequest: UpdateApplicationEnvRequest
+        @RequestBody updateApplicationEnvRequest: UpdateApplicationEnvRequest
     ): ResponseEntity<Void> =
         updateApplicationEnvUseCase.execute(applicationId, key, updateApplicationEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
@@ -164,7 +164,7 @@ class ApplicationWebAdapter(
     fun updateApplication(
         @PathVariable workspaceId: String,
         @PathVariable applicationId: String,
-        @RequestBody updateApplicationRequest: UpdateApplicationRequest
+        @Validated @RequestBody updateApplicationRequest: UpdateApplicationRequest
     ): ResponseEntity<Void> =
         updateApplicationUseCase.execute(applicationId, updateApplicationRequest.toDto())
             .run { ResponseEntity.ok().build() }
