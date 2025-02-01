@@ -16,16 +16,16 @@ class CreateContainerServiceImpl(
     override suspend fun createContainer(application: Application, externalPort: Int) {
         withContext(Dispatchers.IO) {
             val cmd =
-                "docker create --network ${application.workspace.title.replace(' ', '_')} " +
-                        "--name ${application.name.lowercase()} " +
-                        "-p ${externalPort}:${application.port} ${application.name.lowercase()}:latest"
+                "docker create --network ${application.workspace.networkName} " +
+                        "--name ${application.containerName} " +
+                        "-p ${externalPort}:${application.port} ${application.containerName}:latest"
 
             commandPort.executeShellCommand(cmd)
                 .also {exitValue ->
                     checkExitValuePort.checkApplicationExitValue(exitValue, application, this)
                 }
 
-            val dcdNetworkConnectCmd = "docker network connect dcd ${application.name.lowercase()}"
+            val dcdNetworkConnectCmd = "docker network connect dcd ${application.containerName}"
             commandPort.executeShellCommand(dcdNetworkConnectCmd)
                 .also {exitValue ->
                     checkExitValuePort.checkApplicationExitValue(exitValue, application, this)

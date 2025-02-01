@@ -15,8 +15,6 @@ class ExecContainerServiceImpl(
     private val dockerClient: DockerClient,
 ) : ExecContainerService {
     override fun execCmd(application: Application, session: WebSocketSession, cmd: String) {
-        val containerName = application.name.lowercase()
-
         val cmdArray = cmd.split(" ").toTypedArray()
 
         if (cmd.contains("cd")) {
@@ -32,7 +30,7 @@ class ExecContainerServiceImpl(
         val workingDir = session.attributes["workingDir"] as? String ?: "/"
 
         // Docker attach API 호출
-        val execInstance = dockerClient.execCreateCmd(containerName)
+        val execInstance = dockerClient.execCreateCmd(application.containerName)
             .withAttachStdout(true)
             .withAttachStderr(true)
             .withCmd(*cmdArray)

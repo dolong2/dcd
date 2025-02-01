@@ -22,7 +22,7 @@ class ApplicationStatusScheduler(
         val updatedApplicationList = mutableListOf<Application>()
         getContainerService.getContainerNameByStatus(ContainerStatus.EXITED)
             .forEach {containerName ->
-                val containerExitedApplication = runningApplicationList.lastOrNull { it.name.lowercase() == containerName }
+                val containerExitedApplication = runningApplicationList.lastOrNull { it.containerName == containerName }
                     ?: return@forEach
 
                 val updatedApplication = containerExitedApplication.copy(
@@ -41,7 +41,7 @@ class ApplicationStatusScheduler(
         val updatedApplicationList = mutableListOf<Application>()
         getContainerService.getContainerNameByStatus(ContainerStatus.RUNNING)
             .forEach {containerName ->
-                val containerRunningApplication = stoppedApplicationList.lastOrNull { it.name.lowercase() == containerName }
+                val containerRunningApplication = stoppedApplicationList.lastOrNull { it.containerName == containerName }
                     ?: return@forEach
 
                 val updatedApplication = containerRunningApplication.copy(
@@ -60,7 +60,7 @@ class ApplicationStatusScheduler(
         val updatedApplicationList = mutableListOf<Application>()
         getContainerService.getContainerNameByStatus(ContainerStatus.CREATED)
             .forEach {containerName ->
-                val containerExitedApplication = runningApplicationList.lastOrNull { it.name.lowercase() == containerName }
+                val containerExitedApplication = runningApplicationList.lastOrNull { it.containerName == containerName }
                     ?: return@forEach
 
                 val updatedApplication = containerExitedApplication.copy(

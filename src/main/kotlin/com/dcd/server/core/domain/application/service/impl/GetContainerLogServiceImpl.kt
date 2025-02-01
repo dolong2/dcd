@@ -10,5 +10,5 @@ class GetContainerLogServiceImpl(
     private val commandPort: CommandPort
 ) : GetContainerLogService {
     override fun getLogs(application: Application): List<String> =
-        commandPort.executeShellCommandWithResult("docker logs ${application.name.lowercase()}")
+        commandPort.executeShellCommandWithResult("docker logs ${application.containerName}")
 }

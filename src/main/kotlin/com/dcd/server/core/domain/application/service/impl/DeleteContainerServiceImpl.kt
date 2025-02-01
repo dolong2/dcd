@@ -15,8 +15,7 @@ class DeleteContainerServiceImpl(
 ) : DeleteContainerService {
     override suspend fun deleteContainer(application: Application) {
         withContext(Dispatchers.IO) {
-            val name = application.name.lowercase()
-            commandPort.executeShellCommand("docker rm $name")
+            commandPort.executeShellCommand("docker rm ${application.containerName}")
                 .also {exitValue ->
                     if (exitValue != 0 && exitValue != 1)
                         checkExitValuePort.checkApplicationExitValue(exitValue, application, this)

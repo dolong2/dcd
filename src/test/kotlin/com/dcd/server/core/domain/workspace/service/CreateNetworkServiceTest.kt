@@ -19,7 +19,7 @@ class CreateNetworkServiceTest(
 ) : BehaviorSpec({
 
     given("생성할 네트워크 제목을 주어지고") {
-        val testNetworkTitle = "test network"
+        val testNetworkTitle = "test_network"
 
         `when`("createNetwork 메서드를 실행할때") {
             createNetworkService.createNetwork(testNetworkTitle)

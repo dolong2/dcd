@@ -26,7 +26,7 @@ class CreateWorkspaceUseCase(
         val workspace = createWorkspaceReqDto.toEntity(currentUser)
         commandWorkspacePort.save(workspace)
 
-        createNetworkService.createNetwork(createWorkspaceReqDto.title)
+        createNetworkService.createNetwork(workspace.networkName)
 
         return CreateWorkspaceResDto(workspace.id)
     }

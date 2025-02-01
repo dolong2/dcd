@@ -10,6 +10,8 @@ data class Workspace(
     val globalEnv: Map<String, String> = mapOf(),
     val owner: User
 ) {
+    val networkName: String = title.replace(" ", "_")
+
     override fun equals(other: Any?): Boolean {
         if (other !is Workspace) return false
         return this.id == other.id
