@@ -164,7 +164,7 @@ class ApplicationWebAdapter(
     fun updateApplication(
         @PathVariable workspaceId: String,
         @PathVariable applicationId: String,
-        @RequestBody updateApplicationRequest: UpdateApplicationRequest
+        @Validated @RequestBody updateApplicationRequest: UpdateApplicationRequest
     ): ResponseEntity<Void> =
         updateApplicationUseCase.execute(applicationId, updateApplicationRequest.toDto())
             .run { ResponseEntity.ok().build() }
