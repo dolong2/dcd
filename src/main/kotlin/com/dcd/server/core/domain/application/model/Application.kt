@@ -19,6 +19,8 @@ data class Application(
     val status: ApplicationStatus,
     val labels: List<String>
 ) {
+    val containerName = name.lowercase()
+
     override fun equals(other: Any?): Boolean {
         if (other !is Application) return false
         return this.id == other.id
