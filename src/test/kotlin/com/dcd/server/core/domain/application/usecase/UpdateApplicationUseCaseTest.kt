@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
 import com.dcd.server.core.domain.application.exception.AlreadyRunningException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
@@ -9,10 +10,12 @@ import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.mockk.coVerify
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
@@ -25,7 +28,9 @@ class UpdateApplicationUseCaseTest(
     private val queryUserPort: QueryUserPort,
     private val queryWorkspacePort: QueryWorkspacePort,
     private val queryApplicationPort: QueryApplicationPort,
-    private val commandApplicationPort: CommandApplicationPort
+    private val commandApplicationPort: CommandApplicationPort,
+    @MockkBean(relaxed = true)
+    private val commandPort: CommandPort
 ) : BehaviorSpec({
     val targetUserId = "user1"
 
@@ -35,7 +40,8 @@ class UpdateApplicationUseCaseTest(
         val targetUser = queryUserPort.findById(targetUserId)!!
         val workspace = queryWorkspacePort.findByUser(targetUser).first()
         val applicationList = queryApplicationPort.findAllByWorkspace(workspace)
-        val applicationId = applicationList.first().id
+        val targetApplication = applicationList.first()
+        val applicationId = targetApplication.id
 
         `when`("usecase를 실행할때") {
             updateApplicationUseCase.execute(applicationId, updateReqDto)
@@ -49,6 +55,8 @@ class UpdateApplicationUseCaseTest(
                 result?.port shouldBe updateReqDto.port
                 result?.githubUrl shouldBe updateReqDto.githubUrl
                 result?.version shouldBe updateReqDto.version
+                coVerify { commandPort.executeShellCommand("docker rm ${targetApplication.containerName}") }
+                coVerify { commandPort.executeShellCommand("docker rmi ${targetApplication.containerName}") }
             }
         }
 
