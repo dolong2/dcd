@@ -21,13 +21,13 @@ class RunContainerServiceImpl(
 ) : RunContainerService {
     private val log = LoggerFactory.getLogger(this::class.simpleName)
 
-    override suspend fun runApplication(id: String) {
+    override suspend fun runContainer(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
         run(application)
     }
 
-    override suspend fun runApplication(application: Application) {
+    override suspend fun runContainer(application: Application) {
         run(application)
     }
 

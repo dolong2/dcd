@@ -28,7 +28,7 @@ class RunApplicationUseCase(
             throw AlreadyRunningException()
 
         launch  {
-            runContainerService.runApplication(application)
+            runContainerService.runContainer(application)
         }
 
         changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.PENDING)
@@ -55,7 +55,7 @@ class RunApplicationUseCase(
         repeat(3) {
             scope.launch {
                 for (application in runChannel) {
-                    runContainerService.runApplication(application)
+                    runContainerService.runContainer(application)
                 }
             }
         }
