@@ -48,5 +48,6 @@ class UpdateApplicationUseCase(
                 port = updateApplicationReqDto.port
             )
         commandApplicationPort.save(updatedApplication)
+        eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, updatedApplication))
     }
 }
