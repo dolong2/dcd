@@ -24,7 +24,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
             val application = ApplicationGenerator.generateApplication()
             every { queryApplicationPort.findById(appId) } returns application
 
-            service.runApplication(appId)
+            service.runContainer(appId)
             then("commandPort가 실행되어야함") {
                 verify { commandPort.executeShellCommand("docker start ${application.name.lowercase()}") }
             }
@@ -35,7 +35,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
         val application = ApplicationGenerator.generateApplication()
 
         `when`("executeShellCommand 메서드를 실행할때") {
-            service.runApplication(application)
+            service.runContainer(application)
 
             then("commandPort가 실행되어야함") {
                 verify { commandPort.executeShellCommand("docker start ${application.name.lowercase()}") }
