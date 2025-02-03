@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.workspace.usecase
 
+import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.user.spi.CommandUserPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.dto.request.UpdateWorkspaceReqDto
@@ -12,6 +13,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import com.dcd.server.infrastructure.test.user.UserGenerator
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.context.SpringBootTest
@@ -29,7 +31,9 @@ class UpdateWorkspaceUseCaseTest(
     private val queryWorkspacePort: QueryWorkspacePort,
     private val commandWorkspacePort: CommandWorkspacePort,
     private val queryUserPort: QueryUserPort,
-    private val commandUserPort: CommandUserPort
+    private val commandUserPort: CommandUserPort,
+    @MockkBean(relaxed = true)
+    private val commandPort: CommandPort
 ) : BehaviorSpec({
     val userId = "user1"
     val workspaceId = "testWorkspaceId"
