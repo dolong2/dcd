@@ -20,7 +20,7 @@ class DeleteWorkspaceUseCase(
 
         validateWorkspaceOwnerService.validateOwner(workspace)
 
-        deleteNetworkService.deleteNetwork(workspace.title)
+        deleteNetworkService.deleteNetwork(workspace.networkName)
 
         commandWorkspacePort.delete(workspace)
     }
