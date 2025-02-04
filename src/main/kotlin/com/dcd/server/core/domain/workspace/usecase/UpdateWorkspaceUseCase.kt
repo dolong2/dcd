@@ -27,7 +27,7 @@ class UpdateWorkspaceUseCase(
 
         if (workspace.title != updateWorkspaceReqDto.title) {
             //기존 워크스페이스에서 생성된 네트워크 분리
-            disconnectNetworkService.disconnectNetwork(workspace.networkName)
+            disconnectNetworkService.disconnectNetwork(workspace)
             //기존 워크스페이스의 네트워크 삭제
             deleteNetworkService.deleteNetwork(workspace.networkName)
             //수정된 네트워크 생성
