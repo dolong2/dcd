@@ -21,7 +21,6 @@ class DeployApplicationUseCase(
     private val deleteContainerService: DeleteContainerService,
     private val deleteImageService: DeleteImageService,
     private val cloneApplicationByUrlService: CloneApplicationByUrlService,
-    private val modifyGradleService: ModifyGradleService,
     private val createDockerFileService: CreateDockerFileService,
     private val buildDockerImageService: BuildDockerImageService,
     private val createContainerService: CreateContainerService,
@@ -88,10 +87,7 @@ class DeployApplicationUseCase(
 
         val applicationType = application.applicationType
         when(applicationType) {
-            ApplicationType.SPRING_BOOT -> {
-                cloneApplicationByUrlService.cloneByApplication(application)
-            }
-            ApplicationType.NEST_JS -> {
+            ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS -> {
                 cloneApplicationByUrlService.cloneByApplication(application)
             }
             else -> {}
