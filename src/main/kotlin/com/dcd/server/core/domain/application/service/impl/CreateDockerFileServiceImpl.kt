@@ -54,7 +54,7 @@ class CreateDockerFileServiceImpl(
         val file = File("./$directoryName/Dockerfile")
         val fileContent = when (application.applicationType) {
             ApplicationType.SPRING_BOOT ->
-                FileContent.getSpringBootDockerFileContent(directoryName, version, application.port, mutableEnv)
+                FileContent.getSpringBootDockerFileContent(version, application.port, mutableEnv)
 
             ApplicationType.MYSQL ->
                 FileContent.getMYSQLDockerFileContent(version, application.port, mutableEnv)
