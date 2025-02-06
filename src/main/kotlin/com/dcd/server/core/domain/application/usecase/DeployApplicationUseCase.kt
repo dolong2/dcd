@@ -90,7 +90,6 @@ class DeployApplicationUseCase(
         when(applicationType) {
             ApplicationType.SPRING_BOOT -> {
                 cloneApplicationByUrlService.cloneByApplication(application)
-                modifyGradleService.modifyGradleByApplication(application)
             }
             ApplicationType.NEST_JS -> {
                 cloneApplicationByUrlService.cloneByApplication(application)
