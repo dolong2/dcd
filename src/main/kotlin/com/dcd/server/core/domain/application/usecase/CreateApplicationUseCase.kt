@@ -21,7 +21,6 @@ class CreateApplicationUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val queryWorkspacePort: QueryWorkspacePort,
     private val cloneApplicationByUrlService: CloneApplicationByUrlService,
-    private val modifyGradleService: ModifyGradleService,
     private val createDockerFileService: CreateDockerFileService,
     private val getExternalPortService: GetExternalPortService,
     private val buildDockerImageService: BuildDockerImageService,
@@ -44,12 +43,11 @@ class CreateApplicationUseCase(
 
         launch {
             val applicationType = application.applicationType
-            if (applicationType == ApplicationType.SPRING_BOOT) {
-                cloneApplicationByUrlService.cloneByApplication(application)
-                modifyGradleService.modifyGradleByApplication(application)
-            }
-            else if (applicationType == ApplicationType.NEST_JS) {
-                cloneApplicationByUrlService.cloneByApplication(application)
+            when(applicationType) {
+                ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS -> {
+                    cloneApplicationByUrlService.cloneByApplication(application)
+                }
+                else -> {}
             }
 
             createDockerFileService.createFileToApplication(application, version)

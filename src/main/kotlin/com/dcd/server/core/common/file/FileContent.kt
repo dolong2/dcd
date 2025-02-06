@@ -4,9 +4,11 @@ import com.dcd.server.core.domain.application.model.Application
 import java.lang.StringBuilder
 
 object FileContent {
-    fun getSpringBootDockerFileContent(name: String, version: String, port: Int, env: Map<String, String>): String =
+    fun getSpringBootDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
         "FROM openjdk:${version}-jdk\n" +
-        "COPY build/libs/$name.jar build/libs/app.jar\n" +
+        "COPY build/libs/*.jar build/libs/\n" +
+        "RUN rm -f build/libs/*-plain.jar\n" +
+        "RUN mv build/libs/*.jar build/libs/app.jar\n" +
         "EXPOSE ${port}\n" +
         getEnvString(env) +
         "CMD [\"java\",\"-jar\",\"build/libs/app.jar\"]"
@@ -72,7 +74,7 @@ object FileContent {
     private fun getEnvString(env: Map<String, String>): String {
         val envString = StringBuilder()
         for (it in env) {
-            envString.append("ENV ${it.key} ${it.value}\n")
+            envString.append("ENV ${it.key}=${it.value}\n")
         }
         return envString.toString()
     }
