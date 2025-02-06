@@ -43,11 +43,11 @@ class CreateApplicationUseCase(
 
         launch {
             val applicationType = application.applicationType
-            if (applicationType == ApplicationType.SPRING_BOOT) {
-                cloneApplicationByUrlService.cloneByApplication(application)
-            }
-            else if (applicationType == ApplicationType.NEST_JS) {
-                cloneApplicationByUrlService.cloneByApplication(application)
+            when(applicationType) {
+                ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS -> {
+                    cloneApplicationByUrlService.cloneByApplication(application)
+                }
+                else -> {}
             }
 
             createDockerFileService.createFileToApplication(application, version)
