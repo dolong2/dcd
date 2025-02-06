@@ -74,7 +74,7 @@ object FileContent {
     private fun getEnvString(env: Map<String, String>): String {
         val envString = StringBuilder()
         for (it in env) {
-            envString.append("ENV ${it.key} ${it.value}\n")
+            envString.append("ENV ${it.key}=${it.value}\n")
         }
         return envString.toString()
     }
