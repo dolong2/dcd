@@ -42,7 +42,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
                 }
                 actualFileContent.deleteAt(actualFileContent.length - 1)
 
-                actualFileContent.toString() shouldBe FileContent.getSpringBootDockerFileContent(application.name, application.version, application.port, application.env)
+                actualFileContent.toString() shouldBe FileContent.getSpringBootDockerFileContent(application.version, application.port, application.env)
             }
         }
 

@@ -30,8 +30,6 @@ class DeployApplicationUseCaseTest(
     @MockkBean(relaxed = true)
     private val commandPort: CommandPort,
     @MockkBean(relaxUnitFun = true)
-    private val modifyGradleService: ModifyGradleService,
-    @MockkBean(relaxUnitFun = true)
     private val createDockerFileService: CreateDockerFileService,
     private val commandUserPort: CommandUserPort,
     private val commandWorkspacePort: CommandWorkspacePort,
