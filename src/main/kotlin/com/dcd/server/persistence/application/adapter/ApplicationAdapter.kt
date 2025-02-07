@@ -20,6 +20,7 @@ fun Application.toEntity(): ApplicationJpaEntity =
         externalPort = this.externalPort,
         version = this.version,
         status = this.status,
+        failureReason = this.failureReason,
         labels = this.labels
     )
 
@@ -36,5 +37,6 @@ fun ApplicationJpaEntity.toDomain(): Application =
         externalPort = this.externalPort,
         version = this.version,
         status = this.status,
+        failureReason = this.failureReason,
         labels = this.labels
     )
