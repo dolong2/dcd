@@ -52,7 +52,8 @@ class ApplicationStatusScheduler(
 
         val updatedApplicationList = mutableListOf<Application>()
         getContainerService.getContainerNameByStatus(ContainerStatus.RUNNING)
-            .forEach {containerName ->
+            .forEach { result ->
+                val (containerName, _) = result.split(" ")
                 val containerRunningApplication = stoppedApplicationList.lastOrNull { it.containerName == containerName }
                     ?: return@forEach
 
@@ -75,7 +76,8 @@ class ApplicationStatusScheduler(
 
         val updatedApplicationList = mutableListOf<Application>()
         getContainerService.getContainerNameByStatus(ContainerStatus.CREATED)
-            .forEach {containerName ->
+            .forEach { result ->
+                val (containerName, _) = result.split(" ")
                 val containerExitedApplication = runningApplicationList.lastOrNull { it.containerName == containerName }
                     ?: return@forEach
 
