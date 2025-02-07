@@ -15,6 +15,10 @@ class ApplicationStatusScheduler(
     private val getContainerService: GetContainerService,
     private val commandApplicationPort: CommandApplicationPort
 ) {
+    /**
+     * 실행중인 애플리케이션중 컨테이너가 종료된 애플리케이션의 상태를 STOPPED로 변경하는 스케줄러
+     * @author dolong2
+     */
     @Scheduled(cron = "0 * * * * ?")
     fun checkExitedApplication() {
         val runningApplicationList = queryApplicationPort.findAllByStatus(ApplicationStatus.RUNNING)
@@ -34,6 +38,10 @@ class ApplicationStatusScheduler(
         commandApplicationPort.saveAll(updatedApplicationList)
     }
 
+    /**
+     * 정지된 애플리케이션중 실행중인 컨테이너가 있는 애플리케이션의 상태를 RUNNING으로 변경하는 스케줄러
+     * @author dolong2
+     */
     @Scheduled(cron = "0 * * * * ?")
     fun checkRunningApplication() {
         val stoppedApplicationList = queryApplicationPort.findAllByStatus(ApplicationStatus.STOPPED)
@@ -53,6 +61,10 @@ class ApplicationStatusScheduler(
         commandApplicationPort.saveAll(updatedApplicationList)
     }
 
+    /**
+     * 실행중인 상태인 애플리케이션중 컨테이너가 생성된 상태가 있는 애플리케이션이 있다면 정지됨 상태로 변경하는 스케줄러
+     * @author dolong2
+     */
     @Scheduled(cron = "0 * * * * ?")
     fun checkCreatedContainer() {
         val runningApplicationList = queryApplicationPort.findAllByStatus(ApplicationStatus.RUNNING)
