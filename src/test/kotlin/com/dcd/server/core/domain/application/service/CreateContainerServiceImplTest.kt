@@ -28,7 +28,8 @@ class CreateContainerServiceImplTest : BehaviorSpec({
                         "-p ${application.externalPort}:${application.port} ${application.name.lowercase()}:latest"
                     )
                 }
-                verify { checkExitValuePort.checkApplicationExitValue(0, application, any() as CoroutineScope) }
+                verify { checkExitValuePort.checkApplicationExitValue(0, application, any() as CoroutineScope, "컨테이너 생성시 에러") }
+                verify { checkExitValuePort.checkApplicationExitValue(0, application, any() as CoroutineScope, "네트워크 연결 실패") }
             }
         }
     }
