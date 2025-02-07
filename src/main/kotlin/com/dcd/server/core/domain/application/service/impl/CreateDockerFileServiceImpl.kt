@@ -48,7 +48,7 @@ class CreateDockerFileServiceImpl(
 
         commandPort.executeShellCommand("mkdir -p $directoryName")
             .also {exitValue ->
-                checkExitValuePort.checkApplicationExitValue(exitValue, application, coroutineScope)
+                checkExitValuePort.checkApplicationExitValue(exitValue, application, coroutineScope, "애플리케이션 디렉토리 생성중 에러")
             }
 
         val file = File("./$directoryName/Dockerfile")
@@ -73,7 +73,7 @@ class CreateDockerFileServiceImpl(
             if (!file.createNewFile())
                 return
         } catch (e: IOException) {
-            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application))
+            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, "도커파일 생성중 에러"))
         }
     }
 }

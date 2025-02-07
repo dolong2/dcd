@@ -36,7 +36,7 @@ class RunContainerServiceImpl(
             val exitValue = commandPort.executeShellCommand("docker start ${application.containerName}")
             if (exitValue != 0) {
                 log.error("$exitValue")
-                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application))
+                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, "컨테이너 실행중 에러"))
             }
 
             else

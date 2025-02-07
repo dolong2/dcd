@@ -23,7 +23,7 @@ class StopContainerServiceImpl(
             val exitValue = commandPort.executeShellCommand("docker stop ${application.containerName}")
             if (exitValue != 0) {
                 log.error("$exitValue")
-                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application))
+                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, "컨테이너 정지중 에러"))
             }
 
             else

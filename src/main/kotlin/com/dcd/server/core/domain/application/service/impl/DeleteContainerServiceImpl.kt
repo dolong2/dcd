@@ -18,7 +18,7 @@ class DeleteContainerServiceImpl(
             commandPort.executeShellCommand("docker rm ${application.containerName}")
                 .also {exitValue ->
                     if (exitValue != 0 && exitValue != 1)
-                        checkExitValuePort.checkApplicationExitValue(exitValue, application, this)
+                        checkExitValuePort.checkApplicationExitValue(exitValue, application, this, "컨테이너 삭제중 에러")
                 }
         }
     }

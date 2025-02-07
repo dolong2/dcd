@@ -34,7 +34,7 @@ class ApplicationStatusScheduler(
                     if (exitCode == "0")
                         containerExitedApplication.copy(status = ApplicationStatus.STOPPED)
                     else
-                        containerExitedApplication.copy(status = ApplicationStatus.FAILURE)
+                        containerExitedApplication.copy(status = ApplicationStatus.FAILURE, failureReason = "컨테이너가 비정상적으로 종료됨")
 
                 updatedApplicationList.add(updatedApplication)
             }

@@ -22,7 +22,7 @@ class CloneApplicationByUrlServiceImpl(
                 ?: throw ApplicationNotFoundException())
             val githubUrl = application.githubUrl
             val exitValue = commandPort.executeShellCommand("git clone $githubUrl ${application.name}")
-            checkExitValuePort.checkApplicationExitValue(exitValue, application, this)
+            checkExitValuePort.checkApplicationExitValue(exitValue, application, this, "애플리케이션 복사중 에러")
         }
     }
 
@@ -31,7 +31,7 @@ class CloneApplicationByUrlServiceImpl(
             val githubUrl = application.githubUrl
             commandPort.executeShellCommand("git clone $githubUrl ${application.name}")
                 .also {exitValue ->
-                    checkExitValuePort.checkApplicationExitValue(exitValue, application, this)
+                    checkExitValuePort.checkApplicationExitValue(exitValue, application, this, "애플리케이션 복사중 에러")
                 }
         }
     }
