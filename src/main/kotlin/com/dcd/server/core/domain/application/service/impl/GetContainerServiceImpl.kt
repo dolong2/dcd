@@ -10,5 +10,5 @@ class GetContainerServiceImpl(
     private val commandPort: CommandPort
 ) : GetContainerService {
     override fun getContainerNameByStatus(status: ContainerStatus): List<String> =
-        commandPort.executeShellCommandWithResult("docker ps -a --filter \"status=${status.value}\" --format \"{{.Names}}\"")
+        commandPort.executeShellCommandWithResult("docker ps -a --filter \"status=${status.value}\" --format \"{{.ID}}\" | xargs -I {} docker inspect --format \"{{.Name}} {{.State.ExitCode}}\" {}")
 }

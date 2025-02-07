@@ -20,7 +20,7 @@ class DeleteApplicationDirectoryServiceImpl(
         withContext(Dispatchers.IO) {
             commandPort.executeShellCommand("rm -rf ${application.name}")
                 .also {exitValue ->
-                    checkExitValuePort.checkApplicationExitValue(exitValue, application, this)
+                    checkExitValuePort.checkApplicationExitValue(exitValue, application, this, "애플리케이션 디렉토리 삭제중 에러")
                 }
         }
     }

@@ -36,7 +36,7 @@ class BuildDockerImageServiceImpl(
                     commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
                 }
             }
-            checkExitValuePort.checkApplicationExitValue(exitValue, application, this)
+            checkExitValuePort.checkApplicationExitValue(exitValue, application, this, "도커 이미지 빌드중 에러")
         }
     }
 
@@ -52,7 +52,7 @@ class BuildDockerImageServiceImpl(
                     commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
                 }
             }
-            checkExitValuePort.checkApplicationExitValue(exitValue, application, this)
+            checkExitValuePort.checkApplicationExitValue(exitValue, application, this, "도커 이미지 빌드중 에러")
         }
     }
 

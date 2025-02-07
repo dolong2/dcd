@@ -14,7 +14,8 @@ class ApplicationEventListener(
     @Transactional(rollbackFor = [Exception::class])
     fun process(event: ChangeApplicationStatusEvent) {
         val updatedApplication = event.application.copy(
-            status = event.status
+            status = event.status,
+            failureReason = event.failureReason
         )
 
         commandApplicationPort.save(updatedApplication)

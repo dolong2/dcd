@@ -22,13 +22,13 @@ class CreateContainerServiceImpl(
 
             commandPort.executeShellCommand(cmd)
                 .also {exitValue ->
-                    checkExitValuePort.checkApplicationExitValue(exitValue, application, this)
+                    checkExitValuePort.checkApplicationExitValue(exitValue, application, this, "컨테이너 생성시 에러")
                 }
 
             val dcdNetworkConnectCmd = "docker network connect dcd ${application.containerName}"
             commandPort.executeShellCommand(dcdNetworkConnectCmd)
                 .also {exitValue ->
-                    checkExitValuePort.checkApplicationExitValue(exitValue, application, this)
+                    checkExitValuePort.checkApplicationExitValue(exitValue, application, this, "네트워크 연결 실패")
                 }
         }
     }

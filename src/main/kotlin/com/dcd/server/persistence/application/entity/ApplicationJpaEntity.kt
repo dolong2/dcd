@@ -31,6 +31,7 @@ class ApplicationJpaEntity(
     val version: String,
     @Enumerated(EnumType.STRING)
     val status: ApplicationStatus,
+    val failureReason: String?,
     @ElementCollection
     @CollectionTable(name = "application_label_entity", joinColumns = [JoinColumn(name = "application_id")])
     @Column(name = "label")

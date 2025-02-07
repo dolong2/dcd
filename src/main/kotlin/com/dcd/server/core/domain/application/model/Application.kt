@@ -17,6 +17,7 @@ data class Application(
     val port: Int,
     val externalPort: Int,
     val status: ApplicationStatus,
+    val failureReason: String? = null,
     val labels: List<String>
 ) {
     val containerName = name.lowercase()
