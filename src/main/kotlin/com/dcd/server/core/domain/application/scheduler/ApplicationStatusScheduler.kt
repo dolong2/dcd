@@ -25,13 +25,17 @@ class ApplicationStatusScheduler(
 
         val updatedApplicationList = mutableListOf<Application>()
         getContainerService.getContainerNameByStatus(ContainerStatus.EXITED)
-            .forEach {containerName ->
+            .forEach { result ->
+                val (containerName, exitCode) = result.split(" ")
                 val containerExitedApplication = runningApplicationList.lastOrNull { it.containerName == containerName }
                     ?: return@forEach
 
-                val updatedApplication = containerExitedApplication.copy(
-                    status = ApplicationStatus.STOPPED
-                )
+                val updatedApplication =
+                    if (exitCode == "0")
+                        containerExitedApplication.copy(status = ApplicationStatus.STOPPED)
+                    else
+                        containerExitedApplication.copy(status = ApplicationStatus.FAILURE)
+
                 updatedApplicationList.add(updatedApplication)
             }
 
