@@ -35,6 +35,7 @@ fun Application.toDto(): ApplicationResDto =
         externalPort = this.externalPort,
         version = this.version,
         status = this.status,
+        failureReason = this.failureReason,
         labels = this.labels
     )
 
