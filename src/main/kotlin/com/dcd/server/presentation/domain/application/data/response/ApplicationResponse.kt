@@ -14,5 +14,6 @@ data class ApplicationResponse(
     val externalPort: Int,
     val version: String,
     val status: ApplicationStatus,
+    val failureReason: String?,
     val labels: List<String>
 )
