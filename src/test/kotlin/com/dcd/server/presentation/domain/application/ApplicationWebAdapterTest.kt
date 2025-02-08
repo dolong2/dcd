@@ -71,7 +71,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             externalPort = 8080,
             version = "latest",
             status = ApplicationStatus.STOPPED,
-            labels = listOf()
+            labels = listOf(),
+            failureReason = null
         )
         val list = listOf(applicationResponse)
         val responseDto = ApplicationListResDto(list)
@@ -99,7 +100,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             externalPort = 8080,
             version = "latest",
             status = ApplicationStatus.STOPPED,
-            labels = listOf()
+            labels = listOf(),
+            failureReason = null
         )
         `when`("getOneApplication 메서드를 실행할때") {
             every { getOneApplicationUseCase.execute(testId) } returns applicationResponse

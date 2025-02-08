@@ -18,6 +18,7 @@ fun ApplicationResDto.toResponse(): ApplicationResponse =
         externalPort = this.externalPort,
         version = this.version,
         status = this.status,
+        failureReason = this.failureReason,
         labels = this.labels
     )
 
