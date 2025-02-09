@@ -5,6 +5,7 @@ import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.StopContainerService
+import com.dcd.server.core.domain.application.util.FailureCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
@@ -23,7 +24,7 @@ class StopContainerServiceImpl(
             val exitValue = commandPort.executeShellCommand("docker stop ${application.containerName}")
             if (exitValue != 0) {
                 log.error("$exitValue")
-                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, "컨테이너 정지중 에러"))
+                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.STOP_CONTAINER_FAILURE))
             }
 
             else
