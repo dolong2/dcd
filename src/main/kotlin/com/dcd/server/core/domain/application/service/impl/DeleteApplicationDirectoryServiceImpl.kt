@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.DeleteApplicationDirectoryService
 import com.dcd.server.core.domain.application.spi.CheckExitValuePort
+import com.dcd.server.core.domain.application.util.FailureCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.context.ApplicationEventPublisher
@@ -20,7 +21,7 @@ class DeleteApplicationDirectoryServiceImpl(
         withContext(Dispatchers.IO) {
             commandPort.executeShellCommand("rm -rf ${application.name}")
                 .also {exitValue ->
-                    checkExitValuePort.checkApplicationExitValue(exitValue, application, this, "애플리케이션 디렉토리 삭제중 에러")
+                    checkExitValuePort.checkApplicationExitValue(exitValue, application, this, FailureCase.DELETE_DIRECTORY_FAILURE)
                 }
         }
     }

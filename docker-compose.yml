@@ -8,15 +8,13 @@ networks:
 services:
   db:
     container_name: dcd-db
-    image: yobasystems/alpine-mariadb:latest
-    platform: "linux/arm"
+    image: mariadb:latest
     env_file: dcd-db.env
     ports:
       - 3307:3306
   redis:
-    platform: linux/arm/v7
     container_name: dcd-redis
-    image: redis:7.4.1-alpine
+    image: redis:latest
     env_file: dcd-redis.env
     environment:
       - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL

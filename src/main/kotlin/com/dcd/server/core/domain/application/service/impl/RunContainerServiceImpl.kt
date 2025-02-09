@@ -7,6 +7,7 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.RunContainerService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.application.util.FailureCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
@@ -36,7 +37,7 @@ class RunContainerServiceImpl(
             val exitValue = commandPort.executeShellCommand("docker start ${application.containerName}")
             if (exitValue != 0) {
                 log.error("$exitValue")
-                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, "컨테이너 실행중 에러"))
+                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.RUN_CONTAINER_FAILURE))
             }
 
             else

@@ -7,6 +7,7 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.BuildDockerImageService
 import com.dcd.server.core.domain.application.spi.CheckExitValuePort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.application.util.FailureCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
@@ -36,7 +37,7 @@ class BuildDockerImageServiceImpl(
                     commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
                 }
             }
-            checkExitValuePort.checkApplicationExitValue(exitValue, application, this, "도커 이미지 빌드중 에러")
+            checkExitValuePort.checkApplicationExitValue(exitValue, application, this, FailureCase.IMAGE_BUILD_FAILURE)
         }
     }
 
@@ -52,7 +53,7 @@ class BuildDockerImageServiceImpl(
                     commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
                 }
             }
-            checkExitValuePort.checkApplicationExitValue(exitValue, application, this, "도커 이미지 빌드중 에러")
+            checkExitValuePort.checkApplicationExitValue(exitValue, application, this, FailureCase.IMAGE_BUILD_FAILURE)
         }
     }
 

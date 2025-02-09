@@ -15,7 +15,7 @@ class ApplicationEventListener(
     fun process(event: ChangeApplicationStatusEvent) {
         val updatedApplication = event.application.copy(
             status = event.status,
-            failureReason = event.failureReason
+            failureReason = event.failureCase?.reason
         )
 
         commandApplicationPort.save(updatedApplication)

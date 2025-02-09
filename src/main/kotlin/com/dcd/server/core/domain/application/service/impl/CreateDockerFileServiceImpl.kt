@@ -11,6 +11,7 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.CreateDockerFileService
 import com.dcd.server.core.domain.application.spi.CheckExitValuePort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.application.util.FailureCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -48,7 +49,7 @@ class CreateDockerFileServiceImpl(
 
         commandPort.executeShellCommand("mkdir -p $directoryName")
             .also {exitValue ->
-                checkExitValuePort.checkApplicationExitValue(exitValue, application, coroutineScope, "애플리케이션 디렉토리 생성중 에러")
+                checkExitValuePort.checkApplicationExitValue(exitValue, application, coroutineScope, FailureCase.CREATE_DIRECTORY_FAILURE)
             }
 
         val file = File("./$directoryName/Dockerfile")
@@ -73,7 +74,7 @@ class CreateDockerFileServiceImpl(
             if (!file.createNewFile())
                 return
         } catch (e: IOException) {
-            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, "도커파일 생성중 에러"))
+            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.CREATE_DOCKER_FILE_FAILURE))
         }
     }
 }

@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.application.service
 import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.application.service.impl.CreateContainerServiceImpl
 import com.dcd.server.core.domain.application.spi.CheckExitValuePort
+import com.dcd.server.core.domain.application.util.FailureCase
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.mockk
 import io.mockk.verify
@@ -28,8 +29,8 @@ class CreateContainerServiceImplTest : BehaviorSpec({
                         "-p ${application.externalPort}:${application.port} ${application.name.lowercase()}:latest"
                     )
                 }
-                verify { checkExitValuePort.checkApplicationExitValue(0, application, any() as CoroutineScope, "컨테이너 생성시 에러") }
-                verify { checkExitValuePort.checkApplicationExitValue(0, application, any() as CoroutineScope, "네트워크 연결 실패") }
+                verify { checkExitValuePort.checkApplicationExitValue(0, application, any() as CoroutineScope, FailureCase.CREATE_CONTAINER_FAILURE) }
+                verify { checkExitValuePort.checkApplicationExitValue(0, application, any() as CoroutineScope, FailureCase.CONNECT_NETWORK_FAILURE) }
             }
         }
     }
