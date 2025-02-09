@@ -49,7 +49,7 @@ class CreateDockerFileServiceImpl(
 
         commandPort.executeShellCommand("mkdir -p $directoryName")
             .also {exitValue ->
-                checkExitValuePort.checkApplicationExitValue(exitValue, application, coroutineScope, "애플리케이션 디렉토리 생성중 에러")
+                checkExitValuePort.checkApplicationExitValue(exitValue, application, coroutineScope, FailureCase.CREATE_DIRECTORY_FAILURE)
             }
 
         val file = File("./$directoryName/Dockerfile")
