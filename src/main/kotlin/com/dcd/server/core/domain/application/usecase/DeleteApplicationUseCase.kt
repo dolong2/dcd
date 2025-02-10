@@ -10,7 +10,7 @@ import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @UseCase
 class DeleteApplicationUseCase(
@@ -26,11 +26,12 @@ class DeleteApplicationUseCase(
         if (application.status == ApplicationStatus.RUNNING || application.status == ApplicationStatus.PENDING)
             throw CanNotDeleteApplicationException()
 
-        launch {
+        runBlocking {
             deleteContainerService.deleteContainer(application)
             deleteImageService.deleteImage(application)
         }
 
-        commandApplicationPort.delete(application)
+        if (application.status != ApplicationStatus.FAILURE)
+            commandApplicationPort.delete(application)
     }
 }
