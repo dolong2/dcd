@@ -31,6 +31,7 @@ class DeleteApplicationUseCase(
             deleteImageService.deleteImage(application)
         }
 
-        commandApplicationPort.delete(application)
+        if (application.status != ApplicationStatus.FAILURE)
+            commandApplicationPort.delete(application)
     }
 }
