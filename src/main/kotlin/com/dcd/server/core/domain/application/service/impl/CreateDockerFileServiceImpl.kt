@@ -4,7 +4,6 @@ import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.common.file.FileContent
 import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
-import com.dcd.server.core.domain.application.exception.NotSupportedTypeException
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
@@ -14,7 +13,6 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.application.util.FailureCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.withContext
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -49,6 +47,8 @@ class CreateDockerFileServiceImpl(
 
         commandPort.executeShellCommand("mkdir -p $directoryName")
             .also {exitValue ->
+                if (exitValue != 0)
+                    commandPort.executeShellCommand("rm -rf $directoryName")
                 checkExitValuePort.checkApplicationExitValue(exitValue, application, coroutineScope, FailureCase.CREATE_DIRECTORY_FAILURE)
             }
 
@@ -74,6 +74,7 @@ class CreateDockerFileServiceImpl(
             if (!file.createNewFile())
                 return
         } catch (e: IOException) {
+            commandPort.executeShellCommand("rm -rf $directoryName")
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.CREATE_DOCKER_FILE_FAILURE))
         }
     }
