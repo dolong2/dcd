@@ -37,6 +37,8 @@ class BuildDockerImageServiceImpl(
                     commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
                 }
             }
+            if (exitValue != 0)
+                commandPort.executeShellCommand("rm -rf $directoryName")
             checkExitValuePort.checkApplicationExitValue(exitValue, application, this, FailureCase.IMAGE_BUILD_FAILURE)
         }
     }
@@ -53,6 +55,8 @@ class BuildDockerImageServiceImpl(
                     commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
                 }
             }
+            if (exitValue != 0)
+                commandPort.executeShellCommand("rm -rf $directoryName")
             checkExitValuePort.checkApplicationExitValue(exitValue, application, this, FailureCase.IMAGE_BUILD_FAILURE)
         }
     }
