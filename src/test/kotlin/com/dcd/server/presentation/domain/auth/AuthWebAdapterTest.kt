@@ -120,8 +120,8 @@ class AuthWebAdapterTest : BehaviorSpec({
 
     given("주어지는게 없고") {
         `when`("signOut메서드를 실행할때") {
-            every { signOutUseCase.execute() } returns Unit
-            val result = authWebAdapter.signOut()
+            every { signOutUseCase.execute("testAccessToken") } returns Unit
+            val result = authWebAdapter.signOut("testAccessToken")
             then("상태코드는 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
             }

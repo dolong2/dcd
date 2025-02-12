@@ -1,5 +1,6 @@
 package com.dcd.server.infrastructure.global.jwt.adapter
 
+import com.dcd.server.core.domain.auth.spi.QueryTokenBlackListPort
 import com.dcd.server.infrastructure.global.jwt.exception.ExpiredTokenException
 import com.dcd.server.infrastructure.global.jwt.properties.JwtProperty
 import com.dcd.server.infrastructure.global.jwt.exception.TokenNotValidException
@@ -16,7 +17,8 @@ import java.security.Key
 @Component
 class ParseTokenAdapter(
     private val jwtProperty: JwtProperty,
-    private val authDetailsService: AuthDetailsService
+    private val authDetailsService: AuthDetailsService,
+    private val queryTokenBlackListPort: QueryTokenBlackListPort
 ) {
     object JwtPrefix{
         const val ACCESS = "access"
@@ -44,6 +46,9 @@ class ParseTokenAdapter(
     }
 
     private fun getClaims(token: String, secret: Key): Jws<Claims> {
+        if (queryTokenBlackListPort.existsByToken(token))
+            throw ExpiredTokenException()
+
         return try {
             Jwts.parserBuilder()
                 .setSigningKey(secret)

@@ -71,8 +71,8 @@ class AuthWebAdapter(
             .let { ResponseEntity.ok(it.toReissueResponse()) }
 
     @DeleteMapping
-    fun signOut(): ResponseEntity<Void>  =
-        signOutUseCase.execute()
+    fun signOut(@RequestHeader("Authorization") accessToken: String): ResponseEntity<Void>  =
+        signOutUseCase.execute(accessToken)
             .run { ResponseEntity.ok().build() }
 
     @PatchMapping("/password")
