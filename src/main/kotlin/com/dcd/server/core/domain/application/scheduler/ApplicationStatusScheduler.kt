@@ -67,15 +67,13 @@ class ApplicationStatusScheduler(
      * 실행중인 상태인 애플리케이션중 컨테이너가 생성된 상태가 있는 애플리케이션이 있다면 정지됨 상태로 변경하는 스케줄러
      * @author dolong2
      */
-    @Scheduled(cron = "0 * * * * ?")
-    fun checkCreatedContainer() {
-        val runningApplicationList = queryApplicationPort.findAllByStatus(ApplicationStatus.RUNNING)
-
+    fun checkCreatedContainer(targetApplicationList: List<Application>): List<Application> {
         val updatedApplicationList = mutableListOf<Application>()
+
         getContainerService.getContainerNameByStatus(ContainerStatus.CREATED)
             .forEach { result ->
                 val (containerName, _) = result.split(" ")
-                val containerExitedApplication = runningApplicationList.lastOrNull { it.containerName == containerName }
+                val containerExitedApplication = updatedApplicationList.lastOrNull { it.containerName == containerName }
                     ?: return@forEach
 
                 val updatedApplication = containerExitedApplication.copy(
@@ -84,6 +82,6 @@ class ApplicationStatusScheduler(
                 updatedApplicationList.add(updatedApplication)
             }
 
-        commandApplicationPort.saveAll(updatedApplicationList)
+        return updatedApplicationList
     }
 }
