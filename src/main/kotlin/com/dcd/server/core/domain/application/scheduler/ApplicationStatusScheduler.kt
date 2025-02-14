@@ -16,6 +16,24 @@ class ApplicationStatusScheduler(
     private val commandApplicationPort: CommandApplicationPort
 ) {
     /**
+     * 각 애플리케이션의 상태를 확인하고, 컨테이너의 상태와 일치하게 수정하는 스케줄러
+     * @author dolong2
+     */
+    @Scheduled(cron = "0 * * * * ?")
+    fun checkApplicationStatus() {
+        val runningApplicationList = queryApplicationPort.findAllByStatus(ApplicationStatus.RUNNING)
+        val stoppedApplicationList = queryApplicationPort.findAllByStatus(ApplicationStatus.STOPPED)
+
+        val checkExitedApplicationList = checkExitedContainer(runningApplicationList)
+        val checkedRunningApplicationList = checkRunningContainer(stoppedApplicationList)
+        val checkCreatedContainerApplicationList = checkCreatedContainer(runningApplicationList)
+
+        val updatedApplicationList =
+            checkExitedApplicationList + checkedRunningApplicationList + checkCreatedContainerApplicationList
+        commandApplicationPort.saveAll(updatedApplicationList)
+    }
+
+    /**
      * 실행중인 애플리케이션중 컨테이너가 종료된 애플리케이션의 상태가 STOPPED로 변경될 애플리케이션 리스트를 반환하는 메서드
      * @return STOPPED 혹은 FAILURE로 변경될 애플리케이션 리스트
      * @author dolong2
