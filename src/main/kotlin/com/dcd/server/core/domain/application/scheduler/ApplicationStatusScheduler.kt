@@ -19,15 +19,13 @@ class ApplicationStatusScheduler(
      * 실행중인 애플리케이션중 컨테이너가 종료된 애플리케이션의 상태를 STOPPED로 변경하는 스케줄러
      * @author dolong2
      */
-    @Scheduled(cron = "0 * * * * ?")
-    fun checkExitedApplication() {
-        val runningApplicationList = queryApplicationPort.findAllByStatus(ApplicationStatus.RUNNING)
-
+    fun checkExitedContainer(targetApplicationList: List<Application>): List<Application> {
         val updatedApplicationList = mutableListOf<Application>()
+
         getContainerService.getContainerNameByStatus(ContainerStatus.EXITED)
             .forEach { result ->
                 val (containerName, exitCode) = result.split(" ")
-                val containerExitedApplication = runningApplicationList.lastOrNull { it.containerName == containerName }
+                val containerExitedApplication = targetApplicationList.lastOrNull { it.containerName == containerName }
                     ?: return@forEach
 
                 val updatedApplication =
@@ -39,7 +37,7 @@ class ApplicationStatusScheduler(
                 updatedApplicationList.add(updatedApplication)
             }
 
-        commandApplicationPort.saveAll(updatedApplicationList)
+        return updatedApplicationList
     }
 
     /**
