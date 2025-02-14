@@ -42,7 +42,8 @@ class ApplicationStatusScheduler(
     }
 
     /**
-     * 정지된 애플리케이션중 실행중인 컨테이너가 있는 애플리케이션의 상태를 RUNNING으로 변경하는 스케줄러
+     * 정지된 애플리케이션중 실행중인 컨테이너가 있는 애플리케이션의 상태가 RUNNING으로 변경될 애플리케이션 리스트를 반환하는 메서드
+     * @return RUNNING으로 변경될 애플리케이션 리스트
      * @author dolong2
      */
     fun checkRunningContainer(targetApplicationList: List<Application>): List<Application> {
@@ -64,7 +65,8 @@ class ApplicationStatusScheduler(
     }
 
     /**
-     * 실행중인 상태인 애플리케이션중 컨테이너가 생성된 상태가 있는 애플리케이션이 있다면 정지됨 상태로 변경하는 스케줄러
+     * 실행중인 상태인 애플리케이션중 컨테이너가 생성된 상태가 있는 애플리케이션이 있다면 STOPPED로 변경될 애플리케이션 리스트를 반환하는 메서드
+     * @return STOPPED로 변경될 애플리케이션 리스트
      * @author dolong2
      */
     fun checkCreatedContainer(targetApplicationList: List<Application>): List<Application> {
