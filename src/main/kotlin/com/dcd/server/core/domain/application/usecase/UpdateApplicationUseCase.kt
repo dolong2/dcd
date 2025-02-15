@@ -12,7 +12,7 @@ import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.springframework.context.ApplicationEventPublisher
 
 @UseCase
@@ -31,7 +31,7 @@ class UpdateApplicationUseCase(
             throw AlreadyRunningException()
 
         if (application.name != updateApplicationReqDto.name) {
-            launch {
+            runBlocking {
                 deleteContainerService.deleteContainer(application)
                 deleteImageService.deleteImage(application)
                 eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.STOPPED, application))
@@ -48,6 +48,5 @@ class UpdateApplicationUseCase(
                 port = updateApplicationReqDto.port
             )
         commandApplicationPort.save(updatedApplication)
-        eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, updatedApplication))
     }
 }
