@@ -29,7 +29,7 @@ class BuildDockerImageServiceImplTest : BehaviorSpec({
             service.buildImageByApplicationId(appId)
             then("commandPort가 실행되어야함") {
                 coVerify { commandPort.executeShellCommand("cd ./${application.name} && ./gradlew clean build") }
-                coVerify { commandPort.executeShellCommand("cd ./${application.name} && docker build -t ${application.name.lowercase()}:latest .") }
+                coVerify { commandPort.executeShellCommand("cd ./${application.name} && docker build -t ${application.containerName}:latest .") }
             }
         }
     }
@@ -43,7 +43,7 @@ class BuildDockerImageServiceImplTest : BehaviorSpec({
 
             then("commandPort가 실행되어야함") {
                 coVerify { commandPort.executeShellCommand("cd ./${application.name} && ./gradlew clean build") }
-                coVerify { commandPort.executeShellCommand("cd ./${application.name} && docker build -t ${application.name.lowercase()}:latest .") }
+                coVerify { commandPort.executeShellCommand("cd ./${application.name} && docker build -t ${application.containerName}:latest .") }
             }
         }
     }

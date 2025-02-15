@@ -37,7 +37,7 @@ class ExecuteCommandUseCaseTest : BehaviorSpec({
         val request = ExecuteCommandReqDto(cmd)
 
         val givenApplication = ApplicationGenerator.generateApplication(id = applicationId, status = ApplicationStatus.RUNNING)
-        val executedCmd = "docker exec ${givenApplication.name.lowercase()} sh -c 'cd / && $cmd'"
+        val executedCmd = "docker exec ${givenApplication.containerName} sh -c 'cd / && $cmd'"
         val testCmdResult = listOf("test cmd result")
 
         `when`("주어진 아이디를 가진 애플리케이션이 없을때") {

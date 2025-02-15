@@ -22,12 +22,12 @@ class StopContainerServiceImplTest : BehaviorSpec({
             stopContainerService.stopContainer(application)
 
             then("컨테이너 정지 명령이 실행되야함") {
-                verify { commandPort.executeShellCommand("docker stop ${application.name.lowercase()}") }
+                verify { commandPort.executeShellCommand("docker stop ${application.containerName}") }
             }
         }
 
         `when`("컨테이너 정지 명령이 실패했을때") {
-            every { commandPort.executeShellCommand("docker stop ${application.name.lowercase()}") } returns 125
+            every { commandPort.executeShellCommand("docker stop ${application.containerName}") } returns 125
             stopContainerService.stopContainer(application)
 
             then("ContainerNotStoppedException이 발생해야함") {

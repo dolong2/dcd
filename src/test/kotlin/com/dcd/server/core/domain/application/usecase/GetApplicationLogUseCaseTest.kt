@@ -35,7 +35,7 @@ class GetApplicationLogUseCaseTest(
         val workspace = WorkspaceGenerator.generateWorkspace(user = user)
         val application = ApplicationGenerator.generateApplication(id = targetApplicationId, workspace = workspace)
         val expectedResult = listOf("test logs")
-        every { commandPort.executeShellCommandWithResult("docker logs ${application.name.lowercase()}") } returns expectedResult
+        every { commandPort.executeShellCommandWithResult("docker logs ${application.containerName}") } returns expectedResult
 
         commandUserPort.save(user)
         commandWorkspacePort.save(workspace)

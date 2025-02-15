@@ -25,8 +25,8 @@ class CreateContainerServiceImplTest : BehaviorSpec({
                 verify {
                     commandPort.executeShellCommand(
                         "docker create --network ${application.workspace.title.replace(' ', '_')} " +
-                        "--name ${application.name.lowercase()} " +
-                        "-p ${application.externalPort}:${application.port} ${application.name.lowercase()}:latest"
+                        "--name ${application.containerName} " +
+                        "-p ${application.externalPort}:${application.port} ${application.containerName}:latest"
                     )
                 }
                 verify { checkExitValuePort.checkApplicationExitValue(0, application, any() as CoroutineScope, FailureCase.CREATE_CONTAINER_FAILURE) }

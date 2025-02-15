@@ -59,15 +59,15 @@ class DeployApplicationUseCaseTest(
                 result shouldNotBe null
                 result!!.status shouldBe ApplicationStatus.PENDING
 
-                coVerify { commandPort.executeShellCommand("docker rm ${result.name.lowercase()}") }
-                coVerify { commandPort.executeShellCommand("docker rmi ${result.name.lowercase()}") }
+                coVerify { commandPort.executeShellCommand("docker rm ${result.containerName}") }
+                coVerify { commandPort.executeShellCommand("docker rmi ${result.containerName}") }
                 coVerify { commandPort.executeShellCommand("git clone ${result.githubUrl} ${result.name}") }
-                coVerify { commandPort.executeShellCommand("cd ./${result.name} && docker build -t ${result.name.lowercase()}:latest .") }
+                coVerify { commandPort.executeShellCommand("cd ./${result.name} && docker build -t ${result.containerName}:latest .") }
                 coVerify {
                     commandPort.executeShellCommand(
                         "docker create --network ${result.workspace.title.replace(' ', '_')} " +
-                            "--name ${result.name.lowercase()} " +
-                            "-p ${result.externalPort}:${result.port} ${result.name.lowercase()}:latest"
+                            "--name ${result.containerName} " +
+                            "-p ${result.externalPort}:${result.port} ${result.containerName}:latest"
                     )
                 }
                 coVerify { commandPort.executeShellCommand("rm -rf ${result.name}") }

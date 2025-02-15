@@ -20,7 +20,7 @@ class DeleteImageServiceImplTest : BehaviorSpec({
             deleteImageService.deleteImage(application)
 
             then("이미지를 제거하는 명령이 실행되어야함") {
-                verify { commandPort.executeShellCommand("docker rmi ${application.name.lowercase()}") }
+                verify { commandPort.executeShellCommand("docker rmi ${application.containerName}") }
             }
         }
     }
