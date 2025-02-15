@@ -61,8 +61,8 @@ class DeployApplicationUseCaseTest(
 
                 coVerify { commandPort.executeShellCommand("docker rm ${result.containerName}") }
                 coVerify { commandPort.executeShellCommand("docker rmi ${result.containerName}") }
-                coVerify { commandPort.executeShellCommand("git clone ${result.githubUrl} ${result.name}") }
-                coVerify { commandPort.executeShellCommand("cd ./${result.name} && docker build -t ${result.containerName}:latest .") }
+                coVerify { commandPort.executeShellCommand("git clone ${result.githubUrl} '${result.name}'") }
+                coVerify { commandPort.executeShellCommand("cd ./'${result.name}' && docker build -t ${result.containerName}:latest .") }
                 coVerify {
                     commandPort.executeShellCommand(
                         "docker create --network ${result.workspace.title.replace(' ', '_')} " +
@@ -70,7 +70,7 @@ class DeployApplicationUseCaseTest(
                             "-p ${result.externalPort}:${result.port} ${result.containerName}:latest"
                     )
                 }
-                coVerify { commandPort.executeShellCommand("rm -rf ${result.name}") }
+                coVerify { commandPort.executeShellCommand("rm -rf '${result.name}'") }
             }
         }
     }

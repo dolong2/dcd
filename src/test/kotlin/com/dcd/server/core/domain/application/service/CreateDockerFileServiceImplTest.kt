@@ -30,10 +30,10 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
             createDockerFileService.createFileToApplication(application, application.version)
 
             then("애플리케이션의 이름을 가진 디렉토리를 생성해야함") {
-                verify { commandPort.executeShellCommand("mkdir -p ${application.name}") }
+                verify { commandPort.executeShellCommand("mkdir -p '${application.name}'") }
             }
             then("실제로 애플리케이션 이름의 디렉토리가 생성되야함") {
-                commandPort.executeShellCommand("test -e ${application.name}") shouldBe 0
+                commandPort.executeShellCommand("test -e '${application.name}'") shouldBe 0
             }
             then("생성된 DockerFile의 내용은 FileContent의 내용과 같아야함") {
                 val actualFileContent = StringBuilder()
@@ -46,7 +46,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
             }
         }
 
-        commandPort.executeShellCommand("rm -rf ${application.name}") // 실제로 생성된 디렉토리 제거
+        commandPort.executeShellCommand("rm -rf '${application.name}'") // 실제로 생성된 디렉토리 제거
     }
 
     given("레디스 애플리케이션이 주어지고") {
@@ -57,10 +57,10 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
             createDockerFileService.createFileToApplication(application, application.version)
 
             then("애플리케이션의 이름을 가진 디렉토리를 생성해야함") {
-                verify { commandPort.executeShellCommand("mkdir -p ${application.name}") }
+                verify { commandPort.executeShellCommand("mkdir -p '${application.name}'") }
             }
             then("실제로 애플리케이션 이름의 디렉토리가 생성되야함") {
-                commandPort.executeShellCommand("test -e ${application.name}") shouldBe 0
+                commandPort.executeShellCommand("test -e '${application.name}'") shouldBe 0
             }
             then("생성된 DockerFile의 내용은 FileContent의 내용과 같아야함") {
                 val actualFileContent = StringBuilder()
@@ -72,7 +72,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
             }
         }
 
-        commandPort.executeShellCommand("rm -rf ${application.name}") // 실제로 생성된 디렉토리 제거
+        commandPort.executeShellCommand("rm -rf '${application.name}'") // 실제로 생성된 디렉토리 제거
     }
 
     given("MYSQL 애플리케이션이 주어지고") {
@@ -83,10 +83,10 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
             createDockerFileService.createFileToApplication(application, application.version)
 
             then("애플리케이션의 이름을 가진 디렉토리를 생성해야함") {
-                verify { commandPort.executeShellCommand("mkdir -p ${application.name}") }
+                verify { commandPort.executeShellCommand("mkdir -p '${application.name}'") }
             }
             then("실제로 애플리케이션 이름의 디렉토리가 생성되야함") {
-                commandPort.executeShellCommand("test -e ${application.name}") shouldBe 0
+                commandPort.executeShellCommand("test -e '${application.name}'") shouldBe 0
             }
             then("생성된 DockerFile의 내용은 FileContent의 내용과 같아야함") {
                 val actualFileContent = StringBuilder()
@@ -98,7 +98,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
             }
         }
 
-        commandPort.executeShellCommand("rm -rf ${application.name}") // 실제로 생성된 디렉토리 제거
+        commandPort.executeShellCommand("rm -rf '${application.name}'") // 실제로 생성된 디렉토리 제거
     }
 
     given("MARIADB 애플리케이션이 주어지고") {
@@ -109,10 +109,10 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
             createDockerFileService.createFileToApplication(application, application.version)
 
             then("애플리케이션의 이름을 가진 디렉토리를 생성해야함") {
-                verify { commandPort.executeShellCommand("mkdir -p ${application.name}") }
+                verify { commandPort.executeShellCommand("mkdir -p '${application.name}'") }
             }
             then("실제로 애플리케이션 이름의 디렉토리가 생성되야함") {
-                commandPort.executeShellCommand("test -e ${application.name}") shouldBe 0
+                commandPort.executeShellCommand("test -e '${application.name}'") shouldBe 0
             }
             then("생성된 DockerFile의 내용은 FileContent의 내용과 같아야함") {
                 val actualFileContent = StringBuilder()
@@ -124,7 +124,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
             }
         }
 
-        commandPort.executeShellCommand("rm -rf ${application.name}") // 실제로 생성된 디렉토리 제거
+        commandPort.executeShellCommand("rm -rf '${application.name}'") // 실제로 생성된 디렉토리 제거
     }
 
 })
