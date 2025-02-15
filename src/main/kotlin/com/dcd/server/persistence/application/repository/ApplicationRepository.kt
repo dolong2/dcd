@@ -17,4 +17,5 @@ interface ApplicationRepository : JpaRepository<ApplicationJpaEntity, String> {
     fun existsByExternalPort(externalPort: Int): Boolean
     fun findAllByStatus(status: ApplicationStatus): List<ApplicationJpaEntity>
     fun existsByName(name: String): Boolean
+    fun existsByNameAndWorkspace(name: String, workspace: WorkspaceJpaEntity): Boolean
 }

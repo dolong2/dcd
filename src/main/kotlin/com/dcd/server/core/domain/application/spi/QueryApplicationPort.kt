@@ -11,4 +11,5 @@ interface QueryApplicationPort {
     fun existsByExternalPort(externalPort: Int): Boolean
     fun findAllByStatus(status: ApplicationStatus): List<Application>
     fun existsByName(name: String): Boolean
+    fun existsByNameAndWorkspace(name: String, workspace: Workspace): Boolean
 }

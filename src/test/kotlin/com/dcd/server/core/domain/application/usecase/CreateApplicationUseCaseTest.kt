@@ -3,10 +3,13 @@ package com.dcd.server.core.domain.application.usecase
 import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDto
 import com.dcd.server.core.domain.application.exception.AlreadyExistsApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
+import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
+import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.dcd.server.infrastructure.test.application.ApplicationGenerator
 import io.kotest.core.spec.style.BehaviorSpec
 import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
 import io.kotest.assertions.throwables.shouldThrow
@@ -15,6 +18,7 @@ import kotlinx.coroutines.cancel
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Transactional
 @SpringBootTest
@@ -23,15 +27,16 @@ class CreateApplicationUseCaseTest(
     private val createApplicationUseCase: CreateApplicationUseCase,
     private val queryUserPort: QueryUserPort,
     private val commandWorkspacePort: CommandWorkspacePort,
-    private val queryApplicationPort: QueryApplicationPort
+    private val queryApplicationPort: QueryApplicationPort,
+    private val queryWorkspacePort: QueryWorkspacePort,
+    private val commandApplicationPort: CommandApplicationPort
 ) : BehaviorSpec({
-    var targetWorkspaceId = ""
+    val targetWorkspaceId = UUID.randomUUID().toString()
 
-    beforeContainer {
+    beforeTest {
         val user = queryUserPort.findById("user2")!!
-        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
+        val workspace = WorkspaceGenerator.generateWorkspace(id = targetWorkspaceId, user = user)
         commandWorkspacePort.save(workspace)
-        targetWorkspaceId = workspace.id
     }
 
     given("새로 생성할 애플리케이션 요청이 주어지고") {
@@ -57,6 +62,14 @@ class CreateApplicationUseCaseTest(
     }
 
     given("이미 존재하는 애플리케이션 이름이 주어지고") {
+        val targetWorkspace = queryWorkspacePort.findById(targetWorkspaceId)!!
+        val generateApplication =
+            ApplicationGenerator.generateApplication(name = "testName", workspace = targetWorkspace)
+        commandApplicationPort.save(generateApplication)
+        println("targetWorkspace = ${targetWorkspace}")
+
+        println("targetWorkspaceId = ${targetWorkspaceId}")
+
         val existsApplicationRequest = CreateApplicationReqDto(
             name = "testName",
             description = "testDescription",
