@@ -71,9 +71,9 @@ class CreateDockerFileServiceImpl(
                 FileContent.getNestJsDockerFileContent(version, application.port, mutableEnv)
         }
         try {
+            if (!file.exists())
+                file.createNewFile()
             file.writeText(fileContent)
-            if (!file.createNewFile())
-                return
         } catch (e: IOException) {
             e.printStackTrace()
             commandPort.executeShellCommand("rm -rf $directoryName")
