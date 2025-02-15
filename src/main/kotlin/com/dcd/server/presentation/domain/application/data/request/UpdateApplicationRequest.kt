@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern
 
 data class UpdateApplicationRequest(
     @field:NotBlank
-    @field:Pattern(regexp = "^[a-zA-Z0-9]+$")
+    @field:Pattern(regexp = "^[a-zA-Z0-9 ]{1,26}$")
     val name: String,
     val description: String?,
     val applicationType: ApplicationType,
