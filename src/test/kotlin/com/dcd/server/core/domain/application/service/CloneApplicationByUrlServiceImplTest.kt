@@ -28,7 +28,7 @@ class CloneApplicationByUrlServiceImplTest : BehaviorSpec({
 
             service.cloneById(appId)
             then("commandPort가 실행되어야함") {
-                verify { commandPort.executeShellCommand("git clone ${application.githubUrl} ${application.name}") }
+                verify { commandPort.executeShellCommand("git clone ${application.githubUrl} '${application.name}'") }
             }
         }
     }
@@ -41,7 +41,7 @@ class CloneApplicationByUrlServiceImplTest : BehaviorSpec({
             service.cloneByApplication(application)
 
             then("commandPort가 실행되어야함") {
-                verify { commandPort.executeShellCommand("git clone ${application.githubUrl} ${application.name}") }
+                verify { commandPort.executeShellCommand("git clone ${application.githubUrl} '${application.name}'") }
             }
         }
     }

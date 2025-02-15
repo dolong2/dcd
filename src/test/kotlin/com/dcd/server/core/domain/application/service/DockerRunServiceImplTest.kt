@@ -26,7 +26,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
 
             service.runContainer(appId)
             then("commandPort가 실행되어야함") {
-                verify { commandPort.executeShellCommand("docker start ${application.name.lowercase()}") }
+                verify { commandPort.executeShellCommand("docker start ${application.containerName}") }
             }
         }
     }
@@ -38,7 +38,7 @@ class DockerRunServiceImplTest : BehaviorSpec({
             service.runContainer(application)
 
             then("commandPort가 실행되어야함") {
-                verify { commandPort.executeShellCommand("docker start ${application.name.lowercase()}") }
+                verify { commandPort.executeShellCommand("docker start ${application.containerName}") }
             }
         }
     }

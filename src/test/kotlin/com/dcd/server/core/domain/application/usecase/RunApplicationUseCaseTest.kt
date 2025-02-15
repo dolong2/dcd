@@ -55,7 +55,7 @@ class RunApplicationUseCaseTest(
                 targetApplication shouldNotBe null
                 targetApplication!!.status shouldBe ApplicationStatus.PENDING
 
-                coVerify { commandPort.executeShellCommand("docker start ${targetApplication.name.lowercase()}") }
+                coVerify { commandPort.executeShellCommand("docker start ${targetApplication.containerName}") }
             }
         }
     }

@@ -20,7 +20,7 @@ class DeleteApplicationDirectoryServiceImplTest : BehaviorSpec({
             service.deleteApplicationDirectory(application)
 
             then("commandPort가 실행되어야함") {
-                verify { commandPort.executeShellCommand("rm -rf ${application.name}") }
+                verify { commandPort.executeShellCommand("rm -rf '${application.name}'") }
             }
         }
     }

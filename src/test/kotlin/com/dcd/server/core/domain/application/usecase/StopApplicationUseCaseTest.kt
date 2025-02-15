@@ -55,7 +55,7 @@ class StopApplicationUseCaseTest(
                 targetApplication shouldNotBe null
                 targetApplication!!.status shouldBe ApplicationStatus.PENDING
 
-                coVerify { commandPort.executeShellCommand("docker stop ${targetApplication.name.lowercase()}") }
+                coVerify { commandPort.executeShellCommand("docker stop ${targetApplication.containerName}") }
             }
         }
     }

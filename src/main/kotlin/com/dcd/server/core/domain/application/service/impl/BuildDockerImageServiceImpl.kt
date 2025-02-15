@@ -21,7 +21,7 @@ class BuildDockerImageServiceImpl(
     override suspend fun buildImageByApplicationId(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
-        val directoryName = application.name
+        val directoryName = "'${application.name}'"
         withContext(Dispatchers.IO) {
             val exitValue = when (application.applicationType) {
                 ApplicationType.SPRING_BOOT -> {
@@ -44,7 +44,7 @@ class BuildDockerImageServiceImpl(
     }
 
     override suspend fun buildImageByApplication(application: Application) {
-        val directoryName = application.name
+        val directoryName = "'${application.name}'"
         withContext(Dispatchers.IO) {
             val exitValue = when(application.applicationType) {
                 ApplicationType.SPRING_BOOT -> {

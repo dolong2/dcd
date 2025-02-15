@@ -20,7 +20,7 @@ data class Application(
     val failureReason: String? = null,
     val labels: List<String>
 ) {
-    val containerName = name.lowercase()
+    val containerName = "${name.replace(" ", "_").lowercase()}-$id"
 
     override fun equals(other: Any?): Boolean {
         if (other !is Application) return false

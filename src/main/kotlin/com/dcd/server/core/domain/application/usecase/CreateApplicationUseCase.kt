@@ -33,7 +33,7 @@ class CreateApplicationUseCase(
 
         val externalPort = getExternalPortService.getExternalPort(createApplicationReqDto.port)
 
-        if (queryApplicationPort.existsByName(createApplicationReqDto.name))
+        if (queryApplicationPort.existsByNameAndWorkspace(createApplicationReqDto.name, workspace))
             throw AlreadyExistsApplicationException()
 
         val application = createApplicationReqDto.toEntity(workspace, externalPort)

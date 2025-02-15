@@ -51,4 +51,7 @@ class ApplicationPersistenceAdapter(
 
     override fun existsByName(name: String): Boolean =
         applicationRepository.existsByName(name)
+
+    override fun existsByNameAndWorkspace(name: String, workspace: Workspace): Boolean =
+        applicationRepository.existsByNameAndWorkspace(name, workspace.toEntity())
 }
