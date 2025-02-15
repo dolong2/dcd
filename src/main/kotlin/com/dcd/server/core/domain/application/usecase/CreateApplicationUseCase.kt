@@ -28,12 +28,8 @@ class CreateApplicationUseCase(
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService
 ) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
     fun execute(workspaceId: String, createApplicationReqDto: CreateApplicationReqDto): CreateApplicationResDto {
-        println("workspaceId = ${workspaceId}")
-
         val workspace = queryWorkspacePort.findById(workspaceId)
             ?: throw WorkspaceNotFoundException()
-
-        println("workspace = ${workspace}")
 
         val externalPort = getExternalPortService.getExternalPort(createApplicationReqDto.port)
 

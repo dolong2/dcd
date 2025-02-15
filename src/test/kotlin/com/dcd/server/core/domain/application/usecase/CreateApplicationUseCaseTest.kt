@@ -66,9 +66,6 @@ class CreateApplicationUseCaseTest(
         val generateApplication =
             ApplicationGenerator.generateApplication(name = "testName", workspace = targetWorkspace)
         commandApplicationPort.save(generateApplication)
-        println("targetWorkspace = ${targetWorkspace}")
-
-        println("targetWorkspaceId = ${targetWorkspaceId}")
 
         val existsApplicationRequest = CreateApplicationReqDto(
             name = "testName",
