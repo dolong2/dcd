@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.IOException
 
 @Service
@@ -41,7 +42,7 @@ class CreateDockerFileServiceImpl(
     }
 
     private fun createFile(application: Application, version: String, coroutineScope: CoroutineScope) {
-        val directoryName = application.name
+        val directoryName = "'${application.name}'"
         val mutableEnv = application.env.toMutableMap()
         mutableEnv.putAll(application.workspace.globalEnv)
 
@@ -52,7 +53,7 @@ class CreateDockerFileServiceImpl(
                 checkExitValuePort.checkApplicationExitValue(exitValue, application, coroutineScope, FailureCase.CREATE_DIRECTORY_FAILURE)
             }
 
-        val file = File("./$directoryName/Dockerfile")
+        val file = File("./${application.name}/Dockerfile")
         val fileContent = when (application.applicationType) {
             ApplicationType.SPRING_BOOT ->
                 FileContent.getSpringBootDockerFileContent(version, application.port, mutableEnv)
@@ -69,11 +70,12 @@ class CreateDockerFileServiceImpl(
             ApplicationType.NEST_JS ->
                 FileContent.getNestJsDockerFileContent(version, application.port, mutableEnv)
         }
-        file.writeText(fileContent)
         try {
+            file.writeText(fileContent)
             if (!file.createNewFile())
                 return
         } catch (e: IOException) {
+            e.printStackTrace()
             commandPort.executeShellCommand("rm -rf $directoryName")
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.CREATE_DOCKER_FILE_FAILURE))
         }
