@@ -13,6 +13,7 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.application.util.FailureCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.withContext
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -76,6 +77,7 @@ class CreateDockerFileServiceImpl(
             file.writeText(fileContent)
         } catch (e: IOException) {
             commandPort.executeShellCommand("rm -rf $directoryName")
+            coroutineScope.cancel()
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.CREATE_DOCKER_FILE_FAILURE))
         }
     }
