@@ -33,9 +33,11 @@ class CreateContainerServiceImpl(
             val dcdNetworkConnectCmd = "docker network connect dcd ${application.containerName}"
             commandPort.executeShellCommand(dcdNetworkConnectCmd)
                 .also {exitValue ->
-                    if (exitValue != 0)
-                        commandPort.executeShellCommand("rm -rf ${application.name}")
                     checkExitValuePort.checkApplicationExitValue(exitValue, application, this, FailureCase.CONNECT_NETWORK_FAILURE)
+                    if (exitValue != 0) {
+                        commandPort.executeShellCommand("rm -rf ${application.name}")
+                        return@withContext
+                    }
                 }
         }
     }
