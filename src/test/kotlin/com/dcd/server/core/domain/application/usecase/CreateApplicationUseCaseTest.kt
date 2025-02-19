@@ -9,9 +9,9 @@ import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
-import com.dcd.server.infrastructure.test.application.ApplicationGenerator
+import util.application.ApplicationGenerator
 import io.kotest.core.spec.style.BehaviorSpec
-import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import util.workspace.WorkspaceGenerator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.cancel

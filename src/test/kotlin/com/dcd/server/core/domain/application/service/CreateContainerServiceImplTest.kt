@@ -8,7 +8,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.CoroutineScope
-import com.dcd.server.infrastructure.test.application.ApplicationGenerator
+import util.application.ApplicationGenerator
 
 class CreateContainerServiceImplTest : BehaviorSpec({
     val commandPort = mockk<CommandPort>(relaxed = true)

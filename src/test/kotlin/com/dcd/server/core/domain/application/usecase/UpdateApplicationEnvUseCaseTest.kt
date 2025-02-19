@@ -11,8 +11,8 @@ import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import com.dcd.server.infrastructure.test.application.ApplicationGenerator
-import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import util.application.ApplicationGenerator
+import util.workspace.WorkspaceGenerator
 import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles

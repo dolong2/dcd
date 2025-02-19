@@ -8,8 +8,8 @@ import com.dcd.server.infrastructure.global.security.auth.AuthDetailsService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import com.dcd.server.infrastructure.test.user.UserGenerator
-import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder

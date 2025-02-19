@@ -17,7 +17,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import org.springframework.http.HttpStatus
-import com.dcd.server.infrastructure.test.user.UserGenerator
+import util.user.UserGenerator
 
 class UserWebAdapterTest : BehaviorSpec({
     val getUserProfileUseCase = mockk<GetUserProfileUseCase>()

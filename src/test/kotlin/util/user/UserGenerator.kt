@@ -1,4 +1,4 @@
-package com.dcd.server.infrastructure.test.user
+package util.user
 
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.model.enums.Status

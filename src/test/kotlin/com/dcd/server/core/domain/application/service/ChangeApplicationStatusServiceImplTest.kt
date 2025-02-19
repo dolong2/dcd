@@ -9,7 +9,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import com.dcd.server.infrastructure.test.application.ApplicationGenerator
+import util.application.ApplicationGenerator
 
 class ChangeApplicationStatusServiceImplTest : BehaviorSpec({
     val commandApplicationPort = mockk<CommandApplicationPort>(relaxUnitFun = true)
