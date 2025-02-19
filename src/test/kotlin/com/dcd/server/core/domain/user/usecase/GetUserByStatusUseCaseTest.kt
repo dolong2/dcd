@@ -4,7 +4,7 @@ import com.dcd.server.core.domain.user.model.enums.Status
 import com.dcd.server.core.domain.user.spi.CommandUserPort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import com.dcd.server.infrastructure.test.user.UserGenerator
+import util.user.UserGenerator
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional

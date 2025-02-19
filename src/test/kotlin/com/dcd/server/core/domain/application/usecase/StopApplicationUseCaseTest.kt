@@ -11,9 +11,9 @@ import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.coVerify
-import com.dcd.server.infrastructure.test.application.ApplicationGenerator
-import com.dcd.server.infrastructure.test.user.UserGenerator
-import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import util.application.ApplicationGenerator
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe

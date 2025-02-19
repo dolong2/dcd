@@ -6,9 +6,9 @@ import com.dcd.server.core.domain.application.spi.CheckExitValuePort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.*
-import com.dcd.server.infrastructure.test.application.ApplicationGenerator
-import com.dcd.server.infrastructure.test.user.UserGenerator
-import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import util.application.ApplicationGenerator
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 import java.util.*
 
 class BuildDockerImageServiceImplTest : BehaviorSpec({

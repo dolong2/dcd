@@ -8,7 +8,7 @@ import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import com.dcd.server.infrastructure.global.security.auth.AuthDetailsService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import util.workspace.WorkspaceGenerator
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import org.springframework.boot.test.context.SpringBootTest

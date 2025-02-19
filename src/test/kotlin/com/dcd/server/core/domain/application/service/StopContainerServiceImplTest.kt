@@ -8,7 +8,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
-import com.dcd.server.infrastructure.test.application.ApplicationGenerator
+import util.application.ApplicationGenerator
 
 class StopContainerServiceImplTest : BehaviorSpec({
     val commandPort = mockk<CommandPort>(relaxed = true)

@@ -8,8 +8,8 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import com.dcd.server.infrastructure.test.application.ApplicationGenerator
-import com.dcd.server.infrastructure.test.workspace.WorkspaceGenerator
+import util.application.ApplicationGenerator
+import util.workspace.WorkspaceGenerator
 import java.util.*
 
 class CloneApplicationByUrlServiceImplTest : BehaviorSpec({
