@@ -21,9 +21,9 @@ alter table if exists role_entity add constraint FKrot6fehcor0f3sux5s6kgl0a4 for
 alter table if exists workspace_entity add constraint FKlfxk1bhw5knckt8vv28xvx5g2 foreign key (owner_id) references user_entity;
 
 -- 유저 생성
-insert into user_entity (email,name,password,status,id) values ('ownerEmail','applicationOwner', 'encoded_testPassword', 'CREATED','user1');
+insert into user_entity (email,name,password,status,id) values ('ownerEmail','applicationOwner', '$2a$10$uOSckwMEixpnBwRVp6ZoeOG9hQPbxXp.I0UK6xTok8tKK7G5f6A46', 'CREATED','user1');
 insert into role_entity (user_id,roles) values ('user1', 'ROLE_USER');
-insert into user_entity (email,name,password,status,id) values ('testEmail','applicationOwner', 'encoded_testPassword', 'CREATED','user2');
+insert into user_entity (email,name,password,status,id) values ('testEmail','applicationOwner', '$2a$10$uOSckwMEixpnBwRVp6ZoeOG9hQPbxXp.I0UK6xTok8tKK7G5f6A46', 'CREATED','user2');
 insert into role_entity (user_id,roles) values ('user2', 'ROLE_USER');
 
 -- 워크스페이스 생성
