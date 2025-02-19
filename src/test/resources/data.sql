@@ -25,3 +25,6 @@ alter table if exists workspace_entity add constraint FKlfxk1bhw5knckt8vv28xvx5g
 insert into role_entity (user_id,roles) values ('user1', 'ROLE_USER');
 insert into user_entity (email,name,password,status,id) values ('testEmail','applicationOwner' 'encoded_testPassword', 'CREATED','user2');
 insert into role_entity (user_id,roles) values ('user2', 'ROLE_USER');
+
+-- 워크스페이스 생성
+insert into workspace_entity (description,owner_id,title,id) values ('testDescription', 'user1', 'testTitle', 'workspace1');
