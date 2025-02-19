@@ -28,3 +28,6 @@ insert into role_entity (user_id,roles) values ('user2', 'ROLE_USER');
 
 -- 워크스페이스 생성
 insert into workspace_entity (description,owner_id,title,id) values ('testDescription', 'user1', 'testTitle', 'workspace1');
+
+-- 애플리케이션 생성
+insert into application_entity (application_type,description,external_port,failure_reason,github_url,name,port,status,version,workspace_id,id) values ('SPRING_BOOT','testDescription', 8080, NULL, 'testUrl', 'testName', 8080, 'STOPPED','17','workspace1','testId')
