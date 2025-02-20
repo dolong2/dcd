@@ -15,9 +15,10 @@ class CommandAdapter : CommandPort {
         val shellScriptCmd = arrayOf("/bin/sh", "-c", cmd)
         val p = Runtime.getRuntime().exec(shellScriptCmd)
 
-        val br = BufferedReader(InputStreamReader(p.inputStream))
-        br.readLines().forEach {
-            log.info(it)
+        BufferedReader(InputStreamReader(p.inputStream)).use { br ->
+            br.readLines().forEach {
+                log.info(it)
+            }
         }
 
         p.waitFor()
