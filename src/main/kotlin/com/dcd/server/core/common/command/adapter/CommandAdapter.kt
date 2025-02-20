@@ -35,11 +35,16 @@ class CommandAdapter : CommandPort {
         return try {
             val result = br.readLines()
             p.waitFor()
-            p.destroy()
             log.info(result.joinToString("\n"))
             result
         } catch (ex: IOException) {
+            log.error("명령어 실행 중 IO 오류 발생: ${ex.message}")
             emptyList()
+        } catch (ex: InterruptedException) {
+            log.error("명령어 실행이 중단됨: ${ex.message}")
+            emptyList()
+        } finally {
+            p.destroy()
         }
     }
 
