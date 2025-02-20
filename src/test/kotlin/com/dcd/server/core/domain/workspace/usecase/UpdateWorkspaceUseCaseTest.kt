@@ -63,9 +63,9 @@ class UpdateWorkspaceUseCaseTest(
         }
 
         `when`("워크스페이스의 유저와 로그인된 유저가 다를때") {
-            val user = UserGenerator.generateUser()
-            commandUserPort.save(user)
-            val userDetails = authDetailsService.loadUserByUsername(user.id)
+            val otherUser = UserGenerator.generateUser()
+            commandUserPort.save(otherUser)
+            val userDetails = authDetailsService.loadUserByUsername(otherUser.id)
             val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
             SecurityContextHolder.getContext().authentication = authenticationToken
 

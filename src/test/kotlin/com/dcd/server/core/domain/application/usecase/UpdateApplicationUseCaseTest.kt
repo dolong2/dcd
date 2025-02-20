@@ -61,7 +61,6 @@ class UpdateApplicationUseCaseTest(
         }
 
         `when`("애플리케이션이 실행중이라면") {
-            val targetApplication = queryApplicationPort.findById(applicationId)!!
             commandApplicationPort.save(targetApplication.copy(status = ApplicationStatus.RUNNING))
 
             then("에러가 발생해야함") {

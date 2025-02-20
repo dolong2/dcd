@@ -19,8 +19,6 @@ class UserPersistenceAdapterTest : BehaviorSpec({
     given("User가 주어질때") {
         val testUserId = "testId"
         val testEmail = "test"
-        val testPassword = "test123!@#"
-        val testName = "test"
         val user = User(email = "another", password = "password", name = "another user", roles = mutableListOf(Role.ROLE_USER), status = Status.CREATED)
 
         `when`("save 메서드를 사용할때") {
