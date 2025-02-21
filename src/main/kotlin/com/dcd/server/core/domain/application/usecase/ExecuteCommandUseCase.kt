@@ -59,10 +59,12 @@ class ExecuteCommandUseCase(
     }
 
     private fun validateCmd(cmd: String) {
-        val forbiddenPatterns = listOf(";", "`", "$")
         if (cmd.length > 100)
             throw InvalidCmdException()
-        else if (forbiddenPatterns.any { cmd.contains(it) })
+
+        val pattern = Regex("^(?:(?!(;|\\|\\||&&)|rm\\s+-rf\\s+\\/|(wget|curl)\\s+.*\\|\\s*(sh|bash|zsh|ksh)|cat\\s+/etc/passwd|(cat|grep|awk|sed)\\s+/.*ssh/.*(id_rsa|authorized_keys|known_hosts)).)*$")
+
+        if (pattern.matches(cmd).not())
             throw InvalidCmdException()
     }
 }
