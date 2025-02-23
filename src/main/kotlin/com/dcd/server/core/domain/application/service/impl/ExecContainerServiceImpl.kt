@@ -84,8 +84,12 @@ class ExecContainerServiceImpl(
         }
 
         override fun onComplete() {
+            @Suppress("UNCHECKED_CAST")
+            val dirStack = (session.attributes["workingDir"] as? Stack<String>) ?: Stack<String>()
+            val workingDir = "/${dirStack.joinToString("/")}"
+
             if (session.isOpen) {
-                session.sendMessage(TextMessage("current dir = ${session.attributes["workingDir"] ?: "/"}"))
+                session.sendMessage(TextMessage("current dir = $workingDir"))
                 session.sendMessage(TextMessage("cmd end"))
             }
             super.onComplete()
