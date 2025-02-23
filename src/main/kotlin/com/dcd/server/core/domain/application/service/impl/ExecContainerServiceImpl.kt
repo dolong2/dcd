@@ -47,16 +47,16 @@ class ExecContainerServiceImpl(
             .exec(AttachResultCallback(session))
     }
 
-    private fun updateWorkingDir(currentDir: String, newDir: String): String {
-        return when {
-            newDir == "/" -> "/"  // 루트 디렉토리로 이동
-            newDir == ".." -> currentDir.substringBeforeLast("/", "/")  // 상위 디렉토리로 이동
-            newDir.startsWith("/") -> newDir  // 절대 경로로 설정
-            else -> {
-                if (currentDir != "/")
-                    "$currentDir/$newDir"
-                else "/${newDir}"
-            }  // 현재 디렉토리에서 하위 디렉토리로 이동
+    private fun updateWorkingDir(dirStack: Stack<String>, newDir: String) {
+        when {
+            newDir == "/" -> dirStack.removeAllElements()
+            newDir == ".." -> dirStack.pop()
+            newDir.startsWith("/") -> {
+                dirStack.removeAllElements()
+                dirStack.push(newDir)
+            }
+            newDir == "." -> return
+            else -> { dirStack.push(newDir) }
         }
     }
 
