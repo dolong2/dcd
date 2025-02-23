@@ -54,12 +54,13 @@ class ExecContainerServiceImpl(
     private fun updateWorkingDir(dirStack: Stack<String>, newDir: String) {
         when {
             newDir == "/" -> dirStack.removeAllElements()
-            newDir == ".." -> dirStack.pop()
+            newDir == ".." -> if (dirStack.isNotEmpty()) dirStack.pop()
             newDir.startsWith("/") -> {
                 dirStack.removeAllElements()
                 dirStack.push(newDir)
             }
             newDir == "." -> return
+            newDir.isBlank() -> return
             else -> { dirStack.push(newDir) }
         }
     }
