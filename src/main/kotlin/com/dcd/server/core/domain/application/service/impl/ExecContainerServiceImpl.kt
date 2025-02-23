@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 import java.io.*
+import java.util.Stack
 
 @Service
 class ExecContainerServiceImpl(
@@ -17,17 +18,24 @@ class ExecContainerServiceImpl(
     override fun execCmd(application: Application, session: WebSocketSession, cmd: String) {
         val cmdArray = cmd.split(" ").toTypedArray()
 
+        @Suppress("UNCHECKED_CAST")
+        val dirStack = (session.attributes["workingDir"] as? Stack<String>) ?: Stack<String>()
+        val workingDir = "/${dirStack.joinToString("/")}"
+
         if (cmd.contains("cd")) {
-            val newDir = cmdArray[1]
-            val currentDir = session.attributes["workingDir"] as? String ?: "/"
-            val updatedDir = updateWorkingDir(currentDir, newDir)
-            session.attributes["workingDir"] = updatedDir
-            session.sendMessage(TextMessage("current dir = ${session.attributes["workingDir"] ?: "/"}"))
+            val newDirList = cmdArray[1].split("/")
+
+            newDirList.forEach { newDir ->
+                updateWorkingDir(dirStack, newDir)
+            }
+            val updatedWorkingDir = "/${dirStack.joinToString("/")}"
+
+            session.sendMessage(TextMessage("current dir = $updatedWorkingDir"))
             session.sendMessage(TextMessage("cmd end"))
+
+            session.attributes["workingDir"] = dirStack
             return
         }
-
-        val workingDir = session.attributes["workingDir"] as? String ?: "/"
 
         // Docker attach API 호출
         val execInstance = dockerClient.execCreateCmd(application.containerName)
@@ -43,16 +51,17 @@ class ExecContainerServiceImpl(
             .exec(AttachResultCallback(session))
     }
 
-    private fun updateWorkingDir(currentDir: String, newDir: String): String {
-        return when {
-            newDir == "/" -> "/"  // 루트 디렉토리로 이동
-            newDir == ".." -> currentDir.substringBeforeLast("/", "/")  // 상위 디렉토리로 이동
-            newDir.startsWith("/") -> newDir  // 절대 경로로 설정
-            else -> {
-                if (currentDir != "/")
-                    "$currentDir/$newDir"
-                else "/${newDir}"
-            }  // 현재 디렉토리에서 하위 디렉토리로 이동
+    private fun updateWorkingDir(dirStack: Stack<String>, newDir: String) {
+        when {
+            newDir == "/" -> dirStack.removeAllElements()
+            newDir == ".." -> if (dirStack.isNotEmpty()) dirStack.pop()
+            newDir.startsWith("/") -> {
+                dirStack.removeAllElements()
+                dirStack.push(newDir)
+            }
+            newDir == "." -> return
+            newDir.isBlank() -> return
+            else -> { dirStack.push(newDir) }
         }
     }
 
@@ -76,8 +85,12 @@ class ExecContainerServiceImpl(
         }
 
         override fun onComplete() {
+            @Suppress("UNCHECKED_CAST")
+            val dirStack = (session.attributes["workingDir"] as? Stack<String>) ?: Stack<String>()
+            val workingDir = "/${dirStack.joinToString("/")}"
+
             if (session.isOpen) {
-                session.sendMessage(TextMessage("current dir = ${session.attributes["workingDir"] ?: "/"}"))
+                session.sendMessage(TextMessage("current dir = $workingDir"))
                 session.sendMessage(TextMessage("cmd end"))
             }
             super.onComplete()
