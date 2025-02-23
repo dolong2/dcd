@@ -20,10 +20,10 @@ class ExecContainerServiceImpl(
 
         @Suppress("UNCHECKED_CAST")
         val dirStack = (session.attributes["workingDir"] as? Stack<String>) ?: Stack<String>()
+        val workingDir = "/${dirStack.joinToString("/")}"
 
         if (cmd.contains("cd")) {
             val newDir = cmdArray[1]
-            val currentDir = session.attributes["workingDir"] as? String ?: "/"
             val updatedDir = updateWorkingDir(currentDir, newDir)
             session.attributes["workingDir"] = updatedDir
             session.sendMessage(TextMessage("current dir = ${session.attributes["workingDir"] ?: "/"}"))
@@ -32,8 +32,6 @@ class ExecContainerServiceImpl(
             session.attributes["workingDir"] = dirStack
             return
         }
-
-        val workingDir = session.attributes["workingDir"] as? String ?: "/"
 
         // Docker attach API 호출
         val execInstance = dockerClient.execCreateCmd(application.containerName)
