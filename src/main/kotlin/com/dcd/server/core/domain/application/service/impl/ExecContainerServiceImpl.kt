@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 import java.io.*
+import java.util.Stack
 
 @Service
 class ExecContainerServiceImpl(
@@ -17,6 +18,9 @@ class ExecContainerServiceImpl(
     override fun execCmd(application: Application, session: WebSocketSession, cmd: String) {
         val cmdArray = cmd.split(" ").toTypedArray()
 
+        @Suppress("UNCHECKED_CAST")
+        val dirStack = (session.attributes["workingDir"] as? Stack<String>) ?: Stack<String>()
+
         if (cmd.contains("cd")) {
             val newDir = cmdArray[1]
             val currentDir = session.attributes["workingDir"] as? String ?: "/"
@@ -24,6 +28,8 @@ class ExecContainerServiceImpl(
             session.attributes["workingDir"] = updatedDir
             session.sendMessage(TextMessage("current dir = ${session.attributes["workingDir"] ?: "/"}"))
             session.sendMessage(TextMessage("cmd end"))
+
+            session.attributes["workingDir"] = dirStack
             return
         }
 
