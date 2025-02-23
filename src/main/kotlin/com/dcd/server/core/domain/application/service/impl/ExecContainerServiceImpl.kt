@@ -23,10 +23,14 @@ class ExecContainerServiceImpl(
         val workingDir = "/${dirStack.joinToString("/")}"
 
         if (cmd.contains("cd")) {
-            val newDir = cmdArray[1]
-            val updatedDir = updateWorkingDir(currentDir, newDir)
-            session.attributes["workingDir"] = updatedDir
-            session.sendMessage(TextMessage("current dir = ${session.attributes["workingDir"] ?: "/"}"))
+            val newDirList = cmdArray[1].split("/")
+
+            newDirList.forEach { newDir ->
+                updateWorkingDir(dirStack, newDir)
+            }
+            val updatedWorkingDir = "/${dirStack.joinToString("/")}"
+
+            session.sendMessage(TextMessage("current dir = $updatedWorkingDir"))
             session.sendMessage(TextMessage("cmd end"))
 
             session.attributes["workingDir"] = dirStack
