@@ -29,15 +29,13 @@ class DeployApplicationUseCase(
     private val workspaceInfo: WorkspaceInfo
 ) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
     fun execute(id: String) {
-        val job = SupervisorJob()
-        val executionScope = this + job
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
 
         if (application.status == ApplicationStatus.RUNNING || application.status == ApplicationStatus.PENDING)
             throw CanNotDeployApplicationException()
 
-        executionScope.launch {
+        launch {
             deployApplication(application)
         }
 
@@ -51,8 +49,6 @@ class DeployApplicationUseCase(
         val applicationList = queryApplicationPort.findAllByWorkspace(workspace, labels)
 
         val deploymentChannel = Channel<Application>(capacity = Channel.UNLIMITED)
-        val job = SupervisorJob()
-        val scope = this + job
         applicationList.forEach {
             // 만약 애플리케이션의 상태가 배포할 수 없는 상태일때는 건너뜀
             if (it.status == ApplicationStatus.RUNNING || it.status == ApplicationStatus.PENDING)
@@ -65,7 +61,7 @@ class DeployApplicationUseCase(
 
         // 코루틴을 생성하여 작업 처리
         repeat(3) {
-            scope.launch {
+            launch {
                 for (application in deploymentChannel) {
                     deployApplication(application)
                 }
@@ -73,7 +69,11 @@ class DeployApplicationUseCase(
         }
 
         // 작업 완료 후 코루틴 스코프 종료
-        scope.launch {
+        launch {
+            applicationList.forEach { _ ->
+                // 각 애플리케이션 배포 완료 시그널 대기
+                deploymentChannel.receive()
+            }
             deploymentChannel.close()
         }
     }
