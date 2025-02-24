@@ -70,6 +70,10 @@ class DeployApplicationUseCase(
 
         // 작업 완료 후 코루틴 스코프 종료
         launch {
+            applicationList.forEach { _ ->
+                // 각 애플리케이션 배포 완료 시그널 대기
+                deploymentChannel.receive()
+            }
             deploymentChannel.close()
         }
     }
