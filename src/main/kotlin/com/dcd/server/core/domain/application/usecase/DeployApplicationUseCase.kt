@@ -29,8 +29,6 @@ class DeployApplicationUseCase(
     private val workspaceInfo: WorkspaceInfo
 ) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
     fun execute(id: String) {
-        val job = SupervisorJob()
-        val executionScope = this + job
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
 
