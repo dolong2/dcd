@@ -63,7 +63,7 @@ class DeployApplicationUseCase(
 
         // 코루틴을 생성하여 작업 처리
         repeat(3) {
-            scope.launch {
+            launch {
                 for (application in deploymentChannel) {
                     deployApplication(application)
                 }
@@ -71,7 +71,7 @@ class DeployApplicationUseCase(
         }
 
         // 작업 완료 후 코루틴 스코프 종료
-        scope.launch {
+        launch {
             deploymentChannel.close()
         }
     }
