@@ -37,7 +37,7 @@ class DeployApplicationUseCase(
         if (application.status == ApplicationStatus.RUNNING || application.status == ApplicationStatus.PENDING)
             throw CanNotDeployApplicationException()
 
-        executionScope.launch {
+        launch {
             deployApplication(application)
         }
 
