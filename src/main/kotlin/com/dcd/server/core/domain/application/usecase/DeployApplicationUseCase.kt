@@ -49,8 +49,6 @@ class DeployApplicationUseCase(
         val applicationList = queryApplicationPort.findAllByWorkspace(workspace, labels)
 
         val deploymentChannel = Channel<Application>(capacity = Channel.UNLIMITED)
-        val job = SupervisorJob()
-        val scope = this + job
         applicationList.forEach {
             // 만약 애플리케이션의 상태가 배포할 수 없는 상태일때는 건너뜀
             if (it.status == ApplicationStatus.RUNNING || it.status == ApplicationStatus.PENDING)
