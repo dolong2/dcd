@@ -41,3 +41,5 @@ logs/
 *.env
 
 src/main/resources/application-test.yml
+
+getImageVersion.sh
