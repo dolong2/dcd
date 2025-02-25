@@ -26,12 +26,11 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     val stopApplicationUseCase = mockk<StopApplicationUseCase>()
     val deleteApplicationUseCase = mockk<DeleteApplicationUseCase>()
     val updateApplicationUseCase = mockk<UpdateApplicationUseCase>(relaxUnitFun = true)
-    val getAvailableVersionUseCase = mockk<GetAvailableVersionUseCase>()
     val setApplicationDomainUseCase = mockk<SetApplicationDomainUseCase>(relaxUnitFun = true)
     val getApplicationLogUseCase = mockk<GetApplicationLogUseCase>()
     val deployApplicationUseCase = mockk<DeployApplicationUseCase>(relaxUnitFun = true)
     val executeCommandUseCase = mockk<ExecuteCommandUseCase>(relaxUnitFun = true)
-    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springRunApplicationUseCase, getAllApplicationUseCase, getOneApplicationUseCase, addApplicationEnvUseCase, deleteApplicationEnvUseCase, updateApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase, getAvailableVersionUseCase, getApplicationLogUseCase, deployApplicationUseCase, executeCommandUseCase, setApplicationDomainUseCase)
+    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springRunApplicationUseCase, getAllApplicationUseCase, getOneApplicationUseCase, addApplicationEnvUseCase, deleteApplicationEnvUseCase, updateApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase, getApplicationLogUseCase, deployApplicationUseCase, executeCommandUseCase, setApplicationDomainUseCase)
 
     val testWorkspaceId = "testWorkspaceId"
 
@@ -197,23 +196,6 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             }
             then("updateApplicationUseCase를 실행해야함") {
                 verify { updateApplicationUseCase.execute(testId, any() as UpdateApplicationReqDto) }
-            }
-        }
-    }
-
-    given("애플리케이션 타입이 주어지고") {
-        val applicationType = ApplicationType.SPRING_BOOT
-
-        `when`("getAvailableVersion 메서드를 실행할때") {
-            val availableVersionResDto = AvailableVersionResDto(version = listOf("11", "17"))
-            every { getAvailableVersionUseCase.execute(applicationType) } returns availableVersionResDto
-
-            val result = applicationWebAdapter.getAvailableVersion(testWorkspaceId, applicationType)
-            then("result의 바디는 availableVersionResDto랑 같아야함") {
-                result.body?.version shouldBe availableVersionResDto.version
-            }
-            then("result는 200 상태코드를 가져야함") {
-                result.statusCode shouldBe HttpStatus.OK
             }
         }
     }

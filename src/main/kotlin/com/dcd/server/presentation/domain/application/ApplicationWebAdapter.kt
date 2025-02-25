@@ -1,7 +1,6 @@
 package com.dcd.server.presentation.domain.application
 
 import com.dcd.server.core.common.annotation.WorkspaceOwnerVerification
-import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.usecase.*
 import com.dcd.server.presentation.common.annotation.WebAdapter
 import com.dcd.server.presentation.domain.application.data.exetension.toDto
@@ -25,7 +24,6 @@ class ApplicationWebAdapter(
     private val stopApplicationUseCase: StopApplicationUseCase,
     private val deleteApplicationUseCase: DeleteApplicationUseCase,
     private val updateApplicationUseCase: UpdateApplicationUseCase,
-    private val getAvailableVersionUseCase: GetAvailableVersionUseCase,
     private val getApplicationLogUseCase: GetApplicationLogUseCase,
     private val deployApplicationUseCase: DeployApplicationUseCase,
     private val executeCommandUseCase: ExecuteCommandUseCase,
@@ -168,12 +166,6 @@ class ApplicationWebAdapter(
     ): ResponseEntity<Void> =
         updateApplicationUseCase.execute(applicationId, updateApplicationRequest.toDto())
             .run { ResponseEntity.ok().build() }
-
-    @GetMapping("/version/{applicationType}")
-    @WorkspaceOwnerVerification
-    fun getAvailableVersion(@PathVariable workspaceId: String, @PathVariable applicationType: ApplicationType): ResponseEntity<AvailableVersionResponse> =
-        getAvailableVersionUseCase.execute(applicationType)
-            .let { ResponseEntity.ok(it.toResponse()) }
 
     @PostMapping("/{applicationId}/domain")
     @WorkspaceOwnerVerification
