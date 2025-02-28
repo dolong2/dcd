@@ -2,6 +2,7 @@ package com.dcd.server.presentation.domain.application
 
 import com.dcd.server.core.domain.application.dto.response.AvailableVersionResDto
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
+import com.dcd.server.core.domain.application.usecase.GetApplicationTypeUseCase
 import com.dcd.server.core.domain.application.usecase.GetAvailableVersionUseCase
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -11,7 +12,8 @@ import org.springframework.http.HttpStatus
 
 class ApplicationStaticWebAdapterTest : BehaviorSpec({
     val getAvailableVersionUseCase = mockk<GetAvailableVersionUseCase>()
-    val applicationWebAdapter = ApplicationStaticWebAdapter(getAvailableVersionUseCase)
+    val getApplicationTypeUseCase = GetApplicationTypeUseCase()
+    val applicationWebAdapter = ApplicationStaticWebAdapter(getAvailableVersionUseCase, getApplicationTypeUseCase)
 
     given("애플리케이션 타입이 주어지고") {
         val applicationType = ApplicationType.SPRING_BOOT
@@ -23,6 +25,20 @@ class ApplicationStaticWebAdapterTest : BehaviorSpec({
             val result = applicationWebAdapter.getAvailableVersion(applicationType)
             then("result의 바디는 availableVersionResDto랑 같아야함") {
                 result.body?.version shouldBe availableVersionResDto.version
+            }
+            then("result는 200 상태코드를 가져야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
+
+    given("주어지는게 없고") {
+
+        `when`("애플리케이션 타입을 조회할때") {
+            val result = applicationWebAdapter.getApplicationTypes()
+
+            then("결과값에는 모든 애플리케이션 타입이 들어가 있어야함") {
+                result.body?.list shouldBe ApplicationType.values().map { it.name }
             }
             then("result는 200 상태코드를 가져야함") {
                 result.statusCode shouldBe HttpStatus.OK
