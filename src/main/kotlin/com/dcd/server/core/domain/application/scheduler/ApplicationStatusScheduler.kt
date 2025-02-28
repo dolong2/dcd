@@ -95,7 +95,7 @@ class ApplicationStatusScheduler(
         getContainerService.getContainerNameByStatus(ContainerStatus.CREATED)
             .forEach { result ->
                 val (containerName, _) = result.split(" ")
-                val containerExitedApplication = updatedApplicationList.lastOrNull { it.containerName == containerName }
+                val containerExitedApplication = targetApplicationList.find { it.containerName == containerName }
                     ?: return@forEach
 
                 val updatedApplication = containerExitedApplication.copy(
