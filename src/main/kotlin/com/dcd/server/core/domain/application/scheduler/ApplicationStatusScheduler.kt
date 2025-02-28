@@ -8,6 +8,7 @@ import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class ApplicationStatusScheduler(
@@ -20,6 +21,7 @@ class ApplicationStatusScheduler(
      * @author dolong2
      */
     @Scheduled(cron = "0 * * * * ?")
+    @Transactional(rollbackFor = [Exception::class])
     fun checkApplicationStatus() {
         val runningApplicationList = queryApplicationPort.findAllByStatus(ApplicationStatus.RUNNING)
         val stoppedApplicationList = queryApplicationPort.findAllByStatus(ApplicationStatus.STOPPED)
@@ -93,7 +95,7 @@ class ApplicationStatusScheduler(
         getContainerService.getContainerNameByStatus(ContainerStatus.CREATED)
             .forEach { result ->
                 val (containerName, _) = result.split(" ")
-                val containerExitedApplication = updatedApplicationList.lastOrNull { it.containerName == containerName }
+                val containerExitedApplication = targetApplicationList.find { it.containerName == containerName }
                     ?: return@forEach
 
                 val updatedApplication = containerExitedApplication.copy(
