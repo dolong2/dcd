@@ -64,3 +64,8 @@ fun CreateApplicationResDto.toResponse(): CreateApplicationResponse =
     CreateApplicationResponse(
         applicationId = this.applicationId
     )
+
+fun ApplicationTypeListResDto.toResponse(): ApplicationTypeListResponse =
+    ApplicationTypeListResponse(
+        list = this.list
+    )
