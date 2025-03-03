@@ -6,6 +6,9 @@ import com.dcd.server.core.domain.application.scheduler.enums.ContainerStatus
 import com.dcd.server.core.domain.application.service.GetContainerService
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -22,18 +25,19 @@ class ApplicationStatusScheduler(
      */
     @Scheduled(cron = "0 * * * * ?")
     @Transactional(rollbackFor = [Exception::class])
-    fun checkApplicationStatus() {
-        val runningApplicationList = queryApplicationPort.findAllByStatus(ApplicationStatus.RUNNING)
-        val stoppedApplicationList = queryApplicationPort.findAllByStatus(ApplicationStatus.STOPPED)
+    fun checkApplicationStatus() =
+        runBlocking {
+            val runningApplicationList = queryApplicationPort.findAllByStatus(ApplicationStatus.RUNNING)
+            val stoppedApplicationList = queryApplicationPort.findAllByStatus(ApplicationStatus.STOPPED)
 
-        val checkExitedApplicationList = checkExitedContainer(runningApplicationList)
-        val checkedRunningApplicationList = checkRunningContainer(stoppedApplicationList)
-        val checkCreatedContainerApplicationList = checkCreatedContainer(runningApplicationList)
+            val checkExitedApplicationList = async(Dispatchers.IO) { checkExitedContainer(runningApplicationList) }
+            val checkedRunningApplicationList = async(Dispatchers.IO) { checkRunningContainer(stoppedApplicationList) }
+            val checkCreatedContainerApplicationList = async(Dispatchers.IO) { checkCreatedContainer(runningApplicationList) }
 
-        val updatedApplicationList =
-            checkExitedApplicationList + checkedRunningApplicationList + checkCreatedContainerApplicationList
-        commandApplicationPort.saveAll(updatedApplicationList)
-    }
+            val updatedApplicationList =
+                checkExitedApplicationList.await() + checkedRunningApplicationList.await() + checkCreatedContainerApplicationList.await()
+            commandApplicationPort.saveAll(updatedApplicationList)
+        }
 
     /**
      * 실행중인 애플리케이션중 컨테이너가 종료된 애플리케이션의 상태가 STOPPED로 변경될 애플리케이션 리스트를 반환하는 메서드
