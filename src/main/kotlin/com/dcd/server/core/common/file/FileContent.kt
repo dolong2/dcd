@@ -92,19 +92,6 @@ object FileContent {
         "    echo \"\$sorted_numeric_tags\"\n" +
         "fi\n"
 
-    fun getBuildGradleKtsFileContent(name: String): String =
-        "tasks {\n" +
-        "\tval customBootJarName = \"$name.jar\"\n" +
-        "\tnamed<org.springframework.boot.gradle.tasks.bundling.BootJar>(\"bootJar\") {\n" +
-        "\t\tarchiveFileName.set(customBootJarName)\n" +
-        "\t}\n" +
-        "}"
-
-    fun getBuildGradleFileContent(name: String): String =
-        "bootJar {\n" +
-        "\tarchiveFileName = '$name.jar'\n" +
-        "}"
-
     fun getSSLYmlFileContent(name: String, password: String): String =
         "server:\n" +
         "\tssl:\n" +
