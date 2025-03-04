@@ -92,18 +92,6 @@ object FileContent {
         "    echo \"\$sorted_numeric_tags\"\n" +
         "fi\n"
 
-    fun getSSLYmlFileContent(name: String, password: String): String =
-        "server:\n" +
-        "\tssl:\n" +
-        "\t\tkey-store: classpath:${name}.p12\n" +
-        "\t\tkey-store-type: PKC12\n" +
-        "\t\tkey-store-password: $password"
-
-    fun getSSLPropertyFileContent(name: String, password: String): String =
-        "server.ssl.key-store=classpath:${name}.p12\n" +
-        "server.ssl.key-store-type: PKC12\n" +
-        "server.ssl.key-store-password: $password"
-
     fun getApplicationHttpConfig(application: Application, domain: String): String =
         "server {" +
             "\tlisten: 80;\n" +
