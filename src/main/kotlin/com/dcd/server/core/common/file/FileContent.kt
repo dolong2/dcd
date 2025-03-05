@@ -78,9 +78,6 @@ object FileContent {
         "    URL=\$(echo \"\$RESPONSE\" | jq -r '.next')\n" +
         "done\n" +
         "\n" +
-        "echo \"Sorted tags for $imageName:\"\n" +
-        "echo \"-----------------------------------------------\"\n" +
-        "\n" +
         "# 최신 태그(latest)가 있으면 제일 먼저 출력\n" +
         "if \$LATEST_FOUND; then\n" +
         "    echo \"latest\"\n" +
