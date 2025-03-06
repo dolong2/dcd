@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDto
 import com.dcd.server.core.domain.application.exception.AlreadyExistsApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
@@ -29,7 +30,8 @@ class CreateApplicationUseCaseTest(
     private val commandWorkspacePort: CommandWorkspacePort,
     private val queryApplicationPort: QueryApplicationPort,
     private val queryWorkspacePort: QueryWorkspacePort,
-    private val commandApplicationPort: CommandApplicationPort
+    private val commandApplicationPort: CommandApplicationPort,
+    private val workspaceInfo: WorkspaceInfo
 ) : BehaviorSpec({
     val targetWorkspaceId = UUID.randomUUID().toString()
 
@@ -37,6 +39,7 @@ class CreateApplicationUseCaseTest(
         val user = queryUserPort.findById("user2")!!
         val workspace = WorkspaceGenerator.generateWorkspace(id = targetWorkspaceId, user = user)
         commandWorkspacePort.save(workspace)
+        workspaceInfo.workspace = workspace
     }
 
     given("새로 생성할 애플리케이션 요청이 주어지고") {
@@ -105,6 +108,7 @@ class CreateApplicationUseCaseTest(
 
             then("에러가 발생해야함") {
                 shouldThrow<WorkspaceNotFoundException> {
+                    workspaceInfo.workspace = queryWorkspacePort.findById(notFoundWorkspaceId)
                     createApplicationUseCase.execute(notFoundWorkspaceId, request)
                 }
             }

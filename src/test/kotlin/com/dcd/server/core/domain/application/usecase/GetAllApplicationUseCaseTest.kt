@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.dto.extenstion.toDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationListResDto
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -22,13 +23,15 @@ class GetAllApplicationUseCaseTest(
     private val authDetailsService: AuthDetailsService,
     private val queryWorkspacePort: QueryWorkspacePort,
     private val queryUserPort: QueryUserPort,
-    private val queryApplicationPort: QueryApplicationPort
+    private val queryApplicationPort: QueryApplicationPort,
+    private val workspaceInfo: WorkspaceInfo
 ) : BehaviorSpec({
     val userId = "user1"
 
     beforeContainer {
         val userDetails = authDetailsService.loadUserByUsername(userId)
         val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        workspaceInfo.workspace = queryWorkspacePort.findByUser(queryUserPort.findById(userId)!!).first()
         SecurityContextHolder.getContext().authentication = authenticationToken
     }
 
