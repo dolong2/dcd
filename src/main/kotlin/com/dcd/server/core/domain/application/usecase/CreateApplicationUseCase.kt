@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
+import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.dto.extenstion.toEntity
 import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDto
 import com.dcd.server.core.domain.application.dto.response.CreateApplicationResDto
@@ -10,7 +11,6 @@ import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
-import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 class CreateApplicationUseCase(
     private val commandApplicationPort: CommandApplicationPort,
     private val queryApplicationPort: QueryApplicationPort,
-    private val queryWorkspacePort: QueryWorkspacePort,
+    private val workspaceInfo: WorkspaceInfo,
     private val cloneApplicationByUrlService: CloneApplicationByUrlService,
     private val createDockerFileService: CreateDockerFileService,
     private val getExternalPortService: GetExternalPortService,
@@ -28,7 +28,7 @@ class CreateApplicationUseCase(
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService
 ) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
     fun execute(workspaceId: String, createApplicationReqDto: CreateApplicationReqDto): CreateApplicationResDto {
-        val workspace = queryWorkspacePort.findById(workspaceId)
+        val workspace = workspaceInfo.workspace
             ?: throw WorkspaceNotFoundException()
 
         val externalPort = getExternalPortService.getExternalPort(createApplicationReqDto.port)
