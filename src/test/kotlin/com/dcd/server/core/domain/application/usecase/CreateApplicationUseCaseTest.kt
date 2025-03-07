@@ -55,7 +55,7 @@ class CreateApplicationUseCaseTest(
         )
 
         `when`("usecase를 실행하면") {
-            createApplicationUseCase.execute(targetWorkspaceId, request)
+            createApplicationUseCase.execute(request)
             createApplicationUseCase.coroutineContext.cancel()
 
             then("요청의 이름을 가진 애플리케이션이 존재해야함") {
@@ -85,7 +85,7 @@ class CreateApplicationUseCaseTest(
 
             then("에러가 발생해야함") {
                 shouldThrow<AlreadyExistsApplicationException> {
-                    createApplicationUseCase.execute(targetWorkspaceId, existsApplicationRequest)
+                    createApplicationUseCase.execute(existsApplicationRequest)
                 }
             }
         }
@@ -109,7 +109,7 @@ class CreateApplicationUseCaseTest(
             then("에러가 발생해야함") {
                 shouldThrow<WorkspaceNotFoundException> {
                     workspaceInfo.workspace = queryWorkspacePort.findById(notFoundWorkspaceId)
-                    createApplicationUseCase.execute(notFoundWorkspaceId, request)
+                    createApplicationUseCase.execute(request)
                 }
             }
         }

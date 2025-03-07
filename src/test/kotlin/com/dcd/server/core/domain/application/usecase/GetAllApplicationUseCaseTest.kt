@@ -40,7 +40,7 @@ class GetAllApplicationUseCaseTest(
         val applicationList = queryApplicationPort.findAllByWorkspace(workspace)
 
         `when`("usecase를 실행할때") {
-            val result = getAllApplicationUseCase.execute(workspace.id, null)
+            val result = getAllApplicationUseCase.execute(null)
             val target = ApplicationListResDto(applicationList.map { it.toDto() })
             then("result는 target이랑 같아야함") {
                 result shouldBe target
