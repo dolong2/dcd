@@ -12,7 +12,7 @@ class GetAllApplicationUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val workspaceInfo: WorkspaceInfo
 ) {
-    fun execute(workspaceId: String, labels: List<String>?): ApplicationListResDto {
+    fun execute(labels: List<String>?): ApplicationListResDto {
         val workspace = workspaceInfo.workspace
             ?: throw WorkspaceNotFoundException()
 
