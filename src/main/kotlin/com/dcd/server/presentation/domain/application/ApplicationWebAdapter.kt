@@ -35,7 +35,7 @@ class ApplicationWebAdapter(
         @PathVariable workspaceId: String,
         @Validated @RequestBody createApplicationRequest: CreateApplicationRequest
     ): ResponseEntity<CreateApplicationResponse> =
-        createApplicationUseCase.execute(workspaceId, createApplicationRequest.toDto())
+        createApplicationUseCase.execute(createApplicationRequest.toDto())
             .run { ResponseEntity(toResponse(), HttpStatus.CREATED) }
 
     @PostMapping("/{applicationId}/run")
@@ -68,7 +68,7 @@ class ApplicationWebAdapter(
         @PathVariable workspaceId: String,
         @RequestParam(required = false) labels: List<String>? = null
     ): ResponseEntity<ApplicationListResponse> =
-        getAllApplicationUseCase.execute(workspaceId, labels)
+        getAllApplicationUseCase.execute(labels)
             .let { ResponseEntity.ok(it.toResponse()) }
 
     @GetMapping("/{applicationId}")
