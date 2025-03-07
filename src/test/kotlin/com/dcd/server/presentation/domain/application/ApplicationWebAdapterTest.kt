@@ -46,10 +46,10 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         )
 
         `when`("createApplication 메서드를 실행할때") {
-            every { createApplicationUseCase.execute(testWorkspaceId, any()) } returns CreateApplicationResDto("testApplicationId")
+            every { createApplicationUseCase.execute(any()) } returns CreateApplicationResDto("testApplicationId")
             val result = applicationWebAdapter.createApplication(testWorkspaceId, request)
             then("상태코드가 201이여야함") {
-                verify { createApplicationUseCase.execute(testWorkspaceId, any()) }
+                verify { createApplicationUseCase.execute(any()) }
                 result.statusCode shouldBe HttpStatus.CREATED
             }
             then("응답은 생성된 애플리케이션 아이디를 반환해야함") {
@@ -76,7 +76,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
         val list = listOf(applicationResponse)
         val responseDto = ApplicationListResDto(list)
         `when`("getAllApplication 메서드를 실행할때") {
-            every { getAllApplicationUseCase.execute(testWorkspaceId, null) } returns responseDto
+            every { getAllApplicationUseCase.execute(null) } returns responseDto
             val response = applicationWebAdapter.getAllApplication(testWorkspaceId)
             then("응답바디는 targetResponse와 같아야하고 status는 200이여야함") {
                 val targetResponse = responseDto.toResponse()
