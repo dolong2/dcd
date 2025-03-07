@@ -27,7 +27,7 @@ class CreateApplicationUseCase(
     private val createContainerService: CreateContainerService,
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService
 ) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
-    fun execute(workspaceId: String, createApplicationReqDto: CreateApplicationReqDto): CreateApplicationResDto {
+    fun execute(createApplicationReqDto: CreateApplicationReqDto): CreateApplicationResDto {
         val workspace = workspaceInfo.workspace
             ?: throw WorkspaceNotFoundException()
 
