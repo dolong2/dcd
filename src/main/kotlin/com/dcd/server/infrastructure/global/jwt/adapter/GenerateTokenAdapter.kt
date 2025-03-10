@@ -24,7 +24,6 @@ class GenerateTokenAdapter(
     object JwtPrefix{
         const val ACCESS = "access"
         const val REFRESH = "refresh"
-        const val ROLE = "role"
     }
 
     override fun generateToken(userId: String): TokenResDto =

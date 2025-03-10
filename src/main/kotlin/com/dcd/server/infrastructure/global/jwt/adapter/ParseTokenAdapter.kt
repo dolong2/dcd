@@ -23,7 +23,6 @@ class ParseTokenAdapter(
     object JwtPrefix{
         const val ACCESS = "access"
         const val REFRESH = "refresh"
-        const val ROLE = "role"
         const val PREFIX = "Bearer "
     }
     fun parseToken(token: String): String? =
