@@ -8,6 +8,7 @@ import com.dcd.server.core.domain.auth.spi.CommandRefreshTokenPort
 import com.dcd.server.core.domain.auth.spi.JwtPort
 import com.dcd.server.core.domain.auth.spi.QueryRefreshTokenPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
+import com.dcd.server.infrastructure.global.jwt.adapter.JwtPrefix
 import com.dcd.server.infrastructure.global.jwt.adapter.ParseTokenAdapter
 import com.dcd.server.infrastructure.global.jwt.exception.TokenTypeNotValidException
 
@@ -21,7 +22,7 @@ class ReissueTokenUseCase(
 ) {
     fun execute(token: String): TokenResDto {
         val jwtType = parseTokenAdapter.getJwtType(token)
-        if (jwtType != ParseTokenAdapter.JwtPrefix.REFRESH)
+        if (jwtType != JwtPrefix.REFRESH)
             throw TokenTypeNotValidException()
 
         val refreshToken = (queryRefreshTokenPort.findByToken(token)
