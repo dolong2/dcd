@@ -21,10 +21,6 @@ class GenerateTokenAdapter(
     private val tokenTimeProperty: TokenTimeProperty,
     private val commandRefreshTokenPort: CommandRefreshTokenPort
 ) : JwtPort {
-    object JwtPrefix{
-        const val ACCESS = "access"
-        const val REFRESH = "refresh"
-    }
 
     override fun generateToken(userId: String): TokenResDto =
         TokenResDto(

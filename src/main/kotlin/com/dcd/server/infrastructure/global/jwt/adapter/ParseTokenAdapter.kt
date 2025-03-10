@@ -20,11 +20,6 @@ class ParseTokenAdapter(
     private val authDetailsService: AuthDetailsService,
     private val queryTokenBlackListPort: QueryTokenBlackListPort
 ) {
-    object JwtPrefix{
-        const val ACCESS = "access"
-        const val REFRESH = "refresh"
-        const val PREFIX = "Bearer "
-    }
     fun parseToken(token: String): String? =
         if(token.startsWith(JwtPrefix.PREFIX)) token.substring(JwtPrefix.PREFIX.length) else null
     fun getAuthentication(token: String): Authentication {
