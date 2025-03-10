@@ -2,7 +2,7 @@ package com.dcd.server.infrastructure.global.error.response
 
 import com.dcd.server.core.common.error.ErrorCode
 
-class ErrorResponse(
+data class ErrorResponse(
     val status: Int,
     val message: String
 ) {
