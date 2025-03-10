@@ -18,8 +18,7 @@ class ApplicationJpaEntity(
     val applicationType: ApplicationType,
     val githubUrl: String?,
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "application_env_entity",
-        joinColumns = [JoinColumn(name = "application_id", referencedColumnName = "id")])
+    @CollectionTable(name = "application_env_entity", joinColumns = [JoinColumn(name = "application_id", referencedColumnName = "id")])
     @MapKeyColumn(name = "env_key")
     @Column(name = "env_value")
     val env: Map<String, String>,
