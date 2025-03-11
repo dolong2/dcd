@@ -17,7 +17,7 @@ class CommandAdapter : CommandPort {
 
         BufferedReader(InputStreamReader(p.inputStream)).use { br ->
             br.readLines().forEach {
-                log.info(it)
+                log.debug(it)
             }
         }
 
