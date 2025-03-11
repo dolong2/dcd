@@ -19,6 +19,7 @@ class CommandAdapter : CommandPort {
             br.readLines().forEach {
                 log.debug(it)
             }
+            br.close()
         }
 
         p.waitFor()
@@ -47,6 +48,7 @@ class CommandAdapter : CommandPort {
             log.error("명령어 실행이 중단됨: ${ex.message}")
             emptyList()
         } finally {
+            br.close()
             p.destroy()
         }
     }
