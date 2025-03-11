@@ -17,8 +17,9 @@ class CommandAdapter : CommandPort {
 
         BufferedReader(InputStreamReader(p.inputStream)).use { br ->
             br.readLines().forEach {
-                log.info(it)
+                log.debug(it)
             }
+            br.close()
         }
 
         p.waitFor()
@@ -36,7 +37,9 @@ class CommandAdapter : CommandPort {
         return try {
             val result = br.readLines()
             p.waitFor()
-            log.info(result.joinToString("\n"))
+            result.forEach {
+                log.debug(it)
+            }
             result
         } catch (ex: IOException) {
             log.error("명령어 실행 중 IO 오류 발생: ${ex.message}")
@@ -45,6 +48,7 @@ class CommandAdapter : CommandPort {
             log.error("명령어 실행이 중단됨: ${ex.message}")
             emptyList()
         } finally {
+            br.close()
             p.destroy()
         }
     }
