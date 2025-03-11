@@ -36,7 +36,9 @@ class CommandAdapter : CommandPort {
         return try {
             val result = br.readLines()
             p.waitFor()
-            log.info(result.joinToString("\n"))
+            result.forEach {
+                log.info(it)
+            }
             result
         } catch (ex: IOException) {
             log.error("명령어 실행 중 IO 오류 발생: ${ex.message}")
