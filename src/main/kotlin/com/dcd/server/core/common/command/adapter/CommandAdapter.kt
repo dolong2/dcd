@@ -37,7 +37,7 @@ class CommandAdapter : CommandPort {
             val result = br.readLines()
             p.waitFor()
             result.forEach {
-                log.info(it)
+                log.debug(it)
             }
             result
         } catch (ex: IOException) {
