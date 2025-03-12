@@ -1,4 +1,4 @@
-package com.dcd.server.core.common.command.adapter
+package com.dcd.server.infrastructure.global.command.adapter
 
 import com.dcd.server.core.common.command.CommandPort
 import org.slf4j.LoggerFactory
@@ -34,19 +34,19 @@ class CommandAdapter : CommandPort {
         val p = Runtime.getRuntime().exec(shellScriptCmd)
         val br = BufferedReader(InputStreamReader(p.inputStream))
 
-        return try {
+        try {
             val result = br.readLines()
             p.waitFor()
             result.forEach {
                 log.debug(it)
             }
-            result
+            return result
         } catch (ex: IOException) {
             log.error("명령어 실행 중 IO 오류 발생: ${ex.message}")
-            emptyList()
+            return emptyList()
         } catch (ex: InterruptedException) {
             log.error("명령어 실행이 중단됨: ${ex.message}")
-            emptyList()
+            return emptyList()
         } finally {
             br.close()
             p.destroy()
