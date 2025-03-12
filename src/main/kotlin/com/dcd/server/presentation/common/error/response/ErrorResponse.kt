@@ -1,4 +1,4 @@
-package com.dcd.server.infrastructure.global.error.response
+package com.dcd.server.presentation.common.error.response
 
 import com.dcd.server.core.common.error.ErrorCode
 

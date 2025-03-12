@@ -1,7 +1,7 @@
-package com.dcd.server.infrastructure.global.error.handler
+package com.dcd.server.presentation.common.error.handler
 
 import com.dcd.server.core.common.error.BasicException
-import com.dcd.server.infrastructure.global.error.response.ErrorResponse
+import com.dcd.server.presentation.common.error.response.ErrorResponse
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
