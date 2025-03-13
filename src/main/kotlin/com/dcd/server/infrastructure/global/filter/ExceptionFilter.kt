@@ -46,10 +46,12 @@ class ExceptionFilter(
 
     private fun writeErrorResponse(response: HttpServletResponse, exception: BasicException) {
         val errorCode = exception.errorCode
+
         val responseMap = mutableMapOf<String, Any>()
         responseMap["status"] = errorCode.code
         responseMap["message"] = errorCode.msg
         val responseBody = objectMapper.writeValueAsString(responseMap)
+
         response.status = errorCode.code
         response.characterEncoding = Charsets.UTF_8.name()
         response.contentType = "application/json"

@@ -22,14 +22,16 @@ class CustomAccessDeniedHandler(
         response: HttpServletResponse,
         accessDeniedException: AccessDeniedException?
     ) {
+        val errorCode = ErrorCode.INVALID_ROLE
         log.error(request.method)
         log.error(request.requestURI)
-        val errorCode = ErrorCode.INVALID_ROLE
         log.error(errorCode.msg)
+
         val responseMap = mutableMapOf<String, Any>()
         responseMap["status"] = errorCode.code
         responseMap["message"] = errorCode.msg
         val result = objectMapper.writeValueAsString(responseMap)
+
         response.characterEncoding = Charsets.UTF_8.name()
         response.status = errorCode.code
         response.contentType = MediaType.APPLICATION_JSON_VALUE
