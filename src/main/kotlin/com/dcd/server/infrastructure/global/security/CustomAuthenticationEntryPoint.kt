@@ -27,7 +27,10 @@ class CustomAuthenticationEntryPoint(
         log.error(request.requestURI)
         val errorCode = ErrorCode.FORBIDDEN
         log.error(errorCode.msg)
-        val result = objectMapper.writeValueAsString(ErrorResponse(errorCode))
+        val responseMap = mutableMapOf<String, Any>()
+        responseMap["status"] = errorCode.code
+        responseMap["message"] = errorCode.msg
+        val result = objectMapper.writeValueAsString(responseMap)
         response.characterEncoding = Charsets.UTF_8.name()
         response.status = errorCode.code
         response.contentType = MediaType.APPLICATION_JSON_VALUE
