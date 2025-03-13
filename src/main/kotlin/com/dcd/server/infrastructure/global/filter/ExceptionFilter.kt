@@ -39,6 +39,7 @@ class ExceptionFilter(
     }
 
     private fun logErrorResponse(errorCode: ErrorCode, ex: Exception) {
+        log.error("${errorCode.code}")
         log.error(errorCode.msg)
         log.error(ex.message)
     }
