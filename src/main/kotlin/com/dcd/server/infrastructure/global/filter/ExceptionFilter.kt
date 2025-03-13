@@ -4,7 +4,6 @@ import com.dcd.server.core.common.error.BasicException
 import com.dcd.server.core.common.error.ErrorCode
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.FilterChain
-import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
@@ -27,11 +26,6 @@ class ExceptionFilter(
                 is BasicException -> {
                     logErrorResponse(ex.errorCode, ex)
                     writeErrorResponse(response, ex)
-                }
-                is ServletException -> {
-                    val errorCode = ErrorCode.BAD_REQUEST
-                    logErrorResponse(errorCode, ex)
-                    writeErrorResponse(response, BasicException(errorCode))
                 }
                 else -> {
                     ex.printStackTrace()
