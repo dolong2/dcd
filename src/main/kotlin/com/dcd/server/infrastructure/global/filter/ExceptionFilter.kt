@@ -2,7 +2,6 @@ package com.dcd.server.infrastructure.global.filter
 
 import com.dcd.server.core.common.error.BasicException
 import com.dcd.server.core.common.error.ErrorCode
-import com.dcd.server.presentation.common.error.response.ErrorResponse
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
@@ -52,7 +51,10 @@ class ExceptionFilter(
 
     private fun writeErrorResponse(response: HttpServletResponse, exception: BasicException) {
         val errorCode = exception.errorCode
-        val responseBody = objectMapper.writeValueAsString(ErrorResponse(errorCode))
+        val responseMap = mutableMapOf<String, Any>()
+        responseMap["status"] = errorCode.code
+        responseMap["message"] = errorCode.msg
+        val responseBody = objectMapper.writeValueAsString(responseMap)
         response.status = errorCode.code
         response.characterEncoding = Charsets.UTF_8.name()
         response.contentType = "application/json"
