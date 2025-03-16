@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.common.annotation.Lock
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
 import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
@@ -23,6 +24,7 @@ class UpdateApplicationUseCase(
     private val deleteImageService: DeleteImageService,
     private val eventPublisher: ApplicationEventPublisher
 ) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
+    @Lock("#id")
     fun execute(id: String, updateApplicationReqDto: UpdateApplicationReqDto) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())

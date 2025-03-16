@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.common.annotation.Lock
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationEnvReqDto
@@ -15,6 +16,7 @@ class UpdateApplicationEnvUseCase(
     private val commandApplicationPort: CommandApplicationPort,
     private val workspaceInfo: WorkspaceInfo
 ) {
+    @Lock("#applicationId+#envKey")
     fun execute(applicationId: String, envKey: String, updateApplicationEnvReqDto: UpdateApplicationEnvReqDto) {
         val application = (queryApplicationPort.findById(applicationId)
             ?: throw ApplicationNotFoundException())
@@ -32,6 +34,7 @@ class UpdateApplicationEnvUseCase(
         )
     }
 
+    @Lock("#labels+#envKey")
     fun execute(labels: List<String>, envKey: String, updateApplicationEnvReqDto: UpdateApplicationEnvReqDto) {
         val workspace = (workspaceInfo.workspace
             ?: throw WorkspaceNotFoundException())

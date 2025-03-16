@@ -30,6 +30,7 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation ("org.springframework.boot:spring-boot-starter-websocket")
+	implementation ("org.redisson:redisson-spring-boot-starter:3.45.0")
 
 	//database
 	runtimeOnly("com.mysql:mysql-connector-j")
