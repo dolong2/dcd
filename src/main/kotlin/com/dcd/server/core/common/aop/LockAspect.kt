@@ -27,7 +27,7 @@ class LockAspect(
         val annotation: Lock = method.getAnnotation(Lock::class.java)
         val parameterValue =
             CustomExpressionParser.getDynamicValue(signature.parameterNames, joinPoint.args, annotation.lockName)
-        val lockKey = "${method.name}$parameterValue"
+        val lockKey = "${method.declaringClass.simpleName}_${method.name}_$parameterValue"
         val lock = redissonClient.getLock(lockKey)
         try {
             val lockable = lock.tryLock(annotation.waitTime, annotation.leaseTime, TimeUnit.MILLISECONDS)
