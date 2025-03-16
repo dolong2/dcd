@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.workspace.usecase
 
+import com.dcd.server.core.common.annotation.Lock
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.workspace.dto.request.UpdateGlobalEnvReqDto
 import com.dcd.server.core.domain.workspace.exception.GlobalEnvNotFoundException
@@ -14,6 +15,7 @@ class UpdateGlobalEnvUseCase(
     private val commandWorkspacePort: CommandWorkspacePort,
     private val validateWorkspaceOwnerService: ValidateWorkspaceOwnerService
 ) {
+    @Lock("#workspaceId")
     fun execute(workspaceId: String, envKey: String, updateGlobalEnvReqDto: UpdateGlobalEnvReqDto) {
         val workspace = (queryWorkspacePort.findById(workspaceId)
             ?: throw WorkspaceNotFoundException())
