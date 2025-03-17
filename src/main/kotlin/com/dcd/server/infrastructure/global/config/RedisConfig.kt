@@ -1,5 +1,8 @@
 package com.dcd.server.infrastructure.global.config
 
+import org.redisson.Redisson
+import org.redisson.api.RedissonClient
+import org.redisson.config.Config
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -20,5 +23,12 @@ class RedisConfig {
     @Bean
     fun redisConnectionFactory(): RedisConnectionFactory {
         return LettuceConnectionFactory(host, port)
+    }
+
+    @Bean
+    fun redissonClient(): RedissonClient {
+        val config = Config()
+        config.useSingleServer().setAddress("redis://$host:$port")
+        return Redisson.create(config)
     }
 }
