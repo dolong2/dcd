@@ -32,7 +32,7 @@ class LockAspect(
         try {
             val lockable = lock.tryLock(annotation.waitTime, annotation.leaseTime, TimeUnit.MILLISECONDS)
             if (!lockable) {
-                log.debug("Lock 획득 실패={}", lockKey)
+                log.error("Lock 획득 실패: $lockKey")
                 return
             }
             log.debug("로직 수행")
