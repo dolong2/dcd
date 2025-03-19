@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.auth.usecase
 
+import com.dcd.server.core.common.annotation.CheckEmailCertificate
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.service.SecurityService
 import com.dcd.server.core.domain.auth.dto.extension.toEntity
@@ -14,6 +15,7 @@ class SignUpUseCase(
     private val commandUserPort: CommandUserPort,
     private val queryUserPort: QueryUserPort
 ) {
+    @CheckEmailCertificate("#signUpReqDto")
     fun execute(signUpReqDto: SignUpReqDto) {
         if(queryUserPort.existsByEmail(signUpReqDto.email))
             throw AlreadyExistsUserException()

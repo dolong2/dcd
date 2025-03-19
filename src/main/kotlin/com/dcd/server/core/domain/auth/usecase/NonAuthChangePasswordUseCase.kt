@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.auth.usecase
 
+import com.dcd.server.core.common.annotation.CheckEmailCertificate
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.auth.dto.request.NonAuthChangePasswordReqDto
 import com.dcd.server.core.domain.auth.exception.UserNotFoundException
@@ -13,6 +14,7 @@ class NonAuthChangePasswordUseCase(
     private val commandUserPort: CommandUserPort,
     private val passwordEncoder: PasswordEncoder
 ) {
+    @CheckEmailCertificate("#nonAuthChangePasswordReqDto")
     fun execute(nonAuthChangePasswordReqDto: NonAuthChangePasswordReqDto) {
         val user = queryUserPort.findByEmail(nonAuthChangePasswordReqDto.email)
             ?: throw UserNotFoundException()
