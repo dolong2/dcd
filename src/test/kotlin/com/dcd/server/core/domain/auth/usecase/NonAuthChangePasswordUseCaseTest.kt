@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.auth.usecase
 
+import com.dcd.server.core.common.aop.exception.NotCertificateEmailException
 import com.dcd.server.core.domain.auth.dto.request.NonAuthChangePasswordReqDto
 import com.dcd.server.core.domain.auth.exception.UserNotFoundException
 import com.dcd.server.core.domain.auth.model.EmailAuth
@@ -50,8 +51,24 @@ class NonAuthChangePasswordUseCaseTest(
             val notFoundUserEmail = "notFoundUser"
             val nonAuthChangePasswordReqDto = NonAuthChangePasswordReqDto(email = notFoundUserEmail, newPassword = "newPassword")
 
+            val emailAuth = EmailAuth(email = notFoundUserEmail, code = "notFoundEmail", certificate = true)
+            commandEmailAuthPort.save(emailAuth)
+
             then("UserNotFoundException이 발생해야함") {
                 shouldThrow<UserNotFoundException> {
+                    nonAuthChangePasswordUseCase.execute(nonAuthChangePasswordReqDto)
+                }
+            }
+
+            commandEmailAuthPort.deleteByCode("notFoundEmail")
+        }
+
+        `when`("이메일 인증코드가 존재하지 않는 유저일때") {
+            val notFoundUserEmail = "notFoundUser"
+            val nonAuthChangePasswordReqDto = NonAuthChangePasswordReqDto(email = notFoundUserEmail, newPassword = "newPassword")
+
+            then("UserNotFoundException이 발생해야함") {
+                shouldThrow<NotCertificateEmailException> {
                     nonAuthChangePasswordUseCase.execute(nonAuthChangePasswordReqDto)
                 }
             }
