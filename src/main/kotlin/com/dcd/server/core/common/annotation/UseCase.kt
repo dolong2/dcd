@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional
 import kotlin.reflect.KClass
 
 @Component
-@Transactional(rollbackFor = [Exception::class])
+@Transactional
 annotation class UseCase(
     @get:AliasFor(annotation = Transactional::class, attribute = "rollbackFor")
     val rollbackFor: Array<KClass<out Throwable>> = [Exception::class],
