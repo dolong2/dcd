@@ -11,13 +11,14 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.springframework.data.repository.findByIdOrNull
+import java.util.*
 
 class UserPersistenceAdapterTest : BehaviorSpec({
     val userRepository = mockk<UserRepository>()
     val adapter = UserPersistenceAdapter(userRepository)
 
     given("User가 주어질때") {
-        val testUserId = "testId"
+        val testUserId = UUID.randomUUID().toString()
         val testEmail = "test"
         val user = User(email = "another", password = "password", name = "another user", roles = mutableListOf(Role.ROLE_USER), status = Status.CREATED)
 
@@ -30,13 +31,13 @@ class UserPersistenceAdapterTest : BehaviorSpec({
         }
 
         `when`("findById 메서드를 사용할때") {
-            every { userRepository.findByIdOrNull(testUserId) } returns user.toEntity()
+            every { userRepository.findByIdOrNull(UUID.fromString(testUserId)) } returns user.toEntity()
             var result = adapter.findById(testUserId)
             then("해당 유저가 존재한다면 해당 유저가 조회되어야힘") {
                 result shouldBe user
             }
 
-            every { userRepository.findByIdOrNull(testUserId) } returns null
+            every { userRepository.findByIdOrNull(UUID.fromString(testUserId)) } returns null
             result = adapter.findById(testUserId)
             then("해당 유저가 존재하지 않는다면 null이 반환되어야함") {
                 result shouldBe null
@@ -44,14 +45,14 @@ class UserPersistenceAdapterTest : BehaviorSpec({
         }
 
         `when`("existsById 메서드를 사용할때") {
-            every { userRepository.existsById(testUserId) } returns true
-            var result = adapter.exitsById(testUserId)
+            every { userRepository.existsById(UUID.fromString(testUserId)) } returns true
+            var result = adapter.existsById(testUserId)
             then("해당 유저가 존재한다면 해당 true가 반환되어야힘") {
                 result shouldBe true
             }
 
-            every { userRepository.existsById(testUserId) } returns false
-            result = adapter.exitsById(testUserId)
+            every { userRepository.existsById(UUID.fromString(testUserId)) } returns false
+            result = adapter.existsById(testUserId)
             then("해당 유저가 존재하지 않는다면 false가 반환되어야함") {
                 result shouldBe false
             }

@@ -72,12 +72,12 @@ class ApplicationPersistenceAdapterTest : BehaviorSpec({
             }
         }
         `when`("findById 메서드를 실행할때") {
-            every { applicationRepository.findByIdOrNull(id) } returns application.toEntity()
+            every { applicationRepository.findByIdOrNull(UUID.fromString(id)) } returns application.toEntity()
             var result = applicationPersistenceAdapter.findById(id)
             then("repository의 반환값이 applicationEntity라면 결과값은 application이 반환되야함") {
                 result shouldBe application
             }
-            every { applicationRepository.findByIdOrNull(id) } returns null
+            every { applicationRepository.findByIdOrNull(UUID.fromString(id)) } returns null
             result = applicationPersistenceAdapter.findById(id)
             then("repository의 반홥값이 null이라면 결과값은 null이 반환되어야함") {
                 result shouldBe null

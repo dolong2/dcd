@@ -36,7 +36,7 @@ class CreateApplicationUseCaseTest(
     val targetWorkspaceId = UUID.randomUUID().toString()
 
     beforeTest {
-        val user = queryUserPort.findById("user2")!!
+        val user = queryUserPort.findById("1e1973eb-3fb9-47ac-9342-c16cd63ffc6f")!!
         val workspace = WorkspaceGenerator.generateWorkspace(id = targetWorkspaceId, user = user)
         commandWorkspacePort.save(workspace)
         workspaceInfo.workspace = workspace
@@ -92,7 +92,7 @@ class CreateApplicationUseCaseTest(
     }
 
     given("존재하지 않는 워크스페이스 아이디가 주어지고") {
-        val notFoundWorkspaceId = "notFoundWorkspaceId"
+        val notFoundWorkspaceId = UUID.randomUUID().toString()
         val request = CreateApplicationReqDto(
             name = "testCreateApplication",
             description = "testDescription",

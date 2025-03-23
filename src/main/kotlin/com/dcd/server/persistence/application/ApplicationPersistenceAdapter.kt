@@ -10,6 +10,7 @@ import com.dcd.server.persistence.application.repository.ApplicationRepository
 import com.dcd.server.persistence.workspace.adapter.toEntity
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
+import java.util.UUID
 
 @Component
 class ApplicationPersistenceAdapter(
@@ -37,7 +38,7 @@ class ApplicationPersistenceAdapter(
     }
 
     override fun findById(id: String): Application? =
-        applicationRepository.findByIdOrNull(id)
+        applicationRepository.findByIdOrNull(UUID.fromString(id))
             ?.toDomain()
 
     override fun existsByExternalPort(externalPort: Int): Boolean =

@@ -5,13 +5,17 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.persistence.user.entity.UserJpaEntity
 import com.dcd.server.persistence.workspace.entity.WorkspaceJpaEntity
 import jakarta.persistence.*
+import org.hibernate.annotations.GenericGenerator
+import java.util.UUID
 
 
 @Entity
 @Table(name = "application_entity")
 class ApplicationJpaEntity(
     @Id
-    val id: String,
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
+    val id: UUID,
     val name: String,
     val description: String?,
     @Enumerated(EnumType.STRING)

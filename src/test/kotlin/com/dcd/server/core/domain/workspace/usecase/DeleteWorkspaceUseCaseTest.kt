@@ -16,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Transactional
 @SpringBootTest
@@ -29,8 +30,8 @@ class DeleteWorkspaceUseCaseTest(
     @MockkBean(relaxed = true)
     private val commandPort: CommandPort
 ) : BehaviorSpec({
-    val userId = "user1"
-    val workspaceId = "testWorkspaceId"
+    val userId = "923a6407-a5f8-4e1e-bffd-0621910ddfc8"
+    val workspaceId = "d57b42f5-5cc4-440b-8dce-b4fc2e372eff"
 
     beforeContainer {
         val userDetails = authDetailsService.loadUserByUsername(userId)
@@ -54,10 +55,12 @@ class DeleteWorkspaceUseCaseTest(
     }
 
     given("워크스페이스 아이디를 가진 워크스페이스가 주어지지 않고") {
+        val notFoundWorkspaceId = UUID.randomUUID().toString()
+
         `when`("유스케이스를 실행할때") {
             then("WorkspaceNotFoundException이 발생해야함") {
                 shouldThrow<WorkspaceNotFoundException> {
-                    deleteWorkspaceUseCase.execute(workspaceId)
+                    deleteWorkspaceUseCase.execute(notFoundWorkspaceId)
                 }
             }
         }

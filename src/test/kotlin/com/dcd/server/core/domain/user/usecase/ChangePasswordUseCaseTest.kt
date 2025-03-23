@@ -24,7 +24,7 @@ class ChangePasswordUseCaseTest(
     private val authDetailsService: AuthDetailsService
 ) : BehaviorSpec({
     beforeTest {
-        val userId = "user2"
+        val userId = "1e1973eb-3fb9-47ac-9342-c16cd63ffc6f"
         val userDetails = authDetailsService.loadUserByUsername(userId)
         val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
         SecurityContextHolder.getContext().authentication = authenticationToken
@@ -39,7 +39,7 @@ class ChangePasswordUseCaseTest(
         `when`("usecase를 실행할때") {
             changePasswordUseCase.execute(passwordChangeReqDto)
             then("passwordChangeReqDto의 새 패스워드를 가진 유저를 저장해야함") {
-                val user = queryUserPort.findById("user2")
+                val user = queryUserPort.findById("1e1973eb-3fb9-47ac-9342-c16cd63ffc6f")
                 user shouldNotBe null
                 passwordEncoder.matches(passwordChangeReqDto.newPassword, user?.password)
             }

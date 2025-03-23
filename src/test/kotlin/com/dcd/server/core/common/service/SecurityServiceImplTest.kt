@@ -21,7 +21,7 @@ class SecurityServiceImplTest(
     private val authDetailsService: AuthDetailsService,
     private val passwordEncoder: PasswordEncoder
 ) : BehaviorSpec({
-    val targetUserId = "user2"
+    val targetUserId = "1e1973eb-3fb9-47ac-9342-c16cd63ffc6f"
 
     beforeContainer {
         val userDetails = authDetailsService.loadUserByUsername(targetUserId)

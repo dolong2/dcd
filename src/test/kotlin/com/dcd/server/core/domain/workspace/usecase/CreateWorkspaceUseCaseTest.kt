@@ -26,7 +26,7 @@ class CreateWorkspaceUseCaseTest(
     @MockkBean(relaxed = true)
     private val commandPort: CommandPort
 ) : BehaviorSpec({
-    val userId = "user1"
+    val userId = "923a6407-a5f8-4e1e-bffd-0621910ddfc8"
 
     beforeContainer {
         val userDetails = authDetailsService.loadUserByUsername(userId)

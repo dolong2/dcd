@@ -20,6 +20,7 @@ import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Transactional
 @SpringBootTest
@@ -33,7 +34,7 @@ class StopApplicationUseCaseTest(
     private val commandWorkspacePort: CommandWorkspacePort,
     private val commandApplicationPort: CommandApplicationPort
 ) : BehaviorSpec({
-    val targetApplicationId = "testApplicationId"
+    val targetApplicationId = UUID.randomUUID().toString()
 
     beforeSpec {
         val user = UserGenerator.generateUser()
@@ -75,7 +76,7 @@ class StopApplicationUseCaseTest(
     }
 
     given("존재하지 않는 애플리케이션이 주어지고") {
-        val notFoundApplicationId = "notFoundApplicationId"
+        val notFoundApplicationId = UUID.randomUUID().toString()
 
         `when`("유스케이스를 실행할때") {
 

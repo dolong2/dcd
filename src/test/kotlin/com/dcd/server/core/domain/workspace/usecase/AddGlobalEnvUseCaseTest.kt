@@ -19,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Transactional
 @SpringBootTest
@@ -31,8 +32,8 @@ class AddGlobalEnvUseCaseTest(
     private val commandWorkspacePort: CommandWorkspacePort,
     private val commandUserPort: CommandUserPort
 ) : BehaviorSpec({
-    val userId = "user2"
-    val targetWorkspaceId = "testWorkspaceId"
+    val userId = "1e1973eb-3fb9-47ac-9342-c16cd63ffc6f"
+    val targetWorkspaceId = "d57b42f5-5cc4-440b-8dce-b4fc2e372eff"
 
     beforeContainer {
         val userDetails = authDetailsService.loadUserByUsername(userId)
@@ -75,7 +76,7 @@ class AddGlobalEnvUseCaseTest(
     }
 
     given("존재하지 않은 워크스페이스 아이디가 주어지고") {
-        val givenWorkspaceId = "notFoundWorkspace"
+        val givenWorkspaceId = UUID.randomUUID().toString()
         val testEnvList = mapOf("testKey" to "testValue")
         val addGlobalEnvReqDto = AddGlobalEnvReqDto(testEnvList)
 

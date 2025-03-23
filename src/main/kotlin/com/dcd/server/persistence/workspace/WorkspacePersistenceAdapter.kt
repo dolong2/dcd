@@ -9,6 +9,7 @@ import com.dcd.server.persistence.workspace.adapter.toEntity
 import com.dcd.server.persistence.workspace.repository.WorkspaceRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
+import java.util.UUID
 
 @Component
 class WorkspacePersistenceAdapter(
@@ -16,7 +17,7 @@ class WorkspacePersistenceAdapter(
 ) : WorkspacePort {
     override fun findById(id: String): Workspace? {
         return workspaceRepository
-            .findByIdOrNull(id)
+            .findByIdOrNull(UUID.fromString(id))
             ?.toDomain()
     }
 

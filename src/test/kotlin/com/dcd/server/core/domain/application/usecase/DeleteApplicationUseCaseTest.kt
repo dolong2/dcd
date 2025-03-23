@@ -24,7 +24,7 @@ class DeleteApplicationUseCaseTest(
     private val queryApplicationPort: QueryApplicationPort,
     private val commandApplicationPort: CommandApplicationPort
 ) : BehaviorSpec({
-    val targetUserId = "user1"
+    val targetUserId = "923a6407-a5f8-4e1e-bffd-0621910ddfc8"
     var targetApplicationId = ""
 
     beforeSpec {

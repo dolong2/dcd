@@ -2,14 +2,13 @@ package com.dcd.server.persistence.application.adapter
 
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.persistence.application.entity.ApplicationJpaEntity
-import com.dcd.server.persistence.user.adapter.toDomain
-import com.dcd.server.persistence.user.adapter.toEntity
 import com.dcd.server.persistence.workspace.adapter.toDomain
 import com.dcd.server.persistence.workspace.adapter.toEntity
+import java.util.*
 
 fun Application.toEntity(): ApplicationJpaEntity =
     ApplicationJpaEntity(
-        id = this.id,
+        id = UUID.fromString(this.id),
         name = this.name,
         description = this.description,
         applicationType = this.applicationType,
@@ -26,7 +25,7 @@ fun Application.toEntity(): ApplicationJpaEntity =
 
 fun ApplicationJpaEntity.toDomain(): Application =
     Application(
-        id = this.id,
+        id = this.id.toString(),
         name = this.name,
         description = this.description,
         applicationType = this.applicationType,
