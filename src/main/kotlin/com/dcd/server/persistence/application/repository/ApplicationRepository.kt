@@ -6,8 +6,9 @@ import com.dcd.server.persistence.workspace.entity.WorkspaceJpaEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
+import java.util.*
 
-interface ApplicationRepository : JpaRepository<ApplicationJpaEntity, String> {
+interface ApplicationRepository : JpaRepository<ApplicationJpaEntity, UUID> {
     fun findAllByWorkspace(workspace: WorkspaceJpaEntity): List<ApplicationJpaEntity>
     @Query("select app from ApplicationJpaEntity app join app.labels label where app.workspace = :workspace and label IN :labels")
     fun findAllByWorkspaceAndLabels(

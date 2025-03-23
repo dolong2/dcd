@@ -8,6 +8,7 @@ import com.dcd.server.persistence.user.adapter.toEntity
 import com.dcd.server.persistence.user.repository.UserRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
+import java.util.*
 
 @Component
 class UserPersistenceAdapter(
@@ -18,11 +19,11 @@ class UserPersistenceAdapter(
     }
 
     override fun delete(user: User) {
-        userRepository.deleteById(user.id)
+        userRepository.deleteById(UUID.fromString(user.id))
     }
 
     override fun findById(id: String): User? =
-        userRepository.findByIdOrNull(id)
+        userRepository.findByIdOrNull(UUID.fromString(id))
             ?.toDomain()
 
     override fun findByEmail(email: String): User? =
@@ -33,7 +34,7 @@ class UserPersistenceAdapter(
         userRepository.existsByEmail(email)
 
     override fun exitsById(userId: String): Boolean =
-        userRepository.existsById(userId)
+        userRepository.existsById(UUID.fromString(userId))
 
     override fun findByStatus(status: Status): List<User> =
         userRepository.findAllByStatus(status)
