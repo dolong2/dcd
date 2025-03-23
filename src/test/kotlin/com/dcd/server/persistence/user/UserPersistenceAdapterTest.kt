@@ -46,13 +46,13 @@ class UserPersistenceAdapterTest : BehaviorSpec({
 
         `when`("existsById 메서드를 사용할때") {
             every { userRepository.existsById(UUID.fromString(testUserId)) } returns true
-            var result = adapter.exitsById(testUserId)
+            var result = adapter.existsById(testUserId)
             then("해당 유저가 존재한다면 해당 true가 반환되어야힘") {
                 result shouldBe true
             }
 
             every { userRepository.existsById(UUID.fromString(testUserId)) } returns false
-            result = adapter.exitsById(testUserId)
+            result = adapter.existsById(testUserId)
             then("해당 유저가 존재하지 않는다면 false가 반환되어야함") {
                 result shouldBe false
             }

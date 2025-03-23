@@ -7,7 +7,6 @@ interface QueryUserPort {
     fun findById(id: String): User?
     fun findByEmail(email: String): User?
     fun existsByEmail(email: String): Boolean
-    fun exitsById(userId: String): Boolean
-
+    fun existsById(userId: String): Boolean
     fun findByStatus(status: Status): List<User>
 }
