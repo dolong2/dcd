@@ -4,10 +4,11 @@ import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.persistence.user.adapter.toDomain
 import com.dcd.server.persistence.user.adapter.toEntity
 import com.dcd.server.persistence.workspace.entity.WorkspaceJpaEntity
+import java.util.*
 
 fun Workspace.toEntity(): WorkspaceJpaEntity =
     WorkspaceJpaEntity(
-        id = this.id,
+        id = UUID.fromString(this.id),
         title = this.title,
         description = this.description,
         globalEnv = this.globalEnv,
@@ -16,7 +17,7 @@ fun Workspace.toEntity(): WorkspaceJpaEntity =
 
 fun WorkspaceJpaEntity.toDomain(): Workspace =
     Workspace(
-        id = this.id,
+        id = this.id.toString(),
         title = this.title,
         description = this.description,
         globalEnv = this.globalEnv,
