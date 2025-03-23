@@ -22,7 +22,7 @@ class GetAllWorkspaceUseCaseTest(
     private val queryUserPort: QueryUserPort,
     private val commandWorkspacePort: CommandWorkspacePort
 ) : BehaviorSpec({
-    val userId = "user2"
+    val userId = "1e1973eb-3fb9-47ac-9342-c16cd63ffc6f"
     val firstWorkspaceId = UUID.randomUUID().toString()
     val secondWorkspaceId = UUID.randomUUID().toString()
 

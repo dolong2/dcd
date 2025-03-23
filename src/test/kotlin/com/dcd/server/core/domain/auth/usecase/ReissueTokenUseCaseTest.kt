@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.util.UUID
 
 @Transactional
 @SpringBootTest
@@ -30,7 +31,7 @@ class ReissueTokenUseCaseTest(
     private val parseTokenAdapter: ParseTokenAdapter,
     private val refreshTokenPort: CommandRefreshTokenPort
 ) : BehaviorSpec({
-    val userId = "user2"
+    val userId = "1e1973eb-3fb9-47ac-9342-c16cd63ffc6f"
     val token = "testRefreshToken"
     val ttl = 10000L
 
@@ -45,7 +46,7 @@ class ReissueTokenUseCaseTest(
 
         `when`("아무 문제 없이 실행될때") {
             every { parseTokenAdapter.getJwtType(token) } returns JwtPrefix.REFRESH
-            every { jwtPort.generateToken("user2") } returns targetTokenResDto
+            every { jwtPort.generateToken("1e1973eb-3fb9-47ac-9342-c16cd63ffc6f") } returns targetTokenResDto
             refreshTokenPort.save(refreshToken)
 
             val result = reissueTokenUseCase.execute(token)
@@ -63,7 +64,7 @@ class ReissueTokenUseCaseTest(
         }
 
         `when`("토큰에 있는 유저가 없을때") {
-            val notFoundToken = refreshToken.copy(userId = "notFoundUser", token = "notFoundRefreshToken", ttl)
+            val notFoundToken = refreshToken.copy(userId = UUID.randomUUID().toString(), token = "notFoundRefreshToken", ttl)
             refreshTokenPort.save(notFoundToken)
             every { parseTokenAdapter.getJwtType(notFoundToken.token) } returns JwtPrefix.REFRESH
 

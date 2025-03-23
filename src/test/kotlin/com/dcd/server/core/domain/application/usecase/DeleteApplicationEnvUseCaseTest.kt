@@ -14,6 +14,7 @@ import io.kotest.matchers.shouldBe
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Transactional
 @SpringBootTest
@@ -25,11 +26,11 @@ class DeleteApplicationEnvUseCaseTest(
     private val commandWorkspacePort: CommandWorkspacePort,
     private val queryApplicationPort: QueryApplicationPort
 ) : BehaviorSpec({
-    val applicationId = "testId"
+    val applicationId = "2fb0f315-8272-422f-8e9f-c4f765c022b2"
     val key = "testKey"
 
     beforeContainer {
-        val user = queryUserPort.findById("user2")!!
+        val user = queryUserPort.findById("1e1973eb-3fb9-47ac-9342-c16cd63ffc6f")!!
         val workspace = WorkspaceGenerator.generateWorkspace(user = user)
         commandWorkspacePort.save(workspace)
         val application = ApplicationGenerator.generateApplication(id = applicationId, env = mapOf(Pair("testKey", "testValue")), workspace = workspace)
@@ -59,7 +60,7 @@ class DeleteApplicationEnvUseCaseTest(
     }
 
     given("존재하지 않는 애플리케이션의 아이디가 주어지고") {
-        val notFoundApplicationId = "notFoundApplicationId"
+        val notFoundApplicationId = UUID.randomUUID().toString()
 
         `when`("유스케이스를 실행하면") {
 

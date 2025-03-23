@@ -20,6 +20,7 @@ import io.mockk.coVerify
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Transactional
 @SpringBootTest
@@ -33,7 +34,7 @@ class RunApplicationUseCaseTest(
     private val commandWorkspacePort: CommandWorkspacePort,
     private val commandUserPort: CommandUserPort
 ) : BehaviorSpec({
-    val targetApplicationId = "testApplicationId"
+    val targetApplicationId = UUID.randomUUID().toString()
 
     beforeSpec {
         val user = UserGenerator.generateUser()
@@ -75,7 +76,7 @@ class RunApplicationUseCaseTest(
     }
 
     given("존재하지 않는 애플리케이션 아이디가 주어지고") {
-        val notFoundApplicationId = "notFoundApplicationId"
+        val notFoundApplicationId = UUID.randomUUID().toString()
 
         `when`("유스케이스를 실행할때") {
 

@@ -13,6 +13,7 @@ import io.kotest.matchers.equality.shouldBeEqualToComparingFields
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Transactional
 @SpringBootTest
@@ -25,7 +26,7 @@ class GetOneApplicationUseCaseTest(
 ) : BehaviorSpec({
 
     given("애플리케이션이 주어지고") {
-        val user = queryUserPort.findById("user2")!!
+        val user = queryUserPort.findById("1e1973eb-3fb9-47ac-9342-c16cd63ffc6f")!!
         val workspace = WorkspaceGenerator.generateWorkspace(user = user)
         commandWorkspacePort.save(workspace)
         val application = ApplicationGenerator.generateApplication(workspace = workspace)
@@ -46,7 +47,7 @@ class GetOneApplicationUseCaseTest(
 
             then("에러가 발생해야함") {
                 shouldThrow<ApplicationNotFoundException> {
-                    getOneApplicationUseCase.execute("notFoundId")
+                    getOneApplicationUseCase.execute(UUID.randomUUID().toString())
                 }
             }
         }

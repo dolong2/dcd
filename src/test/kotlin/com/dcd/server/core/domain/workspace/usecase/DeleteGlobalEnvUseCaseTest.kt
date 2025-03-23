@@ -19,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Transactional
 @SpringBootTest
@@ -31,8 +32,8 @@ class DeleteGlobalEnvUseCaseTest(
     private val queryWorkspacePort: QueryWorkspacePort,
     private val commandUserPort: CommandUserPort
 ) : BehaviorSpec({
-    val userId = "user2"
-    val targetWorkspaceId = "testWorkspaceId"
+    val userId = "1e1973eb-3fb9-47ac-9342-c16cd63ffc6f"
+    val targetWorkspaceId = "d57b42f5-5cc4-440b-8dce-b4fc2e372eff"
 
     beforeContainer {
         val userDetails = authDetailsService.loadUserByUsername(userId)
@@ -85,7 +86,7 @@ class DeleteGlobalEnvUseCaseTest(
     }
 
     given("워크스페이스가 존재하지 않을때") {
-        val notFoundWorkspaceId = "notFoundWorkspaceId"
+        val notFoundWorkspaceId = UUID.randomUUID().toString()
         val key = "testEnvKey"
 
         `when`("유스케이스를 실행하면") {

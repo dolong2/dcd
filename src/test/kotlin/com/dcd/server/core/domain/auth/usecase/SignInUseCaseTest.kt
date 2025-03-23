@@ -37,7 +37,7 @@ class SignInUseCaseTest(
             val testPassword = "testPassword"
             val requestDto = SignInReqDto(testEmail, testPassword)
 
-            every { jwtPort.generateToken("user2") } returns targetTokenResDto
+            every { jwtPort.generateToken("1e1973eb-3fb9-47ac-9342-c16cd63ffc6f") } returns targetTokenResDto
             val result = signInUseCase.execute(requestDto)
 
             then("아무 이상이 없으면 주어진 responseDto를 반환해야됨") {

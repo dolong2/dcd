@@ -12,6 +12,7 @@ import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Transactional
 @SpringBootTest
@@ -24,7 +25,7 @@ class AddApplicationEnvUseCaseTest(
 ) : BehaviorSpec({
     var targetApplicationId = ""
     beforeSpec {
-        val targetUser = queryUserPort.findById("user1")!!
+        val targetUser = queryUserPort.findById("923a6407-a5f8-4e1e-bffd-0621910ddfc8")!!
 
         val workspace = queryWorkspacePort.findByUser(targetUser).first()
         val application = queryApplicationPort.findAllByWorkspace(workspace).first()
@@ -47,7 +48,7 @@ class AddApplicationEnvUseCaseTest(
     }
 
     given("존재하지 않는 애플리케이션 아이디가 주어지고") {
-        val notFoundApplicationId = "notFoundApplicationId"
+        val notFoundApplicationId = UUID.randomUUID().toString()
         val request = AddApplicationEnvReqDto(
             envList = mapOf(Pair("testA", "testB"))
         )

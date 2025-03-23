@@ -25,7 +25,7 @@ class GetUserProfileUseCaseTest(
     private val queryWorkspacePort: QueryWorkspacePort,
     private val queryApplicationPort: QueryApplicationPort
 ) : BehaviorSpec({
-    val userId = "user1"
+    val userId = "923a6407-a5f8-4e1e-bffd-0621910ddfc8"
     beforeTest {
         val userDetails = authDetailsService.loadUserByUsername(userId)
         val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)

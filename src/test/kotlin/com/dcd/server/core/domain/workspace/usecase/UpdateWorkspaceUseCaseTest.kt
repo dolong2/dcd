@@ -21,6 +21,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Transactional
 @SpringBootTest
@@ -35,8 +36,8 @@ class UpdateWorkspaceUseCaseTest(
     @MockkBean(relaxed = true)
     private val commandPort: CommandPort
 ) : BehaviorSpec({
-    val userId = "user1"
-    val workspaceId = "testWorkspaceId"
+    val userId = "923a6407-a5f8-4e1e-bffd-0621910ddfc8"
+    val workspaceId = "d57b42f5-5cc4-440b-8dce-b4fc2e372eff"
 
     beforeContainer {
         val userDetails = authDetailsService.loadUserByUsername(userId)
@@ -80,12 +81,13 @@ class UpdateWorkspaceUseCaseTest(
     }
 
     given("UpdateWorkspaceReqDto만 주어지고") {
+        val notFoundWorkspaceId = UUID.randomUUID().toString()
         val request = UpdateWorkspaceReqDto(title = "test title", description = "test description")
 
         `when`("유스케이스를 실행하면") {
             then("WorkspaceNotFoundException이 발생해야함") {
                 shouldThrow<WorkspaceNotFoundException> {
-                    updateWorkspaceUseCase.execute(workspaceId, request)
+                    updateWorkspaceUseCase.execute(notFoundWorkspaceId, request)
                 }
             }
         }

@@ -5,10 +5,11 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.workspace.model.Workspace
 import util.workspace.WorkspaceGenerator
+import java.util.*
 
 object ApplicationGenerator {
     fun generateApplication(
-        id: String = "testId",
+        id: String = UUID.randomUUID().toString(),
         name: String = "testName",
         description: String = "testDescription",
         applicationType: ApplicationType = ApplicationType.SPRING_BOOT,

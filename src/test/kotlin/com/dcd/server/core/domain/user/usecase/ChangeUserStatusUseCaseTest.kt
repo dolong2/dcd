@@ -11,6 +11,7 @@ import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Transactional
 @SpringBootTest
@@ -22,7 +23,7 @@ class ChangeUserStatusUseCaseTest(
 ) : BehaviorSpec({
 
     given("존재하는 유저의 아이디가 주어지고") {
-        val userId = "user1"
+        val userId = "923a6407-a5f8-4e1e-bffd-0621910ddfc8"
         val status = Status.PENDING
 
         `when`("유스케이스를 실행할때") {
@@ -37,7 +38,7 @@ class ChangeUserStatusUseCaseTest(
     }
 
     given("존재하지 않는 유저의 아이디가 주어지고") {
-        val userId = "notFoundUser"
+        val userId = UUID.randomUUID().toString()
         val status = Status.PENDING
 
         `when`("유스케케이스를 실행할때") {

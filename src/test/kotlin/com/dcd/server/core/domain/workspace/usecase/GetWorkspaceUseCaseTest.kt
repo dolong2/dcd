@@ -24,8 +24,8 @@ class GetWorkspaceUseCaseTest(
     private val queryUserPort: QueryUserPort,
     private val commandWorkspacePort: CommandWorkspacePort
 ) : BehaviorSpec({
-    val userId = "user1"
-    val workspaceId = "testWorkspaceId"
+    val userId = "923a6407-a5f8-4e1e-bffd-0621910ddfc8"
+    val workspaceId = "1e1973eb-3fb9-47ac-9342-c16cd63ffc6f"
 
     beforeContainer {
         val userDetails = authDetailsService.loadUserByUsername(userId)

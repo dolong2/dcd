@@ -55,7 +55,7 @@ class WorkspacePersistenceAdapterTest : BehaviorSpec({
         }
 
         `when`("findById 메서드를 실행할때") {
-            every { workspaceRepository.findByIdOrNull(id) } returns workspace.toEntity()
+            every { workspaceRepository.findByIdOrNull(UUID.fromString(id)) } returns workspace.toEntity()
             val result = workspacePersistenceAdapter.findById(id)
             then("주어진 workspace가 반환되야함") {
                 result shouldBe workspace

@@ -20,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Transactional
 @SpringBootTest
@@ -32,8 +33,8 @@ class UpdateGlobalEnvUseCaseTest(
     private val queryWorkspacePort: QueryWorkspacePort,
     private val commandUserPort: CommandUserPort
 ) : BehaviorSpec({
-    val userId = "user1"
-    val targetWorkspaceId = "testWorkspaceId"
+    val userId = "923a6407-a5f8-4e1e-bffd-0621910ddfc8"
+    val targetWorkspaceId = "d57b42f5-5cc4-440b-8dce-b4fc2e372eff"
 
     beforeContainer {
         val userDetails = authDetailsService.loadUserByUsername(userId)
@@ -87,7 +88,7 @@ class UpdateGlobalEnvUseCaseTest(
     }
 
     given("워크스페이스가 존재하지 않을때") {
-        val notFoundWorkspaceId = "notFoundWorkspaceId"
+        val notFoundWorkspaceId = UUID.randomUUID().toString()
         val envKey = "testEnvKey"
         val updateGlobalEnvReqDto = UpdateGlobalEnvReqDto(newValue = "updatedValue")
 
