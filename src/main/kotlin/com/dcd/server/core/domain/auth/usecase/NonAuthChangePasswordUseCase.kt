@@ -4,6 +4,7 @@ import com.dcd.server.core.common.annotation.CheckEmailCertificate
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.auth.dto.request.NonAuthChangePasswordReqDto
 import com.dcd.server.core.domain.auth.exception.UserNotFoundException
+import com.dcd.server.core.domain.auth.model.enums.EmailAuthUsage
 import com.dcd.server.core.domain.user.spi.CommandUserPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -14,7 +15,7 @@ class NonAuthChangePasswordUseCase(
     private val commandUserPort: CommandUserPort,
     private val passwordEncoder: PasswordEncoder
 ) {
-    @CheckEmailCertificate("#nonAuthChangePasswordReqDto")
+    @CheckEmailCertificate("#nonAuthChangePasswordReqDto", EmailAuthUsage.CHANGE_PASSWORD)
     fun execute(nonAuthChangePasswordReqDto: NonAuthChangePasswordReqDto) {
         val user = queryUserPort.findByEmail(nonAuthChangePasswordReqDto.email)
             ?: throw UserNotFoundException()

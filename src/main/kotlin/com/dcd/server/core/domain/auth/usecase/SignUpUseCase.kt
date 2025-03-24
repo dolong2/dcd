@@ -6,6 +6,7 @@ import com.dcd.server.core.common.service.SecurityService
 import com.dcd.server.core.domain.auth.dto.extension.toEntity
 import com.dcd.server.core.domain.auth.dto.request.SignUpReqDto
 import com.dcd.server.core.domain.auth.exception.AlreadyExistsUserException
+import com.dcd.server.core.domain.auth.model.enums.EmailAuthUsage
 import com.dcd.server.core.domain.user.spi.CommandUserPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 
@@ -15,7 +16,7 @@ class SignUpUseCase(
     private val commandUserPort: CommandUserPort,
     private val queryUserPort: QueryUserPort
 ) {
-    @CheckEmailCertificate("#signUpReqDto")
+    @CheckEmailCertificate("#signUpReqDto", EmailAuthUsage.SIGNUP)
     fun execute(signUpReqDto: SignUpReqDto) {
         if(queryUserPort.existsByEmail(signUpReqDto.email))
             throw AlreadyExistsUserException()
