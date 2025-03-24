@@ -1,5 +1,8 @@
 package com.dcd.server.persistence.auth.entity
 
+import com.dcd.server.core.domain.auth.model.enums.EmailAuthUsage
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash
 import org.springframework.data.redis.core.index.Indexed
@@ -11,5 +14,7 @@ class EmailAuthEntity(
     @Id
     @Indexed
     val code: String,
-    val certificate: Boolean
+    val certificate: Boolean,
+    @Enumerated(EnumType.STRING)
+    val usage: EmailAuthUsage
 )
