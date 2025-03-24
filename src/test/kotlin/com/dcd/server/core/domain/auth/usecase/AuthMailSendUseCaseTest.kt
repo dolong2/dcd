@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.auth.usecase
 
 import com.dcd.server.ServerApplication
 import com.dcd.server.core.domain.auth.dto.request.EmailSendReqDto
+import com.dcd.server.core.domain.auth.model.enums.EmailAuthUsage
 import com.dcd.server.core.domain.auth.service.EmailSendService
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.BehaviorSpec
@@ -19,11 +20,11 @@ class AuthMailSendUseCaseTest(
 
     given("EmailSendRequestData가 주어지고") {
         val testEmail = "testEmail"
-        val request = EmailSendReqDto(testEmail)
+        val request = EmailSendReqDto(testEmail, EmailAuthUsage.SIGNUP)
         `when`("execute메서드를 실행할때") {
             authMailSendUseCase.execute(request)
             then("emailSendService의 sendEmail메서드를 실행해아함") {
-                coVerify { emailSendService.sendEmail(testEmail) }
+                coVerify { emailSendService.sendEmail(testEmail, EmailAuthUsage.SIGNUP) }
             }
         }
     }

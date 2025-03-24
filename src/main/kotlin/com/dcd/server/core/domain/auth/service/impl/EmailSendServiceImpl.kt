@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.auth.service.impl
 
 import com.dcd.server.core.domain.auth.model.EmailAuth
+import com.dcd.server.core.domain.auth.model.enums.EmailAuthUsage
 import com.dcd.server.core.domain.auth.service.EmailSendService
 import com.dcd.server.core.domain.auth.spi.CommandEmailAuthPort
 import kotlinx.coroutines.Dispatchers
@@ -14,8 +15,8 @@ class EmailSendServiceImpl(
     private val commandEmailAuthPort: CommandEmailAuthPort,
     private val emailSender: JavaMailSender,
 ) : EmailSendService{
-    override suspend fun sendEmail(email: String) {
-        val emailAuth = EmailAuth(email = email)
+    override suspend fun sendEmail(email: String, usage: EmailAuthUsage) {
+        val emailAuth = EmailAuth(email = email, usage = usage)
         val code = emailAuth.code
 
         withContext(Dispatchers.IO) {

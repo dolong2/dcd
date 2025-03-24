@@ -5,6 +5,7 @@ import com.dcd.server.core.domain.auth.dto.request.CertificateMailReqDto
 import com.dcd.server.core.domain.auth.exception.InvalidAuthCodeException
 import com.dcd.server.core.domain.auth.exception.NotFoundAuthCodeException
 import com.dcd.server.core.domain.auth.model.EmailAuth
+import com.dcd.server.core.domain.auth.model.enums.EmailAuthUsage
 import com.dcd.server.core.domain.auth.spi.CommandEmailAuthPort
 import com.dcd.server.core.domain.auth.spi.QueryEmailAuthPort
 import io.kotest.assertions.throwables.shouldThrow
@@ -27,7 +28,7 @@ class AuthenticateMailUseCaseTest(
     val targetCode = "testCode"
 
     beforeSpec {
-        val emailAuth = EmailAuth(email = targetEmail, code = targetCode)
+        val emailAuth = EmailAuth(email = targetEmail, code = targetCode, usage = EmailAuthUsage.SIGNUP)
         commandEmailAuthPort.save(emailAuth)
     }
 

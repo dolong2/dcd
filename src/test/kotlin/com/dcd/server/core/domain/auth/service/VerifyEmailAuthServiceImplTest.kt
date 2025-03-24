@@ -4,6 +4,7 @@ import com.dcd.server.core.domain.auth.exception.ExpiredCodeException
 import com.dcd.server.core.domain.auth.exception.InvalidAuthCodeException
 import com.dcd.server.core.domain.auth.exception.NotFoundAuthCodeException
 import com.dcd.server.core.domain.auth.model.EmailAuth
+import com.dcd.server.core.domain.auth.model.enums.EmailAuthUsage
 import com.dcd.server.core.domain.auth.service.impl.VerifyEmailAuthServiceImpl
 import com.dcd.server.core.domain.auth.spi.CommandEmailAuthPort
 import com.dcd.server.core.domain.auth.spi.QueryEmailAuthPort
@@ -40,7 +41,7 @@ class VerifyEmailAuthServiceImplTest : BehaviorSpec({
             }
 
             every { queryEmailAuthPort.existsByCodeAndEmail(testEmail, testCode) } returns true
-            every { queryEmailAuthPort.findByCode(testCode) } returns EmailAuth(testEmail, testCode, false)
+            every { queryEmailAuthPort.findByCode(testCode) } returns EmailAuth(testEmail, testCode, false, EmailAuthUsage.SIGNUP)
             every { commandEmailAuthPort.save(any()) } answers { callOriginal() }
             serviceImpl.verifyCode(testEmail, testCode)
             then("코드도 올바르면 업데이트 되야함") {

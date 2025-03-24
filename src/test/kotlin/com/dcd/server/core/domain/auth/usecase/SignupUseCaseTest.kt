@@ -4,6 +4,7 @@ import com.dcd.server.core.common.aop.exception.NotCertificateEmailException
 import com.dcd.server.core.domain.auth.dto.request.SignUpReqDto
 import com.dcd.server.core.domain.auth.exception.AlreadyExistsUserException
 import com.dcd.server.core.domain.auth.model.EmailAuth
+import com.dcd.server.core.domain.auth.model.enums.EmailAuthUsage
 import com.dcd.server.core.domain.auth.spi.CommandEmailAuthPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.persistence.auth.repository.EmailAuthRepository
@@ -32,7 +33,8 @@ class SignupUseCaseTest(
     beforeSpec {
         val emailAuth = EmailAuth(
             email = targetEmail,
-            certificate = true
+            certificate = true,
+            usage = EmailAuthUsage.SIGNUP
         )
         commandEmailAuthPort.save(emailAuth)
     }
@@ -58,7 +60,8 @@ class SignupUseCaseTest(
         `when`("같은 유저가 존재할때") {
             val emailAuth = EmailAuth(
                 email = testEmail,
-                certificate = true
+                certificate = true,
+                usage = EmailAuthUsage.SIGNUP
             )
             commandEmailAuthPort.save(emailAuth)
             val request = SignUpReqDto(testEmail, testPassword, testName)
@@ -79,6 +82,19 @@ class SignupUseCaseTest(
                 result?.email shouldBe targetEmail
                 result?.name shouldBe testName
                 passwordEncoder.matches(request.password, result?.password) shouldBe true
+            }
+        }
+
+        `when`("인증코드의 usage가 가입이 아닐때") {
+            val signUpReqDto = SignUpReqDto(targetEmail, testPassword, testName)
+
+            val emailAuth = EmailAuth(email = targetEmail, code = "testCode", certificate = true, usage = EmailAuthUsage.CHANGE_PASSWORD)
+            commandEmailAuthPort.save(emailAuth)
+
+            then("NotCertificateEmailException이 발생해야함") {
+                shouldThrow<NotCertificateEmailException> {
+                    signUpUseCase.execute(signUpReqDto)
+                }
             }
         }
     }

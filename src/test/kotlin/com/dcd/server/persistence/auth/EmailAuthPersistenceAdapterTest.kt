@@ -1,6 +1,7 @@
 package com.dcd.server.persistence.auth
 
 import com.dcd.server.core.domain.auth.model.EmailAuth
+import com.dcd.server.core.domain.auth.model.enums.EmailAuthUsage
 import com.dcd.server.persistence.auth.adapter.toEntity
 import com.dcd.server.persistence.auth.repository.EmailAuthRepository
 import io.kotest.core.spec.style.BehaviorSpec
@@ -17,7 +18,7 @@ class EmailAuthPersistenceAdapterTest : BehaviorSpec({
     given("이메일 인증객체가 주어지고") {
         val testCode = "testCode"
         val testEmail = "testEmail"
-        val emailAuth = EmailAuth(testEmail, testCode)
+        val emailAuth = EmailAuth(testEmail, testCode, usage = EmailAuthUsage.SIGNUP)
         val emailAuthEntity = emailAuth.toEntity()
 
         `when`("save를 실행할때") {

@@ -4,6 +4,7 @@ import com.dcd.server.core.common.aop.exception.NotCertificateEmailException
 import com.dcd.server.core.domain.auth.dto.request.NonAuthChangePasswordReqDto
 import com.dcd.server.core.domain.auth.exception.UserNotFoundException
 import com.dcd.server.core.domain.auth.model.EmailAuth
+import com.dcd.server.core.domain.auth.model.enums.EmailAuthUsage
 import com.dcd.server.core.domain.auth.spi.CommandEmailAuthPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import io.kotest.assertions.throwables.shouldThrow
@@ -26,7 +27,7 @@ class NonAuthChangePasswordUseCaseTest(
     val targetEmail = "testEmail"
 
     beforeSpec {
-        val emailAuth = EmailAuth(email = targetEmail, code = "testCode", certificate = true)
+        val emailAuth = EmailAuth(email = targetEmail, code = "testCode", certificate = true, usage = EmailAuthUsage.CHANGE_PASSWORD)
         commandEmailAuthPort.save(emailAuth)
     }
 
@@ -51,7 +52,7 @@ class NonAuthChangePasswordUseCaseTest(
             val notFoundUserEmail = "notFoundUser"
             val nonAuthChangePasswordReqDto = NonAuthChangePasswordReqDto(email = notFoundUserEmail, newPassword = "newPassword")
 
-            val emailAuth = EmailAuth(email = notFoundUserEmail, code = "notFoundEmail", certificate = true)
+            val emailAuth = EmailAuth(email = notFoundUserEmail, code = "notFoundEmail", certificate = true, usage = EmailAuthUsage.CHANGE_PASSWORD)
             commandEmailAuthPort.save(emailAuth)
 
             then("UserNotFoundException이 발생해야함") {
@@ -67,7 +68,20 @@ class NonAuthChangePasswordUseCaseTest(
             val notFoundUserEmail = "notFoundUser"
             val nonAuthChangePasswordReqDto = NonAuthChangePasswordReqDto(email = notFoundUserEmail, newPassword = "newPassword")
 
-            then("UserNotFoundException이 발생해야함") {
+            then("NotCertificateEmailException이 발생해야함") {
+                shouldThrow<NotCertificateEmailException> {
+                    nonAuthChangePasswordUseCase.execute(nonAuthChangePasswordReqDto)
+                }
+            }
+        }
+
+        `when`("인증코드의 usage가 비밀번호 변경이 아닐때") {
+            val nonAuthChangePasswordReqDto = NonAuthChangePasswordReqDto(email = targetEmail, newPassword = "newPassword")
+
+            val emailAuth = EmailAuth(email = targetEmail, code = "testCode", certificate = true, usage = EmailAuthUsage.SIGNUP)
+            commandEmailAuthPort.save(emailAuth)
+
+            then("NotCertificateEmailException이 발생해야함") {
                 shouldThrow<NotCertificateEmailException> {
                     nonAuthChangePasswordUseCase.execute(nonAuthChangePasswordReqDto)
                 }

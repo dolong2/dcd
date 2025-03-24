@@ -1,6 +1,7 @@
 package com.dcd.server.presentation.domain.auth
 
 import com.dcd.server.core.domain.auth.dto.response.TokenResDto
+import com.dcd.server.core.domain.auth.model.enums.EmailAuthUsage
 import com.dcd.server.core.domain.auth.usecase.*
 import com.dcd.server.presentation.domain.auth.data.exetension.toDto
 import com.dcd.server.presentation.domain.auth.data.exetension.toReissueResponse
@@ -36,7 +37,7 @@ class AuthWebAdapterTest : BehaviorSpec({
 
     given("EmailSendRequest가 주어지고") {
         val testEmail = "testEmail"
-        val request = EmailSendRequest(testEmail)
+        val request = EmailSendRequest(testEmail, EmailAuthUsage.SIGNUP)
 
         `when`("sendEmail 메서드를 실행할때") {
             every { authMailSendUseCase.execute(any()) } returns Unit

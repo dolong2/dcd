@@ -39,7 +39,7 @@ class EmailCertificateAspect(
             ?: throw InvalidParsingObjectFieldException()
 
         val emailAuthList = queryEmailAuthPort.findByEmail(email)
-            .filter { it.certificate }
+            .filter { it.certificate && it.usage == annotation.usage}
         if (emailAuthList.isEmpty())
             throw NotCertificateEmailException()
 
