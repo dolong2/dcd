@@ -5,7 +5,8 @@ import com.dcd.server.presentation.domain.auth.data.request.*
 
 fun EmailSendRequest.toDto(): EmailSendReqDto =
     EmailSendReqDto(
-        email = this.email
+        email = this.email,
+        usage = this.usage
     )
 
 fun CertificateMailRequest.toDto(): CertificateMailReqDto =

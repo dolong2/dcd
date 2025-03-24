@@ -13,7 +13,7 @@ class AuthMailSendUseCase(
 ) : CoroutineScope by CoroutineScope(Dispatchers.IO){
     fun execute(emailSendReqDto: EmailSendReqDto) {
         launch {
-            emailSendService.sendEmail(emailSendReqDto.email)
+            emailSendService.sendEmail(emailSendReqDto.email, emailSendReqDto.usage)
         }
     }
 }
