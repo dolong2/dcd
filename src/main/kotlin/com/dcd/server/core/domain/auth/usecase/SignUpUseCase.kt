@@ -16,7 +16,7 @@ class SignUpUseCase(
     private val commandUserPort: CommandUserPort,
     private val queryUserPort: QueryUserPort
 ) {
-    @CheckEmailCertificate("#signUpReqDto", EmailAuthUsage.SIGNUP)
+    @CheckEmailCertificate("#signUpReqDto.email", EmailAuthUsage.SIGNUP)
     fun execute(signUpReqDto: SignUpReqDto) {
         if(queryUserPort.existsByEmail(signUpReqDto.email))
             throw AlreadyExistsUserException()

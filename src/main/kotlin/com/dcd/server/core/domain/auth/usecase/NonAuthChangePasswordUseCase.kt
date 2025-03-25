@@ -15,7 +15,7 @@ class NonAuthChangePasswordUseCase(
     private val commandUserPort: CommandUserPort,
     private val passwordEncoder: PasswordEncoder
 ) {
-    @CheckEmailCertificate("#nonAuthChangePasswordReqDto", EmailAuthUsage.CHANGE_PASSWORD)
+    @CheckEmailCertificate("#nonAuthChangePasswordReqDto.email", EmailAuthUsage.CHANGE_PASSWORD)
     fun execute(nonAuthChangePasswordReqDto: NonAuthChangePasswordReqDto) {
         val user = queryUserPort.findByEmail(nonAuthChangePasswordReqDto.email)
             ?: throw UserNotFoundException()
