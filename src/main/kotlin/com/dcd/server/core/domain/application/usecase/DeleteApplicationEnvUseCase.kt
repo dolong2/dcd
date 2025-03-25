@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.common.annotation.Lock
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.exception.ApplicationEnvNotFoundException
@@ -14,6 +15,7 @@ class DeleteApplicationEnvUseCase(
     private val commandApplicationPort: CommandApplicationPort,
     private val workspaceInfo: WorkspaceInfo
 ) {
+    @Lock("#id+#key")
     fun execute(id: String, key: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
@@ -23,6 +25,7 @@ class DeleteApplicationEnvUseCase(
         commandApplicationPort.save(application.copy(env = updatedEnv))
     }
 
+    @Lock("'labels_'+#key")
     fun execute(labels: List<String>, key: String) {
         val workspace = (workspaceInfo.workspace
             ?: throw WorkspaceNotFoundException())

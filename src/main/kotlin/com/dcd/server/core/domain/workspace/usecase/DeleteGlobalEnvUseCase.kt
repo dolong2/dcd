@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.workspace.usecase
 
+import com.dcd.server.core.common.annotation.Lock
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.workspace.exception.GlobalEnvNotFoundException
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
@@ -13,6 +14,7 @@ class DeleteGlobalEnvUseCase(
     private val commandWorkspacePort: CommandWorkspacePort,
     private val validateWorkspaceOwnerService: ValidateWorkspaceOwnerService
 ) {
+    @Lock("#workspaceId+#key")
     fun execute(workspaceId: String, key: String) {
         val workspace = (queryWorkspacePort.findById(workspaceId)
             ?: throw WorkspaceNotFoundException())

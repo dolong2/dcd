@@ -34,7 +34,7 @@ class UpdateApplicationEnvUseCase(
         )
     }
 
-    @Lock("#labels+#envKey")
+    @Lock("'labels_'+#envKey")
     fun execute(labels: List<String>, envKey: String, updateApplicationEnvReqDto: UpdateApplicationEnvReqDto) {
         val workspace = (workspaceInfo.workspace
             ?: throw WorkspaceNotFoundException())

@@ -15,7 +15,7 @@ class UpdateGlobalEnvUseCase(
     private val commandWorkspacePort: CommandWorkspacePort,
     private val validateWorkspaceOwnerService: ValidateWorkspaceOwnerService
 ) {
-    @Lock("#workspaceId")
+    @Lock("#workspaceId+#envKey")
     fun execute(workspaceId: String, envKey: String, updateGlobalEnvReqDto: UpdateGlobalEnvReqDto) {
         val workspace = (queryWorkspacePort.findById(workspaceId)
             ?: throw WorkspaceNotFoundException())
