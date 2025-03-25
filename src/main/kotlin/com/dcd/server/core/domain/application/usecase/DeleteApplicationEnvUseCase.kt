@@ -25,7 +25,7 @@ class DeleteApplicationEnvUseCase(
         commandApplicationPort.save(application.copy(env = updatedEnv))
     }
 
-    @Lock("#labels+#key")
+    @Lock("'labels_'+#key")
     fun execute(labels: List<String>, key: String) {
         val workspace = (workspaceInfo.workspace
             ?: throw WorkspaceNotFoundException())
