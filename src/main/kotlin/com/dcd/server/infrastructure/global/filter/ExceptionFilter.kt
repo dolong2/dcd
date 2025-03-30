@@ -29,7 +29,6 @@ class ExceptionFilter(
                 }
                 else -> {
                     ex.printStackTrace()
-                    log.error(ex.message)
                     val errorCode = ErrorCode.INTERNAL_ERROR
                     logErrorResponse(errorCode, ex)
                     writeErrorResponse(response, BasicException(errorCode))

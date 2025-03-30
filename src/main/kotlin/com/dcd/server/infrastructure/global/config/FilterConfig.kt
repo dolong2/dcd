@@ -2,6 +2,7 @@ package com.dcd.server.infrastructure.global.config
 
 import com.dcd.server.infrastructure.global.filter.ExceptionFilter
 import com.dcd.server.infrastructure.global.filter.JwtReqFilter
+import com.dcd.server.infrastructure.global.filter.RequestInfoLogFilter
 import com.dcd.server.infrastructure.global.jwt.adapter.ParseTokenAdapter
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter
@@ -14,7 +15,8 @@ class FilterConfig(
     private val parseTokenAdapter: ParseTokenAdapter
 ) : SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity>() {
     override fun configure(builder: HttpSecurity) {
-        builder.addFilterBefore(ExceptionFilter(objectMapper), UsernamePasswordAuthenticationFilter::class.java)
-        builder.addFilterBefore(JwtReqFilter(parseTokenAdapter), UsernamePasswordAuthenticationFilter::class.java)
+        builder.addFilterBefore(RequestInfoLogFilter(), UsernamePasswordAuthenticationFilter::class.java)
+        builder.addFilterAfter(ExceptionFilter(objectMapper), RequestInfoLogFilter::class.java)
+        builder.addFilterAfter(JwtReqFilter(parseTokenAdapter), ExceptionFilter::class.java)
     }
 }
