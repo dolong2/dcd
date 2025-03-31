@@ -1,7 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
-import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.application.dto.request.ExecuteCommandReqDto
 import com.dcd.server.core.domain.application.dto.response.CommandResultResDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
@@ -20,8 +19,7 @@ import org.springframework.web.socket.WebSocketSession
 class ExecuteCommandUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val execContainerService: ExecContainerService,
-    private val parseTokenAdapter: ParseTokenAdapter,
-    private val commandPort: CommandPort
+    private val parseTokenAdapter: ParseTokenAdapter
 ) {
     fun execute(applicationId: String, executeCommandReqDto: ExecuteCommandReqDto): CommandResultResDto {
         validateCmd(executeCommandReqDto.command)
@@ -32,8 +30,7 @@ class ExecuteCommandUseCase(
         if (application.status != ApplicationStatus.RUNNING)
             throw InvalidApplicationStatusException()
 
-        val result =
-            commandPort.executeShellCommandWithResult("docker exec ${application.containerName} sh -c 'cd / && ${executeCommandReqDto.command}'")
+        val result = execContainerService.execCmd(application, executeCommandReqDto.command)
 
         return CommandResultResDto(result)
     }
