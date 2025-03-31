@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.service.impl
 
+import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.service.ExecContainerService
 import com.github.dockerjava.api.DockerClient
@@ -14,7 +15,14 @@ import java.util.Stack
 @Service
 class ExecContainerServiceImpl(
     private val dockerClient: DockerClient,
+    private val commandPort: CommandPort
 ) : ExecContainerService {
+    override fun execCmd(application: Application, cmd: String): List<String> =
+        commandPort
+            .executeShellCommandWithResult(
+                "docker exec ${application.containerName} sh -c 'cd / && $cmd'"
+            )
+
     override fun execCmd(application: Application, session: WebSocketSession, cmd: String) {
         val cmdArray = cmd.split(" ").toTypedArray()
 
