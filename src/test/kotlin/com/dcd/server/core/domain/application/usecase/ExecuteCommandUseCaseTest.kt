@@ -1,6 +1,5 @@
 package com.dcd.server.core.domain.application.usecase
 
-import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.application.dto.request.ExecuteCommandReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.exception.InvalidApplicationStatusException
@@ -26,10 +25,9 @@ class ExecuteCommandUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>(relaxUnitFun = true)
     val parseTokenAdapter = mockk<ParseTokenAdapter>(relaxUnitFun = true)
     val execContainerService = mockk<ExecContainerService>(relaxUnitFun = true)
-    val commandPort = mockk<CommandPort>(relaxUnitFun = true)
 
     val executeCommandUseCase =
-        ExecuteCommandUseCase(queryApplicationPort, execContainerService, parseTokenAdapter, commandPort)
+        ExecuteCommandUseCase(queryApplicationPort, execContainerService, parseTokenAdapter)
 
     given("애플리케이션 id, ExecuteCommandReqDto가 주어지고") {
         val applicationId = "testApplicationId"
@@ -37,7 +35,6 @@ class ExecuteCommandUseCaseTest : BehaviorSpec({
         val request = ExecuteCommandReqDto(cmd)
 
         val givenApplication = ApplicationGenerator.generateApplication(id = applicationId, status = ApplicationStatus.RUNNING)
-        val executedCmd = "docker exec ${givenApplication.containerName} sh -c 'cd / && $cmd'"
         val testCmdResult = listOf("test cmd result")
 
         `when`("주어진 아이디를 가진 애플리케이션이 없을때") {
@@ -62,13 +59,13 @@ class ExecuteCommandUseCaseTest : BehaviorSpec({
 
         `when`("execute 메서드를 실행할때") {
             every { queryApplicationPort.findById(applicationId) } returns givenApplication
-            every { commandPort.executeShellCommandWithResult(executedCmd) } returns testCmdResult
+            every { execContainerService.execCmd(givenApplication, cmd) } returns testCmdResult
             val result = executeCommandUseCase.execute(applicationId, request)
 
             then("testCmdResult가 응답에 있어야함") {
                 result.result shouldBe testCmdResult
                 verify { queryApplicationPort.findById(applicationId) }
-                verify { commandPort.executeShellCommandWithResult(executedCmd) }
+                verify { execContainerService.execCmd(givenApplication, cmd) }
             }
         }
     }
