@@ -2,6 +2,7 @@ package com.dcd.server.presentation.domain.workspace
 
 import com.dcd.server.core.domain.workspace.usecase.*
 import com.dcd.server.presentation.common.annotation.WebAdapter
+import com.dcd.server.presentation.common.data.response.ListResponse
 import com.dcd.server.presentation.domain.workspace.data.exetension.toDto
 import com.dcd.server.presentation.domain.workspace.data.exetension.toResponse
 import com.dcd.server.presentation.domain.workspace.data.request.AddGlobalEnvRequest
@@ -11,6 +12,7 @@ import com.dcd.server.presentation.domain.workspace.data.request.UpdateWorkspace
 import com.dcd.server.presentation.domain.workspace.data.response.CreateWorkspaceResponse
 import com.dcd.server.presentation.domain.workspace.data.response.WorkspaceListResponse
 import com.dcd.server.presentation.domain.workspace.data.response.WorkspaceResponse
+import com.dcd.server.presentation.domain.workspace.data.response.WorkspaceSimpleResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -36,9 +38,9 @@ class WorkspaceWebAdapter(
             .run { ResponseEntity(this.toResponse(), HttpStatus.CREATED) }
 
     @GetMapping
-    fun getAllWorkspace(): ResponseEntity<WorkspaceListResponse> =
+    fun getAllWorkspace(): ResponseEntity<ListResponse<WorkspaceSimpleResponse>> =
         getAllWorkspaceUseCase.execute()
-            .let { ResponseEntity.ok(it.toResponse()) }
+            .let { ResponseEntity.ok(ListResponse(it.list.map { resDto -> resDto.toResponse() })) }
 
     @GetMapping("/{workspaceId}")
     fun getOneWorkspace(@PathVariable workspaceId: String): ResponseEntity<WorkspaceResponse> =

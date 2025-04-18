@@ -6,11 +6,13 @@ import com.dcd.server.core.domain.user.usecase.ChangeUserStatusUseCase
 import com.dcd.server.core.domain.user.usecase.GetUserByStatusUseCase
 import com.dcd.server.core.domain.user.usecase.GetUserProfileUseCase
 import com.dcd.server.presentation.common.annotation.WebAdapter
+import com.dcd.server.presentation.common.data.response.ListResponse
 import com.dcd.server.presentation.domain.user.data.exetension.toDto
 import com.dcd.server.presentation.domain.user.data.exetension.toResponse
 import com.dcd.server.presentation.domain.user.data.request.PasswordChangeRequest
 import com.dcd.server.presentation.domain.user.data.response.UserListResponse
 import com.dcd.server.presentation.domain.user.data.response.UserProfileResponse
+import com.dcd.server.presentation.domain.user.data.response.UserResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -43,7 +45,7 @@ class UserWebAdapter(
             .run { ResponseEntity.ok().build() }
 
     @GetMapping
-    fun getUserByStatus(@RequestParam status: Status): ResponseEntity<UserListResponse> =
+    fun getUserByStatus(@RequestParam status: Status): ResponseEntity<ListResponse<UserResponse>> =
         getUserStatusUseCase.execute(status)
-            .let { ResponseEntity.ok(it.toResponse()) }
+            .let { ResponseEntity.ok(ListResponse(it.list.map { resDto -> resDto.toResponse() })) }
 }
