@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.data.WorkspaceInfo
+import com.dcd.server.core.common.data.dto.response.ListResDto
 import com.dcd.server.core.domain.application.dto.extenstion.toDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationListResDto
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -41,7 +42,7 @@ class GetAllApplicationUseCaseTest(
 
         `when`("usecase를 실행할때") {
             val result = getAllApplicationUseCase.execute(null)
-            val target = ApplicationListResDto(applicationList.map { it.toDto() })
+            val target = ListResDto(applicationList.map { it.toDto() })
             then("result는 target이랑 같아야함") {
                 result shouldBe target
             }

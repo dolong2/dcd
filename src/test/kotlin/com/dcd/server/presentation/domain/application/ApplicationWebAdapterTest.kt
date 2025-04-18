@@ -1,11 +1,13 @@
 package com.dcd.server.presentation.domain.application
 
+import com.dcd.server.core.common.data.dto.response.ListResDto
 import com.dcd.server.core.domain.application.dto.request.ExecuteCommandReqDto
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
 import com.dcd.server.core.domain.application.dto.response.*
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.usecase.*
+import com.dcd.server.presentation.common.data.response.ListResponse
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
 import com.dcd.server.presentation.domain.application.data.request.*
 import io.kotest.core.spec.style.BehaviorSpec
@@ -74,12 +76,12 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             failureReason = null
         )
         val list = listOf(applicationResponse)
-        val responseDto = ApplicationListResDto(list)
+        val responseDto = ListResDto(list)
         `when`("getAllApplication 메서드를 실행할때") {
             every { getAllApplicationUseCase.execute(null) } returns responseDto
             val response = applicationWebAdapter.getAllApplication(testWorkspaceId)
             then("응답바디는 targetResponse와 같아야하고 status는 200이여야함") {
-                val targetResponse = responseDto.toResponse()
+                val targetResponse = ListResponse(responseDto.list.map { it.toResponse() })
                 response.body shouldBe targetResponse
                 response.statusCode shouldBe HttpStatus.OK
             }

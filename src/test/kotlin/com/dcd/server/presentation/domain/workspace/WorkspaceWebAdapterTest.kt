@@ -1,5 +1,6 @@
 package com.dcd.server.presentation.domain.workspace
 
+import com.dcd.server.core.common.data.dto.response.ListResDto
 import com.dcd.server.core.domain.user.dto.response.UserResDto
 import com.dcd.server.core.domain.user.model.enums.Status
 import com.dcd.server.core.domain.workspace.dto.request.AddGlobalEnvReqDto
@@ -9,6 +10,7 @@ import com.dcd.server.core.domain.workspace.dto.request.UpdateWorkspaceReqDto
 import com.dcd.server.core.domain.workspace.dto.response.CreateWorkspaceResDto
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceListResDto
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceResDto
+import com.dcd.server.core.domain.workspace.dto.response.WorkspaceSimpleResDto
 import com.dcd.server.core.domain.workspace.usecase.*
 import com.dcd.server.presentation.domain.workspace.data.exetension.toDto
 import com.dcd.server.presentation.domain.workspace.data.exetension.toResponse
@@ -53,8 +55,8 @@ class WorkspaceWebAdapterTest : BehaviorSpec({
     }
 
     given("WorkspaceListResDto가 주어지고") {
-        val responseDto = WorkspaceListResDto(list = listOf())
-        every { getAllWorkspaceUseCase.execute() } returns responseDto
+        val responseDto = listOf<WorkspaceSimpleResDto>()
+        every { getAllWorkspaceUseCase.execute() } returns ListResDto(responseDto)
         `when`("getAllWorkspace 메서드를 실행할때") {
             val result = workspaceWebAdapter.getAllWorkspace()
             then("usecase를 실행해야함") {
