@@ -23,11 +23,6 @@ fun WorkspaceSimpleResDto.toResponse(): WorkspaceSimpleResponse =
         applicationList = this.applicationList.map { it.toResponse() }
     )
 
-fun WorkspaceListResDto.toResponse(): WorkspaceListResponse =
-    WorkspaceListResponse(
-        list = this.list.map { it.toResponse() }
-    )
-
 fun WorkspaceProfileResDto.toResponse(): WorkspaceProfileResponse =
     WorkspaceProfileResponse(
         id = this.id,

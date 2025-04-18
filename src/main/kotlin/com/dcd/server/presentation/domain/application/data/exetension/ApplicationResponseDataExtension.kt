@@ -1,6 +1,5 @@
 package com.dcd.server.presentation.domain.application.data.exetension
 
-import com.dcd.server.core.domain.application.dto.extenstion.toWorkspaceDto
 import com.dcd.server.core.domain.application.dto.response.*
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceApplicationResDto
 import com.dcd.server.presentation.domain.application.data.response.*
@@ -20,11 +19,6 @@ fun ApplicationResDto.toResponse(): ApplicationResponse =
         status = this.status,
         failureReason = this.failureReason,
         labels = this.labels
-    )
-
-fun ApplicationListResDto.toResponse(): ApplicationListResponse =
-    ApplicationListResponse(
-        list = this.list.map { it.toResponse() }
     )
 
 fun ApplicationProfileResDto.toResponse(): ApplicationProfileResponse =
@@ -63,9 +57,4 @@ fun CommandResultResDto.toResponse(): CommandResultResponse =
 fun CreateApplicationResDto.toResponse(): CreateApplicationResponse =
     CreateApplicationResponse(
         applicationId = this.applicationId
-    )
-
-fun ApplicationTypeListResDto.toResponse(): ApplicationTypeListResponse =
-    ApplicationTypeListResponse(
-        list = this.list
     )

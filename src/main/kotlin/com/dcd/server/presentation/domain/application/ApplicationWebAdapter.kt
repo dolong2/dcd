@@ -3,6 +3,7 @@ package com.dcd.server.presentation.domain.application
 import com.dcd.server.core.common.annotation.WorkspaceOwnerVerification
 import com.dcd.server.core.domain.application.usecase.*
 import com.dcd.server.presentation.common.annotation.WebAdapter
+import com.dcd.server.presentation.common.data.response.ListResponse
 import com.dcd.server.presentation.domain.application.data.exetension.toDto
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
 import com.dcd.server.presentation.domain.application.data.request.*
@@ -67,9 +68,9 @@ class ApplicationWebAdapter(
     fun getAllApplication(
         @PathVariable workspaceId: String,
         @RequestParam(required = false) labels: List<String>? = null
-    ): ResponseEntity<ApplicationListResponse> =
+    ): ResponseEntity<ListResponse<ApplicationResponse>> =
         getAllApplicationUseCase.execute(labels)
-            .let { ResponseEntity.ok(it.toResponse()) }
+            .let { ResponseEntity.ok(ListResponse(it.list.map { resDto -> resDto.toResponse() })) }
 
     @GetMapping("/{applicationId}")
     @WorkspaceOwnerVerification("#workspaceId")

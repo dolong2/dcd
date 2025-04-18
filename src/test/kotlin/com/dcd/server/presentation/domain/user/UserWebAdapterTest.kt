@@ -1,8 +1,8 @@
 package com.dcd.server.presentation.domain.user
 
+import com.dcd.server.core.common.data.dto.response.ListResDto
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.dto.extension.toDto
-import com.dcd.server.core.domain.user.dto.response.UserListResDto
 import com.dcd.server.core.domain.user.dto.response.UserProfileResDto
 import com.dcd.server.core.domain.user.model.enums.Status
 import com.dcd.server.core.domain.user.model.User
@@ -10,6 +10,7 @@ import com.dcd.server.core.domain.user.usecase.ChangePasswordUseCase
 import com.dcd.server.core.domain.user.usecase.ChangeUserStatusUseCase
 import com.dcd.server.core.domain.user.usecase.GetUserByStatusUseCase
 import com.dcd.server.core.domain.user.usecase.GetUserProfileUseCase
+import com.dcd.server.presentation.common.data.response.ListResponse
 import com.dcd.server.presentation.domain.user.data.exetension.toResponse
 import com.dcd.server.presentation.domain.user.data.request.PasswordChangeRequest
 import io.kotest.core.spec.style.BehaviorSpec
@@ -78,15 +79,15 @@ class UserWebAdapterTest : BehaviorSpec({
 
         `when`("getUserByStatus 메서드를 실행할때") {
             val user = UserGenerator.generateUser()
-            val userListResDto = UserListResDto(listOf(user.toDto()))
+            val userListResDto = listOf(user.toDto())
 
-            every { getUserByStatusUseCase.execute(status) } returns userListResDto
+            every { getUserByStatusUseCase.execute(status) } returns ListResDto(userListResDto)
 
             val response = userWebAdapter.getUserByStatus(status)
 
             then("상태코드는 200이여야하고, 바디는 userListDto의 정보랑 같아야함") {
                 response.statusCode shouldBe HttpStatus.OK
-                response.body shouldBe userListResDto.toResponse()
+                response.body shouldBe ListResponse(userListResDto.map { it.toResponse() })
             }
         }
     }
