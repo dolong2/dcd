@@ -10,7 +10,6 @@ import com.dcd.server.presentation.domain.workspace.data.request.CreateWorkspace
 import com.dcd.server.presentation.domain.workspace.data.request.UpdateGlobalEnvRequest
 import com.dcd.server.presentation.domain.workspace.data.request.UpdateWorkspaceRequest
 import com.dcd.server.presentation.domain.workspace.data.response.CreateWorkspaceResponse
-import com.dcd.server.presentation.domain.workspace.data.response.WorkspaceListResponse
 import com.dcd.server.presentation.domain.workspace.data.response.WorkspaceResponse
 import com.dcd.server.presentation.domain.workspace.data.response.WorkspaceSimpleResponse
 import org.springframework.http.HttpStatus

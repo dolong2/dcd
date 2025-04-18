@@ -10,7 +10,6 @@ import com.dcd.server.presentation.common.data.response.ListResponse
 import com.dcd.server.presentation.domain.user.data.exetension.toDto
 import com.dcd.server.presentation.domain.user.data.exetension.toResponse
 import com.dcd.server.presentation.domain.user.data.request.PasswordChangeRequest
-import com.dcd.server.presentation.domain.user.data.response.UserListResponse
 import com.dcd.server.presentation.domain.user.data.response.UserProfileResponse
 import com.dcd.server.presentation.domain.user.data.response.UserResponse
 import org.springframework.http.ResponseEntity

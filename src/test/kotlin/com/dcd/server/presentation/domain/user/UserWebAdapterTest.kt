@@ -3,7 +3,6 @@ package com.dcd.server.presentation.domain.user
 import com.dcd.server.core.common.data.dto.response.ListResDto
 import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.user.dto.extension.toDto
-import com.dcd.server.core.domain.user.dto.response.UserListResDto
 import com.dcd.server.core.domain.user.dto.response.UserProfileResDto
 import com.dcd.server.core.domain.user.model.enums.Status
 import com.dcd.server.core.domain.user.model.User

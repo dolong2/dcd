@@ -1,9 +1,7 @@
 package com.dcd.server.presentation.domain.user.data.exetension
 
-import com.dcd.server.core.domain.user.dto.response.UserListResDto
 import com.dcd.server.core.domain.user.dto.response.UserProfileResDto
 import com.dcd.server.core.domain.user.dto.response.UserResDto
-import com.dcd.server.presentation.domain.user.data.response.UserListResponse
 import com.dcd.server.presentation.domain.user.data.response.UserProfileResponse
 import com.dcd.server.presentation.domain.user.data.response.UserResponse
 import com.dcd.server.presentation.domain.workspace.data.exetension.toResponse
@@ -20,9 +18,4 @@ fun UserProfileResDto.toResponse(): UserProfileResponse =
     UserProfileResponse(
         user = this.user.toResponse(),
         workspaces = this.workspaces.map { it.toResponse() }
-    )
-
-fun UserListResDto.toResponse(): UserListResponse =
-    UserListResponse(
-        list = this.list.map { it.toResponse() }
     )
