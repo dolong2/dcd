@@ -2,6 +2,7 @@ package com.dcd.server.presentation.domain.workspace
 
 import com.dcd.server.core.domain.workspace.usecase.*
 import com.dcd.server.presentation.common.annotation.WebAdapter
+import com.dcd.server.presentation.common.data.extension.toResponse
 import com.dcd.server.presentation.common.data.response.ListResponse
 import com.dcd.server.presentation.domain.workspace.data.exetension.toDto
 import com.dcd.server.presentation.domain.workspace.data.exetension.toResponse
@@ -39,7 +40,7 @@ class WorkspaceWebAdapter(
     @GetMapping
     fun getAllWorkspace(): ResponseEntity<ListResponse<WorkspaceSimpleResponse>> =
         getAllWorkspaceUseCase.execute()
-            .let { ResponseEntity.ok(ListResponse(it.list.map { resDto -> resDto.toResponse() })) }
+            .let { ResponseEntity.ok(it.toResponse { resDto -> resDto.toResponse() }) }
 
     @GetMapping("/{workspaceId}")
     fun getOneWorkspace(@PathVariable workspaceId: String): ResponseEntity<WorkspaceResponse> =

@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.user.usecase.ChangeUserStatusUseCase
 import com.dcd.server.core.domain.user.usecase.GetUserByStatusUseCase
 import com.dcd.server.core.domain.user.usecase.GetUserProfileUseCase
 import com.dcd.server.presentation.common.annotation.WebAdapter
+import com.dcd.server.presentation.common.data.extension.toResponse
 import com.dcd.server.presentation.common.data.response.ListResponse
 import com.dcd.server.presentation.domain.user.data.exetension.toDto
 import com.dcd.server.presentation.domain.user.data.exetension.toResponse
@@ -46,5 +47,5 @@ class UserWebAdapter(
     @GetMapping
     fun getUserByStatus(@RequestParam status: Status): ResponseEntity<ListResponse<UserResponse>> =
         getUserStatusUseCase.execute(status)
-            .let { ResponseEntity.ok(ListResponse(it.list.map { resDto -> resDto.toResponse() })) }
+            .let { ResponseEntity.ok(it.toResponse { resDto -> resDto.toResponse() }) }
 }

@@ -4,6 +4,7 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.usecase.GetApplicationTypeUseCase
 import com.dcd.server.core.domain.application.usecase.GetAvailableVersionUseCase
 import com.dcd.server.presentation.common.annotation.WebAdapter
+import com.dcd.server.presentation.common.data.extension.toResponse
 import com.dcd.server.presentation.common.data.response.ListResponse
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
 import com.dcd.server.presentation.domain.application.data.response.AvailableVersionResponse
@@ -24,5 +25,5 @@ class ApplicationStaticWebAdapter(
     @GetMapping("/types")
     fun getApplicationTypes(): ResponseEntity<ListResponse<String>> =
         getApplicationTypeUseCase.execute()
-            .let { ResponseEntity.ok(ListResponse(it.list)) }
+            .let { ResponseEntity.ok(it.toResponse { res -> res }) }
 }
