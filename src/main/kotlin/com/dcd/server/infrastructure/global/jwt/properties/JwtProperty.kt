@@ -9,11 +9,6 @@ class JwtProperty (
     accessSecret: String,
     refreshSecret: String
 ) {
-    val accessSecret: Key
-    val refreshSecret: Key
-
-    init {
-        this.accessSecret = Keys.hmacShaKeyFor(accessSecret.toByteArray())
-        this.refreshSecret = Keys.hmacShaKeyFor(refreshSecret.toByteArray())
-    }
+    val accessSecret: Key = Keys.hmacShaKeyFor(accessSecret.toByteArray())
+    val refreshSecret: Key = Keys.hmacShaKeyFor(refreshSecret.toByteArray())
 }

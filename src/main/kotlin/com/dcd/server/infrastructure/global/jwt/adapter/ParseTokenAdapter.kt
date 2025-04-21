@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.security.Key
 
-
 @Component
 class ParseTokenAdapter(
     private val jwtProperty: JwtProperty,
