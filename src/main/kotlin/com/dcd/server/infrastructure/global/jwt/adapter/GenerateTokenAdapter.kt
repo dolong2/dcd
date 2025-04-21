@@ -2,7 +2,6 @@ package com.dcd.server.infrastructure.global.jwt.adapter
 
 import com.dcd.server.core.domain.auth.dto.response.TokenResDto
 import com.dcd.server.core.domain.auth.model.RefreshToken
-import com.dcd.server.core.domain.auth.model.Role
 import com.dcd.server.core.domain.auth.spi.CommandRefreshTokenPort
 import com.dcd.server.core.domain.auth.spi.JwtPort
 import com.dcd.server.infrastructure.global.jwt.properties.JwtProperty
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Component
 import java.security.Key
 import java.time.LocalDateTime
 import java.util.*
-import kotlin.collections.List
 
 @Component
 class GenerateTokenAdapter(
