@@ -9,7 +9,6 @@ import com.github.dockerjava.transport.DockerHttpClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-
 @Configuration
 class DockerClientConfig {
     @Bean

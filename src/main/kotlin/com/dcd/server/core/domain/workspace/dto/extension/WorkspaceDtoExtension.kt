@@ -1,6 +1,5 @@
 package com.dcd.server.core.domain.workspace.dto.extension
 
-import com.dcd.server.core.domain.application.dto.extenstion.toDto
 import com.dcd.server.core.domain.application.dto.extenstion.toWorkspaceDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationProfileResDto
 import com.dcd.server.core.domain.application.model.Application

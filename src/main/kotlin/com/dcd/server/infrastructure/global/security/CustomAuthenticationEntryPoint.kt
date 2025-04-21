@@ -1,7 +1,6 @@
 package com.dcd.server.infrastructure.global.security
 
 import com.dcd.server.core.common.error.ErrorCode
-import com.dcd.server.presentation.common.error.response.ErrorResponse
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

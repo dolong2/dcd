@@ -2,7 +2,6 @@ package com.dcd.server.persistence.application.entity
 
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import com.dcd.server.persistence.user.entity.UserJpaEntity
 import com.dcd.server.persistence.workspace.entity.WorkspaceJpaEntity
 import jakarta.persistence.*
 import org.hibernate.annotations.GenericGenerator
