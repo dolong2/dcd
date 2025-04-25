@@ -1,6 +1,7 @@
 package com.dcd.server.persistence.workspace.adapter
 
 import com.dcd.server.core.domain.workspace.model.Workspace
+import com.dcd.server.persistence.env.adapter.toDomain
 import com.dcd.server.persistence.user.adapter.toDomain
 import com.dcd.server.persistence.user.adapter.toEntity
 import com.dcd.server.persistence.workspace.entity.WorkspaceJpaEntity
@@ -11,7 +12,7 @@ fun Workspace.toEntity(): WorkspaceJpaEntity =
         id = UUID.fromString(this.id),
         title = this.title,
         description = this.description,
-        globalEnv = this.globalEnv,
+        globalEnv = listOf(),
         owner = this.owner.toEntity()
     )
 
@@ -20,6 +21,6 @@ fun WorkspaceJpaEntity.toDomain(): Workspace =
         id = this.id.toString(),
         title = this.title,
         description = this.description,
-        globalEnv = this.globalEnv,
+        globalEnv = this.globalEnv.map { it.toDomain() },
         owner = this.owner.toDomain()
     )

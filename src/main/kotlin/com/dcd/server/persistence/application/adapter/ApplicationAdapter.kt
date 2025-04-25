@@ -2,6 +2,7 @@ package com.dcd.server.persistence.application.adapter
 
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.persistence.application.entity.ApplicationJpaEntity
+import com.dcd.server.persistence.env.adapter.toDomain
 import com.dcd.server.persistence.workspace.adapter.toDomain
 import com.dcd.server.persistence.workspace.adapter.toEntity
 import java.util.*
@@ -13,7 +14,7 @@ fun Application.toEntity(): ApplicationJpaEntity =
         description = this.description,
         applicationType = this.applicationType,
         githubUrl = this.githubUrl,
-        env = this.env,
+        env = listOf(),
         workspace = this.workspace.toEntity(),
         port = this.port,
         externalPort = this.externalPort,
@@ -30,7 +31,7 @@ fun ApplicationJpaEntity.toDomain(): Application =
         description = this.description,
         applicationType = this.applicationType,
         githubUrl = this.githubUrl,
-        env = this.env,
+        env = this.env.map { it.toDomain() },
         workspace = this.workspace.toDomain(),
         port = this.port,
         externalPort = this.externalPort,
