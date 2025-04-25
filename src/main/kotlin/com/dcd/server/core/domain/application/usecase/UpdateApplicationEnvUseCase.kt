@@ -8,6 +8,7 @@ import com.dcd.server.core.domain.application.exception.ApplicationEnvNotFoundEx
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.env.model.ApplicationEnv
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 
 @UseCase
@@ -21,7 +22,7 @@ class UpdateApplicationEnvUseCase(
         val application = (queryApplicationPort.findById(applicationId)
             ?: throw ApplicationNotFoundException())
 
-        val env = application.env
+        val env = application.env.associate { it.key to it.value }.toMutableMap()
         if (env.containsKey(envKey).not())
             throw ApplicationEnvNotFoundException()
 
@@ -29,7 +30,7 @@ class UpdateApplicationEnvUseCase(
         mutableEnv[envKey] = updateApplicationEnvReqDto.newValue
         commandApplicationPort.save(
             application.copy(
-                env = mutableEnv
+                env = mutableEnv.map { ApplicationEnv(key = it.key, value = it.value, encryption = false) }
             )
         )
     }
@@ -42,13 +43,13 @@ class UpdateApplicationEnvUseCase(
         val applicationList = queryApplicationPort.findAllByWorkspace(workspace, labels)
 
         val updatedApplicationList = applicationList.mapNotNull { application ->
-            val env = application.env
+            val env = application.env.associate { it.key to it.value }.toMutableMap()
             if (env.containsKey(envKey).not())
                 return@mapNotNull null
 
             val mutableEnv = env.toMutableMap()
             mutableEnv[envKey] = updateApplicationEnvReqDto.newValue
-            return@mapNotNull application.copy(env = mutableEnv)
+            return@mapNotNull application.copy(env = mutableEnv.map { ApplicationEnv(key = it.key, value = it.value, encryption = false) })
         }
 
         commandApplicationPort.saveAll(updatedApplicationList)

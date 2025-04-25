@@ -18,7 +18,7 @@ fun Workspace.toDto(applicationList: List<Application>): WorkspaceResDto =
         description = this.description,
         owner = this.owner.toDto(),
         applicationList = applicationList.map { it.toWorkspaceDto() },
-        globalEnv = this.globalEnv
+        globalEnv = this.globalEnv.associate { it.key to it.value }
     )
 
 fun CreateWorkspaceReqDto.toEntity(user: User): Workspace =

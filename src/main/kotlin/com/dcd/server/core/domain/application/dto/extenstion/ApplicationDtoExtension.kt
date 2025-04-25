@@ -5,6 +5,7 @@ import com.dcd.server.core.domain.application.dto.response.ApplicationProfileRes
 import com.dcd.server.core.domain.application.dto.response.ApplicationResDto
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
+import com.dcd.server.core.domain.env.model.ApplicationEnv
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceApplicationResDto
 import com.dcd.server.core.domain.workspace.model.Workspace
 
@@ -14,7 +15,7 @@ fun CreateApplicationReqDto.toEntity(workspace: Workspace, externalPort: Int): A
         description = this.description,
         githubUrl = this.githubUrl,
         applicationType = this.applicationType,
-        env = this.env,
+        env = this.env.map { ApplicationEnv(key = it.key, value = it.value, encryption = false) },
         workspace = workspace,
         port = this.port,
         externalPort = externalPort,
@@ -30,7 +31,7 @@ fun Application.toDto(): ApplicationResDto =
         description = this.description,
         githubUrl = this.githubUrl,
         applicationType = this.applicationType,
-        env = this.env,
+        env = this.env.associate { it.key to it.value },
         port = this.port,
         externalPort = this.externalPort,
         version = this.version,

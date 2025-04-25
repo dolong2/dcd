@@ -8,6 +8,7 @@ import com.dcd.server.core.domain.application.exception.AlreadyExistsEnvExceptio
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.env.model.ApplicationEnv
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 
 @UseCase
@@ -20,13 +21,13 @@ class AddApplicationEnvUseCase(
     fun execute(id: String, addApplicationEnvReqDto: AddApplicationEnvReqDto) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
-        val envMutable = application.env.toMutableMap()
+        val envMutable = application.env.associate { it.key to it.value }.toMutableMap()
         addApplicationEnvReqDto.envList.forEach {
             if (envMutable.containsKey(it.key)) throw AlreadyExistsEnvException()
 
             envMutable[it.key] = it.value
         }
-        commandApplicationPort.save(application.copy(env = envMutable))
+        commandApplicationPort.save(application.copy(env = envMutable.map { ApplicationEnv(key = it.key, value = it.value, encryption = false) }))
     }
 
     @Lock("#labels")
@@ -36,13 +37,13 @@ class AddApplicationEnvUseCase(
         val applicationList = queryApplicationPort.findAllByWorkspace(workspace, labels)
 
         val updatedApplicationList = applicationList.map { application ->
-            val envMutable = application.env.toMutableMap()
+            val envMutable = application.env.associate { it.key to it.value }.toMutableMap()
             addApplicationEnvReqDto.envList.forEach {
                 if (envMutable.containsKey(it.key)) return@forEach
 
                 envMutable[it.key] = it.value
             }
-            application.copy(env = envMutable)
+            application.copy(env = envMutable.map { ApplicationEnv(key = it.key, value = it.value, encryption = false) })
         }
 
         commandApplicationPort.saveAll(updatedApplicationList)
