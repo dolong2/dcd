@@ -2,6 +2,7 @@ package com.dcd.server.persistence.application.entity
 
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
+import com.dcd.server.persistence.env.entity.ApplicationEnvEntity
 import com.dcd.server.persistence.workspace.entity.WorkspaceJpaEntity
 import jakarta.persistence.*
 import org.hibernate.annotations.GenericGenerator
@@ -20,11 +21,8 @@ class ApplicationJpaEntity(
     @Enumerated(EnumType.STRING)
     val applicationType: ApplicationType,
     val githubUrl: String?,
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "application_env_entity", joinColumns = [JoinColumn(name = "application_id", referencedColumnName = "id")])
-    @MapKeyColumn(name = "env_key")
-    @Column(name = "env_value")
-    val env: Map<String, String>,
+    @OneToMany(mappedBy = "application")
+    val env: List<ApplicationEnvEntity>,
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "workspace_id")
     val workspace: WorkspaceJpaEntity,

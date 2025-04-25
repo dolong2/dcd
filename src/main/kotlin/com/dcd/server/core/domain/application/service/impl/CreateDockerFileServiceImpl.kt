@@ -43,8 +43,8 @@ class CreateDockerFileServiceImpl(
 
     private fun createFile(application: Application, version: String, coroutineScope: CoroutineScope) {
         val directoryName = "'${application.name}'"
-        val mutableEnv = application.env.toMutableMap()
-        mutableEnv.putAll(application.workspace.globalEnv)
+        val mutableEnv = application.env.associate { it.key to it.value }.toMutableMap()
+        mutableEnv.putAll(application.workspace.globalEnv.associate { it.key to it.value })
 
         commandPort.executeShellCommand("mkdir -p $directoryName")
             .also {exitValue ->

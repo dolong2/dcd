@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.application.model
 
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
+import com.dcd.server.core.domain.env.model.ApplicationEnv
 import com.dcd.server.core.domain.workspace.model.Workspace
 import java.util.*
 
@@ -11,7 +12,7 @@ data class Application(
     val description: String?,
     val applicationType: ApplicationType,
     val githubUrl: String?,
-    val env: Map<String, String>,
+    val env: List<ApplicationEnv>,
     val version: String,
     val workspace: Workspace,
     val port: Int,

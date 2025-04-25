@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.workspace.usecase
 
 import com.dcd.server.core.common.annotation.Lock
 import com.dcd.server.core.common.annotation.UseCase
+import com.dcd.server.core.domain.env.model.GlobalEnv
 import com.dcd.server.core.domain.workspace.exception.GlobalEnvNotFoundException
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
@@ -21,13 +22,13 @@ class DeleteGlobalEnvUseCase(
 
         validateWorkspaceOwnerService.validateOwner(workspace)
 
-        if (workspace.globalEnv.contains(key).not())
+        if (workspace.globalEnv.associate { it.key to it.value }.contains(key).not())
             throw GlobalEnvNotFoundException()
 
-        val updatedGlobalEnv = workspace.globalEnv.toMutableMap()
+        val updatedGlobalEnv = workspace.globalEnv.associate { it.key to it.value }.toMutableMap()
         updatedGlobalEnv.remove(key)
 
-        val updatedWorkspace = workspace.copy(globalEnv = updatedGlobalEnv)
+        val updatedWorkspace = workspace.copy(globalEnv = updatedGlobalEnv.map { GlobalEnv(key = it.key, value = it.value, encryption = false) })
         commandWorkspacePort.save(updatedWorkspace)
     }
 }
