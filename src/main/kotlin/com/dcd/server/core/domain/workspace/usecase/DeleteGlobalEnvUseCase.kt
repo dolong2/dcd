@@ -2,17 +2,16 @@ package com.dcd.server.core.domain.workspace.usecase
 
 import com.dcd.server.core.common.annotation.Lock
 import com.dcd.server.core.common.annotation.UseCase
-import com.dcd.server.core.domain.env.model.GlobalEnv
+import com.dcd.server.core.domain.env.spi.CommandGlobalEnvPort
 import com.dcd.server.core.domain.workspace.exception.GlobalEnvNotFoundException
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
-import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 
 @UseCase
 class DeleteGlobalEnvUseCase(
     private val queryWorkspacePort: QueryWorkspacePort,
-    private val commandWorkspacePort: CommandWorkspacePort,
+    private val commandGlobalEnvPort: CommandGlobalEnvPort,
     private val validateWorkspaceOwnerService: ValidateWorkspaceOwnerService
 ) {
     @Lock("#workspaceId+#key")
@@ -22,13 +21,8 @@ class DeleteGlobalEnvUseCase(
 
         validateWorkspaceOwnerService.validateOwner(workspace)
 
-        if (workspace.globalEnv.associate { it.key to it.value }.contains(key).not())
-            throw GlobalEnvNotFoundException()
-
-        val updatedGlobalEnv = workspace.globalEnv.associate { it.key to it.value }.toMutableMap()
-        updatedGlobalEnv.remove(key)
-
-        val updatedWorkspace = workspace.copy(globalEnv = updatedGlobalEnv.map { GlobalEnv(key = it.key, value = it.value, encryption = false) })
-        commandWorkspacePort.save(updatedWorkspace)
+        val globalEnv = (workspace.globalEnv.find { it.key == key }
+            ?: throw GlobalEnvNotFoundException())
+        commandGlobalEnvPort.delete(globalEnv)
     }
 }
