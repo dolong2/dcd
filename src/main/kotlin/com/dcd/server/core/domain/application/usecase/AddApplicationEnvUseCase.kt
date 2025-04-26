@@ -6,28 +6,34 @@ import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.dto.request.AddApplicationEnvReqDto
 import com.dcd.server.core.domain.application.exception.AlreadyExistsEnvException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
-import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.env.model.ApplicationEnv
+import com.dcd.server.core.domain.env.spi.CommandApplicationEnvPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 
 @UseCase
 class AddApplicationEnvUseCase(
     private val queryApplicationPort: QueryApplicationPort,
-    private val commandApplicationPort: CommandApplicationPort,
-    private val workspaceInfo: WorkspaceInfo
+    private val workspaceInfo: WorkspaceInfo,
+    private val commandApplicationEnvPort: CommandApplicationEnvPort
 ) {
     @Lock("#id")
     fun execute(id: String, addApplicationEnvReqDto: AddApplicationEnvReqDto) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
-        val envMutable = application.env.associate { it.key to it.value }.toMutableMap()
-        addApplicationEnvReqDto.envList.forEach {
-            if (envMutable.containsKey(it.key)) throw AlreadyExistsEnvException()
 
-            envMutable[it.key] = it.value
+        val env = application.env
+        val applicationEnvList = addApplicationEnvReqDto.envList.map { addEnv ->
+            if (env.any { it.key == addEnv.key }) throw AlreadyExistsEnvException()
+
+            ApplicationEnv(
+                key = addEnv.key,
+                value = addEnv.value,
+                encryption = false
+            )
         }
-        commandApplicationPort.save(application.copy(env = envMutable.map { ApplicationEnv(key = it.key, value = it.value, encryption = false) }))
+
+        commandApplicationEnvPort.saveAll(applicationEnvList, application)
     }
 
     @Lock("#labels")
@@ -36,16 +42,19 @@ class AddApplicationEnvUseCase(
             ?: throw WorkspaceNotFoundException()
         val applicationList = queryApplicationPort.findAllByWorkspace(workspace, labels)
 
-        val updatedApplicationList = applicationList.map { application ->
-            val envMutable = application.env.associate { it.key to it.value }.toMutableMap()
-            addApplicationEnvReqDto.envList.forEach {
-                if (envMutable.containsKey(it.key)) return@forEach
+        applicationList.forEach { application ->
+            val env = application.env
+            val applicationEnvList = addApplicationEnvReqDto.envList.map { addEnv ->
+                if (env.any { it.key == addEnv.key }) throw AlreadyExistsEnvException()
 
-                envMutable[it.key] = it.value
+                ApplicationEnv(
+                    key = addEnv.key,
+                    value = addEnv.value,
+                    encryption = false
+                )
             }
-            application.copy(env = envMutable.map { ApplicationEnv(key = it.key, value = it.value, encryption = false) })
-        }
 
-        commandApplicationPort.saveAll(updatedApplicationList)
+            commandApplicationEnvPort.saveAll(applicationEnvList, application)
+        }
     }
 }
