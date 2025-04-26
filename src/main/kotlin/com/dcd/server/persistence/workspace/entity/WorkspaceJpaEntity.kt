@@ -15,7 +15,7 @@ class WorkspaceJpaEntity(
     val id: UUID = UUID.randomUUID(),
     val title: String,
     val description: String,
-    @OneToMany(mappedBy = "workspace")
+    @OneToMany(mappedBy = "workspace", cascade = [CascadeType.REMOVE])
     val globalEnv: List<GlobalEnvEntity>,
     @ManyToOne
     @JoinColumn(name = "owner_id")
