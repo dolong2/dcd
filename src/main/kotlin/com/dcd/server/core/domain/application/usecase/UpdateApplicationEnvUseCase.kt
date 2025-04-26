@@ -8,21 +8,22 @@ import com.dcd.server.core.domain.application.exception.ApplicationEnvNotFoundEx
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.env.spi.CommandApplicationEnvPort
+import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 
 @UseCase
 class UpdateApplicationEnvUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val workspaceInfo: WorkspaceInfo,
-    private val commandApplicationEnvPort: CommandApplicationEnvPort
+    private val commandApplicationEnvPort: CommandApplicationEnvPort,
+    private val queryApplicationEnvPort: QueryApplicationEnvPort
 ) {
     @Lock("#applicationId+#envKey")
     fun execute(applicationId: String, envKey: String, updateApplicationEnvReqDto: UpdateApplicationEnvReqDto) {
         val application = (queryApplicationPort.findById(applicationId)
             ?: throw ApplicationNotFoundException())
 
-        val env = application.env
-        val applicationEnv = (env.find { it.key == envKey }
+        val applicationEnv = (queryApplicationEnvPort.findByKeyAndApplication(envKey, application)
             ?: throw ApplicationEnvNotFoundException())
 
         applicationEnv.value = updateApplicationEnvReqDto.newValue
