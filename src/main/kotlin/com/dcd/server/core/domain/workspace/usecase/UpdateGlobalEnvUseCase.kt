@@ -2,19 +2,18 @@ package com.dcd.server.core.domain.workspace.usecase
 
 import com.dcd.server.core.common.annotation.Lock
 import com.dcd.server.core.common.annotation.UseCase
-import com.dcd.server.core.domain.env.model.GlobalEnv
+import com.dcd.server.core.domain.env.spi.CommandGlobalEnvPort
 import com.dcd.server.core.domain.workspace.dto.request.UpdateGlobalEnvReqDto
 import com.dcd.server.core.domain.workspace.exception.GlobalEnvNotFoundException
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
-import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 
 @UseCase
 class UpdateGlobalEnvUseCase(
     private val queryWorkspacePort: QueryWorkspacePort,
-    private val commandWorkspacePort: CommandWorkspacePort,
-    private val validateWorkspaceOwnerService: ValidateWorkspaceOwnerService
+    private val validateWorkspaceOwnerService: ValidateWorkspaceOwnerService,
+    private val commandGlobalEnvPort: CommandGlobalEnvPort
 ) {
     @Lock("#workspaceId+#envKey")
     fun execute(workspaceId: String, envKey: String, updateGlobalEnvReqDto: UpdateGlobalEnvReqDto) {
@@ -23,13 +22,9 @@ class UpdateGlobalEnvUseCase(
 
         validateWorkspaceOwnerService.validateOwner(workspace)
 
-        val mutableEnv = workspace.globalEnv.associate { it.key to it.value }.toMutableMap()
-        if (mutableEnv.containsKey(envKey).not())
-            throw GlobalEnvNotFoundException()
-
-        mutableEnv[envKey] = updateGlobalEnvReqDto.newValue
-
-        val newWorkspace = workspace.copy(globalEnv = mutableEnv.map { GlobalEnv(key = it.key, value = it.value, encryption = false) })
-        commandWorkspacePort.save(newWorkspace)
+        val globalEnv = (workspace.globalEnv.find { it.key == envKey }
+            ?: throw GlobalEnvNotFoundException())
+        globalEnv.value = updateGlobalEnvReqDto.newValue
+        commandGlobalEnvPort.save(globalEnv, workspace)
     }
 }
