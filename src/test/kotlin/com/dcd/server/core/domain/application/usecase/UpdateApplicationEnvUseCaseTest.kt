@@ -6,6 +6,9 @@ import com.dcd.server.core.domain.application.exception.ApplicationEnvNotFoundEx
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.env.model.ApplicationEnv
+import com.dcd.server.core.domain.env.spi.CommandApplicationEnvPort
+import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import io.kotest.assertions.throwables.shouldThrow
@@ -27,17 +30,22 @@ class UpdateApplicationEnvUseCaseTest(
     private val queryApplicationPort: QueryApplicationPort,
     private val commandApplicationPort: CommandApplicationPort,
     private val queryUserPort: QueryUserPort,
-    private val commandWorkspacePort: CommandWorkspacePort
+    private val commandWorkspacePort: CommandWorkspacePort,
+    private val commandApplicationEnvPort: CommandApplicationEnvPort,
+    private val queryApplicationEnvPort: QueryApplicationEnvPort
 ) : BehaviorSpec({
     val applicationId = "2fb0f315-8272-422f-8e9f-c4f765c022b2"
     val key = "testKey"
+    val targetApplicationEnvId = UUID.randomUUID()
 
     beforeContainer {
         val user = queryUserPort.findById("1e1973eb-3fb9-47ac-9342-c16cd63ffc6f")!!
         val workspace = WorkspaceGenerator.generateWorkspace(user = user)
         commandWorkspacePort.save(workspace)
-        val application = ApplicationGenerator.generateApplication(id = applicationId, env = mapOf(Pair("testKey", "testValue")), workspace = workspace)
+        val application = ApplicationGenerator.generateApplication(id = applicationId, workspace = workspace)
+        val applicationEnv = ApplicationEnv(id = targetApplicationEnvId, key = "testKey", value = "testValue", encryption = false)
         commandApplicationPort.save(application)
+        commandApplicationEnvPort.save(applicationEnv, application)
     }
 
     given("애플리케이션 아이디와 수정할 환경변수값이 주어지고") {
@@ -48,10 +56,11 @@ class UpdateApplicationEnvUseCaseTest(
             updateApplicationEnvUseCase.execute(applicationId, key, request)
 
             then("애플리케이션의 env를 변경해서 저장해야함") {
-                val application = queryApplicationPort.findById(applicationId)
+                val application = queryApplicationPort.findById(applicationId)!!
 
-                application shouldNotBe null
-                application!!.env[key] shouldBe request.newValue
+                val applicationEnv = queryApplicationEnvPort.findByKeyAndApplication(key, application)
+                applicationEnv shouldNotBe null
+                applicationEnv!!.value shouldBe request.newValue
             }
         }
     }

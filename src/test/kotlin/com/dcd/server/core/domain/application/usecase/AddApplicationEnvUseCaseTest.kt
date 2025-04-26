@@ -3,8 +3,7 @@ package com.dcd.server.core.domain.application.usecase
 import com.dcd.server.core.domain.application.dto.request.AddApplicationEnvReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
-import com.dcd.server.core.domain.user.spi.QueryUserPort
-import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -19,18 +18,10 @@ import java.util.UUID
 @ActiveProfiles("test")
 class AddApplicationEnvUseCaseTest(
     private val addApplicationEnvUseCase: AddApplicationEnvUseCase,
-    private val queryUserPort: QueryUserPort,
-    private val queryWorkspacePort: QueryWorkspacePort,
-    private val queryApplicationPort: QueryApplicationPort
+    private val queryApplicationPort: QueryApplicationPort,
+    private val queryApplicationEnvPort: QueryApplicationEnvPort
 ) : BehaviorSpec({
-    var targetApplicationId = ""
-    beforeSpec {
-        val targetUser = queryUserPort.findById("923a6407-a5f8-4e1e-bffd-0621910ddfc8")!!
-
-        val workspace = queryWorkspacePort.findByUser(targetUser).first()
-        val application = queryApplicationPort.findAllByWorkspace(workspace).first()
-        targetApplicationId = application.id
-    }
+    val targetApplicationId = "2fb0f315-8272-422f-8e9f-c4f765c022b2"
 
     given("애플리케이션 아이디와 request가 주어지고") {
         val request = AddApplicationEnvReqDto(
@@ -41,8 +32,9 @@ class AddApplicationEnvUseCaseTest(
             then("타겟 애플리케이션에 환경변수가 추가되어야함") {
                 val result = queryApplicationPort.findById(targetApplicationId)
                 result shouldNotBe null
-                result!!.env["testA"] shouldNotBe null
-                result.env["testA"] shouldBe "testB"
+
+                val appEnv = queryApplicationEnvPort.findByKeyAndApplication("testA", result!!)
+                appEnv?.value shouldBe "testB"
             }
         }
     }

@@ -21,7 +21,7 @@ class ApplicationJpaEntity(
     @Enumerated(EnumType.STRING)
     val applicationType: ApplicationType,
     val githubUrl: String?,
-    @OneToMany(mappedBy = "application")
+    @OneToMany(mappedBy = "application", cascade = [CascadeType.REMOVE])
     val env: List<ApplicationEnvEntity>,
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "workspace_id")

@@ -6,33 +6,28 @@ import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationEnvReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationEnvNotFoundException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
-import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
-import com.dcd.server.core.domain.env.model.ApplicationEnv
+import com.dcd.server.core.domain.env.spi.CommandApplicationEnvPort
+import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 
 @UseCase
 class UpdateApplicationEnvUseCase(
     private val queryApplicationPort: QueryApplicationPort,
-    private val commandApplicationPort: CommandApplicationPort,
-    private val workspaceInfo: WorkspaceInfo
+    private val workspaceInfo: WorkspaceInfo,
+    private val commandApplicationEnvPort: CommandApplicationEnvPort,
+    private val queryApplicationEnvPort: QueryApplicationEnvPort
 ) {
     @Lock("#applicationId+#envKey")
     fun execute(applicationId: String, envKey: String, updateApplicationEnvReqDto: UpdateApplicationEnvReqDto) {
         val application = (queryApplicationPort.findById(applicationId)
             ?: throw ApplicationNotFoundException())
 
-        val env = application.env.associate { it.key to it.value }.toMutableMap()
-        if (env.containsKey(envKey).not())
-            throw ApplicationEnvNotFoundException()
+        val applicationEnv = (queryApplicationEnvPort.findByKeyAndApplication(envKey, application)
+            ?: throw ApplicationEnvNotFoundException())
 
-        val mutableEnv = env.toMutableMap()
-        mutableEnv[envKey] = updateApplicationEnvReqDto.newValue
-        commandApplicationPort.save(
-            application.copy(
-                env = mutableEnv.map { ApplicationEnv(key = it.key, value = it.value, encryption = false) }
-            )
-        )
+        applicationEnv.value = updateApplicationEnvReqDto.newValue
+        commandApplicationEnvPort.save(applicationEnv, application)
     }
 
     @Lock("'labels_'+#envKey")
@@ -40,18 +35,18 @@ class UpdateApplicationEnvUseCase(
         val workspace = (workspaceInfo.workspace
             ?: throw WorkspaceNotFoundException())
 
-        val applicationList = queryApplicationPort.findAllByWorkspace(workspace, labels)
+        val applicationEnvList = queryApplicationPort.findAllByWorkspace(workspace, labels)
+            .associateWith { it.env }
+            .filter { it.value.any { env -> env.key == envKey } }
 
-        val updatedApplicationList = applicationList.mapNotNull { application ->
-            val env = application.env.associate { it.key to it.value }.toMutableMap()
-            if (env.containsKey(envKey).not())
-                return@mapNotNull null
+        applicationEnvList.forEach {
+            val application = it.key
 
-            val mutableEnv = env.toMutableMap()
-            mutableEnv[envKey] = updateApplicationEnvReqDto.newValue
-            return@mapNotNull application.copy(env = mutableEnv.map { ApplicationEnv(key = it.key, value = it.value, encryption = false) })
+            it.value.forEach { env ->
+                env.value = updateApplicationEnvReqDto.newValue
+            }
+
+            commandApplicationEnvPort.saveAll(it.value, application)
         }
-
-        commandApplicationPort.saveAll(updatedApplicationList)
     }
 }

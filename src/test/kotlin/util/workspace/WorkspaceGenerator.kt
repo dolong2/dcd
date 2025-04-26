@@ -1,5 +1,6 @@
 package util.workspace
 
+import com.dcd.server.core.domain.env.model.GlobalEnv
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.workspace.model.Workspace
 import util.user.UserGenerator
@@ -11,7 +12,7 @@ object WorkspaceGenerator {
         title: String = "testTitle",
         description: String = "testDescription",
         user: User = UserGenerator.generateUser(),
-        globalEnv: Map<String, String> = mapOf()
+        globalEnv: List<GlobalEnv> = listOf()
     ): Workspace =
         Workspace(
             id = id,
