@@ -42,7 +42,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
                 }
                 actualFileContent.deleteAt(actualFileContent.length - 1)
 
-                actualFileContent.toString() shouldBe FileContent.getSpringBootDockerFileContent(application.version, application.port, application.env)
+                actualFileContent.toString() shouldBe FileContent.getSpringBootDockerFileContent(application.version, application.port, application.env.associate { it.key to it.value})
             }
         }
 
@@ -68,7 +68,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
                     actualFileContent.append(it + "\n")
                 }
 
-                actualFileContent.toString() shouldBe FileContent.getRedisDockerFileContent(application.version, application.port, application.env)
+                actualFileContent.toString() shouldBe FileContent.getRedisDockerFileContent(application.version, application.port, application.env.associate { it.key to it.value})
             }
         }
 
@@ -94,7 +94,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
                     actualFileContent.append(it + "\n")
                 }
 
-                actualFileContent.toString() shouldBe FileContent.getMYSQLDockerFileContent(application.version, application.port, application.env)
+                actualFileContent.toString() shouldBe FileContent.getMYSQLDockerFileContent(application.version, application.port, application.env.associate { it.key to it.value})
             }
         }
 
@@ -120,7 +120,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
                     actualFileContent.append(it + "\n")
                 }
 
-                actualFileContent.toString() shouldBe FileContent.getMARIADBDockerFileContent(application.version, application.port, application.env)
+                actualFileContent.toString() shouldBe FileContent.getMARIADBDockerFileContent(application.version, application.port, application.env.associate { it.key to it.value})
             }
         }
 

@@ -19,19 +19,10 @@ import org.springframework.transaction.annotation.Transactional
 @ActiveProfiles("test")
 class DeleteApplicationUseCaseTest(
     private val deleteApplicationUseCase: DeleteApplicationUseCase,
-    private val queryWorkspacePort: QueryWorkspacePort,
-    private val queryUserPort: QueryUserPort,
     private val queryApplicationPort: QueryApplicationPort,
     private val commandApplicationPort: CommandApplicationPort
 ) : BehaviorSpec({
-    val targetUserId = "923a6407-a5f8-4e1e-bffd-0621910ddfc8"
-    var targetApplicationId = ""
-
-    beforeSpec {
-        val user = queryUserPort.findById(targetUserId)!!
-        val workspace = queryWorkspacePort.findByUser(user).first()
-        targetApplicationId = queryApplicationPort.findAllByWorkspace(workspace).first().id
-    }
+    val targetApplicationId = "2fb0f315-8272-422f-8e9f-c4f765c022b2"
 
     given("애플리케이션 id가 주어지고") {
 

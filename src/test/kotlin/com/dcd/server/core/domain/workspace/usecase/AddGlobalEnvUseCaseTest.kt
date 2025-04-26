@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.workspace.usecase
 
+import com.dcd.server.core.domain.env.spi.QueryGlobalEnvPort
 import com.dcd.server.core.domain.user.spi.CommandUserPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.dto.request.AddGlobalEnvReqDto
@@ -10,10 +11,10 @@ import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import com.dcd.server.infrastructure.global.security.auth.AuthDetailsService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import util.user.UserGenerator
-import util.workspace.WorkspaceGenerator
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import util.user.UserGenerator
+import util.workspace.WorkspaceGenerator
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -30,7 +31,8 @@ class AddGlobalEnvUseCaseTest(
     private val queryUserPort: QueryUserPort,
     private val queryWorkspacePort: QueryWorkspacePort,
     private val commandWorkspacePort: CommandWorkspacePort,
-    private val commandUserPort: CommandUserPort
+    private val commandUserPort: CommandUserPort,
+    private val queryGlobalEnvPort: QueryGlobalEnvPort
 ) : BehaviorSpec({
     val userId = "1e1973eb-3fb9-47ac-9342-c16cd63ffc6f"
     val targetWorkspaceId = "d57b42f5-5cc4-440b-8dce-b4fc2e372eff"
@@ -55,9 +57,9 @@ class AddGlobalEnvUseCaseTest(
             then("워크스페이스의 env를 저장해야함") {
                 val resultWorkspace = queryWorkspacePort.findById(targetWorkspaceId)
 
-                resultWorkspace shouldNotBe null
-                val resultGlobalEnv = resultWorkspace?.globalEnv
-                resultGlobalEnv?.get("testKey") shouldBe "testValue"
+                val globalEnv = queryGlobalEnvPort.findByKeyAndWorkspace("testKey", resultWorkspace!!)
+                globalEnv shouldNotBe null
+                globalEnv!!.value shouldBe "testValue"
             }
         }
 

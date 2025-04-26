@@ -3,6 +3,7 @@ package util.application
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
+import com.dcd.server.core.domain.env.model.ApplicationEnv
 import com.dcd.server.core.domain.workspace.model.Workspace
 import util.workspace.WorkspaceGenerator
 import java.util.*
@@ -13,7 +14,7 @@ object ApplicationGenerator {
         name: String = "testName",
         description: String = "testDescription",
         applicationType: ApplicationType = ApplicationType.SPRING_BOOT,
-        env: Map<String, String> = mapOf(),
+        env: List<ApplicationEnv> = listOf(),
         githubUrl: String = "testUrl",
         version: String = "17",
         workspace: Workspace = WorkspaceGenerator.generateWorkspace(),
