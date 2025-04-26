@@ -5,25 +5,25 @@ import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.exception.ApplicationEnvNotFoundException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
-import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
-import com.dcd.server.core.domain.env.model.ApplicationEnv
+import com.dcd.server.core.domain.env.spi.CommandApplicationEnvPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 
 @UseCase
 class DeleteApplicationEnvUseCase(
     private val queryApplicationPort: QueryApplicationPort,
-    private val commandApplicationPort: CommandApplicationPort,
-    private val workspaceInfo: WorkspaceInfo
+    private val workspaceInfo: WorkspaceInfo,
+    private val commandApplicationEnvPort: CommandApplicationEnvPort
 ) {
     @Lock("#id+#key")
     fun execute(id: String, key: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
-        val updatedEnv = application.env.associate { it.key to it.value }.toMutableMap()
-        updatedEnv.remove(key)
-            ?: throw ApplicationEnvNotFoundException()
-        commandApplicationPort.save(application.copy(env = updatedEnv.map { ApplicationEnv(key = it.key, value = it.value, encryption = false) }))
+
+        val applicationEnv = (application.env.find { it.key == key }
+            ?: throw ApplicationEnvNotFoundException())
+
+        commandApplicationEnvPort.delete(applicationEnv)
     }
 
     @Lock("'labels_'+#key")
@@ -31,17 +31,10 @@ class DeleteApplicationEnvUseCase(
         val workspace = (workspaceInfo.workspace
             ?: throw WorkspaceNotFoundException())
 
-        val applicationList = queryApplicationPort.findAllByWorkspace(workspace, labels)
-        val updatedApplicationList = applicationList.mapNotNull { application ->
-            val env = application.env
+        val envList = queryApplicationPort.findAllByWorkspace(workspace, labels)
+            .flatMap { it.env }
+            .filter { it.key == key }
 
-            val mutableEnv = env.associate { it.key to it.value }.toMutableMap()
-            mutableEnv.remove(key)
-                ?: return@mapNotNull null
-
-            return@mapNotNull application.copy(env = mutableEnv.map { ApplicationEnv(key = it.key, value = it.value, encryption = false) })
-        }
-
-        commandApplicationPort.saveAll(updatedApplicationList)
+        commandApplicationEnvPort.deleteAll(envList)
     }
 }
