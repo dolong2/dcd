@@ -10,7 +10,6 @@ data class CreateApplicationRequest(
     val name: String,
     val description: String?,
     val githubUrl: String?,
-    val env: Map<String, String>,
     val applicationType: ApplicationType,
     val port: Int,
     val version: String,

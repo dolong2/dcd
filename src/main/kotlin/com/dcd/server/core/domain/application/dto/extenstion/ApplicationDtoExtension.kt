@@ -15,7 +15,7 @@ fun CreateApplicationReqDto.toEntity(workspace: Workspace, externalPort: Int): A
         description = this.description,
         githubUrl = this.githubUrl,
         applicationType = this.applicationType,
-        env = this.env.map { ApplicationEnv(key = it.key, value = it.value, encryption = false) },
+        env = listOf(),
         workspace = workspace,
         port = this.port,
         externalPort = externalPort,
