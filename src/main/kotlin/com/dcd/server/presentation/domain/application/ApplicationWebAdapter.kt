@@ -78,7 +78,7 @@ class ApplicationWebAdapter(
         getOneApplicationUseCase.execute(applicationId)
             .let { ResponseEntity.ok(it.toResponse()) }
 
-    @PostMapping("/{applicationId}/env")
+    @PutMapping("/{applicationId}/env")
     @WorkspaceOwnerVerification("#workspaceId")
     fun putApplicationEnv(
         @PathVariable workspaceId: String,
@@ -88,7 +88,7 @@ class ApplicationWebAdapter(
         putApplicationEnvUseCase.execute(applicationId, putApplicationEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
-    @PostMapping("/env")
+    @PutMapping("/env")
     @WorkspaceOwnerVerification("#workspaceId")
     fun putApplicationEnvWithLabels(
         @PathVariable workspaceId: String,

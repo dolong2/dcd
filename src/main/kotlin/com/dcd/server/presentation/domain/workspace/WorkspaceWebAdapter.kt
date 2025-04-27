@@ -61,7 +61,7 @@ class WorkspaceWebAdapter(
         updateWorkspaceUseCase.execute(workspaceId, updateWorkspaceRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
-    @PostMapping("/{workspaceId}/env")
+    @PutMapping("/{workspaceId}/env")
     fun putGlobalEnv(@PathVariable workspaceId: String, @RequestBody putGlobalEnvRequest: PutGlobalEnvRequest): ResponseEntity<Void> =
         putGlobalEnvUseCase.execute(workspaceId, putGlobalEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
