@@ -13,7 +13,6 @@ enum class ErrorCode(
     NOT_SUPPORTED_APPLICATION_TYPE("지원되는 애플리케이션 타입이 아님", 400),
     APPLICATION_ALREADY_RUNNING("해당 애플리케이션은 이미 실행중임", 400),
     APPLICATION_ALREADY_STOPPED("해당 애플리케이션은 이미 정지됨", 400),
-    ALREADY_EXISTS_APPLICATION_ENV("해당 키값을 가지는 환경변수가 이미 존재함", 400),
     INVALID_CMD("올바르지 않은 커맨드 형식", 400),
     INVALID_DOMAIN_FORMAT("도매인 포맷이 올바르지 않음", 400),
     FAILURE_HTTP_CONFIG("Http 설정 생성에 실패함", 400),

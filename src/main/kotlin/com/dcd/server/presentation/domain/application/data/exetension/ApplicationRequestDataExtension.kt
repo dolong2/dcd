@@ -4,8 +4,8 @@ import com.dcd.server.core.domain.application.dto.request.*
 import com.dcd.server.presentation.domain.application.data.request.*
 import com.dcd.server.presentation.domain.env.data.extension.toDto
 
-fun AddApplicationEnvRequest.toDto(): AddApplicationEnvReqDto =
-    AddApplicationEnvReqDto(
+fun PutApplicationEnvRequest.toDto(): PutApplicationEnvReqDto =
+    PutApplicationEnvReqDto(
         envList = this.envList.map { it.toDto() }
     )
 
@@ -28,11 +28,6 @@ fun UpdateApplicationRequest.toDto(): UpdateApplicationReqDto =
         githubUrl = this.githubUrl,
         version = this.version,
         port = this.port
-    )
-
-fun UpdateApplicationEnvRequest.toDto(): UpdateApplicationEnvReqDto =
-    UpdateApplicationEnvReqDto(
-        newValue = this.newValue
     )
 
 fun ExecuteCommandRequest.toDto(): ExecuteCommandReqDto =

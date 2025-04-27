@@ -1,9 +1,10 @@
 package com.dcd.server.core.domain.workspace.usecase
 
+import com.dcd.server.core.domain.env.dto.request.PutEnvReqDto
 import com.dcd.server.core.domain.env.spi.QueryGlobalEnvPort
 import com.dcd.server.core.domain.user.spi.CommandUserPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
-import com.dcd.server.core.domain.workspace.dto.request.AddGlobalEnvReqDto
+import com.dcd.server.core.domain.workspace.dto.request.PutGlobalEnvReqDto
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
@@ -25,8 +26,8 @@ import java.util.UUID
 @Transactional
 @SpringBootTest
 @ActiveProfiles("test")
-class AddGlobalEnvUseCaseTest(
-    private val addGlobalEnvUseCase: AddGlobalEnvUseCase,
+class PutGlobalEnvUseCaseTest(
+    private val putGlobalEnvUseCase: PutGlobalEnvUseCase,
     private val authDetailsService: AuthDetailsService,
     private val queryUserPort: QueryUserPort,
     private val queryWorkspacePort: QueryWorkspacePort,
@@ -48,11 +49,11 @@ class AddGlobalEnvUseCaseTest(
     }
 
     given("추가할 env가 주어지고") {
-        val testEnvList = mapOf("testKey" to "testValue")
-        val addGlobalEnvReqDto = AddGlobalEnvReqDto(testEnvList)
+        val testEnvList = listOf(PutEnvReqDto("testKey", "testValue"))
+        val putGlobalEnvReqDto = PutGlobalEnvReqDto(testEnvList)
 
         `when`("useCase를 실행할때") {
-            addGlobalEnvUseCase.execute(targetWorkspaceId, addGlobalEnvReqDto)
+            putGlobalEnvUseCase.execute(targetWorkspaceId, putGlobalEnvReqDto)
 
             then("워크스페이스의 env를 저장해야함") {
                 val resultWorkspace = queryWorkspacePort.findById(targetWorkspaceId)
@@ -71,7 +72,7 @@ class AddGlobalEnvUseCaseTest(
 
             then("WorkspaceOwnerNotSameException이 발생해야함") {
                 shouldThrow<WorkspaceOwnerNotSameException> {
-                    addGlobalEnvUseCase.execute(targetWorkspaceId, addGlobalEnvReqDto)
+                    putGlobalEnvUseCase.execute(targetWorkspaceId, putGlobalEnvReqDto)
                 }
             }
         }
@@ -79,14 +80,14 @@ class AddGlobalEnvUseCaseTest(
 
     given("존재하지 않은 워크스페이스 아이디가 주어지고") {
         val givenWorkspaceId = UUID.randomUUID().toString()
-        val testEnvList = mapOf("testKey" to "testValue")
-        val addGlobalEnvReqDto = AddGlobalEnvReqDto(testEnvList)
+        val testEnvList = listOf(PutEnvReqDto("testKey", "testValue"))
+        val putGlobalEnvReqDto = PutGlobalEnvReqDto(testEnvList)
 
         `when`("유스케이스를 실행할때") {
 
             then("WorkspaceNotFoundException이 발생해야함") {
                 shouldThrow<WorkspaceNotFoundException> {
-                    addGlobalEnvUseCase.execute(givenWorkspaceId, addGlobalEnvReqDto)
+                    putGlobalEnvUseCase.execute(givenWorkspaceId, putGlobalEnvReqDto)
                 }
             }
         }

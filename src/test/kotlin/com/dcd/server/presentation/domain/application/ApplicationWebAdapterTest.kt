@@ -10,6 +10,7 @@ import com.dcd.server.core.domain.application.usecase.*
 import com.dcd.server.presentation.common.data.response.ListResponse
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
 import com.dcd.server.presentation.domain.application.data.request.*
+import com.dcd.server.presentation.domain.env.data.request.PutEnvRequest
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -22,9 +23,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     val springRunApplicationUseCase = mockk<RunApplicationUseCase>(relaxUnitFun = true)
     val getAllApplicationUseCase = mockk<GetAllApplicationUseCase>()
     val getOneApplicationUseCase = mockk<GetOneApplicationUseCase>()
-    val addApplicationEnvUseCase = mockk<AddApplicationEnvUseCase>()
+    val putApplicationEnvUseCase = mockk<PutApplicationEnvUseCase>()
     val deleteApplicationEnvUseCase = mockk<DeleteApplicationEnvUseCase>()
-    val updateApplicationEnvUseCase = mockk<UpdateApplicationEnvUseCase>(relaxUnitFun = true)
     val stopApplicationUseCase = mockk<StopApplicationUseCase>()
     val deleteApplicationUseCase = mockk<DeleteApplicationUseCase>()
     val updateApplicationUseCase = mockk<UpdateApplicationUseCase>(relaxUnitFun = true)
@@ -32,7 +32,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     val getApplicationLogUseCase = mockk<GetApplicationLogUseCase>()
     val deployApplicationUseCase = mockk<DeployApplicationUseCase>(relaxUnitFun = true)
     val executeCommandUseCase = mockk<ExecuteCommandUseCase>(relaxUnitFun = true)
-    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springRunApplicationUseCase, getAllApplicationUseCase, getOneApplicationUseCase, addApplicationEnvUseCase, deleteApplicationEnvUseCase, updateApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase, getApplicationLogUseCase, deployApplicationUseCase, executeCommandUseCase, setApplicationDomainUseCase)
+    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springRunApplicationUseCase, getAllApplicationUseCase, getOneApplicationUseCase, putApplicationEnvUseCase, deleteApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase, getApplicationLogUseCase, deployApplicationUseCase, executeCommandUseCase, setApplicationDomainUseCase)
 
     val testWorkspaceId = "testWorkspaceId"
 
@@ -116,12 +116,12 @@ class ApplicationWebAdapterTest : BehaviorSpec({
 
     given("AddApplicationEnvRequest가 주어지고") {
         val testId = "testId"
-        val request = AddApplicationEnvRequest(
-            envList = mapOf(Pair("testKey", "testValue"))
+        val request = PutApplicationEnvRequest(
+            envList = listOf(PutEnvRequest(key = "testKey", value = "testValue"))
         )
         `when`("addApplicationEnv메서드를 실행할때") {
-            every { addApplicationEnvUseCase.execute(testId, any()) } returns Unit
-            val result = applicationWebAdapter.addApplicationEnv(testWorkspaceId, testId, request)
+            every { putApplicationEnvUseCase.execute(testId, any()) } returns Unit
+            val result = applicationWebAdapter.putApplicationEnv(testWorkspaceId, testId, request)
             then("status는 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
             }
@@ -197,20 +197,6 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             }
             then("updateApplicationUseCase를 실행해야함") {
                 verify { updateApplicationUseCase.execute(testId, any() as UpdateApplicationReqDto) }
-            }
-        }
-    }
-
-    given("애플리케이션 id와 UpdateApplicationEnvRequest가 주어지고") {
-        val testId = "testId"
-        val envKey = "testKey"
-        val request = UpdateApplicationEnvRequest(newValue = "newValue")
-
-        `when`("updateApplicationEnv 메서드를 실행할때") {
-            val result = applicationWebAdapter.updateApplicationEnv(testWorkspaceId, testId, envKey, request)
-
-            then("상태코드는 200이여야함") {
-                result.statusCode shouldBe HttpStatus.OK
             }
         }
     }
