@@ -2,10 +2,11 @@ package com.dcd.server.presentation.domain.application.data.exetension
 
 import com.dcd.server.core.domain.application.dto.request.*
 import com.dcd.server.presentation.domain.application.data.request.*
+import com.dcd.server.presentation.domain.env.data.extension.toDto
 
 fun AddApplicationEnvRequest.toDto(): AddApplicationEnvReqDto =
     AddApplicationEnvReqDto(
-        envList = this.envList
+        envList = this.envList.map { it.toDto() }
     )
 
 fun CreateApplicationRequest.toDto(): CreateApplicationReqDto =
