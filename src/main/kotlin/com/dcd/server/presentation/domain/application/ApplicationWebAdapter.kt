@@ -20,9 +20,8 @@ class ApplicationWebAdapter(
     private val runApplicationUseCase: RunApplicationUseCase,
     private val getAllApplicationUseCase: GetAllApplicationUseCase,
     private val getOneApplicationUseCase: GetOneApplicationUseCase,
-    private val addApplicationEnvUseCase: AddApplicationEnvUseCase,
+    private val putApplicationEnvUseCase: PutApplicationEnvUseCase,
     private val deleteApplicationEnvUseCase: DeleteApplicationEnvUseCase,
-    private val updateApplicationEnvUseCase: UpdateApplicationEnvUseCase,
     private val stopApplicationUseCase: StopApplicationUseCase,
     private val deleteApplicationUseCase: DeleteApplicationUseCase,
     private val updateApplicationUseCase: UpdateApplicationUseCase,
@@ -79,24 +78,24 @@ class ApplicationWebAdapter(
         getOneApplicationUseCase.execute(applicationId)
             .let { ResponseEntity.ok(it.toResponse()) }
 
-    @PostMapping("/{applicationId}/env")
+    @PutMapping("/{applicationId}/env")
     @WorkspaceOwnerVerification("#workspaceId")
-    fun addApplicationEnv(
+    fun putApplicationEnv(
         @PathVariable workspaceId: String,
         @PathVariable applicationId: String,
-        @RequestBody addApplicationEnvRequest: AddApplicationEnvRequest
+        @RequestBody putApplicationEnvRequest: PutApplicationEnvRequest
     ): ResponseEntity<Void> =
-        addApplicationEnvUseCase.execute(applicationId, addApplicationEnvRequest.toDto())
+        putApplicationEnvUseCase.execute(applicationId, putApplicationEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
-    @PostMapping("/env")
+    @PutMapping("/env")
     @WorkspaceOwnerVerification("#workspaceId")
-    fun addApplicationEnvWithLabels(
+    fun putApplicationEnvWithLabels(
         @PathVariable workspaceId: String,
         @RequestParam labels: List<String>,
-        @RequestBody addApplicationEnvRequest: AddApplicationEnvRequest
+        @RequestBody putApplicationEnvRequest: PutApplicationEnvRequest
     ): ResponseEntity<Void> =
-        addApplicationEnvUseCase.execute(labels, addApplicationEnvRequest.toDto())
+        putApplicationEnvUseCase.execute(labels, putApplicationEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
     @DeleteMapping("/{applicationId}/env")
@@ -117,28 +116,6 @@ class ApplicationWebAdapter(
         @RequestParam key: String
     ): ResponseEntity<Void> =
         deleteApplicationEnvUseCase.execute(labels, key)
-            .run { ResponseEntity.ok().build() }
-
-    @PatchMapping("/{applicationId}/env")
-    @WorkspaceOwnerVerification("#workspaceId")
-    fun updateApplicationEnv(
-        @PathVariable workspaceId: String,
-        @PathVariable applicationId: String,
-        @RequestParam key: String,
-        @RequestBody updateApplicationEnvRequest: UpdateApplicationEnvRequest
-    ): ResponseEntity<Void> =
-        updateApplicationEnvUseCase.execute(applicationId, key, updateApplicationEnvRequest.toDto())
-            .run { ResponseEntity.ok().build() }
-
-    @PatchMapping("/env")
-    @WorkspaceOwnerVerification("#workspaceId")
-    fun updateApplicationEnvWithLabels(
-        @PathVariable workspaceId: String,
-        @RequestParam labels: List<String>,
-        @RequestParam key: String,
-        @RequestBody updateApplicationEnvRequest: UpdateApplicationEnvRequest
-    ): ResponseEntity<Void> =
-        updateApplicationEnvUseCase.execute(labels, key, updateApplicationEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
     @PostMapping("/{applicationId}/stop")

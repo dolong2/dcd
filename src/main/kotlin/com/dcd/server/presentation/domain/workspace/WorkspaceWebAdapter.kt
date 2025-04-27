@@ -6,9 +6,8 @@ import com.dcd.server.presentation.common.data.extension.toResponse
 import com.dcd.server.presentation.common.data.response.ListResponse
 import com.dcd.server.presentation.domain.workspace.data.exetension.toDto
 import com.dcd.server.presentation.domain.workspace.data.exetension.toResponse
-import com.dcd.server.presentation.domain.workspace.data.request.AddGlobalEnvRequest
+import com.dcd.server.presentation.domain.workspace.data.request.PutGlobalEnvRequest
 import com.dcd.server.presentation.domain.workspace.data.request.CreateWorkspaceRequest
-import com.dcd.server.presentation.domain.workspace.data.request.UpdateGlobalEnvRequest
 import com.dcd.server.presentation.domain.workspace.data.request.UpdateWorkspaceRequest
 import com.dcd.server.presentation.domain.workspace.data.response.CreateWorkspaceResponse
 import com.dcd.server.presentation.domain.workspace.data.response.WorkspaceResponse
@@ -25,9 +24,8 @@ class WorkspaceWebAdapter(
     private val getWorkspaceUseCase: GetWorkspaceUseCase,
     private val deleteWorkspaceUseCase: DeleteWorkspaceUseCase,
     private val updateWorkspaceUseCase: UpdateWorkspaceUseCase,
-    private val addGlobalEnvUseCase: AddGlobalEnvUseCase,
-    private val deleteGlobalEnvUseCase: DeleteGlobalEnvUseCase,
-    private val updateGlobalEnvUseCase: UpdateGlobalEnvUseCase
+    private val putGlobalEnvUseCase: PutGlobalEnvUseCase,
+    private val deleteGlobalEnvUseCase: DeleteGlobalEnvUseCase
 ) {
     @PostMapping
     fun createWorkspace(
@@ -63,18 +61,13 @@ class WorkspaceWebAdapter(
         updateWorkspaceUseCase.execute(workspaceId, updateWorkspaceRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
-    @PostMapping("/{workspaceId}/env")
-    fun addGlobalEnv(@PathVariable workspaceId: String, @RequestBody addGlobalEnvRequest: AddGlobalEnvRequest): ResponseEntity<Void> =
-        addGlobalEnvUseCase.execute(workspaceId, addGlobalEnvRequest.toDto())
+    @PutMapping("/{workspaceId}/env")
+    fun putGlobalEnv(@PathVariable workspaceId: String, @RequestBody putGlobalEnvRequest: PutGlobalEnvRequest): ResponseEntity<Void> =
+        putGlobalEnvUseCase.execute(workspaceId, putGlobalEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
     @DeleteMapping("/{workspaceId}/env")
     fun deleteGlobalEnv(@PathVariable workspaceId: String, @RequestParam key: String): ResponseEntity<Void> =
         deleteGlobalEnvUseCase.execute(workspaceId, key)
-            .run { ResponseEntity.ok().build() }
-
-    @PatchMapping("/{workspaceId}/env")
-    fun updateGlobalEnv(@PathVariable workspaceId: String, @RequestParam key: String, @RequestBody updateGlobalEnvRequest: UpdateGlobalEnvRequest): ResponseEntity<Void> =
-        updateGlobalEnvUseCase.execute(workspaceId, key, updateGlobalEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
 }
