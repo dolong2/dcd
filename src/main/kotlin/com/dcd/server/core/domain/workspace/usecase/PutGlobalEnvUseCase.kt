@@ -44,7 +44,7 @@ class PutGlobalEnvUseCase(
                 }
                 ?: GlobalEnv(
                     key = putEnv.key,
-                    value = putEnv.value,
+                    value = envValue,
                     encryption = putEnv.encryption
                 )
         }
