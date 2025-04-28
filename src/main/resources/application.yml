@@ -37,3 +37,6 @@ jwt:
     refreshTime: ${JWT_REFRESH_TIME}
 server:
   port: 8081
+aes:
+  secret-key: 0123456789abcdef0123456789abcdef
+  init-vector: abcdef9876543210
