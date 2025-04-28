@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.workspace.usecase
 
 import com.dcd.server.core.common.annotation.Lock
 import com.dcd.server.core.common.annotation.UseCase
+import com.dcd.server.core.common.service.EncryptService
 import com.dcd.server.core.domain.env.model.GlobalEnv
 import com.dcd.server.core.domain.env.spi.CommandGlobalEnvPort
 import com.dcd.server.core.domain.env.spi.QueryGlobalEnvPort
@@ -15,7 +16,8 @@ class PutGlobalEnvUseCase(
     private val queryWorkspacePort: QueryWorkspacePort,
     private val commandGlobalEnvPort: CommandGlobalEnvPort,
     private val validateWorkspaceOwnerService: ValidateWorkspaceOwnerService,
-    private val queryGlobalEnvPort: QueryGlobalEnvPort
+    private val queryGlobalEnvPort: QueryGlobalEnvPort,
+    private val encryptService: EncryptService
 ) {
     @Lock("#workspaceId")
     fun execute(workspaceId: String, putGlobalEnvReqDto: PutGlobalEnvReqDto) {
@@ -25,19 +27,25 @@ class PutGlobalEnvUseCase(
         validateWorkspaceOwnerService.validateOwner(workspace)
 
         val globalEnvList = putGlobalEnvReqDto.envList.map { putEnv ->
+            val envValue =
+                if (putEnv.encryption)
+                    encryptService.encryptData(putEnv.value)
+                else
+                    putEnv.value
+
             queryGlobalEnvPort.findByKeyAndWorkspace(putEnv.key, workspace)
                 ?.let {
                     GlobalEnv(
                         id = it.id,
                         key = putEnv.key,
-                        value = putEnv.value,
-                        encryption = false
+                        value = envValue,
+                        encryption = putEnv.encryption
                     )
                 }
                 ?: GlobalEnv(
                     key = putEnv.key,
                     value = putEnv.value,
-                    encryption = false
+                    encryption = putEnv.encryption
                 )
         }
 

@@ -49,7 +49,7 @@ class PutGlobalEnvUseCaseTest(
     }
 
     given("추가할 env가 주어지고") {
-        val testEnvList = listOf(PutEnvReqDto("testKey", "testValue"))
+        val testEnvList = listOf(PutEnvReqDto("testKey", "testValue", false))
         val putGlobalEnvReqDto = PutGlobalEnvReqDto(testEnvList)
 
         `when`("useCase를 실행할때") {
@@ -80,7 +80,7 @@ class PutGlobalEnvUseCaseTest(
 
     given("존재하지 않은 워크스페이스 아이디가 주어지고") {
         val givenWorkspaceId = UUID.randomUUID().toString()
-        val testEnvList = listOf(PutEnvReqDto("testKey", "testValue"))
+        val testEnvList = listOf(PutEnvReqDto("testKey", "testValue", false))
         val putGlobalEnvReqDto = PutGlobalEnvReqDto(testEnvList)
 
         `when`("유스케이스를 실행할때") {
