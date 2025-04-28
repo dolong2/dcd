@@ -6,5 +6,6 @@ import com.dcd.server.presentation.domain.env.data.request.PutEnvRequest
 fun PutEnvRequest.toDto(): PutEnvReqDto =
     PutEnvReqDto(
         key = this.key,
-        value = this.value
+        value = this.value,
+        encryption = this.encryption
     )

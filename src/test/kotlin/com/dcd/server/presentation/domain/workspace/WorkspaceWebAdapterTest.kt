@@ -114,7 +114,7 @@ class WorkspaceWebAdapterTest : BehaviorSpec({
 
     given("addGlobalEnvRequest가 주어지고") {
         val workspaceId = UUID.randomUUID().toString()
-        val request = PutGlobalEnvRequest(envList = listOf(PutEnvRequest(key = "testKey", value = "testValue")))
+        val request = PutGlobalEnvRequest(envList = listOf(PutEnvRequest(key = "testKey", value = "testValue", encryption = false)))
         `when`("addGlobalEnv 메서드를 실행할때") {
             val result = workspaceWebAdapter.putGlobalEnv(workspaceId, request)
 

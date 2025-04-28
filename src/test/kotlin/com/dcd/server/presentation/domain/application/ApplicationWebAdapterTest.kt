@@ -117,7 +117,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     given("AddApplicationEnvRequest가 주어지고") {
         val testId = "testId"
         val request = PutApplicationEnvRequest(
-            envList = listOf(PutEnvRequest(key = "testKey", value = "testValue"))
+            envList = listOf(PutEnvRequest(key = "testKey", value = "testValue", encryption = false))
         )
         `when`("addApplicationEnv메서드를 실행할때") {
             every { putApplicationEnvUseCase.execute(testId, any()) } returns Unit

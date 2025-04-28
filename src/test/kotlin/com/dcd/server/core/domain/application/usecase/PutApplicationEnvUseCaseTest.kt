@@ -26,7 +26,7 @@ class PutApplicationEnvUseCaseTest(
 
     given("애플리케이션 아이디와 request가 주어지고") {
         val request = PutApplicationEnvReqDto(
-            envList = listOf(PutEnvReqDto("testA", "testB"))
+            envList = listOf(PutEnvReqDto("testA", "testB", false))
         )
         `when`("usecase를 실행할때") {
             putApplicationEnvUseCase.execute(targetApplicationId, request)
@@ -43,7 +43,7 @@ class PutApplicationEnvUseCaseTest(
     given("존재하지 않는 애플리케이션 아이디가 주어지고") {
         val notFoundApplicationId = UUID.randomUUID().toString()
         val request = PutApplicationEnvReqDto(
-            envList = listOf(PutEnvReqDto("testKey", "testValue"))
+            envList = listOf(PutEnvReqDto("testKey", "testValue", false))
         )
 
         `when`("usecase를 실행할때") {

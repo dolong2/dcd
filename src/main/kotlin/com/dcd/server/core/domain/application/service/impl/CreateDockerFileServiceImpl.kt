@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.application.service.impl
 
 import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.common.file.FileContent
+import com.dcd.server.core.common.spi.EncryptPort
 import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
@@ -25,7 +26,8 @@ class CreateDockerFileServiceImpl(
     private val queryApplicationPort: QueryApplicationPort,
     private val commandPort: CommandPort,
     private val checkExitValuePort: CheckExitValuePort,
-    private val eventPublisher: ApplicationEventPublisher
+    private val eventPublisher: ApplicationEventPublisher,
+    private val encryptPort: EncryptPort
 ) : CreateDockerFileService {
     override suspend fun createFileByApplicationId(id: String, version: String) {
         val application = (queryApplicationPort.findById(id)
@@ -43,8 +45,19 @@ class CreateDockerFileServiceImpl(
 
     private fun createFile(application: Application, version: String, coroutineScope: CoroutineScope) {
         val directoryName = "'${application.name}'"
-        val mutableEnv = application.env.associate { it.key to it.value }.toMutableMap()
-        mutableEnv.putAll(application.workspace.globalEnv.associate { it.key to it.value })
+        val applicationEnv = application.env.associate {
+            if (it.encryption)
+                it.key to encryptPort.decrypt(it.value)
+            else
+                it.key to it.value
+        }.toMutableMap()
+        val globalEnv = application.workspace.globalEnv.associate {
+            if (it.encryption)
+                it.key to encryptPort.decrypt(it.value)
+            else
+                it.key to it.value
+        }
+        applicationEnv.putAll(globalEnv)
 
         commandPort.executeShellCommand("mkdir -p $directoryName")
             .also {exitValue ->
@@ -56,19 +69,19 @@ class CreateDockerFileServiceImpl(
         val file = File("./${application.name}/Dockerfile")
         val fileContent = when (application.applicationType) {
             ApplicationType.SPRING_BOOT ->
-                FileContent.getSpringBootDockerFileContent(version, application.port, mutableEnv)
+                FileContent.getSpringBootDockerFileContent(version, application.port, applicationEnv)
 
             ApplicationType.MYSQL ->
-                FileContent.getMYSQLDockerFileContent(version, application.port, mutableEnv)
+                FileContent.getMYSQLDockerFileContent(version, application.port, applicationEnv)
 
             ApplicationType.MARIA_DB ->
-                FileContent.getMARIADBDockerFileContent(version, application.port, mutableEnv)
+                FileContent.getMARIADBDockerFileContent(version, application.port, applicationEnv)
 
             ApplicationType.REDIS ->
-                FileContent.getRedisDockerFileContent(version, application.port, mutableEnv)
+                FileContent.getRedisDockerFileContent(version, application.port, applicationEnv)
 
             ApplicationType.NEST_JS ->
-                FileContent.getNestJsDockerFileContent(version, application.port, mutableEnv)
+                FileContent.getNestJsDockerFileContent(version, application.port, applicationEnv)
         }
         try {
             if (!file.exists())

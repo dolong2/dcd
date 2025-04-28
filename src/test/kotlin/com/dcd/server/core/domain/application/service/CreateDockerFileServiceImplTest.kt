@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.application.service
 
 import com.dcd.server.core.common.file.FileContent
+import com.dcd.server.core.common.spi.EncryptPort
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.impl.CreateDockerFileServiceImpl
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -20,7 +21,8 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
     val commandPort = spyk(CommandAdapter())
     val eventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
     val checkExitValuePort = mockk<CheckExitValuePort>(relaxUnitFun = true)
-    val createDockerFileService = CreateDockerFileServiceImpl(queryApplicationPort, commandPort, checkExitValuePort, eventPublisher)
+    val encryptPort = mockk<EncryptPort>()
+    val createDockerFileService = CreateDockerFileServiceImpl(queryApplicationPort, commandPort, checkExitValuePort, eventPublisher, encryptPort)
 
     given("스프링 애플리케이션이 주어지고") {
         val application =

@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.application.usecase
 import com.dcd.server.core.common.annotation.Lock
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.data.WorkspaceInfo
+import com.dcd.server.core.common.service.EncryptService
 import com.dcd.server.core.domain.application.dto.request.PutApplicationEnvReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -16,7 +17,8 @@ class PutApplicationEnvUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val workspaceInfo: WorkspaceInfo,
     private val commandApplicationEnvPort: CommandApplicationEnvPort,
-    private val queryApplicationEnvPort: QueryApplicationEnvPort
+    private val queryApplicationEnvPort: QueryApplicationEnvPort,
+    private val encryptService: EncryptService
 ) {
     @Lock("#id")
     fun execute(id: String, putApplicationEnvReqDto: PutApplicationEnvReqDto) {
@@ -24,19 +26,25 @@ class PutApplicationEnvUseCase(
             ?: throw ApplicationNotFoundException())
 
         val applicationEnvList = putApplicationEnvReqDto.envList.map { putEnv ->
+            val envValue =
+                if (putEnv.encryption)
+                    encryptService.encryptData(putEnv.value)
+                else
+                    putEnv.value
+
             queryApplicationEnvPort.findByKeyAndApplication(putEnv.key, application)
                 ?.let {
                     ApplicationEnv(
                         id = it.id,
                         key = putEnv.key,
-                        value = putEnv.value,
-                        encryption = false
+                        value = envValue,
+                        encryption = putEnv.encryption
                     )
                 }
                 ?: ApplicationEnv(
                     key = putEnv.key,
-                    value = putEnv.value,
-                    encryption = false
+                    value = envValue,
+                    encryption = putEnv.encryption
                 )
         }
 
@@ -51,23 +59,26 @@ class PutApplicationEnvUseCase(
 
         applicationList.forEach { application ->
             val applicationEnvList = putApplicationEnvReqDto.envList.map { putEnv ->
-                val applicationEnv =
-                    queryApplicationEnvPort.findByKeyAndApplication(putEnv.key, application)
-                        ?.let {
-                            ApplicationEnv(
-                                id = it.id,
-                                key = putEnv.key,
-                                value = putEnv.value,
-                                encryption = false
-                            )
-                        }
-                        ?: ApplicationEnv(
-                            key = putEnv.key,
-                            value = putEnv.value,
-                            encryption = false
-                        )
+                val envValue =
+                    if (putEnv.encryption)
+                        encryptService.encryptData(putEnv.value)
+                    else
+                        putEnv.value
 
-                applicationEnv
+                queryApplicationEnvPort.findByKeyAndApplication(putEnv.key, application)
+                    ?.let {
+                        ApplicationEnv(
+                            id = it.id,
+                            key = putEnv.key,
+                            value = envValue,
+                            encryption = putEnv.encryption
+                        )
+                    }
+                    ?: ApplicationEnv(
+                        key = putEnv.key,
+                        value = putEnv.value,
+                        encryption = putEnv.encryption
+                    )
             }
 
             commandApplicationEnvPort.saveAll(applicationEnvList, application)
