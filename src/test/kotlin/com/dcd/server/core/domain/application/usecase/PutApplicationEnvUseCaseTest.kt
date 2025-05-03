@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.common.spi.EncryptPort
 import com.dcd.server.core.domain.application.dto.request.PutApplicationEnvReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -20,7 +21,8 @@ import java.util.UUID
 class PutApplicationEnvUseCaseTest(
     private val putApplicationEnvUseCase: PutApplicationEnvUseCase,
     private val queryApplicationPort: QueryApplicationPort,
-    private val queryApplicationEnvPort: QueryApplicationEnvPort
+    private val queryApplicationEnvPort: QueryApplicationEnvPort,
+    private val encryptPort: EncryptPort
 ) : BehaviorSpec({
     val targetApplicationId = "2fb0f315-8272-422f-8e9f-c4f765c022b2"
 
@@ -52,6 +54,29 @@ class PutApplicationEnvUseCaseTest(
                 shouldThrow<ApplicationNotFoundException> {
                     putApplicationEnvUseCase.execute(notFoundApplicationId, request)
                 }
+            }
+        }
+    }
+
+    given("암호화된 환경변수 등록 요청이 주어지고") {
+        val envKey = "testA"
+        val envValue = "testB"
+        val request = PutApplicationEnvReqDto(
+            envList = listOf(PutEnvReqDto(envKey, envValue, true))
+        )
+
+        `when`("usecase를 실행하면") {
+            putApplicationEnvUseCase.execute(targetApplicationId, request)
+
+            then("암호화된 value가 저장되어야함") {
+                val targetApplication = queryApplicationPort.findById(targetApplicationId)!!
+                val env = queryApplicationEnvPort.findByKeyAndApplication(
+                    key = envKey,
+                    application = targetApplication
+                )!!
+
+                env.value shouldNotBe envValue
+                encryptPort.decrypt(env.value) shouldBe envValue
             }
         }
     }
