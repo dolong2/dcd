@@ -1,7 +1,6 @@
 package com.dcd.server.infrastructure.global.thirdparty.bucket4j
 
 import com.dcd.server.core.common.annotation.Limit
-import com.dcd.server.infrastructure.global.thridpriry.bucket4j.LocalLimitAdapter
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import org.springframework.boot.test.context.SpringBootTest

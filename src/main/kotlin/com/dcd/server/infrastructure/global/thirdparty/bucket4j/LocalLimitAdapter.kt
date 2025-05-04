@@ -1,4 +1,4 @@
-package com.dcd.server.infrastructure.global.thridpriry.bucket4j
+package com.dcd.server.infrastructure.global.thirdparty.bucket4j
 
 import com.dcd.server.core.common.annotation.Limit
 import com.dcd.server.core.common.spi.LimitPort
