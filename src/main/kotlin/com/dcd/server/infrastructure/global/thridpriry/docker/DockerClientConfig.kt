@@ -1,4 +1,4 @@
-package com.dcd.server.infrastructure.global.thridpriry
+package com.dcd.server.infrastructure.global.thridpriry.docker
 
 import com.github.dockerjava.api.DockerClient
 import com.github.dockerjava.core.DefaultDockerClientConfig
