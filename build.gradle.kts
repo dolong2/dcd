@@ -64,6 +64,9 @@ dependencies {
 	implementation("com.github.docker-java:docker-java:3.4.0")
 	implementation("com.github.docker-java:docker-java-transport-okhttp:3.4.0")
 	implementation("com.squareup.okhttp3:okhttp:3.14.9")
+
+	//bucket4j
+	implementation("com.bucket4j:bucket4j_jdk17-core:8.14.0")
 }
 
 tasks.withType<KotlinCompile> {
