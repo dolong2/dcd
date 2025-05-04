@@ -43,6 +43,9 @@ enum class ErrorCode(
     CAN_NOT_DELETE_APPLICATION("애플리케이션을 삭제할 수 없습니다. 애플리케이션을 정지시킨 후 실행해주세요.", 409),
     INVALID_APPLICATION_STATUS("애플리케이션 상태가 유효하지 않음", 409),
 
+    TOO_MANY_REQUESTS("너무 많은 요청 발생", 429),
+    REQUEST_LIMIT_EXCEEDED("너무 많은 요청시도가 발생했습니다. 잠시후 다시 시도해주세요.", 429),
+
     CONTAINER_NOT_RUN("해당 애플리케이션을 실행할 수 없음", 500),
     CONTAINER_NOT_STOPPED("해당 애플리케이션을 정지할 수 없음", 500),
     CONTAINER_NOT_CREATED("해당 애플리케이션의 이미지를 컨테이너로 빌드할 수 없음", 500),
