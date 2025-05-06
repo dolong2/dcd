@@ -1,5 +1,6 @@
 package com.dcd.server.presentation.domain.auth
 
+import com.dcd.server.core.common.annotation.Limit
 import com.dcd.server.core.domain.auth.usecase.*
 import com.dcd.server.presentation.common.annotation.WebAdapter
 import com.dcd.server.presentation.domain.auth.data.exetension.toDto
@@ -28,6 +29,7 @@ class AuthWebAdapter(
     private val nonAuthChangePasswordUseCase: NonAuthChangePasswordUseCase
 ) {
     @PostMapping("/email")
+    @Limit(target = "#emailSendRequest.email+#email", capacity = 5)
     fun sendAuthEmail(
         @Validated
         @RequestBody
