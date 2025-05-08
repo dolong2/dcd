@@ -26,6 +26,7 @@ class PutGlobalEnvUseCase(
             ?: throw WorkspaceNotFoundException())
 
         validateWorkspaceOwnerService.validateOwner(workspace)
+        deleteUnusedEnv(putGlobalEnvReqDto, workspace)
 
         val globalEnvList = putGlobalEnvReqDto.envList.map { putEnv ->
             val envValue =
