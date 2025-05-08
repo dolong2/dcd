@@ -25,6 +25,7 @@ class PutApplicationEnvUseCase(
     fun execute(id: String, putApplicationEnvReqDto: PutApplicationEnvReqDto) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
+        deleteUnusedEnv(putApplicationEnvReqDto, application)
 
         val applicationEnvList = putApplicationEnvReqDto.envList.map { putEnv ->
             val envValue =
@@ -59,6 +60,8 @@ class PutApplicationEnvUseCase(
         val applicationList = queryApplicationPort.findAllByWorkspace(workspace, labels)
 
         applicationList.forEach { application ->
+            deleteUnusedEnv(putApplicationEnvReqDto, application)
+
             val applicationEnvList = putApplicationEnvReqDto.envList.map { putEnv ->
                 val envValue =
                     if (putEnv.encryption)
