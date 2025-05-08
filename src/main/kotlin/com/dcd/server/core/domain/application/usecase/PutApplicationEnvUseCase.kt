@@ -6,6 +6,7 @@ import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.common.service.EncryptService
 import com.dcd.server.core.domain.application.dto.request.PutApplicationEnvReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
+import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.env.model.ApplicationEnv
 import com.dcd.server.core.domain.env.spi.CommandApplicationEnvPort
@@ -24,6 +25,7 @@ class PutApplicationEnvUseCase(
     fun execute(id: String, putApplicationEnvReqDto: PutApplicationEnvReqDto) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
+        deleteUnusedEnv(putApplicationEnvReqDto, application)
 
         val applicationEnvList = putApplicationEnvReqDto.envList.map { putEnv ->
             val envValue =
@@ -58,6 +60,8 @@ class PutApplicationEnvUseCase(
         val applicationList = queryApplicationPort.findAllByWorkspace(workspace, labels)
 
         applicationList.forEach { application ->
+            deleteUnusedEnv(putApplicationEnvReqDto, application)
+
             val applicationEnvList = putApplicationEnvReqDto.envList.map { putEnv ->
                 val envValue =
                     if (putEnv.encryption)
@@ -83,5 +87,14 @@ class PutApplicationEnvUseCase(
 
             commandApplicationEnvPort.saveAll(applicationEnvList, application)
         }
+    }
+
+    private fun deleteUnusedEnv(
+        putApplicationEnvReqDto: PutApplicationEnvReqDto,
+        application: Application,
+    ) {
+        val putEnvKeyList = putApplicationEnvReqDto.envList.map { it.key }
+        val deletedEnv = application.env.filterNot { it.key in putEnvKeyList }
+        commandApplicationEnvPort.deleteAll(deletedEnv)
     }
 }
