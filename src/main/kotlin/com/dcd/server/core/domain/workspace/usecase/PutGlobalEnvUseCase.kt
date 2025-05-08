@@ -8,6 +8,7 @@ import com.dcd.server.core.domain.env.spi.CommandGlobalEnvPort
 import com.dcd.server.core.domain.env.spi.QueryGlobalEnvPort
 import com.dcd.server.core.domain.workspace.dto.request.PutGlobalEnvReqDto
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
+import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.core.domain.workspace.service.ValidateWorkspaceOwnerService
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 
@@ -50,5 +51,14 @@ class PutGlobalEnvUseCase(
         }
 
         commandGlobalEnvPort.saveAll(globalEnvList, workspace)
+    }
+
+    private fun deleteUnusedEnv(
+        putGlobalEnvReqDto: PutGlobalEnvReqDto,
+        workspace: Workspace,
+    ) {
+        val putEnvKeyList = putGlobalEnvReqDto.envList.map { it.key }
+        val deletedEnv = workspace.globalEnv.filterNot { it.key in putEnvKeyList }
+        commandGlobalEnvPort.deleteAll(deletedEnv)
     }
 }
