@@ -29,7 +29,7 @@ class AuthWebAdapter(
     private val nonAuthChangePasswordUseCase: NonAuthChangePasswordUseCase
 ) {
     @PostMapping("/email")
-    @Limit(target = "#emailSendRequest.email+#email", capacity = 5)
+    @Limit(target = "#emailSendRequest.email", capacity = 5)
     fun sendAuthEmail(
         @Validated
         @RequestBody
