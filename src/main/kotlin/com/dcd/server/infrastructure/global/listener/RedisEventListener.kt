@@ -13,7 +13,7 @@ class RedisEventListener(
     @EventListener
     @Transactional(rollbackFor = [Exception::class])
     fun process(event: RedisKeyExpiredEvent<Any>) {
-        val expiredKey = event.source.toString()
+        val expiredKey = event.source.toString(Charsets.UTF_8)
 
         val keyspacePrefix = expiredKey.substringBeforeLast(":")
 
