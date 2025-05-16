@@ -1,5 +1,7 @@
 name: "Feature"
 description: "신규 기능 개발"
+labels:
+  - ':sparkles: Feature'
 body:
   - type: textarea
     attributes:
