@@ -1,6 +1,7 @@
 name: "Bug"
 description: "버그가 발생함"
-labels: 버그
+labels:
+  - ':bug: Bug'
 body:
   - type: textarea
     attributes:
