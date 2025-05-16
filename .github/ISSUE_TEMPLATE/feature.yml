@@ -1,7 +1,6 @@
-name: "Todo"
-description: "신규 기능 개발 혹은 리펙토링 같은 상황에 사용"
+name: "Feature"
+description: "신규 기능 개발"
 body:
-
   - type: textarea
     attributes:
       label: Description
