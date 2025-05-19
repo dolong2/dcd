@@ -1,6 +1,7 @@
 package com.dcd.server.infrastructure.global.security.auth
 
 import com.dcd.server.core.domain.user.model.User
+import com.dcd.server.core.domain.user.model.enums.Status
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -19,9 +20,9 @@ class AuthDetails(
 
     override fun isAccountNonExpired(): Boolean = true
 
-    override fun isAccountNonLocked(): Boolean = true
+    override fun isAccountNonLocked(): Boolean = user.status != Status.PENDING
 
     override fun isCredentialsNonExpired(): Boolean = true
 
-    override fun isEnabled(): Boolean = true
+    override fun isEnabled(): Boolean = this.authorities.isNotEmpty()
 }

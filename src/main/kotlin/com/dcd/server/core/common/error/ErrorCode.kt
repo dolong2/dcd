@@ -29,6 +29,8 @@ enum class ErrorCode(
     NOT_VALID_CODE("코드가 유효하지 않음", 403),
     NOT_CERTIFICATE_MAIL("메일인증후 진행해주세요", 403),
     NOT_SAME_WORKSPACE_OWNER("애플리케이션 소유자가 옳바르지 않음", 403),
+    ACCOUNT_LOCKED("이용할 수 없는 계정임", 403),
+    ACCOUNT_NOT_ENABLED("계정을 이용할 수 없는 상태임", 403),
 
     NOT_FOUND("해당 리소스를 찾을 수 없음", 404),
     USER_NOT_FOUND("해당 유저를 찾을 수 없음", 404),
