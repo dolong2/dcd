@@ -1,10 +1,8 @@
 package com.dcd.server.infrastructure.global.jwt.adapter
 
 import com.dcd.server.core.domain.auth.spi.QueryTokenBlackListPort
-import com.dcd.server.infrastructure.global.jwt.exception.ExpiredTokenException
+import com.dcd.server.infrastructure.global.jwt.exception.*
 import com.dcd.server.infrastructure.global.jwt.properties.JwtProperty
-import com.dcd.server.infrastructure.global.jwt.exception.TokenNotValidException
-import com.dcd.server.infrastructure.global.jwt.exception.TokenTypeNotValidException
 import com.dcd.server.infrastructure.global.security.auth.AuthDetailsService
 import io.jsonwebtoken.*
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -28,6 +26,10 @@ class ParseTokenAdapter(
             throw TokenTypeNotValidException()
 
         val userDetails = getDetails(claims.body)
+        if (userDetails.isAccountNonLocked.not())
+            throw AccountLockedException()
+        else if (userDetails.isEnabled.not())
+            throw AccountNotEnabledException()
 
         return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
     }
