@@ -67,6 +67,8 @@ dependencies {
 
 	//bucket4j
 	implementation("com.bucket4j:bucket4j_jdk17-core:8.14.0")
+	implementation("com.bucket4j:bucket4j_jdk17-redis-common:8.14.0")
+	implementation("com.bucket4j:bucket4j_jdk17-lettuce:8.14.0")
 }
 
 tasks.withType<KotlinCompile> {
