@@ -3,6 +3,7 @@ package com.dcd.server.infrastructure.global.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import io.lettuce.core.RedisClient
 import org.redisson.Redisson
 import org.redisson.api.RedissonClient
 import org.redisson.config.Config
@@ -39,6 +40,10 @@ class RedisConfig {
         config.useSingleServer().setAddress("redis://$host:$port")
         return Redisson.create(config)
     }
+
+    @Bean
+    fun redisClient(): RedisClient =
+        RedisClient.create("redis://$host:$port")
 
     @Bean
     fun cacheManager(redisConnectionFactory: RedisConnectionFactory): RedisCacheManager {
