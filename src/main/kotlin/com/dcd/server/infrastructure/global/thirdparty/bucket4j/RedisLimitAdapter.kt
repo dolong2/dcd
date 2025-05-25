@@ -9,13 +9,14 @@ import io.github.bucket4j.redis.lettuce.Bucket4jLettuce
 import io.lettuce.core.RedisClient
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Primary
+import org.springframework.data.redis.connection.RedisConnectionFactory
 import org.springframework.stereotype.Component
 import java.time.Duration
 
 @Primary
 @Component
 class RedisLimitAdapter(
-    redisClient: RedisClient
+    redisConnectionFactory: RedisConnectionFactory
 ) : LimitPort {
     private val logger = LoggerFactory.getLogger(RedisLimitAdapter::class.simpleName)
     private val bucketProxy = Bucket4jLettuce.casBasedBuilder(redisClient).build()
