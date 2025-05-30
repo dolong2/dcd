@@ -90,13 +90,13 @@ object FileContent {
         "fi\n"
 
     fun getApplicationHttpConfig(application: Application, domain: String): String =
-        "server {" +
+        "server {\n" +
             "\tlisten: 80;\n" +
             "\tserver-name: $domain;\n\n" +
             "\tlocation / {\n" +
                 "\t\tproxy_pass: http://localhost:${application.externalPort};\n" +
             "\t}\n" +
-        "}"
+        "}\n"
 
     private fun getEnvString(env: Map<String, String>): String {
         val envString = StringBuilder()
