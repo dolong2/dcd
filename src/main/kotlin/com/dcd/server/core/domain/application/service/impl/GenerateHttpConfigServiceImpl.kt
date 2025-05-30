@@ -13,13 +13,9 @@ class GenerateHttpConfigServiceImpl(
 ) : GenerateHttpConfigService {
     override fun generateWebServerConfig(application: Application, domain: String) {
         val webServerConfig = FileContent.getApplicationHttpConfig(application, domain)
+        val httpConfigDirectory = "./nginx/conf/${application.workspace.id}"
         val exitValue = commandPort.executeShellCommand(
-            "touch ./nginx/conf/${
-                application.name.replace(
-                    " ",
-                    "-"
-                )
-            }-http.conf >> EOF ${webServerConfig} >> EOF"
+            "cat <<EOF > ${httpConfigDirectory}/${application.name.replace(" ", "-")}-http.conf \n ${webServerConfig}EOF"
         )
 
         if (exitValue != 0)
