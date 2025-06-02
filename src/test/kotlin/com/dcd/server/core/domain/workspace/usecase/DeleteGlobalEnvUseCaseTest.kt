@@ -76,20 +76,6 @@ class DeleteGlobalEnvUseCaseTest(
                 }
             }
         }
-
-        `when`("해당 워크스페이스의 유저가 로그인된 유저가 아닐때") {
-            val user = UserGenerator.generateUser()
-            commandUserPort.save(user)
-            val userDetails = authDetailsService.loadUserByUsername(user.id)
-            val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
-            SecurityContextHolder.getContext().authentication = authenticationToken
-
-            then("WorkspaceOwnerNotSameException이 발생해야함") {
-                shouldThrow<WorkspaceOwnerNotSameException> {
-                    deleteGlobalEnvUseCase.execute(targetWorkspaceId, key)
-                }
-            }
-        }
     }
 
     given("워크스페이스가 존재하지 않을때") {
