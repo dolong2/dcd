@@ -1,5 +1,6 @@
 package com.dcd.server.presentation.domain.workspace
 
+import com.dcd.server.core.common.annotation.WorkspaceOwnerVerification
 import com.dcd.server.core.domain.workspace.usecase.*
 import com.dcd.server.presentation.common.annotation.WebAdapter
 import com.dcd.server.presentation.common.data.extension.toResponse
@@ -41,16 +42,19 @@ class WorkspaceWebAdapter(
             .let { ResponseEntity.ok(it.toResponse { resDto -> resDto.toResponse() }) }
 
     @GetMapping("/{workspaceId}")
+    @WorkspaceOwnerVerification("#workspaceId")
     fun getOneWorkspace(@PathVariable workspaceId: String): ResponseEntity<WorkspaceResponse> =
         getWorkspaceUseCase.execute(workspaceId)
             .let { ResponseEntity.ok(it.toResponse()) }
 
     @DeleteMapping("/{workspaceId}")
+    @WorkspaceOwnerVerification("#workspaceId")
     fun deleteWorkspace(@PathVariable workspaceId: String): ResponseEntity<Void> =
         deleteWorkspaceUseCase.execute(workspaceId)
             .let { ResponseEntity.ok().build() }
 
     @PutMapping("/{workspaceId}")
+    @WorkspaceOwnerVerification("#workspaceId")
     fun updateWorkspace(
         @PathVariable
         workspaceId: String,
@@ -62,11 +66,13 @@ class WorkspaceWebAdapter(
             .run { ResponseEntity.ok().build() }
 
     @PutMapping("/{workspaceId}/env")
+    @WorkspaceOwnerVerification("#workspaceId")
     fun putGlobalEnv(@PathVariable workspaceId: String, @RequestBody putGlobalEnvRequest: PutGlobalEnvRequest): ResponseEntity<Void> =
         putGlobalEnvUseCase.execute(workspaceId, putGlobalEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
     @DeleteMapping("/{workspaceId}/env")
+    @WorkspaceOwnerVerification("#workspaceId")
     fun deleteGlobalEnv(@PathVariable workspaceId: String, @RequestParam key: String): ResponseEntity<Void> =
         deleteGlobalEnvUseCase.execute(workspaceId, key)
             .run { ResponseEntity.ok().build() }
