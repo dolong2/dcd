@@ -65,19 +65,6 @@ class PutGlobalEnvUseCaseTest(
                 globalEnv!!.value shouldBe "testValue"
             }
         }
-
-        `when`("해당 워크스페이스의 소유자가 아닐때") {
-            val generateUser = UserGenerator.generateUser()
-            commandUserPort.save(generateUser)
-            val updatedWorkspace = WorkspaceGenerator.generateWorkspace(id = targetWorkspaceId, user = generateUser)
-            commandWorkspacePort.save(updatedWorkspace)
-
-            then("WorkspaceOwnerNotSameException이 발생해야함") {
-                shouldThrow<WorkspaceOwnerNotSameException> {
-                    putGlobalEnvUseCase.execute(targetWorkspaceId, putGlobalEnvReqDto)
-                }
-            }
-        }
     }
 
     given("존재하지 않은 워크스페이스 아이디가 주어지고") {

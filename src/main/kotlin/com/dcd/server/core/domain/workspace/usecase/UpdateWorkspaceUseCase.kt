@@ -12,7 +12,6 @@ import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 class UpdateWorkspaceUseCase(
     private val commandWorkspacePort: CommandWorkspacePort,
     private val queryWorkspacePort: QueryWorkspacePort,
-    private val validateWorkspaceOwnerService: ValidateWorkspaceOwnerService,
     private val deleteNetworkService: DeleteNetworkService,
     private val disconnectNetworkService: DisconnectNetworkService,
     private val createNetworkService: CreateNetworkService,
@@ -22,8 +21,6 @@ class UpdateWorkspaceUseCase(
     fun execute(workspaceId: String, updateWorkspaceReqDto: UpdateWorkspaceReqDto) {
         val workspace = (queryWorkspacePort.findById(workspaceId)
             ?: throw WorkspaceNotFoundException())
-
-        validateWorkspaceOwnerService.validateOwner(workspace)
 
         val updatedWorkspace = workspace.copy(title = updateWorkspaceReqDto.title, description = updateWorkspaceReqDto.description)
 

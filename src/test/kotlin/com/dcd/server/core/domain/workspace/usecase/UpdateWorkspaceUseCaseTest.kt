@@ -62,22 +62,6 @@ class UpdateWorkspaceUseCaseTest(
                 result?.description shouldBe request.description
             }
         }
-
-        `when`("워크스페이스의 유저와 로그인된 유저가 다를때") {
-            val otherUser = UserGenerator.generateUser()
-            commandUserPort.save(otherUser)
-            val userDetails = authDetailsService.loadUserByUsername(otherUser.id)
-            val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
-            SecurityContextHolder.getContext().authentication = authenticationToken
-
-
-            then("WorkspaceOwnerNotSameException") {
-                shouldThrow<WorkspaceOwnerNotSameException> {
-                    updateWorkspaceUseCase.execute(workspaceId, request)
-                }
-            }
-        }
-
     }
 
     given("UpdateWorkspaceReqDto만 주어지고") {
