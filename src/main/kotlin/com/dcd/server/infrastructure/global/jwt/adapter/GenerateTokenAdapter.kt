@@ -3,7 +3,7 @@ package com.dcd.server.infrastructure.global.jwt.adapter
 import com.dcd.server.core.domain.auth.dto.response.TokenResDto
 import com.dcd.server.core.domain.auth.model.RefreshToken
 import com.dcd.server.core.domain.auth.spi.CommandRefreshTokenPort
-import com.dcd.server.core.domain.auth.spi.JwtPort
+import com.dcd.server.core.domain.auth.spi.GenerateTokenPort
 import com.dcd.server.infrastructure.global.jwt.properties.JwtProperty
 import com.dcd.server.infrastructure.global.jwt.properties.TokenTimeProperty
 import io.jsonwebtoken.Header
@@ -18,7 +18,7 @@ class GenerateTokenAdapter(
     private val jwtProperty: JwtProperty,
     private val tokenTimeProperty: TokenTimeProperty,
     private val commandRefreshTokenPort: CommandRefreshTokenPort
-) : JwtPort {
+) : GenerateTokenPort {
 
     override fun generateToken(userId: String): TokenResDto =
         TokenResDto(

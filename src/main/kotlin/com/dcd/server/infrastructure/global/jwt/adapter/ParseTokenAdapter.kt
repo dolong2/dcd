@@ -1,5 +1,6 @@
 package com.dcd.server.infrastructure.global.jwt.adapter
 
+import com.dcd.server.core.domain.auth.spi.ParseTokenPort
 import com.dcd.server.core.domain.auth.spi.QueryTokenBlackListPort
 import com.dcd.server.infrastructure.global.jwt.exception.*
 import com.dcd.server.infrastructure.global.jwt.properties.JwtProperty
@@ -16,9 +17,19 @@ class ParseTokenAdapter(
     private val jwtProperty: JwtProperty,
     private val authDetailsService: AuthDetailsService,
     private val queryTokenBlackListPort: QueryTokenBlackListPort
-) {
-    fun parseToken(token: String): String? =
+) : ParseTokenPort {
+    override fun parseToken(token: String): String? =
         if(token.startsWith(JwtPrefix.PREFIX)) token.substring(JwtPrefix.PREFIX.length) else null
+
+    override fun getJwtType(token: String): String {
+        val claims = getClaims(token, jwtProperty.refreshSecret)
+
+        return claims.header[Header.JWT_TYPE] as? String ?: ""
+    }
+
+    override fun getUserId(token: String): String =
+        getAuthentication(token).name
+
     fun getAuthentication(token: String): Authentication {
         val claims = getClaims(token, jwtProperty.accessSecret)
 
@@ -34,11 +45,6 @@ class ParseTokenAdapter(
         return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
     }
 
-    fun getJwtType(token: String): String {
-        val claims = getClaims(token, jwtProperty.refreshSecret)
-
-        return claims.header[Header.JWT_TYPE] as? String ?: ""
-    }
 
     private fun getClaims(token: String, secret: Key): Jws<Claims> {
         if (queryTokenBlackListPort.existsByToken(token))
