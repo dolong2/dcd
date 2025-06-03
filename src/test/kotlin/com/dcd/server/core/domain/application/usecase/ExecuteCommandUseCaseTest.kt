@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.application.exception.InvalidApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.ExecContainerService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.auth.spi.ParseTokenPort
 import com.dcd.server.infrastructure.global.jwt.adapter.ParseTokenAdapter
 import com.dcd.server.presentation.domain.application.exception.InvalidConnectionInfoException
 import io.kotest.assertions.throwables.shouldThrow
@@ -23,11 +24,11 @@ import util.workspace.WorkspaceGenerator
 
 class ExecuteCommandUseCaseTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>(relaxUnitFun = true)
-    val parseTokenAdapter = mockk<ParseTokenAdapter>(relaxUnitFun = true)
+    val parseTokenPort = mockk<ParseTokenPort>(relaxUnitFun = true)
     val execContainerService = mockk<ExecContainerService>(relaxUnitFun = true)
 
     val executeCommandUseCase =
-        ExecuteCommandUseCase(queryApplicationPort, execContainerService, parseTokenAdapter)
+        ExecuteCommandUseCase(queryApplicationPort, execContainerService, parseTokenPort)
 
     given("애플리케이션 id, ExecuteCommandReqDto가 주어지고") {
         val applicationId = "testApplicationId"
@@ -94,7 +95,7 @@ class ExecuteCommandUseCaseTest : BehaviorSpec({
         `when`("주어진 아이디를 가진 애플리케이션이 없을때") {
             every { session.attributes["accessToken"] } returns givenToken
             every { givenAuthentication.name } returns givenUser.id
-            every { parseTokenAdapter.getAuthentication(givenToken) } returns givenAuthentication
+            every { parseTokenPort.getUserId(givenToken) } returns givenAuthentication.name
             every { queryApplicationPort.findById(testApplicationId) } returns null
 
             then("ApplicationNotFoundException이 발생해야함") {
