@@ -9,8 +9,8 @@ import com.dcd.server.core.domain.application.exception.InvalidCmdException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.ExecContainerService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.auth.spi.ParseTokenPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceOwnerNotSameException
-import com.dcd.server.infrastructure.global.jwt.adapter.ParseTokenAdapter
 import com.dcd.server.presentation.domain.application.exception.InvalidConnectionInfoException
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.WebSocketSession
@@ -19,7 +19,7 @@ import org.springframework.web.socket.WebSocketSession
 class ExecuteCommandUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val execContainerService: ExecContainerService,
-    private val parseTokenAdapter: ParseTokenAdapter
+    private val parseTokenPort: ParseTokenPort
 ) {
     fun execute(applicationId: String, executeCommandReqDto: ExecuteCommandReqDto): CommandResultResDto {
         validateCmd(executeCommandReqDto.command)
@@ -41,7 +41,7 @@ class ExecuteCommandUseCase(
         val accessToken = (session.attributes["accessToken"] as? String
             ?: throw InvalidConnectionInfoException("세션에 인증 정보가 존재하지 않음", CloseStatus.PROTOCOL_ERROR))
 
-        val userId = parseTokenAdapter.getAuthentication(accessToken).name
+        val userId = parseTokenPort.getUserId(accessToken)
 
         val application = (queryApplicationPort.findById(applicationId)
             ?: throw ApplicationNotFoundException())
