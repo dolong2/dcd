@@ -1,7 +1,6 @@
 package com.dcd.server.core.domain.auth.spi
 
-import com.dcd.server.core.domain.auth.dto.response.TokenResDto
+import org.springframework.stereotype.Component
 
-interface JwtPort {
-    fun generateToken(userId: String): TokenResDto
-}
+@Component
+interface JwtPort : GenerateTokenPort, ParseTokenPort
