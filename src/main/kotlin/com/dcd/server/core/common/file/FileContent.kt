@@ -91,10 +91,14 @@ object FileContent {
 
     fun getApplicationHttpConfig(application: Application, domain: String): String =
         "server {\n" +
-            "\tlisten: 80;\n" +
+            "\tlisten: 443;\n" +
             "\tserver-name: $domain;\n\n" +
+
+            "\tssl_certificate /etc/nginx/conf.d/ssl/certificate/fullchain.pem;\n" +
+            "\tssl_certificate_key /etc/nginx/conf.d/ssl/certificate/privkey.pem;\n\n" +
+
             "\tlocation / {\n" +
-                "\t\tproxy_pass: http://localhost:${application.externalPort};\n" +
+                "\t\tproxy_pass: http://host.docker.internal:${application.externalPort};\n" +
             "\t}\n" +
         "}\n"
 
