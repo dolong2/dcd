@@ -29,6 +29,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx/conf:/etc/nginx/conf.d:ro
+      - ./nginx/log:/var/log/nginx
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
