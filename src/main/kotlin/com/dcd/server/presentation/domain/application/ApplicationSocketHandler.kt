@@ -1,6 +1,7 @@
-package com.dcd.server.infrastructure.global.socket
+package com.dcd.server.presentation.domain.application
 
 import com.dcd.server.core.common.error.BasicException
+import com.dcd.server.core.common.socket.SocketHandler
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.usecase.ExecuteCommandUseCase
 import com.dcd.server.presentation.domain.application.exception.InvalidConnectionInfoException
@@ -8,12 +9,11 @@ import org.springframework.stereotype.Component
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
-import org.springframework.web.socket.handler.TextWebSocketHandler
 
 @Component
 class ApplicationSocketHandler(
     private val executeCommandUseCase: ExecuteCommandUseCase
-) : TextWebSocketHandler() {
+) : SocketHandler() {
     @Throws(Exception::class)
     override fun handleTextMessage(session: WebSocketSession, message: TextMessage) {
         val applicationId = (session.attributes["applicationId"] as? String
