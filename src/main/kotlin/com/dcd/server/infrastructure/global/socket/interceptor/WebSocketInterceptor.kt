@@ -7,11 +7,13 @@ import com.dcd.server.presentation.domain.application.exception.InvalidConnectio
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
+import org.springframework.stereotype.Component
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.WebSocketHandler
 import org.springframework.web.socket.server.HandshakeInterceptor
 import java.lang.Exception
 
+@Component
 class WebSocketInterceptor(
     private val parseTokenAdapter: ParseTokenAdapter
 ) : HandshakeInterceptor {
