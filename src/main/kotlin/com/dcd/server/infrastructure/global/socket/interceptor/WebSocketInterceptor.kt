@@ -1,4 +1,4 @@
-package com.dcd.server.infrastructure.global.filter
+package com.dcd.server.infrastructure.global.socket.interceptor
 
 import com.dcd.server.core.common.error.BasicException
 import com.dcd.server.infrastructure.global.jwt.adapter.ParseTokenAdapter
@@ -7,12 +7,14 @@ import com.dcd.server.presentation.domain.application.exception.InvalidConnectio
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
+import org.springframework.stereotype.Component
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.WebSocketHandler
 import org.springframework.web.socket.server.HandshakeInterceptor
 import java.lang.Exception
 
-class WebSocketFilter(
+@Component
+class WebSocketInterceptor(
     private val parseTokenAdapter: ParseTokenAdapter
 ) : HandshakeInterceptor {
     override fun beforeHandshake(
