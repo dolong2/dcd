@@ -9,11 +9,11 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 
 @Configuration
 class WebSocketConfig(
-    private val socketHAndler: SocketHandler,
+    private val socketHandler: SocketHandler,
     private val webSocketInterceptor: WebSocketInterceptor
 ) : WebSocketConfigurer {
     override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
-        registry.addHandler(socketHAndler, "/application/exec")
+        registry.addHandler(socketHandler, "/application/exec")
             .addInterceptors(webSocketInterceptor)
             .setAllowedOrigins("*")
     }
