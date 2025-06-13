@@ -1,4 +1,4 @@
-package com.dcd.server.infrastructure.global.filter
+package com.dcd.server.infrastructure.global.socket.interceptor
 
 import com.dcd.server.core.common.error.BasicException
 import com.dcd.server.infrastructure.global.jwt.adapter.ParseTokenAdapter
@@ -12,7 +12,7 @@ import org.springframework.web.socket.WebSocketHandler
 import org.springframework.web.socket.server.HandshakeInterceptor
 import java.lang.Exception
 
-class WebSocketFilter(
+class WebSocketInterceptor(
     private val parseTokenAdapter: ParseTokenAdapter
 ) : HandshakeInterceptor {
     override fun beforeHandshake(
