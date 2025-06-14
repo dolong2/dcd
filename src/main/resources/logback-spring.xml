@@ -55,7 +55,7 @@
         <appender-ref ref="ERROR_APPENDER"/>
     </logger>
     <logger name="CheckExitValueAdapter" level="error" additivity="true">
-        <appender-ref ref="ERROR_ADAPTER"/>
+        <appender-ref ref="ERROR_APPENDER"/>
     </logger>
     <logger name="RequestInfoLogFilter" level="info" additivity="true">
         <appender-ref ref="DEFAULT_REQUEST_APPENDER"/>
