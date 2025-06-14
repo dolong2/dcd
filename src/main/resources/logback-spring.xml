@@ -54,6 +54,9 @@
     <logger name="CustomAuthenticationEntryPoint" level="error" additivity="true">
         <appender-ref ref="ERROR_APPENDER"/>
     </logger>
+    <logger name="CheckExitValueAdapter" level="error" additivity="true">
+        <appender-ref ref="ERROR_ADAPTER"/>
+    </logger>
     <logger name="RequestInfoLogFilter" level="info" additivity="true">
         <appender-ref ref="DEFAULT_REQUEST_APPENDER"/>
     </logger>
@@ -62,8 +65,5 @@
     </logger>
     <logger name="CommandAdapter" level="info" additivity="true">
         <appender-ref ref="COMMAND_APPENDER"/>
-    </logger>
-    <logger name="CheckExitValueAdapter" level="info" additivity="true">
-        <appender-ref ref="ERROR_ADAPTER"/>
     </logger>
 </configuration>
