@@ -19,7 +19,9 @@ class ParseTokenAdapter(
     private val queryTokenBlackListPort: QueryTokenBlackListPort
 ) : ParseTokenPort {
     override fun parseToken(token: String): String? =
-        if(token.startsWith(JwtPrefix.PREFIX)) token.substring(JwtPrefix.PREFIX.length) else null
+        if(token.startsWith(JwtPrefix.PREFIX))
+            token.substring(JwtPrefix.PREFIX.length)
+        else null
 
     override fun getJwtType(token: String): String {
         val claims = getClaims(token, jwtProperty.refreshSecret)
@@ -28,7 +30,7 @@ class ParseTokenAdapter(
     }
 
     override fun getUserId(token: String): String =
-        getAuthentication(token).name
+        getClaims(token, jwtProperty.accessSecret).body.id
 
     fun getAuthentication(token: String): Authentication {
         val claims = getClaims(token, jwtProperty.accessSecret)
@@ -60,7 +62,7 @@ class ParseTokenAdapter(
                 is InvalidClaimException -> throw TokenNotValidException()
                 is ExpiredJwtException -> throw ExpiredTokenException()
                 is JwtException -> throw TokenNotValidException()
-                else -> throw RuntimeException()
+                else -> throw TokenNotValidException()
             }
         }
     }
