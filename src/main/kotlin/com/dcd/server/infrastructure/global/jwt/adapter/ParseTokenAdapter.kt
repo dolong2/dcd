@@ -60,7 +60,7 @@ class ParseTokenAdapter(
                 is InvalidClaimException -> throw TokenNotValidException()
                 is ExpiredJwtException -> throw ExpiredTokenException()
                 is JwtException -> throw TokenNotValidException()
-                else -> throw RuntimeException()
+                else -> throw TokenNotValidException()
             }
         }
     }
