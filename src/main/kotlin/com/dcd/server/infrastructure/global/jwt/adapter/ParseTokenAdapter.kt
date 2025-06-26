@@ -19,7 +19,9 @@ class ParseTokenAdapter(
     private val queryTokenBlackListPort: QueryTokenBlackListPort
 ) : ParseTokenPort {
     override fun parseToken(token: String): String? =
-        if(token.startsWith(JwtPrefix.PREFIX)) token.substring(JwtPrefix.PREFIX.length) else null
+        if(token.startsWith(JwtPrefix.PREFIX))
+            token.substring(JwtPrefix.PREFIX.length)
+        else null
 
     override fun getJwtType(token: String): String {
         val claims = getClaims(token, jwtProperty.refreshSecret)
