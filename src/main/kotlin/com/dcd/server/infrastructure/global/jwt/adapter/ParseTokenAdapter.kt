@@ -30,7 +30,7 @@ class ParseTokenAdapter(
     }
 
     override fun getUserId(token: String): String =
-        getAuthentication(token).name
+        getClaims(token, jwtProperty.accessSecret).body.id
 
     fun getAuthentication(token: String): Authentication {
         val claims = getClaims(token, jwtProperty.accessSecret)
