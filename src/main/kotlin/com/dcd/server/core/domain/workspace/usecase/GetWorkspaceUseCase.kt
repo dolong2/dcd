@@ -1,13 +1,13 @@
 package com.dcd.server.core.domain.workspace.usecase
 
-import com.dcd.server.core.common.annotation.ReadOnlyUseCase
+import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.workspace.dto.extension.toDto
 import com.dcd.server.core.domain.workspace.dto.response.WorkspaceResDto
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 
-@ReadOnlyUseCase
+@UseCase(readOnly = true)
 class GetWorkspaceUseCase(
     private val queryWorkspacePort: QueryWorkspacePort,
     private val queryApplicationPort: QueryApplicationPort
