@@ -12,5 +12,8 @@ annotation class UseCase(
     val rollbackFor: Array<KClass<out Throwable>> = [Exception::class],
 
     @get:AliasFor(annotation = Transactional::class, attribute = "noRollbackFor")
-    val noRollbackFor: Array<KClass<out Throwable>> = []
+    val noRollbackFor: Array<KClass<out Throwable>> = [],
+
+    @get:AliasFor(annotation = Transactional::class, attribute = "readOnly")
+    val readOnly: Boolean = false
 )
