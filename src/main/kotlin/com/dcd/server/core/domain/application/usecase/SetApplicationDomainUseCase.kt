@@ -1,6 +1,5 @@
 package com.dcd.server.core.domain.application.usecase
 
-import com.dcd.server.core.common.annotation.Lock
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.domain.application.dto.request.SetDomainReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
@@ -18,7 +17,6 @@ class SetApplicationDomainUseCase(
     private val generateHttpConfigService: GenerateHttpConfigService,
     private val rebootNginxService: RebootNginxService
 ) {
-    @Lock("#applicationId", waitTime = 1000 * 60 * 3, leaseTime = 1000 * 60 * 3)
     fun execute(applicationId: String, setDomainReqDto: SetDomainReqDto) {
         val domain = setDomainReqDto.domain
         require(domain.matches(Regex("^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$"))) {
