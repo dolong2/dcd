@@ -5,16 +5,19 @@ import com.dcd.server.core.common.file.FileContent
 import com.dcd.server.core.domain.application.exception.HttpConfigFailureException
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.service.GenerateHttpConfigService
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
 class GenerateHttpConfigServiceImpl(
     private val commandPort: CommandPort,
 ) : GenerateHttpConfigService {
+    @Value("\${domain.config-path}")
+    private val domainConfigPath: String = ""
+
     override fun generateWebServerConfig(application: Application, domain: String) {
         val webServerConfig = FileContent.getApplicationHttpConfig(application, domain)
-        //TODO 환경변수 + 절대경로로 수정 필요
-        val httpConfigDirectory = "./nginx/conf/${application.workspace.id}"
+        val httpConfigDirectory = "${domainConfigPath}/nginx/conf/${application.workspace.id}"
         val exitValue = commandPort.executeShellCommand(
             "mkdir -p $httpConfigDirectory && " +
             "cat <<EOF > ${httpConfigDirectory}/${application.name.replace(" ", "-")}-http.conf \n ${webServerConfig}EOF"
