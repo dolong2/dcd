@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service
 @Service
 class GenerateHttpConfigServiceImpl(
     private val commandPort: CommandPort,
+    @Value("\${domain.config-path:.}")
+    private val domainConfigPath: String
 ) : GenerateHttpConfigService {
-    @Value("\${domain.config-path}")
-    private val domainConfigPath: String = ""
 
     override fun generateWebServerConfig(application: Application, domain: String) {
         val webServerConfig = FileContent.getApplicationHttpConfig(application, domain)
