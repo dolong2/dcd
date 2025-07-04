@@ -29,14 +29,20 @@ spring:
           connectiontimeout: 5000
           timeout: 5000
           writetimeout: 5000
+
 jwt:
   accessSecret: ${JWT_ACCESS_SECRET}
   refreshSecret: ${JWT_REFRESH_SECRET}
   time:
     accessTime: ${JWT_ACCESS_TIME}
     refreshTime: ${JWT_REFRESH_TIME}
+
 server:
   port: 8081
+
 aes:
   secret-key: ${AES_SECRET}
   init-vector: ${AES_INIT_VECTOR}
+
+domain:
+  config-path: ${DOMAIN_CONFIG_PATH}
