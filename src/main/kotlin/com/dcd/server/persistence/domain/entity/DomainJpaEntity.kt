@@ -14,7 +14,6 @@ class DomainJpaEntity(
     val id: UUID,
     val name: String,
     val description: String,
-    val domain: String,
     @OneToOne
     @JoinColumn(name = "application_id")
     val application: ApplicationJpaEntity
