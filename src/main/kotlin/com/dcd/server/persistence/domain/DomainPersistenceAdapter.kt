@@ -32,4 +32,7 @@ class DomainPersistenceAdapter(
     override fun findById(id: String): Domain? =
         domainRepository.findByIdOrNull(UUID.fromString(id))
             ?.toDomain()
+
+    override fun existsByName(name: String): Boolean =
+        domainRepository.existsByName(name)
 }
