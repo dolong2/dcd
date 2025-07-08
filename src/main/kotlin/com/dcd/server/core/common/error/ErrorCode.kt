@@ -18,6 +18,7 @@ enum class ErrorCode(
     FAILURE_HTTP_CONFIG("Http 설정 생성에 실패함", 400),
     ALREADY_EXISTS_APPLICATION("이미 존재하는 이름의 애플리케이션", 400),
     ALREADY_EXISTS_WORKSPACE("이미 존재하는 워크스페이스", 400),
+    ALREADY_EXISTS_DOMAIN("이미 존재하는 도메인", 400),
 
     UNAUTHORIZED("권한이 없음", 401),
     EXPIRED_TOKEN("토큰이 만료됨", 401),
