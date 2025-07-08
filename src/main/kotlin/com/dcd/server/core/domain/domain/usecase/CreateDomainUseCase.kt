@@ -4,7 +4,7 @@ import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.domain.dto.extension.toEntity
 import com.dcd.server.core.domain.domain.dto.request.CreateDomainReqDto
-import com.dcd.server.core.domain.domain.dto.respone.CreateDomainResDto
+import com.dcd.server.core.domain.domain.dto.response.CreateDomainResDto
 import com.dcd.server.core.domain.domain.exception.AlreadyExistsDomainException
 import com.dcd.server.core.domain.domain.spi.CommandDomainPort
 import com.dcd.server.core.domain.domain.spi.QueryDomainPort
