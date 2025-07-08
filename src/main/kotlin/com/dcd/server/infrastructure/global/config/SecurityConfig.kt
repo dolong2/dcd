@@ -83,6 +83,9 @@ class SecurityConfig(
                 it.requestMatchers(HttpMethod.PUT, "/workspace/{workspaceId}/env").authenticated()
                 it.requestMatchers(HttpMethod.DELETE, "/workspace/{workspaceId}/env").authenticated()
 
+                //domain
+                it.requestMatchers(HttpMethod.POST, "/{workspaceId}/domain").authenticated()
+
                 //user
                 it.requestMatchers(HttpMethod.GET, "/user/profile").authenticated()
                 it.requestMatchers(HttpMethod.PATCH, "/user/password").authenticated()
