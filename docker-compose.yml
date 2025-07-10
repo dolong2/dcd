@@ -1,9 +1,7 @@
-version: "3.8"
-
 networks:
   default:
-    external:
-      name: dcd
+    name: dcd
+    external: true
 
 services:
   db:
@@ -20,7 +18,6 @@ services:
       - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
     ports:
       - 6378:6379
-    command: ["redis-server", "--requirepass", "$REDIS_PASSWORD"]
   proxy:
     container_name: dcd-nginx
     image: nginx:latest
