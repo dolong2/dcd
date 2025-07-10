@@ -22,12 +22,16 @@ import java.time.Duration
 
 @Configuration
 @EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
-class RedisConfig {
+class RedisConfig(
     @Value("\${spring.data.redis.host}")
-    private val host: String = ""
-
+    private val host: String,
     @Value("\${spring.data.redis.port}")
-    private val port = 0
+    private val port: Int,
+    @Value("\${spring.data.redis.username}")
+    private val redisUserName: String,
+    @Value("\${spring.data.redis.password}")
+    private val redisPassword: String
+) {
     @Bean
     fun redisConnectionFactory(): RedisConnectionFactory {
         return LettuceConnectionFactory(host, port)
@@ -36,7 +40,10 @@ class RedisConfig {
     @Bean
     fun redissonClient(): RedissonClient {
         val config = Config()
-        config.useSingleServer().setAddress("redis://$host:$port")
+        config.useSingleServer()
+            .setAddress("redis://$host:$port")
+            .setUsername(redisUserName)
+            .setPassword(redisPassword)
         return Redisson.create(config)
     }
 
