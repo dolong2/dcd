@@ -43,3 +43,5 @@ logs/
 src/main/resources/application-test.yml
 
 getImageVersion.sh
+
+sql/
