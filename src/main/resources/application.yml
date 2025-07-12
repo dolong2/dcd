@@ -9,6 +9,9 @@ spring:
       ddl-auto: none
     show-sql: true
     database: mysql
+    properties:
+      hibernate:
+        dialect: ${DB_HIBERNATE_DIALECT}
   data:
     redis:
       host: ${REDIS_HOST}
