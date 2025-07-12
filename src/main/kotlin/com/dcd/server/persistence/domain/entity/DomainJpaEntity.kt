@@ -9,7 +9,6 @@ import java.util.*
 @Table(name = "domain_entity")
 class DomainJpaEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "BINARY(16)")
     val id: UUID,
     val name: String,

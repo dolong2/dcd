@@ -6,7 +6,6 @@ import java.util.UUID
 @MappedSuperclass
 open class Env(
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "BINARY(16)")
     val id: UUID,
     @Column(name = "env_key")

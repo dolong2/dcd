@@ -12,7 +12,6 @@ import java.util.UUID
 @Table(name = "application_entity")
 class ApplicationJpaEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "BINARY(16)")
     val id: UUID,
     val name: String,

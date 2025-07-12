@@ -9,7 +9,6 @@ import java.util.UUID
 @Table(name = "workspace_entity")
 class WorkspaceJpaEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "BINARY(16)")
     val id: UUID = UUID.randomUUID(),
     val title: String,

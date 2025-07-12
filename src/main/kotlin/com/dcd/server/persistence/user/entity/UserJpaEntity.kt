@@ -9,7 +9,6 @@ import java.util.*
 @Table(name = "user_entity")
 class UserJpaEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "BINARY(16)")
     val id: UUID = UUID.randomUUID(),
     val email: String,
