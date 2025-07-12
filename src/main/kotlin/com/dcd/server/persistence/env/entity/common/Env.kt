@@ -1,15 +1,12 @@
 package com.dcd.server.persistence.env.entity.common
 
-import jakarta.persistence.Column
-import jakarta.persistence.Id
-import jakarta.persistence.MappedSuperclass
-import org.hibernate.annotations.GenericGenerator
+import jakarta.persistence.*
 import java.util.UUID
 
 @MappedSuperclass
 open class Env(
     @Id
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "BINARY(16)")
     val id: UUID,
     @Column(name = "env_key")
