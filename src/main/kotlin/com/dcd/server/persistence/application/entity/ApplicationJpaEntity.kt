@@ -5,7 +5,6 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.persistence.env.entity.ApplicationEnvEntity
 import com.dcd.server.persistence.workspace.entity.WorkspaceJpaEntity
 import jakarta.persistence.*
-import org.hibernate.annotations.GenericGenerator
 import java.util.UUID
 
 
@@ -13,7 +12,6 @@ import java.util.UUID
 @Table(name = "application_entity")
 class ApplicationJpaEntity(
     @Id
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
     val id: UUID,
     val name: String,
