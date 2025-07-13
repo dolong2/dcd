@@ -1,5 +1,7 @@
 package com.dcd.server.core.domain.domain.usecase
 
+import com.dcd.server.core.domain.application.spi.CommandApplicationPort
+import com.dcd.server.core.domain.domain.exception.AlreadyConnectedDomainException
 import com.dcd.server.core.domain.domain.exception.DomainNotFoundException
 import com.dcd.server.core.domain.domain.spi.CommandDomainPort
 import com.dcd.server.core.domain.domain.spi.QueryDomainPort
@@ -10,6 +12,7 @@ import io.kotest.matchers.shouldBe
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import util.application.ApplicationGenerator
 import util.domain.DomainGenerator
 import java.util.*
 
@@ -20,7 +23,8 @@ class DeleteDomainUseCaseTest(
     private val deleteDomainUseCase: DeleteDomainUseCase,
     private val commandDomainPort: CommandDomainPort,
     private val queryDomainPort: QueryDomainPort,
-    private val queryWorkspacePort: QueryWorkspacePort
+    private val queryWorkspacePort: QueryWorkspacePort,
+    private val commandApplicationPort: CommandApplicationPort
 ) : BehaviorSpec({
     val domainId = UUID.randomUUID().toString()
 
@@ -34,6 +38,19 @@ class DeleteDomainUseCaseTest(
 
             then("도메인을 조회할 수 없게 되야함") {
                 queryDomainPort.findById(domainId) shouldBe null
+            }
+        }
+
+        `when`("이미 연결되어있는 도메인일때") {
+            val application = ApplicationGenerator.generateApplication(workspace = workspace)
+            commandApplicationPort.save(application)
+            val updatedDomain = domain.copy(application = application)
+            commandDomainPort.save(updatedDomain)
+
+            then("도메인을 삭제하면 예외가 발생해야함") {
+                shouldThrow<AlreadyConnectedDomainException> {
+                    deleteDomainUseCase.execute(domainId)
+                }
             }
         }
     }
