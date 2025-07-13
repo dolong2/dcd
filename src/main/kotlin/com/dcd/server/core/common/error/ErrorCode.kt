@@ -19,6 +19,7 @@ enum class ErrorCode(
     ALREADY_EXISTS_APPLICATION("이미 존재하는 이름의 애플리케이션", 400),
     ALREADY_EXISTS_WORKSPACE("이미 존재하는 워크스페이스", 400),
     ALREADY_EXISTS_DOMAIN("이미 존재하는 도메인", 400),
+    ALREADY_CONNECTED_DOMAIN("이미 연결된 도메인", 400),
 
     UNAUTHORIZED("권한이 없음", 401),
     EXPIRED_TOKEN("토큰이 만료됨", 401),
@@ -40,6 +41,7 @@ enum class ErrorCode(
     GLOBAL_ENV_NOT_FOUND("해당 환경변수를 찾을 수 없음", 404),
     WORKSPACE_NOT_FOUND("해당 워크스페이스를 찾을 수 없음", 404),
     AUTH_CODE_NOT_FOUND("인증 코드를 찾을 수 없습니다. 코드를 다시 전송 해주세요.", 404),
+    DOMAIN_NOT_FOUND("해당 도메인을 찾을 수 없음", 404),
 
     CONFLICT("해당 요청은 서버의 상태와 충돌됩니다.", 409),
     CAN_NOT_DEPLOY_APPLICATION("애플리케이션을 배포할 수 없습니다. 애플리케이션을 정지시킨 후 실행해주세요.", 409),
