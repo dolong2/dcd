@@ -9,4 +9,7 @@ data class Domain(
     val description: String,
     val application: Application?,
     val workspace: Workspace,
-)
+) {
+    fun getDomainName(): String =
+        "${name}.dolong2.co.kr"
+}

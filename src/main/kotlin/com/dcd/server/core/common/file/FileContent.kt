@@ -98,6 +98,13 @@ object FileContent {
             "\tssl_certificate_key /etc/nginx/conf.d/ssl/certificate/privkey.pem;\n\n" +
 
             "\tlocation / {\n" +
+                "\t\t# WebSocket 관련 헤더 설정\n" +
+                "\t\tproxy_set_header Upgrade \$http_upgrade;\n" +
+                "\t\tproxy_set_header Connection \$connection_upgrade;\n" +
+                "\t\tproxy_set_header Host \$host;\n" +
+                "\t\tproxy_set_header X-Real-IP \$remote_addr;\n" +
+                "\t\tproxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;\n\n" +
+
                 "\t\tproxy_pass http://host.docker.internal:${application.externalPort};\n" +
             "\t}\n" +
         "}\n"

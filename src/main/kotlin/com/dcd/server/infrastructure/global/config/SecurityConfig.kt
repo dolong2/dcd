@@ -62,7 +62,6 @@ class SecurityConfig(
                 it.requestMatchers(HttpMethod.DELETE, "/{workspaceId}/application/{id}").authenticated()
                 it.requestMatchers(HttpMethod.PUT, "/{workspaceId}/application/{id}").authenticated()
                 it.requestMatchers(HttpMethod.GET, "/{workspaceId}/application/{id}/logs").authenticated()
-                it.requestMatchers(HttpMethod.POST, "/{workspaceId}/application/{id}/domain").authenticated()
                 it.requestMatchers(HttpMethod.PUT, "/{workspaceId}/application/{id}/env").authenticated()
                 it.requestMatchers(HttpMethod.PUT, "/{workspaceId}/application/env").authenticated()
                 it.requestMatchers(HttpMethod.DELETE, "/{workspaceId}/application/{id}/env").authenticated()
@@ -86,6 +85,7 @@ class SecurityConfig(
                 //domain
                 it.requestMatchers(HttpMethod.POST, "/{workspaceId}/domain").authenticated()
                 it.requestMatchers(HttpMethod.DELETE, "/{workspaceId}/domain/{domainId}").authenticated()
+                it.requestMatchers(HttpMethod.POST, "/{workspaceId}/domain/{domainId}/connect").authenticated()
 
                 //user
                 it.requestMatchers(HttpMethod.GET, "/user/profile").authenticated()
