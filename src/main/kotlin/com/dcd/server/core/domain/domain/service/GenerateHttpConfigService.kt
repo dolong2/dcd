@@ -1,4 +1,4 @@
-package com.dcd.server.core.domain.application.service
+package com.dcd.server.core.domain.domain.service
 
 import com.dcd.server.core.domain.application.model.Application
 

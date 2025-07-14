@@ -1,7 +1,7 @@
-package com.dcd.server.core.domain.application.service.impl
+package com.dcd.server.core.domain.domain.service.impl
 
 import com.dcd.server.core.common.command.CommandPort
-import com.dcd.server.core.domain.application.service.RebootNginxService
+import com.dcd.server.core.domain.domain.service.RebootNginxService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 

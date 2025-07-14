@@ -1,4 +1,4 @@
-package com.dcd.server.core.domain.application.service.impl
+package com.dcd.server.core.domain.domain.service.impl
 
 import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.common.file.FileContent
