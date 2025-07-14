@@ -2,6 +2,7 @@ package com.dcd.server.presentation.domain.domain
 
 import com.dcd.server.core.domain.domain.dto.request.CreateDomainReqDto
 import com.dcd.server.core.domain.domain.dto.response.CreateDomainResDto
+import com.dcd.server.core.domain.domain.usecase.ConnectDomainUseCase
 import com.dcd.server.core.domain.domain.usecase.CreateDomainUseCase
 import com.dcd.server.core.domain.domain.usecase.DeleteDomainUseCase
 import com.dcd.server.presentation.domain.domain.data.request.CreateDomainRequest
@@ -16,10 +17,12 @@ class DomainWebAdapterTest : BehaviorSpec({
     val workspaceId= UUID.randomUUID().toString()
     val createDomainUseCase = mockk<CreateDomainUseCase>()
     val deleteDomainUseCase = mockk<DeleteDomainUseCase>(relaxUnitFun = true)
+    val connectDomainUseCase = mockk<ConnectDomainUseCase>(relaxUnitFun = true)
 
     val domainWebAdapter = DomainWebAdapter(
         createDomainUseCase = createDomainUseCase,
         deleteDomainUseCase = deleteDomainUseCase,
+        connectDomainUseCase = connectDomainUseCase,
     )
 
     given("CreateDomainRequest가 주어지고") {
