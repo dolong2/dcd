@@ -27,8 +27,7 @@ class ApplicationWebAdapter(
     private val updateApplicationUseCase: UpdateApplicationUseCase,
     private val getApplicationLogUseCase: GetApplicationLogUseCase,
     private val deployApplicationUseCase: DeployApplicationUseCase,
-    private val executeCommandUseCase: ExecuteCommandUseCase,
-    private val setApplicationDomainUseCase: SetApplicationDomainUseCase
+    private val executeCommandUseCase: ExecuteCommandUseCase
 ) {
     @PostMapping
     @WorkspaceOwnerVerification("#workspaceId")
@@ -144,16 +143,6 @@ class ApplicationWebAdapter(
         @Validated @RequestBody updateApplicationRequest: UpdateApplicationRequest
     ): ResponseEntity<Void> =
         updateApplicationUseCase.execute(applicationId, updateApplicationRequest.toDto())
-            .run { ResponseEntity.ok().build() }
-
-    @PostMapping("/{applicationId}/domain")
-    @WorkspaceOwnerVerification("#workspaceId")
-    fun setApplicationDomain(
-        @PathVariable workspaceId: String,
-        @PathVariable applicationId: String,
-        @RequestBody setDomainRequest: SetDomainRequest
-    ): ResponseEntity<Void> =
-        setApplicationDomainUseCase.execute(applicationId, setDomainRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
     @GetMapping("/{applicationId}/logs")
