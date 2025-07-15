@@ -5,10 +5,12 @@ import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.common.file.FileContent
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.domain.dto.request.ConnectDomainReqDto
+import com.dcd.server.core.domain.domain.exception.DomainNotFoundException
 import com.dcd.server.core.domain.domain.spi.CommandDomainPort
 import com.dcd.server.core.domain.domain.spi.QueryDomainPort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import com.ninjasquad.springmockk.MockkBean
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.verify
@@ -59,6 +61,17 @@ class ConnectDomainUseCaseTest(
             }
             then("nginx 재실행이 명령되어야함") {
                 verify { commandPort.executeShellCommand("docker restart dcd-nginx") }
+            }
+        }
+
+        `when`("해당 도메인이 존재하지 않을때") {
+            commandDomainPort.delete(domain)
+            val request = ConnectDomainReqDto(applicationId)
+
+            then("에러가 발생해야함") {
+                shouldThrow<DomainNotFoundException> {
+                    connectDomainUseCase.execute(domainId, request)
+                }
             }
         }
     }
