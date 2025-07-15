@@ -20,6 +20,7 @@ import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import util.application.ApplicationGenerator
 import util.domain.DomainGenerator
 import util.workspace.WorkspaceGenerator
 import java.util.*
@@ -96,12 +97,10 @@ class ConnectDomainUseCaseTest(
         `when`("타겟 애플리케이션이 해당 워크스페이스랑 다른 워크스페이스에 위치할때") {
             val otherWorkspace = WorkspaceGenerator.generateWorkspace(user = workspaceInfo.workspace!!.owner)
             commandWorkspacePort.save(otherWorkspace)
-            queryApplicationPort.findById(applicationId)!!
-                .also {
-                    commandApplicationPort.save(it.copy(workspace = otherWorkspace))
-                }
+            val otherApplication = ApplicationGenerator.generateApplication(workspace = otherWorkspace)
+            commandApplicationPort.save(otherApplication)
 
-            val request = ConnectDomainReqDto(applicationId)
+            val request = ConnectDomainReqDto(otherApplication.id)
 
             then("에러가 발생해야함") {
                 shouldThrow<ApplicationNotFoundException> {
