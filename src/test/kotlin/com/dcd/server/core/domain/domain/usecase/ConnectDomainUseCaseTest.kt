@@ -92,5 +92,22 @@ class ConnectDomainUseCaseTest(
                 }
             }
         }
+
+        `when`("타겟 애플리케이션이 해당 워크스페이스랑 다른 워크스페이스에 위치할때") {
+            val otherWorkspace = WorkspaceGenerator.generateWorkspace(user = workspaceInfo.workspace!!.owner)
+            commandWorkspacePort.save(otherWorkspace)
+            queryApplicationPort.findById(applicationId)!!
+                .also {
+                    commandApplicationPort.save(it.copy(workspace = otherWorkspace))
+                }
+
+            val request = ConnectDomainReqDto(applicationId)
+
+            then("에러가 발생해야함") {
+                shouldThrow<ApplicationNotFoundException> {
+                    connectDomainUseCase.execute(domainId, request)
+                }
+            }
+        }
     }
 })
