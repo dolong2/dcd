@@ -3,11 +3,14 @@ package com.dcd.server.core.domain.domain.usecase
 import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.common.file.FileContent
+import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
+import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.domain.dto.request.ConnectDomainReqDto
 import com.dcd.server.core.domain.domain.exception.DomainNotFoundException
 import com.dcd.server.core.domain.domain.spi.CommandDomainPort
 import com.dcd.server.core.domain.domain.spi.QueryDomainPort
+import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.throwables.shouldThrow
@@ -18,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 import util.domain.DomainGenerator
+import util.workspace.WorkspaceGenerator
 import java.util.*
 
 @Transactional
@@ -28,7 +32,9 @@ class ConnectDomainUseCaseTest(
     private val commandDomainPort: CommandDomainPort,
     private val queryDomainPort: QueryDomainPort,
     private val queryWorkspacePort: QueryWorkspacePort,
+    private val commandWorkspacePort: CommandWorkspacePort,
     private val queryApplicationPort: QueryApplicationPort,
+    private val commandApplicationPort: CommandApplicationPort,
     private val workspaceInfo: WorkspaceInfo,
     @MockkBean(relaxed = true)
     private val commandPort: CommandPort,
@@ -70,6 +76,18 @@ class ConnectDomainUseCaseTest(
 
             then("에러가 발생해야함") {
                 shouldThrow<DomainNotFoundException> {
+                    connectDomainUseCase.execute(domainId, request)
+                }
+            }
+
+            commandDomainPort.save(domain)
+        }
+
+        `when`("타겟 애플리케이션이 존재하지 않을때") {
+            val request = ConnectDomainReqDto(UUID.randomUUID().toString())
+
+            then("에러가 발생해야함") {
+                shouldThrow<ApplicationNotFoundException> {
                     connectDomainUseCase.execute(domainId, request)
                 }
             }
