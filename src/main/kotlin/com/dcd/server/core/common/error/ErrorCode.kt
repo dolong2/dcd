@@ -20,6 +20,7 @@ enum class ErrorCode(
     ALREADY_EXISTS_WORKSPACE("이미 존재하는 워크스페이스", 400),
     ALREADY_EXISTS_DOMAIN("이미 존재하는 도메인", 400),
     ALREADY_CONNECTED_DOMAIN("이미 연결된 도메인", 400),
+    NOT_CONNECTED_DOMAIN("도메인이 애플리케이션에 연결되어 있지 않음", 400),
 
     UNAUTHORIZED("권한이 없음", 401),
     EXPIRED_TOKEN("토큰이 만료됨", 401),
