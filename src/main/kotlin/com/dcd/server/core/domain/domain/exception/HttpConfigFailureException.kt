@@ -1,4 +1,4 @@
-package com.dcd.server.core.domain.application.exception
+package com.dcd.server.core.domain.domain.exception
 
 import com.dcd.server.core.common.error.BasicException
 import com.dcd.server.core.common.error.ErrorCode
