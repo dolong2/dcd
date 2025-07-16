@@ -86,6 +86,7 @@ class SecurityConfig(
                 it.requestMatchers(HttpMethod.POST, "/{workspaceId}/domain").authenticated()
                 it.requestMatchers(HttpMethod.DELETE, "/{workspaceId}/domain/{domainId}").authenticated()
                 it.requestMatchers(HttpMethod.POST, "/{workspaceId}/domain/{domainId}/connect").authenticated()
+                it.requestMatchers(HttpMethod.POST, "/{workspaceId}/domain/{domainId}/disconnect").authenticated()
 
                 //user
                 it.requestMatchers(HttpMethod.GET, "/user/profile").authenticated()

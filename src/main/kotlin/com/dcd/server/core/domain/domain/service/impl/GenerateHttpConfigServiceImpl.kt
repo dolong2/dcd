@@ -2,7 +2,7 @@ package com.dcd.server.core.domain.domain.service.impl
 
 import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.common.file.FileContent
-import com.dcd.server.core.domain.application.exception.HttpConfigFailureException
+import com.dcd.server.core.domain.domain.exception.HttpConfigFailureException
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.domain.model.Domain
 import com.dcd.server.core.domain.domain.service.GenerateHttpConfigService

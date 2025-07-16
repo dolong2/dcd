@@ -5,6 +5,7 @@ import com.dcd.server.core.domain.domain.dto.response.CreateDomainResDto
 import com.dcd.server.core.domain.domain.usecase.ConnectDomainUseCase
 import com.dcd.server.core.domain.domain.usecase.CreateDomainUseCase
 import com.dcd.server.core.domain.domain.usecase.DeleteDomainUseCase
+import com.dcd.server.core.domain.domain.usecase.DisconnectDomainUseCase
 import com.dcd.server.presentation.domain.domain.data.request.ConnectDomainRequest
 import com.dcd.server.presentation.domain.domain.data.request.CreateDomainRequest
 import io.kotest.core.spec.style.BehaviorSpec
@@ -19,11 +20,13 @@ class DomainWebAdapterTest : BehaviorSpec({
     val createDomainUseCase = mockk<CreateDomainUseCase>()
     val deleteDomainUseCase = mockk<DeleteDomainUseCase>(relaxUnitFun = true)
     val connectDomainUseCase = mockk<ConnectDomainUseCase>(relaxUnitFun = true)
+    val disconnectDomainUseCase = mockk<DisconnectDomainUseCase>(relaxUnitFun = true)
 
     val domainWebAdapter = DomainWebAdapter(
         createDomainUseCase = createDomainUseCase,
         deleteDomainUseCase = deleteDomainUseCase,
         connectDomainUseCase = connectDomainUseCase,
+        disconnectDomainUseCase = disconnectDomainUseCase,
     )
 
     given("CreateDomainRequest가 주어지고") {
@@ -47,7 +50,7 @@ class DomainWebAdapterTest : BehaviorSpec({
         val domainId = UUID.randomUUID().toString()
 
         `when`("도메인 삭제 메서드를 실행할때") {
-            val result = domainWebAdapter.deleteDomain(UUID.randomUUID().toString(), domainId)
+            val result = domainWebAdapter.deleteDomain(workspaceId, domainId)
 
             then("200으로 응답되어야함") {
                 result.statusCode shouldBe HttpStatus.OK
@@ -57,7 +60,16 @@ class DomainWebAdapterTest : BehaviorSpec({
 
         `when`("도메인 연결 메서드를 실행할때") {
             val request = ConnectDomainRequest(UUID.randomUUID().toString())
-            val result = domainWebAdapter.connectDomain(UUID.randomUUID().toString(), domainId, request)
+            val result = domainWebAdapter.connectDomain(workspaceId, domainId, request)
+
+            then("200으로 응답되어야함") {
+                result.statusCode shouldBe HttpStatus.OK
+                result.body shouldBe null
+            }
+        }
+
+        `when`("도메인 연결 해제 메서드를 실행할때") {
+            val result = domainWebAdapter.disconnectDomain(workspaceId, domainId)
 
             then("200으로 응답되어야함") {
                 result.statusCode shouldBe HttpStatus.OK
