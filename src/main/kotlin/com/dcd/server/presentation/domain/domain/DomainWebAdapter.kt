@@ -4,6 +4,7 @@ import com.dcd.server.core.common.annotation.WorkspaceOwnerVerification
 import com.dcd.server.core.domain.domain.usecase.ConnectDomainUseCase
 import com.dcd.server.core.domain.domain.usecase.CreateDomainUseCase
 import com.dcd.server.core.domain.domain.usecase.DeleteDomainUseCase
+import com.dcd.server.core.domain.domain.usecase.DisconnectDomainUseCase
 import com.dcd.server.presentation.domain.domain.data.extension.toDto
 import com.dcd.server.presentation.domain.domain.data.extension.toResponse
 import com.dcd.server.presentation.domain.domain.data.request.ConnectDomainRequest
@@ -23,7 +24,8 @@ import org.springframework.web.bind.annotation.RestController
 class DomainWebAdapter(
     private val createDomainUseCase: CreateDomainUseCase,
     private val deleteDomainUseCase: DeleteDomainUseCase,
-    private val connectDomainUseCase: ConnectDomainUseCase
+    private val connectDomainUseCase: ConnectDomainUseCase,
+    private val disconnectDomainUseCase: DisconnectDomainUseCase
 ) {
     @PostMapping
     @WorkspaceOwnerVerification("#workspaceId")
@@ -51,5 +53,14 @@ class DomainWebAdapter(
         @Validated @RequestBody connectDomainRequest: ConnectDomainRequest
     ): ResponseEntity<Void> =
         connectDomainUseCase.execute(domainId, connectDomainRequest.toDto())
+            .run { ResponseEntity.ok().build() }
+
+    @PostMapping("/{domainId}/disconnect")
+    @WorkspaceOwnerVerification("#workspaceId")
+    fun disconnectDomain(
+        @PathVariable workspaceId: String,
+        @PathVariable domainId: String
+    ): ResponseEntity<Void> =
+        disconnectDomainUseCase.execute(domainId)
             .run { ResponseEntity.ok().build() }
 }
