@@ -25,6 +25,9 @@ class ConnectDomainUseCase(
         val domain = (queryDomainPort.findById(domainId)
             ?: throw DomainNotFoundException())
 
+        if (domain.workspace != workspaceInfo.workspace)
+            throw DomainNotFoundException()
+
         if (domain.application != null)
             throw AlreadyConnectedDomainException()
 
