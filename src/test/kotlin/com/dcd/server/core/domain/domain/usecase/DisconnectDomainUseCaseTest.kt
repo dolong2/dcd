@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.domain.exception.DomainNotFoundException
 import com.dcd.server.core.domain.domain.spi.CommandDomainPort
 import com.dcd.server.core.domain.domain.spi.QueryDomainPort
+import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.throwables.shouldThrow
@@ -16,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 import util.domain.DomainGenerator
+import util.workspace.WorkspaceGenerator
 import java.util.*
 
 @Transactional
@@ -25,6 +27,7 @@ class DisconnectDomainUseCaseTest(
     private val disconnectDomainUseCase: DisconnectDomainUseCase,
     private val commandDomainPort: CommandDomainPort,
     private val queryDomainPort: QueryDomainPort,
+    private val commandWorkspacePort: CommandWorkspacePort,
     private val queryWorkspacePort: QueryWorkspacePort,
     private val queryApplicationPort: QueryApplicationPort,
     private val workspaceInfo: WorkspaceInfo,
@@ -69,6 +72,18 @@ class DisconnectDomainUseCaseTest(
             }
 
             commandDomainPort.save(domain)
+        }
+
+        `when`("워크스페이스 정보가 도메인의 워크스페이스가 아닐때") {
+            val otherWorkspace = workspaceInfo.workspace!!.copy(id = UUID.randomUUID().toString())
+            commandWorkspacePort.save(otherWorkspace)
+            workspaceInfo.workspace = otherWorkspace
+
+            then("에러가 발생해야함") {
+                shouldThrow<DomainNotFoundException> {
+                    disconnectDomainUseCase.execute(domainId)
+                }
+            }
         }
     }
 })
