@@ -92,7 +92,7 @@ object FileContent {
     fun getApplicationHttpConfig(application: Application, domain: String): String =
         "server {\n" +
             "\tlisten 443 ssl;\n" +
-            "\tserver-name: $domain;\n\n" +
+            "\tserver-name $domain;\n\n" +
 
             "\tssl_certificate /etc/nginx/conf.d/ssl/certificate/fullchain.pem;\n" +
             "\tssl_certificate_key /etc/nginx/conf.d/ssl/certificate/privkey.pem;\n\n" +
