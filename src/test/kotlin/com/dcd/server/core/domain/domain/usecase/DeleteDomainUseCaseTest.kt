@@ -49,7 +49,7 @@ class DeleteDomainUseCaseTest(
         `when`("현재 워크스페이스 정보가 도메인의 워크스페이스가 아닐때") {
             val otherWorkspace = workspace.copy(owner = workspace.owner)
             commandWorkspacePort.save(otherWorkspace)
-            workspaceInfo.workspace = workspace
+            workspaceInfo.workspace = otherWorkspace
 
             then("에러가 발생해야함") {
                 shouldThrow<DomainNotFoundException> {
