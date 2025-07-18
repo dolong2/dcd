@@ -94,6 +94,23 @@ class ConnectDomainUseCaseTest(
             }
         }
 
+        `when`("타겟 도메인이 해당 워크스페이스랑 다른 워크스페이스에 위치할때") {
+            val existingWorkspace = workspaceInfo.workspace!!
+            val otherWorkspace = WorkspaceGenerator.generateWorkspace(user = existingWorkspace.owner)
+            commandWorkspacePort.save(otherWorkspace)
+            workspaceInfo.workspace = otherWorkspace
+
+            val request = ConnectDomainReqDto(applicationId)
+
+            then("에러가 발생해야함") {
+                shouldThrow<DomainNotFoundException> {
+                    connectDomainUseCase.execute(domainId, request)
+                }
+            }
+
+            workspaceInfo.workspace = existingWorkspace
+        }
+
         `when`("타겟 애플리케이션이 해당 워크스페이스랑 다른 워크스페이스에 위치할때") {
             val otherWorkspace = WorkspaceGenerator.generateWorkspace(user = workspaceInfo.workspace!!.owner)
             commandWorkspacePort.save(otherWorkspace)
