@@ -102,24 +102,26 @@ object FileContent {
         """.trimIndent()
 
     fun getApplicationHttpConfig(application: Application, domain: String): String =
-        "server {\n" +
-            "\tlisten 443 ssl;\n" +
-            "\tserver_name $domain;\n\n" +
-
-            "\tssl_certificate /etc/nginx/conf.d/ssl/certificate/fullchain.pem;\n" +
-            "\tssl_certificate_key /etc/nginx/conf.d/ssl/certificate/privkey.pem;\n\n" +
-
-            "\tlocation / {\n" +
-                "\t\t# WebSocket 관련 헤더 설정\n" +
-                "\t\tproxy_set_header Upgrade \$http_upgrade;\n" +
-                "\t\tproxy_set_header Connection \$connection_upgrade;\n" +
-                "\t\tproxy_set_header Host \$host;\n" +
-                "\t\tproxy_set_header X-Real-IP \$remote_addr;\n" +
-                "\t\tproxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;\n\n" +
-
-                "\t\tproxy_pass http://host.docker.internal:${application.externalPort};\n" +
-            "\t}\n" +
-        "}\n"
+        """
+        server {
+          listen 443 ssl;
+          server_name $domain;
+          
+          ssl_certificate /etc/nginx/conf.d/ssl/certificate/fullchain.pem;
+          ssl_certificate_key /etc/nginx/conf.d/ssl/certificate/privkey.pem;
+          
+          location / {
+            # WebSocket 관련 헤더 설정
+            proxy_set_header Upgrade ${'$'}http_upgrade;
+            proxy_set_header Connection ${'$'}connection_upgrade;
+            proxy_set_header Host ${'$'}host;
+            proxy_set_header X-Real-IP ${'$'}remote_addr;
+            proxy_set_header X-Forwarded-For ${'$'}proxy_add_x_forwarded_for;
+            
+            proxy_pass http://host.docker.internal:${application.externalPort};
+          }
+        }
+        """.trimIndent()
 
     private fun getEnvString(env: Map<String, String>): String {
         val envString = StringBuilder()
