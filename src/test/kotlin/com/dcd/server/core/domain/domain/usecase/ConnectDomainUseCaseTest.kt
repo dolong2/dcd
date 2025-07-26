@@ -60,7 +60,7 @@ class ConnectDomainUseCaseTest(
                 val application = queryApplicationPort.findById(applicationId)!!
                 val webServerConfig = FileContent.getApplicationHttpConfig(application, domain.getDomainName())
                 val httpConfigDirectory = "./nginx/conf/${domain.id}"
-                verify { commandPort.executeShellCommand("mkdir -p $httpConfigDirectory && cat <<'EOF' > ${httpConfigDirectory}/${application.name.replace(" ", "-")}-http.conf \n${webServerConfig}") }
+                verify { commandPort.executeShellCommand("mkdir -p $httpConfigDirectory && cat <<'EOF' > ${httpConfigDirectory}/${application.name.replace(" ", "-")}-http.conf \n${webServerConfig}\nEOF") }
             }
             then("도메인에 해당 애플리케이션이 연결되어야함") {
                 val domain = queryDomainPort.findById(domainId)!!
