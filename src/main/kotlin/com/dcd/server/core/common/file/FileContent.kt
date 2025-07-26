@@ -48,56 +48,58 @@ object FileContent {
        """.trimIndent()
 
     fun getImageVersionShellScriptContent(imageName: String, minVersion: String): String =
-        "#!/bin/bash\n" +
-        "\n" +
-        "# 이미지, 페이지 사이즈, 최소 버전(threshold) 설정\n" +
-        "IMAGE_NAME=\"library/$imageName\"\n" +
-        "PAGE_SIZE=100\n" +
-        "MIN_VERSION=\"$minVersion\"\n" +
-        "\n" +
-        "# 첫 페이지 URL 구성\n" +
-        "URL=\"https://hub.docker.com/v2/repositories/\$IMAGE_NAME/tags/?page_size=\$PAGE_SIZE\"\n" +
-        "\n" +
-        "# 결과를 저장할 변수 및 배열 초기화\n" +
-        "LATEST_FOUND=false\n" +
-        "NUMERIC_TAGS=()\n" +
-        "\n" +
-        "# pagination 처리: next URL이 없을 때까지 반복\n" +
-        "while [ -n \"\$URL\" ] && [ \"\$URL\" != \"null\" ]; do\n" +
-        "    RESPONSE=\$(curl -s \"\$URL\")\n" +
-        "    \n" +
-        "    # 현재 페이지의 태그 목록 추출\n" +
-        "    TAGS=\$(echo \"\$RESPONSE\" | jq -r '.results[].name')\n" +
-        "    \n" +
-        "    for tag in \$TAGS; do\n" +
-        "        # latest는 따로 체크\n" +
-        "        if [[ \"\$tag\" == \"latest\" ]]; then\n" +
-        "            LATEST_FOUND=true\n" +
-        "        # 숫자와 점(.)만 포함된 태그 필터링\n" +
-        "        elif [[ \"\$tag\" =~ ^[0-9]+(\\.[0-9]+)*\$ ]]; then\n" +
-        "            # 버전 비교: tag가 MIN_VERSION 이상이면 저장\n" +
-        "            # sort -V를 사용하여 두 버전을 정렬한 후 첫 번째가 MIN_VERSION이면 tag가 MIN_VERSION 이상입니다.\n" +
-        "            lowest=\$(printf \"%s\\n%s\" \"\$MIN_VERSION\" \"\$tag\" | sort -V | head -n1)\n" +
-        "            if [ \"\$lowest\" = \"\$MIN_VERSION\" ]; then\n" +
-        "                NUMERIC_TAGS+=(\"\$tag\")\n" +
-        "            fi\n" +
-        "        fi\n" +
-        "    done\n" +
-        "    \n" +
-        "    # 다음 페이지 URL 추출 (없으면 \"null\" 또는 빈 문자열)\n" +
-        "    URL=\$(echo \"\$RESPONSE\" | jq -r '.next')\n" +
-        "done\n" +
-        "\n" +
-        "# 최신 태그(latest)가 있으면 제일 먼저 출력\n" +
-        "if \$LATEST_FOUND; then\n" +
-        "    echo \"latest\"\n" +
-        "fi\n" +
-        "\n" +
-        "# 숫자 태그를 내림차순(-r 옵션) 버전 정렬(-V 옵션) 후 출력\n" +
-        "if [ \${#NUMERIC_TAGS[@]} -gt 0 ]; then\n" +
-        "    sorted_numeric_tags=\$(printf \"%s\\n\" \"\${NUMERIC_TAGS[@]}\" | sort -r -V)\n" +
-        "    echo \"\$sorted_numeric_tags\"\n" +
-        "fi\n"
+        """
+        #!/bin/bash
+    
+        # 이미지, 페이지 사이즈, 최소 버전(threshold) 설정
+        IMAGE_NAME="library/$imageName"
+        PAGE_SIZE=100
+        MIN_VERSION="$minVersion"
+    
+        # 첫 페이지 URL 구성
+        URL="https://hub.docker.com/v2/repositories/${'$'}IMAGE_NAME/tags/?page_size=${'$'}PAGE_SIZE"
+    
+        # 결과를 저장할 변수 및 배열 초기화
+        LATEST_FOUND=false
+        NUMERIC_TAGS=()
+    
+        # pagination 처리: next URL이 없을 때까지 반복
+        while [ -n "${'$'}URL" ] && [ "${'$'}URL" != "null" ]; do
+            RESPONSE=\$(curl -s "${'$'}URL")
+            
+            # 현재 페이지의 태그 목록 추출
+            TAGS=\$(echo "${'$'}RESPONSE" | jq -r '.results[].name')
+            
+            for tag in ${'$'}TAGS; do
+                # latest는 따로 체크
+                if [[ "${'$'}tag" == "latest" ]]; then
+                    LATEST_FOUND=true
+                # 숫자와 점(.)만 포함된 태그 필터링
+                elif [[ "${'$'}tag" =~ ^[0-9]+(\.[0-9]+)*\$ ]]; then
+                    # 버전 비교: tag가 MIN_VERSION 이상이면 저장
+                    # sort -V를 사용하여 두 버전을 정렬한 후 첫 번째가 MIN_VERSION이면 tag가 MIN_VERSION 이상입니다.
+                    lowest=\$(printf "%s\n%s" "${'$'}MIN_VERSION" "${'$'}tag" | sort -V | head -n1)
+                    if [ "${'$'}lowest" = "${'$'}MIN_VERSION" ]; then
+                        NUMERIC_TAGS+=("${'$'}tag")
+                    fi
+                fi
+            done
+            
+            # 다음 페이지 URL 추출 (없으면 "null" 또는 빈 문자열)
+            URL=\$(echo "${'$'}RESPONSE" | jq -r '.next')
+        done
+    
+        # 최신 태그(latest)가 있으면 제일 먼저 출력
+        if ${'$'}LATEST_FOUND; then
+            echo "latest"
+        fi
+    
+        # 숫자 태그를 내림차순(-r 옵션) 버전 정렬(-V 옵션) 후 출력
+        if [ ${'$'}{#NUMERIC_TAGS[@]} -gt 0 ]; then
+            sorted_numeric_tags=\$(printf "%s\n" "${'$'}{NUMERIC_TAGS[@]}" | sort -r -V)
+            echo "${'$'}sorted_numeric_tags"
+        fi
+        """.trimIndent()
 
     fun getApplicationHttpConfig(application: Application, domain: String): String =
         "server {\n" +
