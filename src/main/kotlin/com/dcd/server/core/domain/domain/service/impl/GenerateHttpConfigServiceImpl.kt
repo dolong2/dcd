@@ -21,7 +21,7 @@ class GenerateHttpConfigServiceImpl(
         val httpConfigDirectory = "${domainConfigPath}/nginx/conf/${domain.id}"
         val exitValue = commandPort.executeShellCommand(
             "mkdir -p $httpConfigDirectory && " +
-            "cat <<'EOF' > ${httpConfigDirectory}/${application.name.replace(" ", "-")}-http.conf \n ${webServerConfig}EOF"
+            "cat <<'EOF' > ${httpConfigDirectory}/${application.name.replace(" ", "-")}-http.conf \n$webServerConfig"
         )
 
         if (exitValue != 0)
