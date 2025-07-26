@@ -5,37 +5,47 @@ import java.lang.StringBuilder
 
 object FileContent {
     fun getSpringBootDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
-        "FROM openjdk:${version}-jdk\n" +
-        "COPY build/libs/*.jar build/libs/\n" +
-        "RUN rm -f build/libs/*-plain.jar\n" +
-        "RUN mv build/libs/*.jar build/libs/app.jar\n" +
-        "EXPOSE ${port}\n" +
-        getEnvString(env) +
-        "CMD [\"java\",\"-jar\",\"build/libs/app.jar\"]"
+        """
+        FROM openjdk:${version}-jdk
+        COPY build/libs/*.jar build/libs/
+        RUN rm -f build/libs/*-plain.jar
+        RUN mv build/libs/*.jar build/libs/app.jar
+        EXPOSE $port
+        ${getEnvString(env)}
+        CMD [\"java\",\"-jar\",\"build/libs/app.jar\"]
+        """.trimIndent()
 
     fun getNestJsDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
-        "FROM node:${version}\n" +
-        "COPY . .\n" +
-        "RUN npm install\n" +
-        "RUN npm run build\n" +
-        "EXPOSE ${port}\n" +
-        getEnvString(env) +
-        "CMD [\"npm\", \"start\"]"
+        """
+        FROM node:${version}
+        COPY . .
+        RUN npm install
+        RUN npm run build
+        EXPOSE $port
+        ${getEnvString(env)}
+        CMD [\"npm\", \"start\"]
+        """.trimIndent()
 
     fun getMYSQLDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
-        "FROM mysql:${version}\n" +
-        "EXPOSE ${port}\n" +
-        getEnvString(env)
+        """
+        FROM mysql:${version}
+        EXPOSE $port
+        ${getEnvString(env)}
+        """.trimIndent()
 
     fun getMARIADBDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
-        "FROM mariadb:${version}\n" +
-        "EXPOSE ${port}\n" +
-        getEnvString(env)
+        """
+        FROM mariadb:${version}
+        EXPOSE $port
+        ${getEnvString(env)}
+        """.trimIndent()
 
     fun getRedisDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
-        "FROM redis:${version}\n" +
-        "EXPOSE ${port}\n" +
-        getEnvString(env)
+        """
+        FROM redis:${version}
+        EXPOSE $port
+        ${getEnvString(env)}
+       """.trimIndent()
 
     fun getImageVersionShellScriptContent(imageName: String, minVersion: String): String =
         "#!/bin/bash\n" +
