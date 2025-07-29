@@ -54,8 +54,8 @@ class DisconnectDomainUseCaseTest(
                 verify { commandPort.executeShellCommand("rm -r $httpConfigDirectory") }
             }
             then("도메인에 해당 애플리케이션이 null로 변경되어야함") {
-                val domain = queryDomainPort.findById(domainId)!!
-                domain.application shouldBe null
+                val domainEntity = queryDomainPort.findById(domainId)!!
+                domainEntity.application shouldBe null
             }
             then("nginx 재실행이 명령되어야함") {
                 verify { commandPort.executeShellCommand("docker restart dcd-nginx") }

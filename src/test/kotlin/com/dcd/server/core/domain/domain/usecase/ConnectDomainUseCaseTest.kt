@@ -63,8 +63,8 @@ class ConnectDomainUseCaseTest(
                 verify { commandPort.executeShellCommand("mkdir -p $httpConfigDirectory && cat <<'EOF' > ${httpConfigDirectory}/${application.name.replace(" ", "-")}-http.conf \n${webServerConfig}\nEOF") }
             }
             then("도메인에 해당 애플리케이션이 연결되어야함") {
-                val domain = queryDomainPort.findById(domainId)!!
-                domain.application?.id shouldBe applicationId
+                val domainEntity = queryDomainPort.findById(domainId)!!
+                domainEntity.application?.id shouldBe applicationId
             }
             then("nginx 재실행이 명령되어야함") {
                 verify { commandPort.executeShellCommand("docker restart dcd-nginx") }
