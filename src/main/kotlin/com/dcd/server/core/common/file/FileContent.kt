@@ -12,7 +12,7 @@ object FileContent {
         RUN mv build/libs/*.jar build/libs/app.jar
         EXPOSE $port
         ${getEnvString(env)}
-        CMD ["java","-jar","build/libs/app.jar"]
+        CMD ["java", "-jar", "build/libs/app.jar"]
         """.trimIndent()
 
     fun getNestJsDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
