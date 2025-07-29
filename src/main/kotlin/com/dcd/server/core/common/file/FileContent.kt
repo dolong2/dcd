@@ -23,7 +23,7 @@ object FileContent {
         RUN npm run build
         EXPOSE $port
         ${getEnvString(env)}
-        CMD [\"npm\", \"start\"]
+        CMD ["npm", "start"]
         """.trimIndent()
 
     fun getMYSQLDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
