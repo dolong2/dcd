@@ -1,25 +1,17 @@
 package com.dcd.server.persistence.env.adapter
 
-import com.dcd.server.core.domain.env.model.ApplicationEnv
-import com.dcd.server.core.domain.env.model.ApplicationEnvDetail
-import com.dcd.server.core.domain.env.model.ApplicationEnvMatcher
-import com.dcd.server.core.domain.env.model.GlobalEnv
-import com.dcd.server.core.domain.workspace.model.Workspace
+import com.dcd.server.core.domain.env.model.*
 import com.dcd.server.persistence.application.adapter.toDomain
 import com.dcd.server.persistence.application.adapter.toEntity
-import com.dcd.server.persistence.env.entity.ApplicationEnvDetailEntity
-import com.dcd.server.persistence.env.entity.ApplicationEnvEntity
-import com.dcd.server.persistence.env.entity.ApplicationEnvMatcherEntity
-import com.dcd.server.persistence.env.entity.GlobalEnvEntity
+import com.dcd.server.persistence.env.entity.*
 import com.dcd.server.persistence.env.entity.common.EnvDetail
-import com.dcd.server.persistence.workspace.adapter.toEntity
 
 fun ApplicationEnv.toEntity(): ApplicationEnvEntity =
     ApplicationEnvEntity(
         id = this.id,
         name = this.name,
         description = this.description,
-        details = this.details.map { it.toEntity() }
+        details = listOf()
     )
 
 fun ApplicationEnvEntity.toDomain(): ApplicationEnv =
@@ -60,19 +52,34 @@ fun ApplicationEnvMatcherEntity.toDomain(): ApplicationEnvMatcher =
         application = this.application.toDomain()
     )
 
-fun GlobalEnv.toEntity(workspace: Workspace): GlobalEnvEntity =
+fun GlobalEnv.toEntity(): GlobalEnvEntity =
     GlobalEnvEntity(
         id = this.id,
-        key = this.key,
-        value = this.value,
-        encryption = this.encryption,
-        workspace = workspace.toEntity()
+        name = this.name,
+        description = this.description,
+        details = listOf()
     )
 
 fun GlobalEnvEntity.toDomain(): GlobalEnv =
     GlobalEnv(
         id = this.id,
-        key = this.key,
-        value = this.value,
-        encryption = this.encryption,
+        name = this.name,
+        description = this.description,
+        details = this.details.map { it.toDomain() }
+    )
+
+fun GlobalEnvDetail.toEntity(): GlobalEnvDetailEntity =
+    GlobalEnvDetailEntity(
+        id = this.id,
+        envDetail = EnvDetail(this.key, this.value, this.encryption),
+        globalEnv = this.globalEnv.toEntity(),
+    )
+
+fun GlobalEnvDetailEntity.toDomain(): GlobalEnvDetail =
+    GlobalEnvDetail(
+        id = this.id,
+        key = this.envDetail.key,
+        value = this.envDetail.value,
+        encryption = this.envDetail.encryption,
+        globalEnv = this.globalEnv.toDomain()
     )
