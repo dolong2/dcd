@@ -1,20 +1,15 @@
 package com.dcd.server.persistence.env.entity
 
-import com.dcd.server.persistence.application.entity.ApplicationJpaEntity
 import com.dcd.server.persistence.env.entity.common.Env
-import jakarta.persistence.Entity
-import jakarta.persistence.FetchType
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
+import jakarta.persistence.*
 import java.util.*
+import kotlin.collections.List
 
 @Entity
 class ApplicationEnvEntity(
     id: UUID = UUID.randomUUID(),
-    key: String,
-    value: String,
-    encryption: Boolean,
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "application_id")
-    val application: ApplicationJpaEntity? = null
-) : Env(id, key, value, encryption)
+    name: String,
+    description: String,
+    @OneToMany(mappedBy = "applicationEnv", cascade = [CascadeType.REMOVE])
+    val details: List<ApplicationEnvDetailEntity>
+) : Env(id, name, description)
