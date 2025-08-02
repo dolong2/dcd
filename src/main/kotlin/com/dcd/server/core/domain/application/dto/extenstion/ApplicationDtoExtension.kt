@@ -15,7 +15,6 @@ fun CreateApplicationReqDto.toEntity(workspace: Workspace, externalPort: Int): A
         description = this.description,
         githubUrl = this.githubUrl,
         applicationType = this.applicationType,
-        env = listOf(),
         workspace = workspace,
         port = this.port,
         externalPort = externalPort,
@@ -24,14 +23,19 @@ fun CreateApplicationReqDto.toEntity(workspace: Workspace, externalPort: Int): A
         labels = this.labels
     )
 
-fun Application.toDto(): ApplicationResDto =
+fun Application.toDto(envList: List<ApplicationEnv>): ApplicationResDto =
     ApplicationResDto(
         id = this.id,
         name = this.name,
         description = this.description,
         githubUrl = this.githubUrl,
         applicationType = this.applicationType,
-        env = this.env.associate { if (it.encryption) it.key to "<encoded data>" else it.key to it.value },
+        env = envList.flatMap { it.details }.associate {
+            val envValue =
+                if (it.encryption) "<encoded data>"
+                else it.value
+            it.key to envValue
+       },
         port = this.port,
         externalPort = this.externalPort,
         version = this.version,

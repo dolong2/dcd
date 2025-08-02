@@ -25,7 +25,7 @@ class DeleteApplicationEnvUseCase(
         val applicationEnv = (queryApplicationEnvPort.findByKeyAndApplication(key, application)
             ?: throw ApplicationEnvNotFoundException())
 
-        commandApplicationEnvPort.delete(applicationEnv)
+        commandApplicationEnvPort.deleteDetail(applicationEnv)
     }
 
     @Lock("'labels_'+#key")
@@ -34,8 +34,7 @@ class DeleteApplicationEnvUseCase(
             ?: throw WorkspaceNotFoundException())
 
         val envList = queryApplicationPort.findAllByWorkspace(workspace, labels)
-            .flatMap { it.env }
-            .filter { it.key == key }
+            .flatMap { queryApplicationEnvPort.findByApplication(it) }
 
         commandApplicationEnvPort.deleteAll(envList)
     }

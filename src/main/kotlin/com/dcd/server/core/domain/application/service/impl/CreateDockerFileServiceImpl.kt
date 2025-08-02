@@ -12,6 +12,7 @@ import com.dcd.server.core.domain.application.service.CreateDockerFileService
 import com.dcd.server.core.domain.application.spi.CheckExitValuePort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.application.util.FailureCase
+import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -24,6 +25,7 @@ import java.io.IOException
 @Service
 class CreateDockerFileServiceImpl(
     private val queryApplicationPort: QueryApplicationPort,
+    private val queryApplicationEnvPort: QueryApplicationEnvPort,
     private val commandPort: CommandPort,
     private val checkExitValuePort: CheckExitValuePort,
     private val eventPublisher: ApplicationEventPublisher,
@@ -45,18 +47,24 @@ class CreateDockerFileServiceImpl(
 
     private fun createFile(application: Application, version: String, coroutineScope: CoroutineScope) {
         val directoryName = "'${application.name}'"
-        val applicationEnv = application.env.associate {
-            if (it.encryption)
-                it.key to encryptPort.decrypt(it.value)
-            else
-                it.key to it.value
-        }.toMutableMap()
-        val globalEnv = application.workspace.globalEnv.associate {
-            if (it.encryption)
-                it.key to encryptPort.decrypt(it.value)
-            else
-                it.key to it.value
-        }
+        val applicationEnv =
+            queryApplicationEnvPort.findByApplication(application)
+                .flatMap { it.details }
+                .associate {
+                    if (it.encryption)
+                        it.key to encryptPort.decrypt(it.value)
+                    else
+                        it.key to it.value
+                }.toMutableMap()
+
+        val globalEnv = application.workspace.globalEnv
+            .flatMap { it.details }
+            .associate {
+                if (it.encryption)
+                    it.key to encryptPort.decrypt(it.value)
+                else
+                    it.key to it.value
+            }
         applicationEnv.putAll(globalEnv)
 
         commandPort.executeShellCommand("mkdir -p $directoryName")

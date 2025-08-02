@@ -6,12 +6,14 @@ import com.dcd.server.core.common.data.dto.response.ListResDto
 import com.dcd.server.core.domain.application.dto.extenstion.toDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationResDto
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 
 @UseCase(readOnly = true)
 class GetAllApplicationUseCase(
     private val queryApplicationPort: QueryApplicationPort,
-    private val workspaceInfo: WorkspaceInfo
+    private val workspaceInfo: WorkspaceInfo,
+    private val queryApplicationEnvPort: QueryApplicationEnvPort
 ) {
     fun execute(labels: List<String>?): ListResDto<ApplicationResDto> {
         val workspace = workspaceInfo.workspace
@@ -20,7 +22,10 @@ class GetAllApplicationUseCase(
         return ListResDto(
             queryApplicationPort
                 .findAllByWorkspace(workspace, labels)
-                .map { it.toDto() }
+                .map {
+                    val applicationEnvList = queryApplicationEnvPort.findByApplication(it)
+                    it.toDto(applicationEnvList)
+                }
         )
     }
 }
