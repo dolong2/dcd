@@ -11,5 +11,8 @@ class GlobalEnvEntity(
     name: String,
     description: String,
     @OneToMany(mappedBy = "globalEnv", cascade = [CascadeType.REMOVE])
-    val details: List<GlobalEnvDetailEntity>
+    val details: List<GlobalEnvDetailEntity>,
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "workspace_id")
+    val workspace: WorkspaceJpaEntity
 ) : Env(id, name, description)

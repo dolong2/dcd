@@ -5,6 +5,5 @@ class GlobalEnvDetail(
     val id: UUID = UUID.randomUUID(),
     val key: String,
     val value: String,
-    val encryption: Boolean = false,
-    val globalEnv: GlobalEnv,
+    val encryption: Boolean = false
 )

@@ -22,5 +22,7 @@ fun UpdateWorkspaceRequest.toDto(): UpdateWorkspaceReqDto =
 
 fun PutGlobalEnvRequest.toDto(): PutGlobalEnvReqDto =
     PutGlobalEnvReqDto(
+        name = this.name,
+        description = this.description,
         envList = this.envList.map { it.toDto() }
     )
