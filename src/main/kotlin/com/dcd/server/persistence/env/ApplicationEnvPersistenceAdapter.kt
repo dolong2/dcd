@@ -41,6 +41,7 @@ class ApplicationEnvPersistenceAdapter(
         )
         applicationEnvRepository.save(applicationEnvEntity)
         applicationEnvMatcherRepository.save(applicationEnvMatcherEntity)
+        applicationEnvDetailRepository.saveAll(applicationEnv.details.map { it.toEntity() })
     }
 
     override fun saveAll(applicationEnvList: List<ApplicationEnv>, application: Application) {
