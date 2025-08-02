@@ -7,6 +7,7 @@ import com.dcd.server.core.domain.env.spi.ApplicationEnvPort
 import com.dcd.server.persistence.application.adapter.toEntity
 import com.dcd.server.persistence.env.adapter.toDomain
 import com.dcd.server.persistence.env.adapter.toEntity
+import com.dcd.server.persistence.env.entity.ApplicationEnvDetailEntity
 import com.dcd.server.persistence.env.entity.ApplicationEnvMatcherEntity
 import com.dcd.server.persistence.env.repository.ApplicationEnvDetailRepository
 import com.dcd.server.persistence.env.repository.ApplicationEnvMatcherRepository
@@ -41,13 +42,22 @@ class ApplicationEnvPersistenceAdapter(
         )
         applicationEnvRepository.save(applicationEnvEntity)
         applicationEnvMatcherRepository.save(applicationEnvMatcherEntity)
-        applicationEnvDetailRepository.saveAll(applicationEnv.details.map { it.toEntity() })
+        applicationEnvDetailRepository.saveAll(applicationEnv.details.map { it.toEntity(applicationEnvEntity) })
     }
 
     override fun saveAll(applicationEnvList: List<ApplicationEnv>, application: Application) {
         val applicationEntity = application.toEntity()
 
-        val applicationEntityList = applicationEnvList.map { it.toEntity() }
+        val applicationEnvDetailList = mutableListOf<ApplicationEnvDetailEntity>()
+
+        val applicationEntityList = applicationEnvList.map {
+            val applicationEnvEntity = it.toEntity()
+
+            val detailList = it.details.map { envDetail -> envDetail.toEntity(applicationEnvEntity) }
+            applicationEnvDetailList.addAll(detailList)
+
+            applicationEnvEntity
+        }
         applicationEnvRepository.saveAll(applicationEntityList)
 
         val applicationEnvMatcherEntityList = applicationEntityList.map {
@@ -57,6 +67,7 @@ class ApplicationEnvPersistenceAdapter(
             )
         }
         applicationEnvMatcherRepository.saveAll(applicationEnvMatcherEntityList)
+        applicationEnvDetailRepository.saveAll(applicationEnvDetailList)
     }
 
     override fun delete(applicationEnv: ApplicationEnv) {
@@ -71,5 +82,5 @@ class ApplicationEnvPersistenceAdapter(
     }
 
     override fun deleteDetail(applicationEnvDetail: ApplicationEnvDetail) =
-        applicationEnvDetailRepository.delete(applicationEnvDetail.toEntity())
+        applicationEnvDetailRepository.deleteById(applicationEnvDetail.id)
 }

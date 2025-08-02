@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query
 import java.util.*
 
 interface ApplicationEnvDetailRepository : JpaRepository<ApplicationEnvDetailEntity, UUID> {
-    @Query("select d from ApplicationEnvDetailEntity d where d.key = :key and (select count(m) from ApplicationEnvMatcherEntity m where m.application = :application and m.applicationEnv = d) > 0")
+    @Query("select d from ApplicationEnvDetailEntity d where d.envDetail.key = :key and exists(select m from ApplicationEnvMatcherEntity m where m.application = :application and m.applicationEnv = d.applicationEnv)")
     fun findByKeyAndApplication(key: String, application: ApplicationJpaEntity): ApplicationEnvDetailEntity?
 }

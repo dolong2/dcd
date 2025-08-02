@@ -9,7 +9,7 @@ interface CommandApplicationEnvPort {
 
     fun saveAll(applicationEnvList: List<ApplicationEnv>, application: Application)
 
-    fun delete(applicationEnvDetail: ApplicationEnv)
+    fun delete(applicationEnv: ApplicationEnv)
 
     fun deleteAll(applicationEnvList: List<ApplicationEnv>)
 

@@ -10,7 +10,6 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.env.model.ApplicationEnv
 import com.dcd.server.core.domain.env.model.ApplicationEnvDetail
 import com.dcd.server.core.domain.env.spi.CommandApplicationEnvPort
-import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import java.util.UUID
 
@@ -19,7 +18,6 @@ class PutApplicationEnvUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val workspaceInfo: WorkspaceInfo,
     private val commandApplicationEnvPort: CommandApplicationEnvPort,
-    private val queryApplicationEnvPort: QueryApplicationEnvPort,
     private val encryptService: EncryptService
 ) {
     @Lock("#id")
@@ -45,8 +43,7 @@ class PutApplicationEnvUseCase(
                 id = UUID.randomUUID(),
                 key = putEnv.key,
                 value = envValue,
-                encryption = putEnv.encryption,
-                applicationEnv = applicationEnv
+                encryption = putEnv.encryption
             )
         }
 
@@ -81,8 +78,7 @@ class PutApplicationEnvUseCase(
                     id = UUID.randomUUID(),
                     key = putEnv.key,
                     value = envValue,
-                    encryption = putEnv.encryption,
-                    applicationEnv = applicationEnv
+                    encryption = putEnv.encryption
                 )
             }
 

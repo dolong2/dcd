@@ -6,6 +6,5 @@ class ApplicationEnvDetail(
     val id: UUID,
     val key: String,
     val value: String,
-    val encryption: Boolean = false,
-    val applicationEnv: ApplicationEnv,
+    val encryption: Boolean = false
 )

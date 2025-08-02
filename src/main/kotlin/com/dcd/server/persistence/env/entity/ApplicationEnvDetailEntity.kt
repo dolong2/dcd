@@ -4,7 +4,7 @@ import com.dcd.server.persistence.env.entity.common.EnvDetail
 import jakarta.persistence.*
 import java.util.*
 
-@Entity(name = "application_env_detail")
+@Entity
 class ApplicationEnvDetailEntity(
     @Id
     @Column(columnDefinition = "BINARY(16)")

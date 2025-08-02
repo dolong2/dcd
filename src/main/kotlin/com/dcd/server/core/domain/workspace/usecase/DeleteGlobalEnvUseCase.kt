@@ -21,6 +21,6 @@ class DeleteGlobalEnvUseCase(
 
         val globalEnv = (queryGlobalEnvPort.findByKeyAndWorkspace(key, workspace)
             ?: throw GlobalEnvNotFoundException())
-        commandGlobalEnvPort.delete(globalEnv)
+        commandGlobalEnvPort.deleteDetail(globalEnv)
     }
 }
