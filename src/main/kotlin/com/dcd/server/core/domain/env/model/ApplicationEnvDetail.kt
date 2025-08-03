@@ -2,7 +2,7 @@ package com.dcd.server.core.domain.env.model
 
 import java.util.UUID
 
-class ApplicationEnvDetail(
+data class ApplicationEnvDetail(
     val id: UUID,
     val key: String,
     val value: String,
