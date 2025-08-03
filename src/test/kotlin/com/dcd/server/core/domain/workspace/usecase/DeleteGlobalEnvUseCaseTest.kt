@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.workspace.usecase
 
 import com.dcd.server.core.domain.env.model.GlobalEnv
+import com.dcd.server.core.domain.env.model.GlobalEnvDetail
 import com.dcd.server.core.domain.env.spi.CommandGlobalEnvPort
 import com.dcd.server.core.domain.env.spi.QueryGlobalEnvPort
 import com.dcd.server.core.domain.user.spi.CommandUserPort
@@ -40,6 +41,7 @@ class DeleteGlobalEnvUseCaseTest(
     val userId = "1e1973eb-3fb9-47ac-9342-c16cd63ffc6f"
     val targetWorkspaceId = "d57b42f5-5cc4-440b-8dce-b4fc2e372eff"
     val targetGlobalEnvId = UUID.randomUUID()
+    val targetGlobalEnvDetailId = UUID.randomUUID()
 
     beforeContainer {
         val userDetails = authDetailsService.loadUserByUsername(userId)
@@ -48,7 +50,13 @@ class DeleteGlobalEnvUseCaseTest(
 
         val user = queryUserPort.findById(userId)!!
         val workspace = WorkspaceGenerator.generateWorkspace(id = targetWorkspaceId, user = user)
-        val globalEnv = GlobalEnv(id = targetGlobalEnvId, key = "testEnvKey", value = "testValue", encryption = false)
+        val globalEnv = GlobalEnv(
+            id = targetGlobalEnvId,
+            name = "testGlobalEnv",
+            description = "testGlobalEnvDescription",
+            workspace = workspace,
+            details = listOf(GlobalEnvDetail(id = targetGlobalEnvDetailId, key = "testEnvKey", value = "testValue"))
+        )
         commandWorkspacePort.save(workspace)
         commandGlobalEnvPort.save(globalEnv, workspace)
     }

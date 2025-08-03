@@ -1,10 +1,12 @@
 package com.dcd.server.core.domain.env.model
 
+import com.dcd.server.core.domain.workspace.model.Workspace
 import java.util.*
 
 data class GlobalEnv(
     val id: UUID = UUID.randomUUID(),
-    val key: String,
-    var value: String,
-    val encryption: Boolean
+    val name: String,
+    val description: String,
+    val details: List<GlobalEnvDetail>,
+    val workspace: Workspace? = null
 )

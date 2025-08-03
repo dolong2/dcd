@@ -12,7 +12,6 @@ data class Application(
     val description: String?,
     val applicationType: ApplicationType,
     val githubUrl: String?,
-    val env: List<ApplicationEnv>,
     val version: String,
     val workspace: Workspace,
     val port: Int,

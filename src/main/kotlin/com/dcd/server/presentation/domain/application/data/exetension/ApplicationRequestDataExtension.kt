@@ -6,6 +6,8 @@ import com.dcd.server.presentation.domain.env.data.extension.toDto
 
 fun PutApplicationEnvRequest.toDto(): PutApplicationEnvReqDto =
     PutApplicationEnvReqDto(
+        name = this.name,
+        description = this.description,
         envList = this.envList.map { it.toDto() }
     )
 

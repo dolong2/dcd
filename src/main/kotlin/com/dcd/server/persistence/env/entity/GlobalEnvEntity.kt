@@ -2,19 +2,17 @@ package com.dcd.server.persistence.env.entity
 
 import com.dcd.server.persistence.env.entity.common.Env
 import com.dcd.server.persistence.workspace.entity.WorkspaceJpaEntity
-import jakarta.persistence.Entity
-import jakarta.persistence.FetchType
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
+import jakarta.persistence.*
 import java.util.UUID
 
 @Entity
 class GlobalEnvEntity(
     id: UUID = UUID.randomUUID(),
-    key: String,
-    value: String,
-    encryption: Boolean,
+    name: String,
+    description: String,
+    @OneToMany(mappedBy = "globalEnv", cascade = [CascadeType.REMOVE])
+    val details: List<GlobalEnvDetailEntity>,
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "workspace_id")
-    val workspace: WorkspaceJpaEntity? = null
-) : Env(id, key, value, encryption)
+    val workspace: WorkspaceJpaEntity
+) : Env(id, name, description)

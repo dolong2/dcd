@@ -116,6 +116,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     given("AddApplicationEnvRequest가 주어지고") {
         val testId = "testId"
         val request = PutApplicationEnvRequest(
+            name = "testName",
+            description = "testDescription",
             envList = listOf(PutEnvRequest(key = "testKey", value = "testValue", encryption = false))
         )
         `when`("addApplicationEnv메서드를 실행할때") {

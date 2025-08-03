@@ -4,7 +4,7 @@ import java.util.*
 
 data class ApplicationEnv(
     val id: UUID = UUID.randomUUID(),
-    val key: String,
-    var value: String,
-    val encryption: Boolean
+    val name: String,
+    val description: String,
+    val details: List<ApplicationEnvDetail>
 )

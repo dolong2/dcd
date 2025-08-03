@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.env.spi
 
 import com.dcd.server.core.domain.env.model.GlobalEnv
+import com.dcd.server.core.domain.env.model.GlobalEnvDetail
 import com.dcd.server.core.domain.workspace.model.Workspace
 
 interface CommandGlobalEnvPort {
@@ -11,4 +12,6 @@ interface CommandGlobalEnvPort {
     fun delete(globalEnv: GlobalEnv)
 
     fun deleteAll(globalEnvList: List<GlobalEnv>)
+
+    fun deleteDetail(globalEnvDetail: GlobalEnvDetail)
 }

@@ -41,7 +41,7 @@ class GetAllApplicationUseCaseTest(
 
         `when`("usecase를 실행할때") {
             val result = getAllApplicationUseCase.execute(null)
-            val target = ListResDto(applicationList.map { it.toDto() })
+            val target = ListResDto(applicationList.map { it.toDto(listOf()) })
             then("result는 target이랑 같아야함") {
                 result shouldBe target
             }
