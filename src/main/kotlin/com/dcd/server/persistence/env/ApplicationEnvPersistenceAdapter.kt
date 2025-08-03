@@ -49,6 +49,7 @@ class ApplicationEnvPersistenceAdapter(
         val applicationEntity = application.toEntity()
 
         val applicationEnvDetailList = mutableListOf<ApplicationEnvDetailEntity>()
+        val applicationEnvMatcherEntityList = mutableListOf<ApplicationEnvMatcherEntity>()
 
         val applicationEntityList = applicationEnvList.map {
             val applicationEnvEntity = it.toEntity()
@@ -56,16 +57,16 @@ class ApplicationEnvPersistenceAdapter(
             val detailList = it.details.map { envDetail -> envDetail.toEntity(applicationEnvEntity) }
             applicationEnvDetailList.addAll(detailList)
 
+            applicationEnvMatcherEntityList.add(
+                ApplicationEnvMatcherEntity(
+                    application = applicationEntity,
+                    applicationEnv = applicationEnvEntity
+                )
+            )
+
             applicationEnvEntity
         }
         applicationEnvRepository.saveAll(applicationEntityList)
-
-        val applicationEnvMatcherEntityList = applicationEntityList.map {
-            ApplicationEnvMatcherEntity(
-                application = applicationEntity,
-                applicationEnv = it
-            )
-        }
         applicationEnvMatcherRepository.saveAll(applicationEnvMatcherEntityList)
         applicationEnvDetailRepository.saveAll(applicationEnvDetailList)
     }
