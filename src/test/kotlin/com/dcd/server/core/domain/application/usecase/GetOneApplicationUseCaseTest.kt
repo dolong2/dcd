@@ -36,7 +36,7 @@ class GetOneApplicationUseCaseTest(
             val result = getOneApplicationUseCase.execute(application.id)
 
             then("result는 application의 내용이랑 같아야함") {
-                result shouldBeEqualToComparingFields application.toDto()
+                result shouldBeEqualToComparingFields application.toDto(listOf())
             }
         }
     }

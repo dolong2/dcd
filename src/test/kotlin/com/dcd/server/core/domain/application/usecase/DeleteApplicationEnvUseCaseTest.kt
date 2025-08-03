@@ -5,6 +5,7 @@ import com.dcd.server.core.domain.application.exception.ApplicationNotFoundExcep
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.env.model.ApplicationEnv
+import com.dcd.server.core.domain.env.model.ApplicationEnvDetail
 import com.dcd.server.core.domain.env.spi.CommandApplicationEnvPort
 import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
@@ -24,9 +25,6 @@ import java.util.UUID
 @ActiveProfiles("test")
 class DeleteApplicationEnvUseCaseTest(
     private val deleteApplicationEnvUseCase: DeleteApplicationEnvUseCase,
-    private val commandApplicationPort: CommandApplicationPort,
-    private val queryUserPort: QueryUserPort,
-    private val commandWorkspacePort: CommandWorkspacePort,
     private val queryApplicationPort: QueryApplicationPort,
     private val commandApplicationEnvPort: CommandApplicationEnvPort,
     private val queryApplicationEnvPort: QueryApplicationEnvPort
@@ -34,14 +32,16 @@ class DeleteApplicationEnvUseCaseTest(
     val applicationId = "2fb0f315-8272-422f-8e9f-c4f765c022b2"
     val key = "testKey"
     val targetApplicationEnvId = UUID.randomUUID()
+    val targetApplicationDetailId = UUID.randomUUID()
 
     beforeContainer {
-        val user = queryUserPort.findById("1e1973eb-3fb9-47ac-9342-c16cd63ffc6f")!!
-        val workspace = WorkspaceGenerator.generateWorkspace(user = user)
-        commandWorkspacePort.save(workspace)
-        val application = ApplicationGenerator.generateApplication(id = applicationId, workspace = workspace)
-        val applicationEnv = ApplicationEnv(id = targetApplicationEnvId, key = "testKey", value = "testValue", encryption = false)
-        commandApplicationPort.save(application)
+        val application = queryApplicationPort.findById(applicationId)!!
+        val applicationEnv = ApplicationEnv(
+            id = targetApplicationEnvId,
+            name = "testEnv",
+            description = "testEnvDescription",
+            details = listOf(ApplicationEnvDetail(id = targetApplicationDetailId, key = "testKey", value = "testValue")),
+        )
         commandApplicationEnvPort.save(applicationEnv, application)
     }
 

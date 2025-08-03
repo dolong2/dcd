@@ -7,8 +7,10 @@ import com.dcd.server.core.domain.application.service.impl.CreateDockerFileServi
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.infrastructure.global.command.adapter.CommandAdapter
 import com.dcd.server.core.domain.application.spi.CheckExitValuePort
+import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
@@ -18,15 +20,17 @@ import java.io.File
 
 class CreateDockerFileServiceImplTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
+    val queryApplicationEnvPort = mockk<QueryApplicationEnvPort>()
     val commandPort = spyk(CommandAdapter())
     val eventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
     val checkExitValuePort = mockk<CheckExitValuePort>(relaxUnitFun = true)
     val encryptPort = mockk<EncryptPort>()
-    val createDockerFileService = CreateDockerFileServiceImpl(queryApplicationPort, commandPort, checkExitValuePort, eventPublisher, encryptPort)
+    val createDockerFileService = CreateDockerFileServiceImpl(queryApplicationPort, queryApplicationEnvPort, commandPort, checkExitValuePort, eventPublisher, encryptPort)
 
     given("스프링 애플리케이션이 주어지고") {
         val application =
             ApplicationGenerator.generateApplication(applicationType = ApplicationType.SPRING_BOOT)
+        every { queryApplicationEnvPort.findByApplication(application) } returns emptyList()
 
         `when`("서비스를 실행할때") {
             createDockerFileService.createFileToApplication(application, application.version)
@@ -44,7 +48,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
                 }
                 actualFileContent.deleteAt(actualFileContent.length - 1)
 
-                actualFileContent.toString() shouldBe FileContent.getSpringBootDockerFileContent(application.version, application.port, application.env.associate { it.key to it.value})
+                actualFileContent.toString() shouldBe FileContent.getSpringBootDockerFileContent(application.version, application.port, emptyMap())
             }
         }
 
@@ -54,6 +58,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
     given("레디스 애플리케이션이 주어지고") {
         val application =
             ApplicationGenerator.generateApplication(applicationType = ApplicationType.REDIS)
+        every { queryApplicationEnvPort.findByApplication(application) } returns emptyList()
 
         `when`("서비스를 실행할때") {
             createDockerFileService.createFileToApplication(application, application.version)
@@ -70,7 +75,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
                     actualFileContent.append(it + "\n")
                 }
 
-                actualFileContent.toString() shouldBe FileContent.getRedisDockerFileContent(application.version, application.port, application.env.associate { it.key to it.value})
+                actualFileContent.toString() shouldBe FileContent.getRedisDockerFileContent(application.version, application.port, emptyMap())
             }
         }
 
@@ -80,6 +85,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
     given("MYSQL 애플리케이션이 주어지고") {
         val application =
             ApplicationGenerator.generateApplication(applicationType = ApplicationType.MYSQL)
+        every { queryApplicationEnvPort.findByApplication(application) } returns emptyList()
 
         `when`("서비스를 실행할때") {
             createDockerFileService.createFileToApplication(application, application.version)
@@ -96,7 +102,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
                     actualFileContent.append(it + "\n")
                 }
 
-                actualFileContent.toString() shouldBe FileContent.getMYSQLDockerFileContent(application.version, application.port, application.env.associate { it.key to it.value})
+                actualFileContent.toString() shouldBe FileContent.getMYSQLDockerFileContent(application.version, application.port, emptyMap())
             }
         }
 
@@ -106,6 +112,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
     given("MARIADB 애플리케이션이 주어지고") {
         val application =
             ApplicationGenerator.generateApplication(applicationType = ApplicationType.MARIA_DB)
+        every { queryApplicationEnvPort.findByApplication(application) } returns emptyList()
 
         `when`("서비스를 실행할때") {
             createDockerFileService.createFileToApplication(application, application.version)
@@ -122,7 +129,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
                     actualFileContent.append(it + "\n")
                 }
 
-                actualFileContent.toString() shouldBe FileContent.getMARIADBDockerFileContent(application.version, application.port, application.env.associate { it.key to it.value})
+                actualFileContent.toString() shouldBe FileContent.getMARIADBDockerFileContent(application.version, application.port, emptyMap())
             }
         }
 
