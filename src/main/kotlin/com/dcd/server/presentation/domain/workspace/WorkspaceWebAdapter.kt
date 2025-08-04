@@ -7,7 +7,6 @@ import com.dcd.server.presentation.common.data.extension.toResponse
 import com.dcd.server.presentation.common.data.response.ListResponse
 import com.dcd.server.presentation.domain.workspace.data.exetension.toDto
 import com.dcd.server.presentation.domain.workspace.data.exetension.toResponse
-import com.dcd.server.presentation.domain.workspace.data.request.PutGlobalEnvRequest
 import com.dcd.server.presentation.domain.workspace.data.request.CreateWorkspaceRequest
 import com.dcd.server.presentation.domain.workspace.data.request.UpdateWorkspaceRequest
 import com.dcd.server.presentation.domain.workspace.data.response.CreateWorkspaceResponse
@@ -24,9 +23,7 @@ class WorkspaceWebAdapter(
     private val getAllWorkspaceUseCase: GetAllWorkspaceUseCase,
     private val getWorkspaceUseCase: GetWorkspaceUseCase,
     private val deleteWorkspaceUseCase: DeleteWorkspaceUseCase,
-    private val updateWorkspaceUseCase: UpdateWorkspaceUseCase,
-    private val putGlobalEnvUseCase: PutGlobalEnvUseCase,
-    private val deleteGlobalEnvUseCase: DeleteGlobalEnvUseCase
+    private val updateWorkspaceUseCase: UpdateWorkspaceUseCase
 ) {
     @PostMapping
     fun createWorkspace(
@@ -63,17 +60,5 @@ class WorkspaceWebAdapter(
         updateWorkspaceRequest: UpdateWorkspaceRequest
     ): ResponseEntity<Void> =
         updateWorkspaceUseCase.execute(workspaceId, updateWorkspaceRequest.toDto())
-            .run { ResponseEntity.ok().build() }
-
-    @PutMapping("/{workspaceId}/env")
-    @WorkspaceOwnerVerification("#workspaceId")
-    fun putGlobalEnv(@PathVariable workspaceId: String, @RequestBody putGlobalEnvRequest: PutGlobalEnvRequest): ResponseEntity<Void> =
-        putGlobalEnvUseCase.execute(workspaceId, putGlobalEnvRequest.toDto())
-            .run { ResponseEntity.ok().build() }
-
-    @DeleteMapping("/{workspaceId}/env")
-    @WorkspaceOwnerVerification("#workspaceId")
-    fun deleteGlobalEnv(@PathVariable workspaceId: String, @RequestParam key: String): ResponseEntity<Void> =
-        deleteGlobalEnvUseCase.execute(workspaceId, key)
             .run { ResponseEntity.ok().build() }
 }
