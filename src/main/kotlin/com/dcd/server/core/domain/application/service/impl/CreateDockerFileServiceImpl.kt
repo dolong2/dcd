@@ -55,17 +55,7 @@ class CreateDockerFileServiceImpl(
                         it.key to encryptPort.decrypt(it.value)
                     else
                         it.key to it.value
-                }.toMutableMap()
-
-        val globalEnv = application.workspace.globalEnv
-            .flatMap { it.details }
-            .associate {
-                if (it.encryption)
-                    it.key to encryptPort.decrypt(it.value)
-                else
-                    it.key to it.value
-            }
-        applicationEnv.putAll(globalEnv)
+                }
 
         commandPort.executeShellCommand("mkdir -p $directoryName")
             .also {exitValue ->

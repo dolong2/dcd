@@ -12,7 +12,6 @@ fun Workspace.toEntity(): WorkspaceJpaEntity =
         id = UUID.fromString(this.id),
         title = this.title,
         description = this.description,
-        globalEnv = listOf(),
         owner = this.owner.toEntity()
     )
 
@@ -21,6 +20,5 @@ fun WorkspaceJpaEntity.toDomain(): Workspace =
         id = this.id.toString(),
         title = this.title,
         description = this.description,
-        globalEnv = this.globalEnv.map { it.toDomain() },
         owner = this.owner.toDomain()
     )

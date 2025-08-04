@@ -17,8 +17,7 @@ fun Workspace.toDto(applicationList: List<Application>): WorkspaceResDto =
         title = this.title,
         description = this.description,
         owner = this.owner.toDto(),
-        applicationList = applicationList.map { it.toWorkspaceDto() },
-        globalEnv = this.globalEnv.flatMap { it.details }.associate { if (it.encryption) it.key to "<encoded data>" else it.key to it.value }
+        applicationList = applicationList.map { it.toWorkspaceDto() }
     )
 
 fun CreateWorkspaceReqDto.toEntity(user: User): Workspace =

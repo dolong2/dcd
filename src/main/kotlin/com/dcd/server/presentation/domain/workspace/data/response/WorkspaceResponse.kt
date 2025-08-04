@@ -7,6 +7,5 @@ data class WorkspaceResponse(
     val title: String,
     val description: String,
     val applicationList: List<WorkspaceApplicationResponse>,
-    val globalEnv: Map<String, String>,
     val owner: UserResponse
 )
