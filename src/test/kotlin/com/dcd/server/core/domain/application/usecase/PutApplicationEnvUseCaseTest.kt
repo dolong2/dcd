@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.common.spi.EncryptPort
 import com.dcd.server.core.domain.application.dto.request.PutApplicationEnvReqDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
@@ -22,9 +23,14 @@ class PutApplicationEnvUseCaseTest(
     private val putApplicationEnvUseCase: PutApplicationEnvUseCase,
     private val queryApplicationPort: QueryApplicationPort,
     private val queryApplicationEnvPort: QueryApplicationEnvPort,
-    private val encryptPort: EncryptPort
+    private val encryptPort: EncryptPort,
+    private val workspaceInfo: WorkspaceInfo
 ) : BehaviorSpec({
     val targetApplicationId = "2fb0f315-8272-422f-8e9f-c4f765c022b2"
+    beforeTest {
+        val application = queryApplicationPort.findById(targetApplicationId)!!
+        workspaceInfo.workspace = application.workspace
+    }
 
     given("애플리케이션 아이디와 request가 주어지고") {
         val request = PutApplicationEnvReqDto(
