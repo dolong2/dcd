@@ -41,6 +41,7 @@ class DeleteApplicationEnvUseCaseTest(
             name = "testEnv",
             description = "testEnvDescription",
             details = listOf(ApplicationEnvDetail(id = targetApplicationDetailId, key = "testKey", value = "testValue")),
+            workspace = application.workspace
         )
         commandApplicationEnvPort.save(applicationEnv, application)
     }
