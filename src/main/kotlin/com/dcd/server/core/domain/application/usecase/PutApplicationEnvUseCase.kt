@@ -22,6 +22,9 @@ class PutApplicationEnvUseCase(
 ) {
     @Lock("#id")
     fun execute(id: String, putApplicationEnvReqDto: PutApplicationEnvReqDto) {
+        val workspace = workspaceInfo.workspace
+            ?: throw WorkspaceNotFoundException()
+
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
 
@@ -29,7 +32,8 @@ class PutApplicationEnvUseCase(
             id = UUID.randomUUID(),
             name = putApplicationEnvReqDto.name,
             description = putApplicationEnvReqDto.description,
-            details = listOf()
+            details = listOf(),
+            workspace = workspace
         )
 
         val applicationEnvDetailList = putApplicationEnvReqDto.envList.map { putEnv ->
@@ -56,6 +60,7 @@ class PutApplicationEnvUseCase(
     fun execute(labels: List<String>, putApplicationEnvReqDto: PutApplicationEnvReqDto) {
         val workspace = workspaceInfo.workspace
             ?: throw WorkspaceNotFoundException()
+
         val applicationList = queryApplicationPort.findAllByWorkspace(workspace, labels)
 
         applicationList.forEach { application ->
@@ -64,7 +69,8 @@ class PutApplicationEnvUseCase(
                 id = UUID.randomUUID(),
                 name = putApplicationEnvReqDto.name,
                 description = putApplicationEnvReqDto.description,
-                details = listOf()
+                details = listOf(),
+                workspace = workspace
             )
 
             val applicationEnvDetailList = putApplicationEnvReqDto.envList.map { putEnv ->
