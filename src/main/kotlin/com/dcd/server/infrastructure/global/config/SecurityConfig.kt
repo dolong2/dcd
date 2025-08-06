@@ -95,6 +95,9 @@ class SecurityConfig(
                 it.requestMatchers(HttpMethod.PATCH, "/user/{userId}/status").hasRole("ADMIN")
                 it.requestMatchers(HttpMethod.GET, "/user").hasRole("ADMIN")
 
+                //env
+                it.requestMatchers(HttpMethod.POST, "/{workspaceId}/env").authenticated()
+
                 //when url not set
                 it.anyRequest().denyAll()
             }
