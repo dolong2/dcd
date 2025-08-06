@@ -41,6 +41,10 @@ class ApplicationPersistenceAdapter(
         applicationRepository.findByIdOrNull(UUID.fromString(id))
             ?.toDomain()
 
+    override fun findByIds(ids: List<String>): List<Application> =
+        applicationRepository.findAllById(ids.map { UUID.fromString(it) })
+            .map { it.toDomain() }
+
     override fun existsByExternalPort(externalPort: Int): Boolean =
         applicationRepository.existsByExternalPort(externalPort)
 
