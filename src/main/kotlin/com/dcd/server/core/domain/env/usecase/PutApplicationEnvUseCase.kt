@@ -4,7 +4,7 @@ import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.env.dto.extension.toModel
-import com.dcd.server.core.domain.env.dto.request.PutApplicationReqDto
+import com.dcd.server.core.domain.env.dto.request.PutApplicationEnvReqDto
 import com.dcd.server.core.domain.env.model.ApplicationEnvMatcher
 import com.dcd.server.core.domain.env.spi.CommandApplicationEnvPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
@@ -16,17 +16,17 @@ class PutApplicationEnvUseCase(
     private val queryApplicationPort: QueryApplicationPort,
 ) {
 
-    fun execute(putApplicationReqDto: PutApplicationReqDto) {
+    fun execute(putApplicationEnvReqDto: PutApplicationEnvReqDto) {
         val workspace = (workspaceInfo.workspace
             ?: throw WorkspaceNotFoundException())
 
-        val applicationEnv = putApplicationReqDto.toModel(workspace)
+        val applicationEnv = putApplicationEnvReqDto.toModel(workspace)
         commandApplicationEnvPort.save(applicationEnv)
 
-        val applicationListByLabel = putApplicationReqDto.applicationLabelList
+        val applicationListByLabel = putApplicationEnvReqDto.applicationLabelList
             ?.let { queryApplicationPort.findAllByWorkspace(workspace, it) }
             ?: emptyList()
-        val applicationListByIds = (putApplicationReqDto.applicationIdList
+        val applicationListByIds = (putApplicationEnvReqDto.applicationIdList
             ?.let { queryApplicationPort.findByIds(it) }
             ?: emptyList())
 
