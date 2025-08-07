@@ -20,7 +20,7 @@ class ApplicationWebAdapter(
     private val runApplicationUseCase: RunApplicationUseCase,
     private val getAllApplicationUseCase: GetAllApplicationUseCase,
     private val getOneApplicationUseCase: GetOneApplicationUseCase,
-    private val putApplicationEnvUseCase: PutApplicationEnvUseCase,
+//    private val putApplicationEnvUseCase: PutApplicationEnvUseCase,
     private val deleteApplicationEnvUseCase: DeleteApplicationEnvUseCase,
     private val stopApplicationUseCase: StopApplicationUseCase,
     private val deleteApplicationUseCase: DeleteApplicationUseCase,
@@ -77,6 +77,7 @@ class ApplicationWebAdapter(
         getOneApplicationUseCase.execute(applicationId)
             .let { ResponseEntity.ok(it.toResponse()) }
 
+    @Deprecated("사용되지 않을 엔드포인트")
     @PutMapping("/{applicationId}/env")
     @WorkspaceOwnerVerification("#workspaceId")
     fun putApplicationEnv(
@@ -84,9 +85,11 @@ class ApplicationWebAdapter(
         @PathVariable applicationId: String,
         @RequestBody putApplicationEnvRequest: PutApplicationEnvRequest
     ): ResponseEntity<Void> =
-        putApplicationEnvUseCase.execute(applicationId, putApplicationEnvRequest.toDto())
-            .run { ResponseEntity.ok().build() }
+//        putApplicationEnvUseCase.execute(applicationId, putApplicationEnvRequest.toDto())
+//            .run { ResponseEntity.ok().build() }
+        ResponseEntity.ok().build()
 
+    @Deprecated("사용되지 않을 엔드포인트")
     @PutMapping("/env")
     @WorkspaceOwnerVerification("#workspaceId")
     fun putApplicationEnvWithLabels(
@@ -94,8 +97,9 @@ class ApplicationWebAdapter(
         @RequestParam labels: List<String>,
         @RequestBody putApplicationEnvRequest: PutApplicationEnvRequest
     ): ResponseEntity<Void> =
-        putApplicationEnvUseCase.execute(labels, putApplicationEnvRequest.toDto())
-            .run { ResponseEntity.ok().build() }
+//        putApplicationEnvUseCase.execute(labels, putApplicationEnvRequest.toDto())
+//            .run { ResponseEntity.ok().build() }
+        ResponseEntity.ok().build()
 
     @DeleteMapping("/{applicationId}/env")
     @WorkspaceOwnerVerification("#workspaceId")

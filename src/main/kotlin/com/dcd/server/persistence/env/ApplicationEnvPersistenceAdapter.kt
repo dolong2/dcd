@@ -3,6 +3,7 @@ package com.dcd.server.persistence.env
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.env.model.ApplicationEnv
 import com.dcd.server.core.domain.env.model.ApplicationEnvDetail
+import com.dcd.server.core.domain.env.model.ApplicationEnvMatcher
 import com.dcd.server.core.domain.env.spi.ApplicationEnvPort
 import com.dcd.server.persistence.application.adapter.toEntity
 import com.dcd.server.persistence.env.adapter.toDomain
@@ -33,6 +34,16 @@ class ApplicationEnvPersistenceAdapter(
         applicationEnvMatcherRepository.findByApplication(application.toEntity())
             .map { it.applicationEnv }
             .map { it.toDomain() }
+
+    override fun save(applicationEnv: ApplicationEnv) {
+        val envEntity = applicationEnv.toEntity()
+        applicationEnvRepository.save(envEntity)
+        applicationEnvDetailRepository.saveAll(applicationEnv.details.map { it.toEntity(envEntity) })
+    }
+
+    override fun saveAllMatcher(applicationEnvMatcher: List<ApplicationEnvMatcher>) {
+        applicationEnvMatcherRepository.saveAll(applicationEnvMatcher.map { it.toEntity() })
+    }
 
     override fun save(applicationEnv: ApplicationEnv, application: Application) {
         val applicationEnvEntity = applicationEnv.toEntity()

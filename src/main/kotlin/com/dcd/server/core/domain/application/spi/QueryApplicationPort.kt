@@ -7,6 +7,7 @@ import com.dcd.server.core.domain.workspace.model.Workspace
 interface QueryApplicationPort {
     fun findAllByWorkspace(workspace: Workspace, labels: List<String>? = null): List<Application>
     fun findById(id: String): Application?
+    fun findByIds(ids: List<String>): List<Application>
     fun existsByExternalPort(externalPort: Int): Boolean
     fun findAllByStatus(status: ApplicationStatus): List<Application>
     fun existsByName(name: String): Boolean
