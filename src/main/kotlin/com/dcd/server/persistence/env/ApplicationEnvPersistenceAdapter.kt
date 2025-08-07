@@ -36,7 +36,9 @@ class ApplicationEnvPersistenceAdapter(
             .map { it.toDomain() }
 
     override fun save(applicationEnv: ApplicationEnv) {
-        applicationEnvRepository.save(applicationEnv.toEntity())
+        val envEntity = applicationEnv.toEntity()
+        applicationEnvRepository.save(envEntity)
+        applicationEnvDetailRepository.saveAll(applicationEnv.details.map { it.toEntity(envEntity) })
     }
 
     override fun saveAllMatcher(applicationEnvMatcher: List<ApplicationEnvMatcher>) {
