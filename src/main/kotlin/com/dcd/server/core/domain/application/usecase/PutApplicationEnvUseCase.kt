@@ -13,7 +13,8 @@ import com.dcd.server.core.domain.env.spi.CommandApplicationEnvPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import java.util.UUID
 
-@UseCase
+@Deprecated("사용되지 않을 유스케이스")
+//@UseCase
 class PutApplicationEnvUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val workspaceInfo: WorkspaceInfo,
