@@ -10,7 +10,8 @@ import com.dcd.server.core.domain.env.spi.CommandApplicationEnvPort
 import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 
-@UseCase
+@Deprecated("사용되지 않을 유스케이스")
+//@UseCase
 class DeleteApplicationEnvUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val workspaceInfo: WorkspaceInfo,

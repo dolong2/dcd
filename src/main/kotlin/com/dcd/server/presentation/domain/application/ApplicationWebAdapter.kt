@@ -21,7 +21,7 @@ class ApplicationWebAdapter(
     private val getAllApplicationUseCase: GetAllApplicationUseCase,
     private val getOneApplicationUseCase: GetOneApplicationUseCase,
 //    private val putApplicationEnvUseCase: PutApplicationEnvUseCase,
-    private val deleteApplicationEnvUseCase: DeleteApplicationEnvUseCase,
+//    private val deleteApplicationEnvUseCase: DeleteApplicationEnvUseCase,
     private val stopApplicationUseCase: StopApplicationUseCase,
     private val deleteApplicationUseCase: DeleteApplicationUseCase,
     private val updateApplicationUseCase: UpdateApplicationUseCase,
@@ -101,6 +101,7 @@ class ApplicationWebAdapter(
 //            .run { ResponseEntity.ok().build() }
         ResponseEntity.ok().build()
 
+    @Deprecated("사용되지 않을 엔드포인트")
     @DeleteMapping("/{applicationId}/env")
     @WorkspaceOwnerVerification("#workspaceId")
     fun deleteApplicationEnv(
@@ -108,9 +109,11 @@ class ApplicationWebAdapter(
         @PathVariable applicationId: String,
         @RequestParam key: String
     ): ResponseEntity<Void> =
-        deleteApplicationEnvUseCase.execute(applicationId, key)
-            .run { ResponseEntity.ok().build() }
+//        deleteApplicationEnvUseCase.execute(applicationId, key)
+//            .run { ResponseEntity.ok().build() }
+        ResponseEntity.ok().build()
 
+    @Deprecated("사용되지 않을 엔드포인트")
     @DeleteMapping("/env")
     @WorkspaceOwnerVerification("#workspaceId")
     fun deleteApplicationEnvWithLabels(
@@ -118,8 +121,9 @@ class ApplicationWebAdapter(
         @RequestParam labels: List<String>,
         @RequestParam key: String
     ): ResponseEntity<Void> =
-        deleteApplicationEnvUseCase.execute(labels, key)
-            .run { ResponseEntity.ok().build() }
+//        deleteApplicationEnvUseCase.execute(labels, key)
+//            .run { ResponseEntity.ok().build() }
+        ResponseEntity.ok().build()
 
     @PostMapping("/{applicationId}/stop")
     @WorkspaceOwnerVerification("#workspaceId")
