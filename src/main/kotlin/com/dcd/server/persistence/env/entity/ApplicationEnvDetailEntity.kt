@@ -11,7 +11,7 @@ class ApplicationEnvDetailEntity(
     val id: UUID = UUID.randomUUID(),
     @Embedded
     val envDetail: EnvDetail,
-    @ManyToOne(cascade = [CascadeType.REMOVE])
+    @ManyToOne
     @JoinColumn(name = "env_id")
     val applicationEnv: ApplicationEnvEntity
 )
