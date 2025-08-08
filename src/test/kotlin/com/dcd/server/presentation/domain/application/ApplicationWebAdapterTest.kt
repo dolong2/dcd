@@ -31,7 +31,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     val getApplicationLogUseCase = mockk<GetApplicationLogUseCase>()
     val deployApplicationUseCase = mockk<DeployApplicationUseCase>(relaxUnitFun = true)
     val executeCommandUseCase = mockk<ExecuteCommandUseCase>(relaxUnitFun = true)
-    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springRunApplicationUseCase, getAllApplicationUseCase, getOneApplicationUseCase, deleteApplicationEnvUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase, getApplicationLogUseCase, deployApplicationUseCase, executeCommandUseCase)
+    val applicationWebAdapter = ApplicationWebAdapter(createApplicationUseCase, springRunApplicationUseCase, getAllApplicationUseCase, getOneApplicationUseCase, stopApplicationUseCase, deleteApplicationUseCase, updateApplicationUseCase, getApplicationLogUseCase, deployApplicationUseCase, executeCommandUseCase)
 
     val testWorkspaceId = "testWorkspaceId"
 
@@ -109,34 +109,6 @@ class ApplicationWebAdapterTest : BehaviorSpec({
                 val targetResponse = applicationResponse.toResponse()
                 response.body shouldBe targetResponse
                 response.statusCode shouldBe HttpStatus.OK
-            }
-        }
-    }
-
-    given("AddApplicationEnvRequest가 주어지고") {
-        val testId = "testId"
-        val request = PutApplicationEnvRequest(
-            name = "testName",
-            description = "testDescription",
-            envList = listOf(PutEnvRequest(key = "testKey", value = "testValue", encryption = false))
-        )
-        `when`("addApplicationEnv메서드를 실행할때") {
-            every { putApplicationEnvUseCase.execute(testId, any()) } returns Unit
-            val result = applicationWebAdapter.putApplicationEnv(testWorkspaceId, testId, request)
-            then("status는 200이여야함") {
-                result.statusCode shouldBe HttpStatus.OK
-            }
-        }
-    }
-
-    given("애플리케이션 id와 삭제할 키가 주어지고") {
-        val testId = "testId"
-        val key = "testKey"
-        `when`("deleteApplicationEnv메서드를 실행할때") {
-            every { deleteApplicationEnvUseCase.execute(testId, key) } returns Unit
-            val result = applicationWebAdapter.deleteApplicationEnv(testWorkspaceId, testId, key)
-            then("status는 200이여야함") {
-                result.statusCode shouldBe HttpStatus.OK
             }
         }
     }

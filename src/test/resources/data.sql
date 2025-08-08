@@ -19,9 +19,9 @@ create table domain_entity (id binary(16), name varchar(255), description varcha
 create table application_env_entity (id BINARY(16) not null, description varchar(255), name varchar(255), workspace_id binary(16), primary key (id));
 create table application_env_detail_entity (id BINARY(16) not null, encryption bit not null, env_key varchar(255), env_value varchar(255), env_id BINARY(16), primary key (id));
 create table application_env_matcher_entity (id BINARY(16) not null, application_id BINARY(16), env_id BINARY(16), primary key (id));
-alter table if exists application_env_detail_entity add constraint FKtjqi6ag33hu1vxeg5kgc58ga6 foreign key (env_id) references application_env_entity (id);
-alter table if exists application_env_matcher_entity add constraint FK4ivou7scuc0dg5af4g7epjdj0 foreign key (application_id) references application_entity (id);
-alter table if exists application_env_matcher_entity add constraint FKqfkw6tgy65k4x6syrh6p858ic foreign key (env_id) references application_env_entity (id);
+alter table if exists application_env_detail_entity add constraint FKtjqi6ag33hu1vxeg5kgc58ga6 foreign key (env_id) references application_env_entity (id) on delete cascade;
+alter table if exists application_env_matcher_entity add constraint FK4ivou7scuc0dg5af4g7epjdj0 foreign key (application_id) references application_entity (id) on delete cascade;
+alter table if exists application_env_matcher_entity add constraint FKqfkw6tgy65k4x6syrh6p858ic foreign key (env_id) references application_env_entity (id) on delete cascade;
 alter table if exists application_env_entity add constraint FKm22cqdjjl434jyqenpa4nf78p foreign key (workspace_id) references workspace_entity (id);
 alter table if exists application_entity add constraint FKn9drxkrx2h6wlorxfy00mr45h foreign key (workspace_id) references workspace_entity;
 alter table if exists application_label_entity add constraint FKq6iovxq5tdx2i1lwrx34kg0b9 foreign key (application_id) references application_entity;
