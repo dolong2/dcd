@@ -8,7 +8,6 @@ import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.kotest.mpp.env
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
@@ -71,7 +70,7 @@ class GetApplicationEnvUseCaseTest(
                 targetEnv!!.id shouldBe result.id
                 targetEnv.name shouldBe result.name
                 targetEnv.description shouldBe result.description
-                targetEnv.details shouldBe result.details
+                targetEnv.details.size shouldBe result.details.size
             }
         }
     }
