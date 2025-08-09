@@ -9,6 +9,7 @@ import com.dcd.server.presentation.domain.env.data.extension.toDto
 import com.dcd.server.presentation.domain.env.data.extension.toResponse
 import com.dcd.server.presentation.domain.env.data.request.PutApplicationEnvRequest
 import com.dcd.server.presentation.domain.env.data.response.ApplicationEnvListResponse
+import com.dcd.server.presentation.domain.env.data.response.ApplicationEnvResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -45,5 +46,14 @@ class ApplicationEnvWebAdapter(
     @WorkspaceOwnerVerification("#workspaceId")
     fun getApplicationEnvList(@PathVariable workspaceId: String): ResponseEntity<ApplicationEnvListResponse> =
         getApplicationEnvUseCase.execute()
+            .let { ResponseEntity.ok(it.toResponse()) }
+
+    @GetMapping("/{envId}")
+    @WorkspaceOwnerVerification("#workspaceId")
+    fun getApplicationEnv(
+        @PathVariable workspaceId: String,
+        @PathVariable envId: UUID
+    ): ResponseEntity<ApplicationEnvResponse> =
+        getApplicationEnvUseCase.execute(envId)
             .let { ResponseEntity.ok(it.toResponse()) }
 }
