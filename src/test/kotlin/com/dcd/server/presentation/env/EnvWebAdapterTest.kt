@@ -1,6 +1,8 @@
 package com.dcd.server.presentation.env
 
+import com.dcd.server.core.domain.env.dto.response.ApplicationEnvDetailResDto
 import com.dcd.server.core.domain.env.dto.response.ApplicationEnvListResDto
+import com.dcd.server.core.domain.env.dto.response.ApplicationEnvResDto
 import com.dcd.server.core.domain.env.dto.response.ApplicationEnvSimpleResDto
 import com.dcd.server.core.domain.env.usecase.DeleteApplicationEnvUseCase
 import com.dcd.server.core.domain.env.usecase.GetApplicationEnvUseCase
@@ -66,6 +68,29 @@ class EnvWebAdapterTest : BehaviorSpec({
             }
             then("응답값은 주어진 응답과 일치해야함") {
                 result.body shouldBe applicationEnvListResDto.toResponse()
+            }
+        }
+    }
+
+    given("환경변수 상세 응답이 주어지고") {
+        val testId = "testId"
+        val envId = UUID.randomUUID()
+        val expectedEnvRes = ApplicationEnvResDto(
+            id = envId,
+            name = "testName",
+            description = "testDescription",
+            details = listOf(ApplicationEnvDetailResDto(key = "testKey", value = "testValue", encryption = false))
+        )
+        every { getApplicationEnvUseCase.execute(envId) } returns expectedEnvRes
+
+        `when`("환경변수 상세조회 메서드를 실행할때") {
+            val result = applicationEnvWebAdapter.getApplicationEnv(testId, envId)
+
+            then("status는 200이여야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+            then("응답값은 주어진 응답과 일치해야함") {
+                result.body shouldBe expectedEnvRes.toResponse()
             }
         }
     }
