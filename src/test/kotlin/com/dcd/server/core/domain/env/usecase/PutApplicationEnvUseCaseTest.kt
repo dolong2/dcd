@@ -22,6 +22,10 @@ class PutApplicationEnvUseCaseTest(
     private val queryWorkspacePort: QueryWorkspacePort,
     private val workspaceInfo: WorkspaceInfo
 ) : BehaviorSpec({
+    beforeSpec {
+        applicationEnvRepository.deleteAll()
+    }
+
     beforeTest {
         val workspace = queryWorkspacePort.findById("d57b42f5-5cc4-440b-8dce-b4fc2e372eff")
         workspaceInfo.workspace = workspace

@@ -98,6 +98,8 @@ class SecurityConfig(
                 //env
                 it.requestMatchers(HttpMethod.POST, "/{workspaceId}/env").authenticated()
                 it.requestMatchers(HttpMethod.DELETE, "/{workspaceId}/env/{envId}").authenticated()
+                it.requestMatchers(HttpMethod.GET, "/{workspaceId}/env").authenticated()
+                it.requestMatchers(HttpMethod.GET, "/{workspaceId}/env/{envId}").authenticated()
 
                 //when url not set
                 it.anyRequest().denyAll()

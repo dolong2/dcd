@@ -5,6 +5,7 @@ import com.dcd.server.core.domain.env.model.ApplicationEnv
 import com.dcd.server.core.domain.env.model.ApplicationEnvDetail
 import com.dcd.server.core.domain.env.model.ApplicationEnvMatcher
 import com.dcd.server.core.domain.env.spi.ApplicationEnvPort
+import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.persistence.application.adapter.toEntity
 import com.dcd.server.persistence.env.adapter.toDomain
 import com.dcd.server.persistence.env.adapter.toEntity
@@ -13,6 +14,7 @@ import com.dcd.server.persistence.env.entity.ApplicationEnvMatcherEntity
 import com.dcd.server.persistence.env.repository.ApplicationEnvDetailRepository
 import com.dcd.server.persistence.env.repository.ApplicationEnvMatcherRepository
 import com.dcd.server.persistence.env.repository.ApplicationEnvRepository
+import com.dcd.server.persistence.workspace.adapter.toEntity
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 import java.util.*
@@ -33,6 +35,10 @@ class ApplicationEnvPersistenceAdapter(
     override fun findByApplication(application: Application): List<ApplicationEnv> =
         applicationEnvMatcherRepository.findByApplication(application.toEntity())
             .map { it.applicationEnv }
+            .map { it.toDomain() }
+
+    override fun findAllByWorkspace(workspace: Workspace): List<ApplicationEnv> =
+        applicationEnvRepository.findAllByWorkspace(workspace.toEntity())
             .map { it.toDomain() }
 
     override fun save(applicationEnv: ApplicationEnv) {

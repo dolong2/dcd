@@ -6,7 +6,6 @@ import com.dcd.server.core.domain.env.model.ApplicationEnv
 import com.dcd.server.core.domain.env.model.ApplicationEnvDetail
 import com.dcd.server.core.domain.env.spi.CommandApplicationEnvPort
 import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
-import com.dcd.server.persistence.env.repository.ApplicationEnvRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -22,8 +21,7 @@ class DeleteApplicationEnvUseCaseTest(
     private val deleteApplicationEnvUseCase: DeleteApplicationEnvUseCase,
     private val queryApplicationPort: QueryApplicationPort,
     private val commandApplicationEnvPort: CommandApplicationEnvPort,
-    private val queryApplicationEnvPort: QueryApplicationEnvPort,
-    private val applicationEnvRepository: ApplicationEnvRepository
+    private val queryApplicationEnvPort: QueryApplicationEnvPort
 ) : BehaviorSpec({
     val targetApplicationEnvId = UUID.randomUUID()
 

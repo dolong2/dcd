@@ -3,6 +3,9 @@ package com.dcd.server.core.domain.env.dto.extension
 import com.dcd.server.core.common.service.EncryptService
 import com.dcd.server.core.domain.env.dto.request.PutApplicationEnvReqDto
 import com.dcd.server.core.domain.env.dto.request.PutEnvReqDto
+import com.dcd.server.core.domain.env.dto.response.ApplicationEnvDetailResDto
+import com.dcd.server.core.domain.env.dto.response.ApplicationEnvResDto
+import com.dcd.server.core.domain.env.dto.response.ApplicationEnvSimpleResDto
 import com.dcd.server.core.domain.env.model.ApplicationEnv
 import com.dcd.server.core.domain.env.model.ApplicationEnvDetail
 import com.dcd.server.core.domain.workspace.model.Workspace
@@ -24,6 +27,33 @@ fun PutEnvReqDto.toModel(encryptService: EncryptService): ApplicationEnvDetail {
             this.value
     return ApplicationEnvDetail(
         id = UUID.randomUUID(),
+        key = this.key,
+        value = envValue,
+        encryption = this.encryption,
+    )
+}
+
+fun ApplicationEnv.toSimpleResDto(): ApplicationEnvSimpleResDto =
+    ApplicationEnvSimpleResDto(
+        id = this.id,
+        name = this.name,
+        description = this.description
+    )
+
+fun ApplicationEnv.toResDto(): ApplicationEnvResDto =
+    ApplicationEnvResDto(
+        id = this.id,
+        name = this.name,
+        description = this.description,
+        details = this.details.map { it.toResDto() }
+    )
+
+fun ApplicationEnvDetail.toResDto(): ApplicationEnvDetailResDto {
+    val envValue =
+        if (this.encryption) "<encoded data>"
+        else this.value
+
+    return ApplicationEnvDetailResDto(
         key = this.key,
         value = envValue,
         encryption = this.encryption,
