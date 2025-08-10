@@ -43,7 +43,7 @@ class EnvWebAdapterTest : BehaviorSpec({
 
         `when`("이미 존재하는 환경변수 일때") {
             val targetEnvId = UUID.randomUUID()
-            every { putApplicationEnvUseCase.execute(any()) } returns Unit
+            every { putApplicationEnvUseCase.execute(targetEnvId, any()) } returns Unit
             val result = applicationEnvWebAdapter.updateApplicationEnv(testId, targetEnvId, request)
 
             then("status는 200이여야함") {
