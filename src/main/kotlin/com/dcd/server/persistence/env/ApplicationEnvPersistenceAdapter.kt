@@ -105,4 +105,8 @@ class ApplicationEnvPersistenceAdapter(
     override fun deleteAllMatcherByEnv(applicationEnv: ApplicationEnv) {
         applicationEnvMatcherRepository.deleteByApplicationEnv(applicationEnv.toEntity())
     }
+
+    override fun deleteAllDetail(applicationEnv: ApplicationEnv) {
+        applicationEnvDetailRepository.deleteAllByApplicationEnv(applicationEnv.toEntity())
+    }
 }

@@ -21,4 +21,6 @@ interface CommandApplicationEnvPort {
     fun deleteDetail(applicationEnvDetail: ApplicationEnvDetail)
 
     fun deleteAllMatcherByEnv(applicationEnv: ApplicationEnv)
+
+    fun deleteAllDetail(applicationEnv: ApplicationEnv)
 }

@@ -57,11 +57,8 @@ class PutApplicationEnvUseCase(
         if (workspace != applicationEnv.workspace)
             throw ApplicationEnvNotFoundException()
 
-        val requestKeys = applicationEnv.details.map { it.key }.toSet()
-        val newEnvDetails = putApplicationEnvReqDto.details.filter { it.key !in requestKeys }.map { it.toModel(encryptService) }
-
-        val envDetail = applicationEnv.details.toMutableList()
-        envDetail.addAll(newEnvDetails)
+        commandApplicationEnvPort.deleteAllDetail(applicationEnv)
+        val envDetail = putApplicationEnvReqDto.details.map { it.toModel(encryptService) }
 
         val updatedEnv = applicationEnv.copy(
             name = putApplicationEnvReqDto.name,
