@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import java.util.UUID
 
@@ -40,6 +41,16 @@ class ApplicationEnvWebAdapter(
         @PathVariable envId: UUID
     ): ResponseEntity<Void> =
         deleteApplicationEnvUseCase.execute(envId)
+            .run { ResponseEntity.ok().build() }
+
+    @PutMapping("/{envId}")
+    @WorkspaceOwnerVerification("#workspaceId")
+    fun updateApplicationEnv(
+        @PathVariable workspaceId: String,
+        @PathVariable envId: UUID,
+        @RequestBody putApplicationEnvRequest: PutApplicationEnvRequest
+    ): ResponseEntity<Void> =
+        putApplicationEnvUseCase.execute(envId, putApplicationEnvRequest.toDto())
             .run { ResponseEntity.ok().build() }
 
     @GetMapping

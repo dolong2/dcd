@@ -40,6 +40,16 @@ class EnvWebAdapterTest : BehaviorSpec({
                 result.statusCode shouldBe HttpStatus.OK
             }
         }
+
+        `when`("이미 존재하는 환경변수 일때") {
+            val targetEnvId = UUID.randomUUID()
+            every { putApplicationEnvUseCase.execute(targetEnvId, any()) } returns Unit
+            val result = applicationEnvWebAdapter.updateApplicationEnv(testId, targetEnvId, request)
+
+            then("status는 200이여야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+        }
     }
 
     given("삭제할 Env 아이디가 주어지고") {
