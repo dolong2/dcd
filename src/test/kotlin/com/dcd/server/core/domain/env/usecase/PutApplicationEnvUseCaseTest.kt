@@ -3,14 +3,20 @@ package com.dcd.server.core.domain.env.usecase
 import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.env.dto.request.PutApplicationEnvReqDto
 import com.dcd.server.core.domain.env.dto.request.PutEnvReqDto
+import com.dcd.server.core.domain.env.model.ApplicationEnv
+import com.dcd.server.core.domain.env.spi.CommandApplicationEnvPort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.dcd.server.persistence.env.adapter.toDomain
 import com.dcd.server.persistence.env.repository.ApplicationEnvDetailRepository
 import com.dcd.server.persistence.env.repository.ApplicationEnvRepository
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Transactional
 @SpringBootTest
@@ -20,6 +26,7 @@ class PutApplicationEnvUseCaseTest(
     private val applicationEnvRepository: ApplicationEnvRepository,
     private val applicationEnvDetailRepository: ApplicationEnvDetailRepository,
     private val queryWorkspacePort: QueryWorkspacePort,
+    private val commandApplicationEnvPort: CommandApplicationEnvPort,
     private val workspaceInfo: WorkspaceInfo
 ) : BehaviorSpec({
     beforeSpec {
@@ -50,6 +57,50 @@ class PutApplicationEnvUseCaseTest(
                 appEnvList.size shouldBe 1
 
                 val appEnv = appEnvList.first()
+                appEnv.name shouldBe putApplicationEnvReqDto.name
+                appEnv.description shouldBe putApplicationEnvReqDto.description
+
+                val envDetail = applicationEnvDetailRepository.findAll().first()
+                envDetail.envDetail.key shouldBe putApplicationEnvReqDto.details[0].key
+                envDetail.envDetail.value shouldBe putApplicationEnvReqDto.details[0].value
+                envDetail.envDetail.encryption shouldBe putApplicationEnvReqDto.details[0].encryption
+                envDetail.applicationEnv shouldBe appEnv
+            }
+        }
+    }
+
+    given("애플리케이션 환경변수 아이디와 삽입요청 dto가 주어지고") {
+        val targetApplicationId = "2fb0f315-8272-422f-8e9f-c4f765c022b2"
+        val targetEnvId = UUID.randomUUID()
+
+        val workspace = workspaceInfo.workspace!!
+        val applicationEnv = ApplicationEnv(
+            id = targetEnvId,
+            name = "testEnv",
+            description = "test",
+            details = listOf(),
+            workspace = workspace
+        )
+        commandApplicationEnvPort.save(applicationEnv)
+        applicationEnvRepository.flush()
+
+        val putApplicationEnvReqDto = PutApplicationEnvReqDto(
+            name = "updateEnv",
+            description = "update",
+            details = listOf(PutEnvReqDto(key = "testEnvKey", value = "testEnvValue", encryption = false)),
+            applicationIdList = listOf(targetApplicationId),
+            applicationLabelList = null
+        )
+
+        `when`("유스케이스를 실행하면") {
+            putApplicationEnvUseCase.execute(targetEnvId, putApplicationEnvReqDto)
+
+            then("Env가 생성되어야함") {
+                applicationEnvRepository.flush()
+                val appEnv = applicationEnvRepository.findByIdOrNull(targetEnvId)
+                appEnv shouldNotBe null
+                appEnv!!
+
                 appEnv.name shouldBe putApplicationEnvReqDto.name
                 appEnv.description shouldBe putApplicationEnvReqDto.description
 
