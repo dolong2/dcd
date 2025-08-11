@@ -32,7 +32,8 @@ class GetApplicationEnvUseCaseTest(
             name = "testEnvName",
             description = "testEnvDescription",
             details = listOf(),
-            workspace = workspace
+            workspace = workspace,
+            labels = listOf(),
         )
         commandApplicationEnvPort.save(applicationEnv)
     }

@@ -16,7 +16,8 @@ fun ApplicationEnv.toEntity(): ApplicationEnvEntity =
         name = this.name,
         description = this.description,
         details = listOf(),
-        workspace = this.workspace.toEntity()
+        workspace = this.workspace.toEntity(),
+        labels = this.labels,
     )
 
 fun ApplicationEnvEntity.toDomain(): ApplicationEnv =
@@ -25,7 +26,8 @@ fun ApplicationEnvEntity.toDomain(): ApplicationEnv =
         name = this.name,
         description = this.description,
         details = this.details.map { it.toDomain() },
-        workspace = this.workspace.toDomain()
+        workspace = this.workspace.toDomain(),
+        labels = this.labels
     )
 
 fun ApplicationEnvDetailEntity.toDomain(): ApplicationEnvDetail =

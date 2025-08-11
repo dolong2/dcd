@@ -16,7 +16,8 @@ fun PutApplicationEnvReqDto.toModel(workspace: Workspace, encryptService: Encryp
         name = this.name,
         description = this.description,
         details = this.details.map { it.toModel(encryptService) },
-        workspace = workspace
+        workspace = workspace,
+        labels = this.applicationLabelList ?: emptyList()
     )
 
 fun PutEnvReqDto.toModel(encryptService: EncryptService): ApplicationEnvDetail {

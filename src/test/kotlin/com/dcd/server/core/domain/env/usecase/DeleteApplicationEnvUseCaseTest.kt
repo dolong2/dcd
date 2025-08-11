@@ -32,7 +32,8 @@ class DeleteApplicationEnvUseCaseTest(
             name = "testEnv",
             description = "testEnvDescription",
             details = listOf(ApplicationEnvDetail(id = UUID.randomUUID(), key = "testKey", value = "testValue")),
-            workspace = application.workspace
+            workspace = application.workspace,
+            labels = listOf(),
         )
         commandApplicationEnvPort.save(applicationEnv, application)
     }

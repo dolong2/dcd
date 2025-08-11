@@ -8,5 +8,6 @@ data class ApplicationEnv(
     val name: String,
     val description: String,
     val details: List<ApplicationEnvDetail>,
-    val workspace: Workspace
+    val workspace: Workspace,
+    val labels: List<String>
 )

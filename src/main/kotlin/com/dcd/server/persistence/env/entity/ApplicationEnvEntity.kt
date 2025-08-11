@@ -16,4 +16,8 @@ class ApplicationEnvEntity(
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "workspace_id")
     val workspace: WorkspaceJpaEntity,
+    @ElementCollection
+    @CollectionTable(name = "application_env_label_entity", joinColumns = [JoinColumn(name = "application_env_id")])
+    @Column(name = "label")
+    val labels: List<String>
 ) : Env(id, name, description)
