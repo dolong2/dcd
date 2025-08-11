@@ -34,7 +34,8 @@ class PutApplicationEnvUseCase(
             name = putApplicationEnvReqDto.name,
             description = putApplicationEnvReqDto.description,
             details = listOf(),
-            workspace = workspace
+            workspace = workspace,
+            labels = listOf()
         )
 
         val applicationEnvDetailList = putApplicationEnvReqDto.envList.map { putEnv ->
@@ -71,7 +72,8 @@ class PutApplicationEnvUseCase(
                 name = putApplicationEnvReqDto.name,
                 description = putApplicationEnvReqDto.description,
                 details = listOf(),
-                workspace = workspace
+                workspace = workspace,
+                labels = listOf(),
             )
 
             val applicationEnvDetailList = putApplicationEnvReqDto.envList.map { putEnv ->
