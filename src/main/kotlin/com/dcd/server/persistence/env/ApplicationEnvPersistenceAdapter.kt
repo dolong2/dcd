@@ -41,8 +41,8 @@ class ApplicationEnvPersistenceAdapter(
         applicationEnvRepository.findAllByWorkspace(workspace.toEntity())
             .map { it.toDomain() }
 
-    override fun findAllByLabelsIn(labels: List<String>): List<ApplicationEnv> =
-        applicationEnvRepository.findAllByLabelsIn(labels)
+    override fun findAllByLabelsIn(workspace: Workspace, labels: List<String>): List<ApplicationEnv> =
+        applicationEnvRepository.findAllByWorkspaceAndLabelsIn(workspace.toEntity(), labels)
             .map { it.toDomain() }
 
     override fun save(applicationEnv: ApplicationEnv) {

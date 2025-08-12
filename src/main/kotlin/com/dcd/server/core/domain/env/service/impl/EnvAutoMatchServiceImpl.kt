@@ -5,6 +5,7 @@ import com.dcd.server.core.domain.env.model.ApplicationEnvMatcher
 import com.dcd.server.core.domain.env.service.EnvAutoMatchService
 import com.dcd.server.core.domain.env.spi.CommandApplicationEnvPort
 import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
+import com.dcd.server.core.domain.workspace.model.Workspace
 import org.springframework.stereotype.Service
 
 @Service
@@ -12,8 +13,8 @@ class EnvAutoMatchServiceImpl(
     private val queryApplicationEnvPort: QueryApplicationEnvPort,
     private val commandApplicationEnvPort: CommandApplicationEnvPort
 ) : EnvAutoMatchService {
-    override fun match(application: Application) {
-        val applicationEnvList = queryApplicationEnvPort.findAllByLabelsIn(application.labels)
+    override fun match(workspace: Workspace, application: Application) {
+        val applicationEnvList = queryApplicationEnvPort.findAllByLabelsIn(workspace, application.labels)
 
         val envMatchers =
             applicationEnvList.map { env ->

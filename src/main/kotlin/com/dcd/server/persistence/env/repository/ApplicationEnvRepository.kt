@@ -8,5 +8,5 @@ import java.util.UUID
 interface ApplicationEnvRepository : JpaRepository<ApplicationEnvEntity, UUID> {
     fun findAllByWorkspace(workspaceJpaEntity: WorkspaceJpaEntity): List<ApplicationEnvEntity>
 
-    fun findAllByLabelsIn(labels: List<String>): List<ApplicationEnvEntity>
+    fun findAllByWorkspaceAndLabelsIn(workspaceJpaEntity: WorkspaceJpaEntity, labels: List<String>): List<ApplicationEnvEntity>
 }

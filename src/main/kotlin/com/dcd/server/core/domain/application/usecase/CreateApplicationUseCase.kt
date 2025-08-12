@@ -43,7 +43,7 @@ class CreateApplicationUseCase(
 
         val version = application.version
 
-        envAutoMatchService.match(application)
+        envAutoMatchService.match(workspace, application)
 
         launch {
             val applicationType = application.applicationType
