@@ -14,4 +14,6 @@ interface QueryApplicationEnvPort {
     fun findByApplication(application: Application): List<ApplicationEnv>
 
     fun findAllByWorkspace(workspace: Workspace): List<ApplicationEnv>
+
+    fun findAllByLabelsIn(labels: List<String>): List<ApplicationEnv>
 }
