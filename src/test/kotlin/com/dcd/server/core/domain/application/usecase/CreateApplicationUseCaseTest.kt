@@ -6,10 +6,16 @@ import com.dcd.server.core.domain.application.exception.AlreadyExistsApplication
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.env.model.ApplicationEnv
+import com.dcd.server.core.domain.env.model.ApplicationEnvDetail
+import com.dcd.server.core.domain.env.spi.CommandApplicationEnvPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.dcd.server.persistence.application.adapter.toDomain
+import com.dcd.server.persistence.env.adapter.toDomain
+import com.dcd.server.persistence.env.repository.ApplicationEnvMatcherRepository
 import util.application.ApplicationGenerator
 import io.kotest.core.spec.style.BehaviorSpec
 import util.workspace.WorkspaceGenerator
@@ -31,6 +37,8 @@ class CreateApplicationUseCaseTest(
     private val queryApplicationPort: QueryApplicationPort,
     private val queryWorkspacePort: QueryWorkspacePort,
     private val commandApplicationPort: CommandApplicationPort,
+    private val commandApplicationEnvPort: CommandApplicationEnvPort,
+    private val applicationEnvMatcherRepository: ApplicationEnvMatcherRepository,
     private val workspaceInfo: WorkspaceInfo
 ) : BehaviorSpec({
     val targetWorkspaceId = UUID.randomUUID().toString()
@@ -108,6 +116,53 @@ class CreateApplicationUseCaseTest(
                     workspaceInfo.workspace = queryWorkspacePort.findById(notFoundWorkspaceId)
                     createApplicationUseCase.execute(request)
                 }
+            }
+        }
+    }
+
+    given("env와 일치하는 라벨을 가진 애플리케이션 생성 정보가 주어지고") {
+        val targetWorkspace = queryWorkspacePort.findById(targetWorkspaceId)!!
+        val applicationEnv = ApplicationEnv(
+            name = "testEnv",
+            description = "testEnv",
+            details = listOf(
+                ApplicationEnvDetail(
+                    id = UUID.randomUUID(),
+                    key = "testKey",
+                    value = "testValue",
+                    encryption = false
+                )
+            ),
+            labels = listOf("testLabel"),
+            workspace = targetWorkspace
+        )
+        commandApplicationEnvPort.save(applicationEnv)
+        val request = CreateApplicationReqDto(
+            name = "testCreateApplication",
+            description = "testDescription",
+            applicationType = ApplicationType.SPRING_BOOT,
+            githubUrl = "testGithub",
+            version = "17",
+            port = 8080,
+            labels = listOf("testLabel")
+        )
+
+        `when`("usecase를 실행하면") {
+            val result = createApplicationUseCase.execute(request)
+            createApplicationUseCase.coroutineContext.cancel()
+
+            then("envMatcher가 생성되어야함") {
+                applicationEnvMatcherRepository.flush()
+
+                val application = queryApplicationPort.findById(result.applicationId)!!
+
+                val envMatcherList = applicationEnvMatcherRepository.findAll()
+                envMatcherList.size shouldBe 1
+
+                val envMatcher = envMatcherList.first()
+
+                envMatcher.application.id shouldBe application.id
+                envMatcher.applicationEnv.id shouldBe applicationEnv.id
             }
         }
     }
