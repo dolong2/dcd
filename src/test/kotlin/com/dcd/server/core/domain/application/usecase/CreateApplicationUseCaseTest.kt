@@ -13,8 +13,6 @@ import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
-import com.dcd.server.persistence.application.adapter.toDomain
-import com.dcd.server.persistence.env.adapter.toDomain
 import com.dcd.server.persistence.env.repository.ApplicationEnvMatcherRepository
 import util.application.ApplicationGenerator
 import io.kotest.core.spec.style.BehaviorSpec
@@ -161,7 +159,7 @@ class CreateApplicationUseCaseTest(
 
                 val envMatcher = envMatcherList.first()
 
-                envMatcher.application.id shouldBe application.id
+                envMatcher.application.id.toString() shouldBe application.id
                 envMatcher.applicationEnv.id shouldBe applicationEnv.id
             }
         }
