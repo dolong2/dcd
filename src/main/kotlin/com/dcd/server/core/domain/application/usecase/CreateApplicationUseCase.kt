@@ -10,6 +10,7 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.env.service.EnvAutoMatchService
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +26,8 @@ class CreateApplicationUseCase(
     private val getExternalPortService: GetExternalPortService,
     private val buildDockerImageService: BuildDockerImageService,
     private val createContainerService: CreateContainerService,
-    private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService
+    private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
+    private val envAutoMatchService: EnvAutoMatchService
 ) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
     fun execute(createApplicationReqDto: CreateApplicationReqDto): CreateApplicationResDto {
         val workspace = workspaceInfo.workspace
@@ -40,6 +42,8 @@ class CreateApplicationUseCase(
         commandApplicationPort.save(application)
 
         val version = application.version
+
+        envAutoMatchService.match(workspace, application)
 
         launch {
             val applicationType = application.applicationType
