@@ -2,7 +2,7 @@ package com.dcd.server.core.domain.env.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.data.WorkspaceInfo
-import com.dcd.server.core.domain.application.exception.ApplicationEnvNotFoundException
+import com.dcd.server.core.domain.env.exception.ApplicationEnvNotFoundException
 import com.dcd.server.core.domain.env.dto.extension.toResDto
 import com.dcd.server.core.domain.env.dto.extension.toSimpleResDto
 import com.dcd.server.core.domain.env.dto.response.ApplicationEnvListResDto

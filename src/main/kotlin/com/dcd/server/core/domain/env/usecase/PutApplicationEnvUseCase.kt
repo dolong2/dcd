@@ -3,7 +3,7 @@ package com.dcd.server.core.domain.env.usecase
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.common.service.EncryptService
-import com.dcd.server.core.domain.application.exception.ApplicationEnvNotFoundException
+import com.dcd.server.core.domain.env.exception.ApplicationEnvNotFoundException
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.env.dto.extension.toModel
 import com.dcd.server.core.domain.env.dto.request.PutApplicationEnvReqDto

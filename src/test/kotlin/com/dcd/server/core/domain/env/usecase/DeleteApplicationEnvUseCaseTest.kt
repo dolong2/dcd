@@ -1,6 +1,6 @@
 package com.dcd.server.core.domain.env.usecase
 
-import com.dcd.server.core.domain.application.exception.ApplicationEnvNotFoundException
+import com.dcd.server.core.domain.env.exception.ApplicationEnvNotFoundException
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.env.model.ApplicationEnv
 import com.dcd.server.core.domain.env.model.ApplicationEnvDetail
