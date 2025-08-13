@@ -10,7 +10,6 @@ import com.dcd.server.core.domain.application.usecase.*
 import com.dcd.server.presentation.common.data.response.ListResponse
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
 import com.dcd.server.presentation.domain.application.data.request.*
-import com.dcd.server.presentation.domain.env.data.request.PutEnvRequest
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -23,8 +22,6 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     val springRunApplicationUseCase = mockk<RunApplicationUseCase>(relaxUnitFun = true)
     val getAllApplicationUseCase = mockk<GetAllApplicationUseCase>()
     val getOneApplicationUseCase = mockk<GetOneApplicationUseCase>()
-    val putApplicationEnvUseCase = mockk<PutApplicationEnvUseCase>()
-    val deleteApplicationEnvUseCase = mockk<DeleteApplicationEnvUseCase>()
     val stopApplicationUseCase = mockk<StopApplicationUseCase>()
     val deleteApplicationUseCase = mockk<DeleteApplicationUseCase>()
     val updateApplicationUseCase = mockk<UpdateApplicationUseCase>(relaxUnitFun = true)
