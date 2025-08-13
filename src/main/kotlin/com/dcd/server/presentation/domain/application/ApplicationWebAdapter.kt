@@ -77,54 +77,6 @@ class ApplicationWebAdapter(
         getOneApplicationUseCase.execute(applicationId)
             .let { ResponseEntity.ok(it.toResponse()) }
 
-    @Deprecated("사용되지 않을 엔드포인트")
-    @PutMapping("/{applicationId}/env")
-    @WorkspaceOwnerVerification("#workspaceId")
-    fun putApplicationEnv(
-        @PathVariable workspaceId: String,
-        @PathVariable applicationId: String,
-        @RequestBody putApplicationEnvRequest: PutApplicationEnvRequest
-    ): ResponseEntity<Void> =
-//        putApplicationEnvUseCase.execute(applicationId, putApplicationEnvRequest.toDto())
-//            .run { ResponseEntity.ok().build() }
-        ResponseEntity.ok().build()
-
-    @Deprecated("사용되지 않을 엔드포인트")
-    @PutMapping("/env")
-    @WorkspaceOwnerVerification("#workspaceId")
-    fun putApplicationEnvWithLabels(
-        @PathVariable workspaceId: String,
-        @RequestParam labels: List<String>,
-        @RequestBody putApplicationEnvRequest: PutApplicationEnvRequest
-    ): ResponseEntity<Void> =
-//        putApplicationEnvUseCase.execute(labels, putApplicationEnvRequest.toDto())
-//            .run { ResponseEntity.ok().build() }
-        ResponseEntity.ok().build()
-
-    @Deprecated("사용되지 않을 엔드포인트")
-    @DeleteMapping("/{applicationId}/env")
-    @WorkspaceOwnerVerification("#workspaceId")
-    fun deleteApplicationEnv(
-        @PathVariable workspaceId: String,
-        @PathVariable applicationId: String,
-        @RequestParam key: String
-    ): ResponseEntity<Void> =
-//        deleteApplicationEnvUseCase.execute(applicationId, key)
-//            .run { ResponseEntity.ok().build() }
-        ResponseEntity.ok().build()
-
-    @Deprecated("사용되지 않을 엔드포인트")
-    @DeleteMapping("/env")
-    @WorkspaceOwnerVerification("#workspaceId")
-    fun deleteApplicationEnvWithLabels(
-        @PathVariable workspaceId: String,
-        @RequestParam labels: List<String>,
-        @RequestParam key: String
-    ): ResponseEntity<Void> =
-//        deleteApplicationEnvUseCase.execute(labels, key)
-//            .run { ResponseEntity.ok().build() }
-        ResponseEntity.ok().build()
-
     @PostMapping("/{applicationId}/stop")
     @WorkspaceOwnerVerification("#workspaceId")
     fun stopApplication(@PathVariable workspaceId: String, @PathVariable applicationId: String): ResponseEntity<Void> =
