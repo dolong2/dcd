@@ -50,7 +50,7 @@ class PutApplicationEnvUseCase(
         commandApplicationEnvPort.saveAllMatcher(envMatcherList)
 
         if (applicationSet.isNotEmpty()) {
-            eventPublisher.publishEvent(DeployApplicationEvent(applicationSet.toList()))
+            eventPublisher.publishEvent(DeployApplicationEvent(applicationSet.map { it.id }))
         }
     }
 
@@ -93,7 +93,7 @@ class PutApplicationEnvUseCase(
         commandApplicationEnvPort.saveAllMatcher(envMatcherList)
 
         if (applicationSet.isNotEmpty()) {
-            eventPublisher.publishEvent(DeployApplicationEvent(applicationSet.toList()))
+            eventPublisher.publishEvent(DeployApplicationEvent(applicationSet.map { it.id }))
         }
     }
 }

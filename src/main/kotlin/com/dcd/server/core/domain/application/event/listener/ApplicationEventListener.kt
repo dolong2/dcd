@@ -12,6 +12,7 @@ import com.dcd.server.core.domain.application.service.DeleteApplicationDirectory
 import com.dcd.server.core.domain.application.service.DeleteContainerService
 import com.dcd.server.core.domain.application.service.DeleteImageService
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
+import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,7 +31,8 @@ class ApplicationEventListener(
     private val createDockerFileService: CreateDockerFileService,
     private val buildDockerImageService: BuildDockerImageService,
     private val createContainerService: CreateContainerService,
-    private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService
+    private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
+    private val queryApplicationPort: QueryApplicationPort
 ) {
     @EventListener
     @Transactional(rollbackFor = [Exception::class])
@@ -45,7 +47,9 @@ class ApplicationEventListener(
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     fun process(event: DeployApplicationEvent) {
-        event.applications.forEach { application ->
+        val applicationList = queryApplicationPort.findByIds(event.applicationIdList)
+
+        applicationList.forEach { application ->
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     deleteContainerService.deleteContainer(application)
