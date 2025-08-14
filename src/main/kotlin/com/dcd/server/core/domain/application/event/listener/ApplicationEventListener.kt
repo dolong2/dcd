@@ -70,13 +70,14 @@ class ApplicationEventListener(
                     createDockerFileService.createFileToApplication(application, version)
                     buildDockerImageService.buildImageByApplication(application)
                     createContainerService.createContainer(application, externalPort)
-                    deleteApplicationDirectoryService.deleteApplicationDirectory(application)
 
                     val updatedApplication = application.copy(status = ApplicationStatus.STOPPED)
                     commandApplicationPort.save(updatedApplication)
                 } catch (e: Exception) {
                     val updatedApplication = application.copy(status = ApplicationStatus.FAILURE, failureReason = e.message)
                     commandApplicationPort.save(updatedApplication)
+                } finally {
+                    deleteApplicationDirectoryService.deleteApplicationDirectory(application)
                 }
             }
 
