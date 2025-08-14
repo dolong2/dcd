@@ -49,7 +49,9 @@ class PutApplicationEnvUseCase(
         }
         commandApplicationEnvPort.saveAllMatcher(envMatcherList)
 
-        eventPublisher.publishEvent(DeployApplicationEvent(applicationSet.toList()))
+        if (applicationSet.isNotEmpty()) {
+            eventPublisher.publishEvent(DeployApplicationEvent(applicationSet.toList()))
+        }
     }
 
     fun execute(id: UUID, putApplicationEnvReqDto: PutApplicationEnvReqDto) {
@@ -90,6 +92,8 @@ class PutApplicationEnvUseCase(
         }
         commandApplicationEnvPort.saveAllMatcher(envMatcherList)
 
-        eventPublisher.publishEvent(DeployApplicationEvent(applicationSet.toList()))
+        if (applicationSet.isNotEmpty()) {
+            eventPublisher.publishEvent(DeployApplicationEvent(applicationSet.toList()))
+        }
     }
 }
