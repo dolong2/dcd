@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.env.usecase
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.common.service.EncryptService
+import com.dcd.server.core.domain.application.event.DeployApplicationEvent
 import com.dcd.server.core.domain.env.exception.ApplicationEnvNotFoundException
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.env.dto.extension.toModel
@@ -11,6 +12,7 @@ import com.dcd.server.core.domain.env.model.ApplicationEnvMatcher
 import com.dcd.server.core.domain.env.spi.CommandApplicationEnvPort
 import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
+import org.springframework.context.ApplicationEventPublisher
 import java.util.UUID
 
 @UseCase
@@ -20,6 +22,7 @@ class PutApplicationEnvUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val encryptService: EncryptService,
     private val queryApplicationEnvPort: QueryApplicationEnvPort,
+    private val eventPublisher: ApplicationEventPublisher
 ) {
 
     fun execute(putApplicationEnvReqDto: PutApplicationEnvReqDto) {
@@ -45,6 +48,10 @@ class PutApplicationEnvUseCase(
             )
         }
         commandApplicationEnvPort.saveAllMatcher(envMatcherList)
+
+        if (applicationSet.isNotEmpty()) {
+            eventPublisher.publishEvent(DeployApplicationEvent(applicationSet.map { it.id }))
+        }
     }
 
     fun execute(id: UUID, putApplicationEnvReqDto: PutApplicationEnvReqDto) {
@@ -84,5 +91,9 @@ class PutApplicationEnvUseCase(
             )
         }
         commandApplicationEnvPort.saveAllMatcher(envMatcherList)
+
+        if (applicationSet.isNotEmpty()) {
+            eventPublisher.publishEvent(DeployApplicationEvent(applicationSet.map { it.id }))
+        }
     }
 }
