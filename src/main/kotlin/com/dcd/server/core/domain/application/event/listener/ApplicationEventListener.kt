@@ -18,6 +18,8 @@ import kotlinx.coroutines.launch
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.event.TransactionPhase
+import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
 class ApplicationEventListener(
@@ -41,33 +43,39 @@ class ApplicationEventListener(
         commandApplicationPort.save(updatedApplication)
     }
 
-    @EventListener
-    @Transactional(rollbackFor = [Exception::class])
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     fun process(event: DeployApplicationEvent) {
         event.applications.forEach { application ->
             CoroutineScope(Dispatchers.IO).launch {
-                deleteContainerService.deleteContainer(application)
-                deleteImageService.deleteImage(application)
+                try {
+                    deleteContainerService.deleteContainer(application)
+                    deleteImageService.deleteImage(application)
 
-                val version = application.version
-                val externalPort = application.externalPort
+                    val version = application.version
+                    val externalPort = application.externalPort
 
-                val applicationType = application.applicationType
-                when(applicationType) {
-                    ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS -> {
-                        cloneApplicationByUrlService.cloneByApplication(application)
+                    val applicationType = application.applicationType
+                    when (applicationType) {
+                        ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS -> {
+                            cloneApplicationByUrlService.cloneByApplication(application)
+                        }
+
+                        else -> {}
                     }
-                    else -> {}
-                }
 
-                createDockerFileService.createFileToApplication(application, version)
-                buildDockerImageService.buildImageByApplication(application)
-                createContainerService.createContainer(application, externalPort)
-                deleteApplicationDirectoryService.deleteApplicationDirectory(application)
+                    createDockerFileService.createFileToApplication(application, version)
+                    buildDockerImageService.buildImageByApplication(application)
+                    createContainerService.createContainer(application, externalPort)
+                    deleteApplicationDirectoryService.deleteApplicationDirectory(application)
+
+                    val updatedApplication = application.copy(status = ApplicationStatus.STOPPED)
+                    commandApplicationPort.save(updatedApplication)
+                } catch (e: Exception) {
+                    val updatedApplication = application.copy(status = ApplicationStatus.FAILURE, failureReason = e.message)
+                    commandApplicationPort.save(updatedApplication)
+                }
             }
 
-            val updatedApplication = application.copy(status = ApplicationStatus.STOPPED)
-            commandApplicationPort.save(updatedApplication)
         }
     }
 }
