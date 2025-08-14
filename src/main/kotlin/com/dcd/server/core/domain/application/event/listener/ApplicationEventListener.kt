@@ -4,18 +4,17 @@ import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
 import com.dcd.server.core.domain.application.event.DeployApplicationEvent
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import com.dcd.server.core.domain.application.service.impl.BuildDockerImageServiceImpl
-import com.dcd.server.core.domain.application.service.impl.CloneApplicationByUrlServiceImpl
-import com.dcd.server.core.domain.application.service.impl.CreateContainerServiceImpl
-import com.dcd.server.core.domain.application.service.impl.CreateDockerFileServiceImpl
-import com.dcd.server.core.domain.application.service.impl.DeleteApplicationDirectoryServiceImpl
-import com.dcd.server.core.domain.application.service.impl.DeleteContainerServiceImpl
-import com.dcd.server.core.domain.application.service.impl.DeleteImageServiceImpl
+import com.dcd.server.core.domain.application.service.BuildDockerImageService
+import com.dcd.server.core.domain.application.service.CloneApplicationByUrlService
+import com.dcd.server.core.domain.application.service.CreateContainerService
+import com.dcd.server.core.domain.application.service.CreateDockerFileService
+import com.dcd.server.core.domain.application.service.DeleteApplicationDirectoryService
+import com.dcd.server.core.domain.application.service.DeleteContainerService
+import com.dcd.server.core.domain.application.service.DeleteImageService
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -23,13 +22,13 @@ import org.springframework.transaction.annotation.Transactional
 @Component
 class ApplicationEventListener(
     private val commandApplicationPort: CommandApplicationPort,
-    private val deleteContainerService: DeleteContainerServiceImpl,
-    private val deleteImageService: DeleteImageServiceImpl,
-    private val cloneApplicationByUrlService: CloneApplicationByUrlServiceImpl,
-    private val createDockerFileService: CreateDockerFileServiceImpl,
-    private val buildDockerImageService: BuildDockerImageServiceImpl,
-    private val createContainerService: CreateContainerServiceImpl,
-    private val deleteApplicationDirectoryService: DeleteApplicationDirectoryServiceImpl
+    private val deleteContainerService: DeleteContainerService,
+    private val deleteImageService: DeleteImageService,
+    private val cloneApplicationByUrlService: CloneApplicationByUrlService,
+    private val createDockerFileService: CreateDockerFileService,
+    private val buildDockerImageService: BuildDockerImageService,
+    private val createContainerService: CreateContainerService,
+    private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService
 ) {
     @EventListener
     @Transactional(rollbackFor = [Exception::class])
