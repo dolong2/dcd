@@ -27,12 +27,12 @@ class DeleteApplicationEnvUseCase(
         if (applicationEnv.workspace != workspace)
             throw ApplicationEnvNotFoundException()
 
-        commandApplicationEnvPort.delete(applicationEnv)
-
         val envMatcher = queryApplicationEnvPort.findAllMatcherByEnv(applicationEnv)
         val applicationSet = envMatcher.map { it.application }.toSet()
         if (applicationSet.isNotEmpty()) {
             eventPublisher.publishEvent(DeployApplicationEvent(applicationSet.map { it.id }))
         }
+
+        commandApplicationEnvPort.delete(applicationEnv)
     }
 }
