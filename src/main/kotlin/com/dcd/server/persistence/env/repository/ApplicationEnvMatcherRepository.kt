@@ -10,4 +10,5 @@ interface ApplicationEnvMatcherRepository : JpaRepository<ApplicationEnvMatcherE
     fun deleteByApplicationEnv(applicationEnv: ApplicationEnvEntity)
     fun deleteByApplicationEnvIn(applicationEnvList: List<ApplicationEnvEntity>)
     fun findByApplication(application: ApplicationJpaEntity): List<ApplicationEnvMatcherEntity>
+    fun findAllByApplicationEnv(applicationEnv: ApplicationEnvEntity): List<ApplicationEnvMatcherEntity>
 }

@@ -45,6 +45,10 @@ class ApplicationEnvPersistenceAdapter(
         applicationEnvRepository.findAllByWorkspaceAndLabelsIn(workspace.toEntity(), labels)
             .map { it.toDomain() }
 
+    override fun findAllMatcherByEnv(applicationEnv: ApplicationEnv): List<ApplicationEnvMatcher> =
+        applicationEnvMatcherRepository.findAllByApplicationEnv(applicationEnv.toEntity())
+            .map { it.toDomain() }
+
     override fun save(applicationEnv: ApplicationEnv) {
         val envEntity = applicationEnv.toEntity()
         applicationEnvRepository.save(envEntity)
