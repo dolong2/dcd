@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.user.model
 
 import com.dcd.server.core.domain.auth.model.Role
+import com.dcd.server.core.domain.user.model.enums.Status
 import java.util.*
 
 data class User(
@@ -8,5 +9,15 @@ data class User(
     val email: String,
     val password: String,
     val name: String,
-    val roles: MutableList<Role>
-)
+    val roles: MutableList<Role>,
+    val status: Status
+) {
+    override fun equals(other: Any?): Boolean {
+        if (other !is User) return false
+        return this.id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return this.id.hashCode()
+    }
+}

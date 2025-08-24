@@ -1,0 +1,68 @@
+package com.dcd.server.core.domain.workspace.usecase
+
+import com.dcd.server.core.common.command.CommandPort
+import com.dcd.server.core.domain.user.spi.QueryUserPort
+import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
+import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
+import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.dcd.server.infrastructure.global.security.auth.AuthDetailsService
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.core.spec.style.BehaviorSpec
+import util.workspace.WorkspaceGenerator
+import com.ninjasquad.springmockk.MockkBean
+import io.kotest.matchers.shouldBe
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
+
+@Transactional
+@SpringBootTest
+@ActiveProfiles("test")
+class DeleteWorkspaceUseCaseTest(
+    private val deleteWorkspaceUseCase: DeleteWorkspaceUseCase,
+    private val authDetailsService: AuthDetailsService,
+    private val queryWorkspacePort: QueryWorkspacePort,
+    private val commandWorkspacePort: CommandWorkspacePort,
+    private val queryUserPort: QueryUserPort,
+    @MockkBean(relaxed = true)
+    private val commandPort: CommandPort
+) : BehaviorSpec({
+    val userId = "923a6407-a5f8-4e1e-bffd-0621910ddfc8"
+    val workspaceId = "d57b42f5-5cc4-440b-8dce-b4fc2e372eff"
+
+    beforeContainer {
+        val userDetails = authDetailsService.loadUserByUsername(userId)
+        val authenticationToken = UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+        SecurityContextHolder.getContext().authentication = authenticationToken
+    }
+
+    given("워크스페이스 아이디를 가진 워크스페이스가 주어지고") {
+        val user = queryUserPort.findById(userId)!!
+        val workspace = WorkspaceGenerator.generateWorkspace(id = workspaceId, user = user)
+        commandWorkspacePort.save(workspace)
+
+        `when`("유스케이스를 실행하면") {
+            deleteWorkspaceUseCase.execute(workspaceId)
+
+            then("워크스페이스가 조회되지 않아야함") {
+                queryWorkspacePort.findById(workspaceId) shouldBe null
+                commandPort.executeShellCommand("docker network rm ${workspace.title.replace(" ", "_")}")
+            }
+        }
+    }
+
+    given("워크스페이스 아이디를 가진 워크스페이스가 주어지지 않고") {
+        val notFoundWorkspaceId = UUID.randomUUID().toString()
+
+        `when`("유스케이스를 실행할때") {
+            then("WorkspaceNotFoundException이 발생해야함") {
+                shouldThrow<WorkspaceNotFoundException> {
+                    deleteWorkspaceUseCase.execute(notFoundWorkspaceId)
+                }
+            }
+        }
+    }
+})

@@ -1,0 +1,60 @@
+package com.dcd.server.persistence.application
+
+import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
+import com.dcd.server.core.domain.application.spi.ApplicationPort
+import com.dcd.server.core.domain.workspace.model.Workspace
+import com.dcd.server.persistence.application.adapter.toDomain
+import com.dcd.server.persistence.application.adapter.toEntity
+import com.dcd.server.persistence.application.repository.ApplicationRepository
+import com.dcd.server.persistence.workspace.adapter.toEntity
+import org.springframework.data.repository.findByIdOrNull
+import org.springframework.stereotype.Component
+import java.util.UUID
+
+@Component
+class ApplicationPersistenceAdapter(
+    private val applicationRepository: ApplicationRepository
+) : ApplicationPort {
+    override fun save(application: Application) {
+        applicationRepository.save(application.toEntity())
+    }
+
+    override fun delete(application: Application) {
+        applicationRepository.delete(application.toEntity())
+    }
+
+    override fun saveAll(applicationList: List<Application>) {
+        applicationRepository.saveAll(applicationList.map { it.toEntity() })
+    }
+
+    override fun findAllByWorkspace(workspace: Workspace, labels: List<String>?): List<Application> {
+        val applicationEntityList =
+            labels?.run {
+                applicationRepository.findAllByWorkspaceAndLabels(workspace.toEntity(), this)
+            } ?: applicationRepository.findAllByWorkspace(workspace.toEntity())
+
+        return applicationEntityList.map { it.toDomain() }
+    }
+
+    override fun findById(id: String): Application? =
+        applicationRepository.findByIdOrNull(UUID.fromString(id))
+            ?.toDomain()
+
+    override fun findByIds(ids: List<String>): List<Application> =
+        applicationRepository.findAllById(ids.map { UUID.fromString(it) })
+            .map { it.toDomain() }
+
+    override fun existsByExternalPort(externalPort: Int): Boolean =
+        applicationRepository.existsByExternalPort(externalPort)
+
+    override fun findAllByStatus(status: ApplicationStatus): List<Application> =
+        applicationRepository.findAllByStatus(status)
+            .map { it.toDomain() }
+
+    override fun existsByName(name: String): Boolean =
+        applicationRepository.existsByName(name)
+
+    override fun existsByNameAndWorkspace(name: String, workspace: Workspace): Boolean =
+        applicationRepository.existsByNameAndWorkspace(name, workspace.toEntity())
+}

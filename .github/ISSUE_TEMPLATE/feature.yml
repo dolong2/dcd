@@ -1,0 +1,12 @@
+name: "Feature"
+description: "신규 기능 개발"
+labels:
+  - ':sparkles: Feature'
+body:
+  - type: textarea
+    attributes:
+      label: Description
+      description: |
+        이번에 작업해야하는 내용을 간략하게 설명
+      placeholder: |
+        deploy 커맨드를 추가합니다.

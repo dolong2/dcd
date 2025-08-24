@@ -1,0 +1,12 @@
+name: "Refac"
+description: "기능 리펙토링"
+labels:
+  - ':hammer: Refactor'
+body:
+  - type: textarea
+    attributes:
+      label: Description
+      description: |
+        이번에 작업해야하는 내용을 간략하게 설명
+      placeholder: |
+        deploy 커맨드에 코루틴을 적용합니다.

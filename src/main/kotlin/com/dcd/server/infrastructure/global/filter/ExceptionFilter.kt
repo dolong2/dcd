@@ -1,0 +1,59 @@
+package com.dcd.server.infrastructure.global.filter
+
+import com.dcd.server.core.common.error.BasicException
+import com.dcd.server.core.common.error.ErrorCode
+import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.servlet.FilterChain
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.LoggerFactory
+import org.springframework.web.filter.OncePerRequestFilter
+
+class ExceptionFilter(
+    private val objectMapper: ObjectMapper
+) : OncePerRequestFilter() {
+    private val log = LoggerFactory.getLogger(this::class.simpleName)
+
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain,
+    ) {
+        try {
+            filterChain.doFilter(request, response)
+        } catch (ex: Exception) {
+            when (ex) {
+                is BasicException -> {
+                    logErrorResponse(ex.errorCode, ex)
+                    writeErrorResponse(response, ex)
+                }
+                else -> {
+                    ex.printStackTrace()
+                    val errorCode = ErrorCode.INTERNAL_ERROR
+                    logErrorResponse(errorCode, ex)
+                    writeErrorResponse(response, BasicException(errorCode))
+                }
+            }
+        }
+    }
+
+    private fun logErrorResponse(errorCode: ErrorCode, ex: Exception) {
+        log.error("${errorCode.code}")
+        log.error(errorCode.msg)
+        log.error(ex.message)
+    }
+
+    private fun writeErrorResponse(response: HttpServletResponse, exception: BasicException) {
+        val errorCode = exception.errorCode
+
+        val responseMap = mutableMapOf<String, Any>()
+        responseMap["status"] = errorCode.code
+        responseMap["message"] = errorCode.msg
+        val responseBody = objectMapper.writeValueAsString(responseMap)
+
+        response.status = errorCode.code
+        response.characterEncoding = Charsets.UTF_8.name()
+        response.contentType = "application/json"
+        response.writer.write(responseBody)
+    }
+}

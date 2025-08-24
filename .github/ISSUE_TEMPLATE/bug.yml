@@ -1,0 +1,12 @@
+name: "Bug"
+description: "버그가 발생함"
+labels:
+  - ':bug: Bug'
+body:
+  - type: textarea
+    attributes:
+      label: Description
+      description: |
+        어떤 버그가 발생했는지 작성
+      placeholder: |
+        deploy 커맨드에서 NPE가 발생합니다.

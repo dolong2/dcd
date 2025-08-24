@@ -1,0 +1,32 @@
+networks:
+  default:
+    name: dcd
+    external: true
+
+services:
+  db:
+    container_name: dcd-db
+    image: mariadb:latest
+    env_file: dcd-db.env
+    ports:
+      - 3307:3306
+  redis:
+    container_name: dcd-redis
+    image: redis:latest
+    env_file: dcd-redis.env
+    environment:
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    ports:
+      - 6378:6379
+  proxy:
+    container_name: dcd-nginx
+    image: nginx:latest
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d:ro
+      - ./nginx/log:/var/log/nginx
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped

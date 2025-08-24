@@ -6,16 +6,47 @@ spring:
     driver-class-name: ${DB_DRIVER}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
+    show-sql: true
     database: mysql
-  redis:
-    host: ${REDIS_HOST}
-    port: ${REDIS_PORT}
+    properties:
+      hibernate:
+        dialect: ${DB_HIBERNATE_DIALECT}
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_ADDRESS}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
 jwt:
-  access-secret: ${JWT_ACCESS_SECRET}
-  refresh-secret: ${JWT_REFRESH_SECRET}
+  accessSecret: ${JWT_ACCESS_SECRET}
+  refreshSecret: ${JWT_REFRESH_SECRET}
   time:
     accessTime: ${JWT_ACCESS_TIME}
     refreshTime: ${JWT_REFRESH_TIME}
+
 server:
-  port: 8080
+  port: 8081
+
+aes:
+  secret-key: ${AES_SECRET}
+  init-vector: ${AES_INIT_VECTOR}
+
+domain:
+  config-path: ${DOMAIN_CONFIG_PATH}

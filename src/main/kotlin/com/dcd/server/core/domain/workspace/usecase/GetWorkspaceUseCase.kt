@@ -1,0 +1,21 @@
+package com.dcd.server.core.domain.workspace.usecase
+
+import com.dcd.server.core.common.annotation.UseCase
+import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.workspace.dto.extension.toDto
+import com.dcd.server.core.domain.workspace.dto.response.WorkspaceResDto
+import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
+import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+
+@UseCase(readOnly = true)
+class GetWorkspaceUseCase(
+    private val queryWorkspacePort: QueryWorkspacePort,
+    private val queryApplicationPort: QueryApplicationPort
+) {
+    fun execute(workspaceId: String): WorkspaceResDto {
+        val workspace = (queryWorkspacePort.findById(workspaceId)
+            ?: throw WorkspaceNotFoundException())
+        val applicationList = queryApplicationPort.findAllByWorkspace(workspace)
+        return workspace.toDto(applicationList)
+    }
+}

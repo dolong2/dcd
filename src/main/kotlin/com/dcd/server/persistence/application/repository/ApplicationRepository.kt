@@ -1,0 +1,22 @@
+package com.dcd.server.persistence.application.repository
+
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
+import com.dcd.server.persistence.application.entity.ApplicationJpaEntity
+import com.dcd.server.persistence.workspace.entity.WorkspaceJpaEntity
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
+import java.util.*
+
+interface ApplicationRepository : JpaRepository<ApplicationJpaEntity, UUID> {
+    fun findAllByWorkspace(workspace: WorkspaceJpaEntity): List<ApplicationJpaEntity>
+    @Query("select app from ApplicationJpaEntity app join app.labels label where app.workspace = :workspace and label IN :labels")
+    fun findAllByWorkspaceAndLabels(
+        @Param("workspace") workspace: WorkspaceJpaEntity,
+        @Param("labels") labels: List<String>
+    ): List<ApplicationJpaEntity>
+    fun existsByExternalPort(externalPort: Int): Boolean
+    fun findAllByStatus(status: ApplicationStatus): List<ApplicationJpaEntity>
+    fun existsByName(name: String): Boolean
+    fun existsByNameAndWorkspace(name: String, workspace: WorkspaceJpaEntity): Boolean
+}

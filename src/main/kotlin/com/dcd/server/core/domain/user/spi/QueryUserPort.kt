@@ -1,9 +1,12 @@
 package com.dcd.server.core.domain.user.spi
 
+import com.dcd.server.core.domain.user.model.enums.Status
 import com.dcd.server.core.domain.user.model.User
 
 interface QueryUserPort {
     fun findById(id: String): User?
     fun findByEmail(email: String): User?
     fun existsByEmail(email: String): Boolean
+    fun existsById(userId: String): Boolean
+    fun findByStatus(status: Status): List<User>
 }

@@ -1,5 +1,6 @@
 package com.dcd.server.persistence.user
 
+import com.dcd.server.core.domain.user.model.enums.Status
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.spi.UserPort
 import com.dcd.server.persistence.user.adapter.toDomain
@@ -7,6 +8,7 @@ import com.dcd.server.persistence.user.adapter.toEntity
 import com.dcd.server.persistence.user.repository.UserRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
+import java.util.*
 
 @Component
 class UserPersistenceAdapter(
@@ -16,8 +18,12 @@ class UserPersistenceAdapter(
         userRepository.save(user.toEntity())
     }
 
+    override fun delete(user: User) {
+        userRepository.deleteById(UUID.fromString(user.id))
+    }
+
     override fun findById(id: String): User? =
-        userRepository.findByIdOrNull(id)
+        userRepository.findByIdOrNull(UUID.fromString(id))
             ?.toDomain()
 
     override fun findByEmail(email: String): User? =
@@ -26,4 +32,11 @@ class UserPersistenceAdapter(
 
     override fun existsByEmail(email: String): Boolean =
         userRepository.existsByEmail(email)
+
+    override fun existsById(userId: String): Boolean =
+        userRepository.existsById(UUID.fromString(userId))
+
+    override fun findByStatus(status: Status): List<User> =
+        userRepository.findAllByStatus(status)
+            .map { it.toDomain() }
 }
