@@ -11,7 +11,7 @@ class ApplicationEnvEntity(
     id: UUID = UUID.randomUUID(),
     name: String,
     description: String,
-    @OneToMany(mappedBy = "applicationEnv", cascade = [CascadeType.REMOVE])
+    @OneToMany(mappedBy = "applicationEnv", cascade = [CascadeType.REMOVE], fetch = FetchType.EAGER)
     val details: List<ApplicationEnvDetailEntity>,
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "workspace_id")
