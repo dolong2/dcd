@@ -21,5 +21,6 @@ class VolumeMountJpaEntity(
     @ManyToOne
     @JoinColumn(name = "volume_id")
     val volume: VolumeJpaEntity,
-    val mountPath: String
+    val mountPath: String,
+    val readOnly: Boolean
 )

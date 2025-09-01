@@ -7,6 +7,6 @@ class VolumeMount(
     val id: UUID,
     val application: Application,
     val volume: Volume,
-    val mountPath: String
-) {
-}
+    val mountPath: String,
+    val readOnly: Boolean
+)

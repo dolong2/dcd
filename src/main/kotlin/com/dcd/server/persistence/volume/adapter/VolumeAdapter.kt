@@ -32,7 +32,8 @@ fun VolumeMount.toEntity(): VolumeMountJpaEntity =
         id = this.id,
         application = this.application.toEntity(),
         volume = this.volume.toEntity(),
-        mountPath = this.mountPath
+        mountPath = this.mountPath,
+        readOnly = this.readOnly
     )
 
 fun VolumeMountJpaEntity.toDomain(): VolumeMount =
@@ -40,5 +41,6 @@ fun VolumeMountJpaEntity.toDomain(): VolumeMount =
         id = this.id,
         application = this.application.toDomain(),
         volume = this.volume.toDomain(),
-        mountPath = this.mountPath
+        mountPath = this.mountPath,
+        readOnly = this.readOnly
     )

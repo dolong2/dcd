@@ -24,7 +24,7 @@ create table application_env_detail_entity (id BINARY(16) not null, encryption b
 create table application_env_matcher_entity (id BINARY(16) not null, application_id BINARY(16), env_id BINARY(16), primary key (id));
 create table application_env_label_entity (application_env_id BINARY(16) not null, label varchar(255));
 create table volume_entity (id BINARY(16) not null, description varchar(255), name varchar(255), physical_path varchar(255), workspace_id BINARY(16), primary key (id));
-create table volume_mount_entity (id BINARY(16) not null, mount_path varchar(255), application_id BINARY(16), volume_id BINARY(16), primary key (id));
+create table volume_mount_entity (id BINARY(16) not null, mount_path varchar(255), application_id BINARY(16), volume_id BINARY(16), read_only bit(1), primary key (id));
 alter table if exists volume_entity add constraint FKhp1ggnqtveky8po2cwsb45una foreign key (workspace_id) references workspace_entity (id);
 alter table if exists volume_mount_entity add constraint FKr5bb2ev813ioxtylyobgdphel foreign key (application_id) references application_entity (id);
 alter table if exists volume_mount_entity add constraint FKq6dppr5p20mvgjditmpypicey foreign key (volume_id) references volume_entity (id);
