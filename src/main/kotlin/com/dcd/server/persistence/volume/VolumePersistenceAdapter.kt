@@ -4,11 +4,13 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.volume.model.Volume
 import com.dcd.server.core.domain.volume.model.VolumeMount
 import com.dcd.server.core.domain.volume.spi.VolumePort
+import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.persistence.application.adapter.toEntity
 import com.dcd.server.persistence.volume.adapter.toDomain
 import com.dcd.server.persistence.volume.adapter.toEntity
 import com.dcd.server.persistence.volume.repository.VolumeMountRepository
 import com.dcd.server.persistence.volume.repository.VolumeRepository
+import com.dcd.server.persistence.workspace.adapter.toEntity
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 import java.util.UUID
@@ -29,6 +31,12 @@ class VolumePersistenceAdapter(
     override fun findById(id: UUID): Volume? =
         volumeRepository.findByIdOrNull(id)
             ?.toDomain()
+
+    override fun existsVolumeByNameAndWorkspace(
+        name: String,
+        workspace: Workspace,
+    ): Boolean =
+        volumeRepository.existsByNameAndWorkspace(name, workspace.toEntity())
 
     override fun findAllMountByApplication(application: Application): List<VolumeMount> =
         volumeMountRepository.findAllByApplication(application.toEntity())

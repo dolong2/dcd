@@ -14,7 +14,6 @@ fun Volume.toEntity(): VolumeJpaEntity =
         id = this.id,
         name = this.name,
         description = this.description,
-        physicalPath = this.physicalPath,
         workspace = this.workspace.toEntity()
     )
 
@@ -23,7 +22,6 @@ fun VolumeJpaEntity.toDomain(): Volume =
         id = this.id,
         name = this.name,
         description = this.description,
-        physicalPath = this.physicalPath,
         workspace = this.workspace.toDomain()
     )
 

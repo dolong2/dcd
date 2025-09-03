@@ -18,7 +18,6 @@ class VolumeJpaEntity(
     val id: UUID,
     val name: String,
     val description: String,
-    val physicalPath: String,
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "workspace_id")
     val workspace: WorkspaceJpaEntity,

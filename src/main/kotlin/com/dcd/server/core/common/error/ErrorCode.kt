@@ -22,6 +22,7 @@ enum class ErrorCode(
     ALREADY_EXISTS_DOMAIN("이미 존재하는 도메인", 400),
     ALREADY_CONNECTED_DOMAIN("이미 연결된 도메인", 400),
     NOT_CONNECTED_DOMAIN("도메인이 애플리케이션에 연결되어 있지 않음", 400),
+    ALREADY_EXISTS_VOLUME("이미 존재하는 볼륨", 400),
 
     UNAUTHORIZED("권한이 없음", 401),
     EXPIRED_TOKEN("토큰이 만료됨", 401),
@@ -59,4 +60,5 @@ enum class ErrorCode(
     IMAGE_NOT_BUILT("해당 애플리케이션을 이미지로 빌드할 수 없음", 500),
     INTERNAL_ERROR("서버 내부 에러", 500),
     INVALID_PARSING_OBJECT_FIELD("파싱할 필드가 올바르게 설정되어있지 않는 객체임", 500),
+    FAILURE_VOLUME_CREATION("컨테이너 볼륨 생성에 실패했습니다.", 500),
 }
