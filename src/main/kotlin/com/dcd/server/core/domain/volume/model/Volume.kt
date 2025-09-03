@@ -7,6 +7,7 @@ class Volume(
     val id: UUID,
     val name: String,
     val description: String,
-    val physicalPath: String,
     val workspace: Workspace
-)
+) {
+    val volumeName: String = "${name.replace(" ", "_")}-$id"
+}
