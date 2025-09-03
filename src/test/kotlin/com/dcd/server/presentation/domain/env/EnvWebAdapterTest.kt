@@ -1,4 +1,4 @@
-package com.dcd.server.presentation.env
+package com.dcd.server.presentation.domain.env
 
 import com.dcd.server.core.domain.env.dto.response.ApplicationEnvDetailResDto
 import com.dcd.server.core.domain.env.dto.response.ApplicationEnvListResDto
@@ -41,7 +41,7 @@ class EnvWebAdapterTest : BehaviorSpec({
             }
         }
 
-        `when`("이미 존재하는 환경변수 일때") {
+        `when`("updateApplicationEnv 메서드를 실행할때") {
             val targetEnvId = UUID.randomUUID()
             every { putApplicationEnvUseCase.execute(targetEnvId, any()) } returns Unit
             val result = applicationEnvWebAdapter.updateApplicationEnv(testId, targetEnvId, request)
