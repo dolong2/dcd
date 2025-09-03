@@ -98,6 +98,9 @@ class SecurityConfig(
                 it.requestMatchers(HttpMethod.GET, "/{workspaceId}/env").authenticated()
                 it.requestMatchers(HttpMethod.GET, "/{workspaceId}/env/{envId}").authenticated()
 
+                //volume
+                it.requestMatchers(HttpMethod.POST, "/{workspaceId}/volume").authenticated()
+
                 //when url not set
                 it.anyRequest().denyAll()
             }
