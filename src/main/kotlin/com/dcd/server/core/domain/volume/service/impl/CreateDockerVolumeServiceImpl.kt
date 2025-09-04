@@ -1,7 +1,7 @@
 package com.dcd.server.core.domain.volume.service.impl
 
 import com.dcd.server.core.common.command.CommandPort
-import com.dcd.server.core.domain.volume.exception.VolumeCreationFailedException
+import com.dcd.server.core.domain.volume.exception.VolumeCreationFailureException
 import com.dcd.server.core.domain.volume.model.Volume
 import com.dcd.server.core.domain.volume.service.CreateVolumeService
 import org.springframework.stereotype.Service
@@ -14,6 +14,6 @@ class CreateDockerVolumeServiceImpl(
         val exitValue = commandPort.executeShellCommand("docker volume create ${volume.volumeName}")
 
         if (exitValue != 0)
-            throw VolumeCreationFailedException()
+            throw VolumeCreationFailureException()
     }
 }
