@@ -3,4 +3,4 @@ package com.dcd.server.core.domain.volume.exception
 import com.dcd.server.core.common.error.BasicException
 import com.dcd.server.core.common.error.ErrorCode
 
-class VolumeCreationFailedException : BasicException(ErrorCode.FAILURE_VOLUME_CREATION)
+class AlreadyExistsVolumeMountException : BasicException(ErrorCode.ALREADY_EXISTS_VOLUME_MOUNT)
