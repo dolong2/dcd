@@ -64,4 +64,5 @@ enum class ErrorCode(
     INVALID_PARSING_OBJECT_FIELD("파싱할 필드가 올바르게 설정되어있지 않는 객체임", 500),
     FAILURE_VOLUME_CREATION("컨테이너 볼륨 생성에 실패했습니다.", 500),
     FAILURE_VOLUME_DELETE("컨테이너 볼륨 삭제에 실패했습니다.", 500),
+    FAILURE_VOLUME_COPY("컨테이너 볼륨 복제에 실패했습니다.", 500),
 }
