@@ -45,7 +45,6 @@ class UpdateVolumeUseCaseTest(
 
     beforeSpec {
         val targetWorkspace = queryWorkspacePort.findById("d57b42f5-5cc4-440b-8dce-b4fc2e372eff")!!
-        workspaceInfo.workspace = targetWorkspace
 
         val volume = Volume(
             id = targetVolumeId,
@@ -57,6 +56,11 @@ class UpdateVolumeUseCaseTest(
     }
 
     given("타겟 볼륨 아이디와 수정할 볼륨 요청 dto가 주어지고") {
+        beforeTest {
+            val targetWorkspace = queryWorkspacePort.findById("d57b42f5-5cc4-440b-8dce-b4fc2e372eff")!!
+            workspaceInfo.workspace = targetWorkspace
+        }
+
         val request = UpdateVolumeReqDto(name = "updateVolume", description = "updateDescription")
 
         `when`("유스케이스를 실행할때") {
@@ -73,6 +77,11 @@ class UpdateVolumeUseCaseTest(
     }
 
     given("볼륨이 존재하지 않고") {
+        beforeTest {
+            val targetWorkspace = queryWorkspacePort.findById("d57b42f5-5cc4-440b-8dce-b4fc2e372eff")!!
+            workspaceInfo.workspace = targetWorkspace
+        }
+
         volumeRepository.deleteAll()
         val request = UpdateVolumeReqDto(name = "updateVolume", description = "updateDescription")
 
@@ -87,6 +96,11 @@ class UpdateVolumeUseCaseTest(
     }
 
     given("볼륨 마운트가 존재하고") {
+        beforeTest {
+            val targetWorkspace = queryWorkspacePort.findById("d57b42f5-5cc4-440b-8dce-b4fc2e372eff")!!
+            workspaceInfo.workspace = targetWorkspace
+        }
+
         val application = queryApplicationPort.findById("2fb0f315-8272-422f-8e9f-c4f765c022b2")!!
         val volume = volumeRepository.findByIdOrNull(targetVolumeId)!!.toDomain()
         val volumeMount = VolumeMount(
@@ -111,9 +125,11 @@ class UpdateVolumeUseCaseTest(
     }
 
     given("볼륨이 속한 워크스페이스가 아니고") {
-        val otherWorkspace = WorkspaceGenerator.generateWorkspace(user = workspaceInfo.workspace!!.owner)
-        workspaceRepository.save(otherWorkspace.toEntity())
-        workspaceInfo.workspace = otherWorkspace
+        beforeTest {
+            val otherWorkspace = WorkspaceGenerator.generateWorkspace(user = workspaceInfo.workspace!!.owner)
+            workspaceRepository.save(otherWorkspace.toEntity())
+            workspaceInfo.workspace = otherWorkspace
+        }
 
         val request = UpdateVolumeReqDto(name = "updateVolume", description = "updateDescription")
 
