@@ -13,6 +13,7 @@ import com.dcd.server.persistence.volume.adapter.toDomain
 import com.dcd.server.persistence.volume.adapter.toEntity
 import com.dcd.server.persistence.volume.repository.VolumeMountRepository
 import com.dcd.server.persistence.volume.repository.VolumeRepository
+import com.dcd.server.persistence.workspace.adapter.toEntity
 import com.dcd.server.persistence.workspace.repository.WorkspaceRepository
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.throwables.shouldThrow
@@ -22,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import util.workspace.WorkspaceGenerator
 import java.util.UUID
 
 @Transactional
@@ -94,6 +96,21 @@ class DeleteVolumeUseCaseTest(
 
             then("에러가 발생해야함") {
                 shouldThrow<AlreadyExistsVolumeMountException> {
+                    deleteVolumeUseCase.execute(targetVolumeId)
+                }
+            }
+        }
+    }
+
+    given("볼륨이 속한 워크스페이스가 아니고") {
+        val otherWorkspace = WorkspaceGenerator.generateWorkspace(user = workspaceInfo.workspace!!.owner)
+        workspaceRepository.save(otherWorkspace.toEntity())
+        workspaceInfo.workspace = otherWorkspace
+
+        `when`("유스케이스를 실행하면") {
+
+            then("에러가 발생해야함") {
+                shouldThrow<VolumeNotFoundException> {
                     deleteVolumeUseCase.execute(targetVolumeId)
                 }
             }

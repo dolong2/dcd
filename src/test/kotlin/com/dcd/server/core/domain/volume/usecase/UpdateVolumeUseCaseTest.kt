@@ -13,6 +13,8 @@ import com.dcd.server.persistence.volume.adapter.toDomain
 import com.dcd.server.persistence.volume.adapter.toEntity
 import com.dcd.server.persistence.volume.repository.VolumeMountRepository
 import com.dcd.server.persistence.volume.repository.VolumeRepository
+import com.dcd.server.persistence.workspace.adapter.toEntity
+import com.dcd.server.persistence.workspace.repository.WorkspaceRepository
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -22,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import util.workspace.WorkspaceGenerator
 import java.util.UUID
 
 @Transactional
@@ -34,6 +37,7 @@ class UpdateVolumeUseCaseTest(
     private val workspaceInfo: WorkspaceInfo,
     private val volumeRepository: VolumeRepository,
     private val volumeMountRepository: VolumeMountRepository,
+    private val workspaceRepository: WorkspaceRepository,
     private val queryWorkspacePort: QueryWorkspacePort,
     private val queryApplicationPort: QueryApplicationPort,
 ) : BehaviorSpec({
@@ -100,6 +104,23 @@ class UpdateVolumeUseCaseTest(
 
             then("에러가 발생해야함") {
                 shouldThrow<AlreadyExistsVolumeMountException> {
+                    updateVolumeUseCase.execute(targetVolumeId, request)
+                }
+            }
+        }
+    }
+
+    given("볼륨이 속한 워크스페이스가 아니고") {
+        val otherWorkspace = WorkspaceGenerator.generateWorkspace(user = workspaceInfo.workspace!!.owner)
+        workspaceRepository.save(otherWorkspace.toEntity())
+        workspaceInfo.workspace = otherWorkspace
+
+        val request = UpdateVolumeReqDto(name = "updateVolume", description = "updateDescription")
+
+        `when`("유스케이스를 실행하면") {
+
+            then("에러가 발생해야함") {
+                shouldThrow<VolumeNotFoundException> {
                     updateVolumeUseCase.execute(targetVolumeId, request)
                 }
             }
