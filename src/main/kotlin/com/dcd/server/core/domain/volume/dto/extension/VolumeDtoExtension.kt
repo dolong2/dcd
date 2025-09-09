@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.volume.dto.extension
 
 import com.dcd.server.core.domain.volume.dto.request.CreateVolumeReqDto
 import com.dcd.server.core.domain.volume.dto.request.UpdateVolumeReqDto
+import com.dcd.server.core.domain.volume.dto.response.VolumeSimpleResDto
 import com.dcd.server.core.domain.volume.model.Volume
 import com.dcd.server.core.domain.workspace.model.Workspace
 import java.util.UUID
@@ -20,4 +21,11 @@ fun UpdateVolumeReqDto.toEntity(volume: Volume): Volume =
         name = this.name,
         description = this.description,
         workspace = volume.workspace,
+    )
+
+fun Volume.toResDto(): VolumeSimpleResDto =
+    VolumeSimpleResDto(
+        id = this.id,
+        name = this.name,
+        description = this.description
     )
