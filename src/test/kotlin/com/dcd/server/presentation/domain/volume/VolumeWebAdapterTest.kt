@@ -2,15 +2,20 @@ package com.dcd.server.presentation.domain.volume
 
 import com.dcd.server.core.domain.volume.dto.request.CreateVolumeReqDto
 import com.dcd.server.core.domain.volume.dto.request.UpdateVolumeReqDto
+import com.dcd.server.core.domain.volume.dto.response.VolumeDetailResDto
+import com.dcd.server.core.domain.volume.dto.response.VolumeListResDto
+import com.dcd.server.core.domain.volume.dto.response.VolumeSimpleResDto
 import com.dcd.server.core.domain.volume.usecase.CreateVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.DeleteVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.GetAllVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.GetOneVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.UpdateVolumeUseCase
+import com.dcd.server.presentation.domain.volume.data.extension.toResponse
 import com.dcd.server.presentation.domain.volume.data.request.CreateVolumeRequest
 import com.dcd.server.presentation.domain.volume.data.request.UpdateVolumeRequest
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.springframework.http.HttpStatus
@@ -79,6 +84,44 @@ class VolumeWebAdapterTest : BehaviorSpec({
 
             then("볼륨 수정 유스케이스를 실행해야함") {
                 verify { updateVolumeUseCase.execute(testVolumeId, any() as UpdateVolumeReqDto) }
+            }
+        }
+    }
+
+    given("조회할 볼륨 아이디가 주어지고") {
+        val testWorkspaceId = UUID.randomUUID().toString()
+        val testVolumeId = UUID.randomUUID()
+
+        `when`("볼륨 단일 조회 메서드를 실행할때") {
+            val volumeDetailResDto = VolumeDetailResDto(testVolumeId, "testVolume", "testDescription", listOf())
+            every { getOneVolumeUseCase.execute(testVolumeId) } returns volumeDetailResDto
+
+            val result = volumeWebAdapter.getVolume(testWorkspaceId, testVolumeId)
+
+            then("유스케이스의 응답이 레핑되서 반환되어야함") {
+                result.body shouldBe volumeDetailResDto.toResponse()
+            }
+            then("상태코드 OK가 응답되어야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
+
+    given("워크스페이스 아이디만 주어지고") {
+        val testWorkspaceId = UUID.randomUUID().toString()
+
+        `when`("볼륨 목록 조회 메서드를 실행할때") {
+            val volumeListResDto =
+                VolumeListResDto(listOf(VolumeSimpleResDto(UUID.randomUUID(), "testVolume", "testDescription")))
+            every { getAllVolumeUseCase.execute() } returns volumeListResDto
+
+            val result = volumeWebAdapter.getAllVolume(testWorkspaceId)
+
+            then("유스케이스의 응답이 레핑되서 반환되어야함") {
+                result.body shouldBe volumeListResDto.toResponse()
+            }
+            then("상태코드 OK가 응답되어야함") {
+                result.statusCode shouldBe HttpStatus.OK
             }
         }
     }
