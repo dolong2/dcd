@@ -103,6 +103,7 @@ class SecurityConfig(
                 it.requestMatchers(HttpMethod.DELETE, "/{workspaceId}/volume/{volumeId}").authenticated()
                 it.requestMatchers(HttpMethod.PUT, "/{workspaceId}/volume/{volumeId}").authenticated()
                 it.requestMatchers(HttpMethod.GET, "/{workspaceId}/volume").authenticated()
+                it.requestMatchers(HttpMethod.GET, "/{workspaceId}/volume/{volumeId}").authenticated()
 
                 //when url not set
                 it.anyRequest().denyAll()

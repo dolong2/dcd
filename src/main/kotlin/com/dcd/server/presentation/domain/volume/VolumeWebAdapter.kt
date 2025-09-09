@@ -4,12 +4,14 @@ import com.dcd.server.core.common.annotation.WorkspaceOwnerVerification
 import com.dcd.server.core.domain.volume.usecase.CreateVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.DeleteVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.GetAllVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.GetOneVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.UpdateVolumeUseCase
 import com.dcd.server.presentation.common.annotation.WebAdapter
 import com.dcd.server.presentation.domain.volume.data.extension.toDto
 import com.dcd.server.presentation.domain.volume.data.extension.toResponse
 import com.dcd.server.presentation.domain.volume.data.request.CreateVolumeRequest
 import com.dcd.server.presentation.domain.volume.data.request.UpdateVolumeRequest
+import com.dcd.server.presentation.domain.volume.data.response.VolumeDetailResponse
 import com.dcd.server.presentation.domain.volume.data.response.VolumeListResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -26,7 +28,8 @@ class VolumeWebAdapter(
     private val createVolumeUseCase: CreateVolumeUseCase,
     private val deleteVolumeUseCase: DeleteVolumeUseCase,
     private val updateVolumeUseCase: UpdateVolumeUseCase,
-    private val getAllVolumeUseCase: GetAllVolumeUseCase
+    private val getAllVolumeUseCase: GetAllVolumeUseCase,
+    private val getOneVolumeUseCase: GetOneVolumeUseCase
 ) {
     @PostMapping
     @WorkspaceOwnerVerification("#workspaceId")
@@ -60,5 +63,14 @@ class VolumeWebAdapter(
     @WorkspaceOwnerVerification("#workspaceId")
     fun getAllVolume(@PathVariable workspaceId: String): ResponseEntity<VolumeListResponse> =
         getAllVolumeUseCase.execute()
+            .let { ResponseEntity.ok(it.toResponse()) }
+
+    @GetMapping("/{volumeId}")
+    @WorkspaceOwnerVerification("#workspaceId")
+    fun getVolume(
+        @PathVariable workspaceId: String,
+        @PathVariable volumeId: UUID
+    ): ResponseEntity<VolumeDetailResponse> =
+        getOneVolumeUseCase.execute(volumeId)
             .let { ResponseEntity.ok(it.toResponse()) }
 }
