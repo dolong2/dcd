@@ -30,6 +30,7 @@ class GetAllVolumeUseCaseTest(
     val targetVolume2Id = UUID.randomUUID()
 
     beforeSpec {
+        volumeRepository.deleteAll()
         val targetWorkspace = queryWorkspacePort.findById("d57b42f5-5cc4-440b-8dce-b4fc2e372eff")!!
         val volume1 = Volume(
             id = targetVolume1Id,
@@ -47,7 +48,7 @@ class GetAllVolumeUseCaseTest(
     }
 
     given("알맞는 워크스페이스가 세팅되고") {
-        beforeTest {
+        beforeContainer {
             val targetWorkspace = queryWorkspacePort.findById("d57b42f5-5cc4-440b-8dce-b4fc2e372eff")!!
             workspaceInfo.workspace = targetWorkspace
         }
@@ -58,7 +59,6 @@ class GetAllVolumeUseCaseTest(
             then("타켓 볼륨의 정보가 반환되어야함") {
                 val targetVolumeList = volumeRepository.findAllById(listOf(targetVolume1Id, targetVolume2Id))
                 targetVolumeList.size shouldBe 2
-
                 result.list shouldContainOnly targetVolumeList.map { it.toDomain().toResDto() }
             }
         }
