@@ -32,6 +32,10 @@ class VolumePersistenceAdapter(
         volumeRepository.findByIdOrNull(id)
             ?.toDomain()
 
+    override fun findAllVolumeByWorkspace(workspace: Workspace): List<Volume> =
+        volumeRepository.findAllByWorkspace(workspace.toEntity())
+            .map { it.toDomain() }
+
     override fun existsVolumeByNameAndWorkspace(
         name: String,
         workspace: Workspace,

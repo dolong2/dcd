@@ -9,6 +9,8 @@ import java.util.UUID
 interface QueryVolumePort {
     fun findById(id: UUID): Volume?
 
+    fun findAllVolumeByWorkspace(workspace: Workspace): List<Volume>
+
     fun existsVolumeByNameAndWorkspace(name: String, workspace: Workspace): Boolean
 
     fun findAllMountByApplication(application: Application): List<VolumeMount>

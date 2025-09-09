@@ -55,7 +55,7 @@ class DeleteVolumeUseCaseTest(
     }
 
     given("타켓 볼륨 아이디가 주어지고") {
-        beforeTest {
+        beforeContainer {
             val targetWorkspace = queryWorkspacePort.findById("d57b42f5-5cc4-440b-8dce-b4fc2e372eff")!!
             workspaceInfo.workspace = targetWorkspace
         }
@@ -70,7 +70,7 @@ class DeleteVolumeUseCaseTest(
     }
 
     given("볼륨이 존재하지 않고") {
-        beforeTest {
+        beforeContainer {
             val targetWorkspace = queryWorkspacePort.findById("d57b42f5-5cc4-440b-8dce-b4fc2e372eff")!!
             workspaceInfo.workspace = targetWorkspace
         }
@@ -88,7 +88,7 @@ class DeleteVolumeUseCaseTest(
     }
 
     given("마운트된 볼륨이 존재하고") {
-        beforeTest {
+        beforeContainer {
             val targetWorkspace = queryWorkspacePort.findById("d57b42f5-5cc4-440b-8dce-b4fc2e372eff")!!
             workspaceInfo.workspace = targetWorkspace
         }
@@ -115,7 +115,7 @@ class DeleteVolumeUseCaseTest(
     }
 
     given("볼륨이 속한 워크스페이스가 아니고") {
-        beforeTest {
+        beforeContainer {
             val targetWorkspace = queryWorkspacePort.findById("d57b42f5-5cc4-440b-8dce-b4fc2e372eff")!!
             val otherWorkspace = WorkspaceGenerator.generateWorkspace(user = targetWorkspace.owner)
             workspaceRepository.save(otherWorkspace.toEntity())
