@@ -4,8 +4,8 @@ import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.volume.dto.extension.toResDto
 import com.dcd.server.core.domain.volume.dto.response.VolumeListResDto
-import com.dcd.server.core.domain.volume.exception.VolumeNotFoundException
 import com.dcd.server.core.domain.volume.spi.QueryVolumePort
+import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 
 @UseCase(readOnly = true)
 class GetAllVolumeUseCase(
@@ -14,7 +14,7 @@ class GetAllVolumeUseCase(
 ) {
     fun execute(): VolumeListResDto {
         val workspace = (workspaceInfo.workspace
-            ?: throw VolumeNotFoundException())
+            ?: throw WorkspaceNotFoundException())
 
         val volumeList =
             queryVolumePort.findAllVolumeByWorkspace(workspace)
