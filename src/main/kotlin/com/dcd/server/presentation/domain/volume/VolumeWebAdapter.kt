@@ -3,14 +3,18 @@ package com.dcd.server.presentation.domain.volume
 import com.dcd.server.core.common.annotation.WorkspaceOwnerVerification
 import com.dcd.server.core.domain.volume.usecase.CreateVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.DeleteVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.GetAllVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.UpdateVolumeUseCase
 import com.dcd.server.presentation.common.annotation.WebAdapter
 import com.dcd.server.presentation.domain.volume.data.extension.toDto
+import com.dcd.server.presentation.domain.volume.data.extension.toResponse
 import com.dcd.server.presentation.domain.volume.data.request.CreateVolumeRequest
 import com.dcd.server.presentation.domain.volume.data.request.UpdateVolumeRequest
+import com.dcd.server.presentation.domain.volume.data.response.VolumeListResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -21,7 +25,8 @@ import java.util.UUID
 class VolumeWebAdapter(
     private val createVolumeUseCase: CreateVolumeUseCase,
     private val deleteVolumeUseCase: DeleteVolumeUseCase,
-    private val updateVolumeUseCase: UpdateVolumeUseCase
+    private val updateVolumeUseCase: UpdateVolumeUseCase,
+    private val getAllVolumeUseCase: GetAllVolumeUseCase
 ) {
     @PostMapping
     @WorkspaceOwnerVerification("#workspaceId")
@@ -50,4 +55,10 @@ class VolumeWebAdapter(
     ): ResponseEntity<Void> =
         updateVolumeUseCase.execute(volumeId, updateVolumeRequest.toDto())
             .run { ResponseEntity.ok().build() }
+
+    @GetMapping
+    @WorkspaceOwnerVerification("#workspaceId")
+    fun getAllVolume(@PathVariable workspaceId: String): ResponseEntity<VolumeListResponse> =
+        getAllVolumeUseCase.execute()
+            .let { ResponseEntity.ok(it.toResponse()) }
 }

@@ -4,6 +4,7 @@ import com.dcd.server.core.domain.volume.dto.request.CreateVolumeReqDto
 import com.dcd.server.core.domain.volume.dto.request.UpdateVolumeReqDto
 import com.dcd.server.core.domain.volume.usecase.CreateVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.DeleteVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.GetAllVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.UpdateVolumeUseCase
 import com.dcd.server.presentation.domain.volume.data.request.CreateVolumeRequest
 import com.dcd.server.presentation.domain.volume.data.request.UpdateVolumeRequest
@@ -18,8 +19,14 @@ class VolumeWebAdapterTest : BehaviorSpec({
     val createVolumeUseCase = mockk<CreateVolumeUseCase>(relaxUnitFun = true)
     val deleteVolumeUseCase = mockk<DeleteVolumeUseCase>(relaxUnitFun = true)
     val updateVolumeUseCase = mockk<UpdateVolumeUseCase>(relaxUnitFun = true)
+    val getAllVolumeUseCase = mockk<GetAllVolumeUseCase>(relaxUnitFun = true)
 
-    val volumeWebAdapter = VolumeWebAdapter(createVolumeUseCase, deleteVolumeUseCase, updateVolumeUseCase)
+    val volumeWebAdapter = VolumeWebAdapter(
+        createVolumeUseCase,
+        deleteVolumeUseCase,
+        updateVolumeUseCase,
+        getAllVolumeUseCase
+    )
 
     given("워크스페이스 아이디와 볼륨 생성 요청이 주어지고") {
         val testWorkspaceId = UUID.randomUUID().toString()
