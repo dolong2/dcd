@@ -7,4 +7,5 @@ import java.util.UUID
 
 interface VolumeRepository : JpaRepository<VolumeJpaEntity, UUID> {
     fun existsByNameAndWorkspace(name: String, workspace: WorkspaceJpaEntity): Boolean
+    fun findAllByWorkspace(workspace: WorkspaceJpaEntity): List<VolumeJpaEntity>
 }
