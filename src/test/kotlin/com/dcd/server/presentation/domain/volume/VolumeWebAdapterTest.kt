@@ -9,6 +9,7 @@ import com.dcd.server.core.domain.volume.usecase.CreateVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.DeleteVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.GetAllVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.GetOneVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.MountVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.UpdateVolumeUseCase
 import com.dcd.server.presentation.domain.volume.data.extension.toResponse
 import com.dcd.server.presentation.domain.volume.data.request.CreateVolumeRequest
@@ -27,13 +28,15 @@ class VolumeWebAdapterTest : BehaviorSpec({
     val updateVolumeUseCase = mockk<UpdateVolumeUseCase>(relaxUnitFun = true)
     val getAllVolumeUseCase = mockk<GetAllVolumeUseCase>(relaxUnitFun = true)
     val getOneVolumeUseCase = mockk<GetOneVolumeUseCase>(relaxUnitFun = true)
+    val mountVolumeUseCase = mockk<MountVolumeUseCase>(relaxUnitFun = true)
 
     val volumeWebAdapter = VolumeWebAdapter(
         createVolumeUseCase,
         deleteVolumeUseCase,
         updateVolumeUseCase,
         getAllVolumeUseCase,
-        getOneVolumeUseCase
+        getOneVolumeUseCase,
+        mountVolumeUseCase
     )
 
     given("워크스페이스 아이디와 볼륨 생성 요청이 주어지고") {

@@ -5,11 +5,13 @@ import com.dcd.server.core.domain.volume.usecase.CreateVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.DeleteVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.GetAllVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.GetOneVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.MountVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.UpdateVolumeUseCase
 import com.dcd.server.presentation.common.annotation.WebAdapter
 import com.dcd.server.presentation.domain.volume.data.extension.toDto
 import com.dcd.server.presentation.domain.volume.data.extension.toResponse
 import com.dcd.server.presentation.domain.volume.data.request.CreateVolumeRequest
+import com.dcd.server.presentation.domain.volume.data.request.MountVolumeRequest
 import com.dcd.server.presentation.domain.volume.data.request.UpdateVolumeRequest
 import com.dcd.server.presentation.domain.volume.data.response.VolumeDetailResponse
 import com.dcd.server.presentation.domain.volume.data.response.VolumeListResponse
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
 import java.util.UUID
 
 @WebAdapter("/{workspaceId}/volume")
@@ -29,7 +32,8 @@ class VolumeWebAdapter(
     private val deleteVolumeUseCase: DeleteVolumeUseCase,
     private val updateVolumeUseCase: UpdateVolumeUseCase,
     private val getAllVolumeUseCase: GetAllVolumeUseCase,
-    private val getOneVolumeUseCase: GetOneVolumeUseCase
+    private val getOneVolumeUseCase: GetOneVolumeUseCase,
+    private val mountVolumeUseCase: MountVolumeUseCase
 ) {
     @PostMapping
     @WorkspaceOwnerVerification("#workspaceId")
@@ -73,4 +77,15 @@ class VolumeWebAdapter(
     ): ResponseEntity<VolumeDetailResponse> =
         getOneVolumeUseCase.execute(volumeId)
             .let { ResponseEntity.ok(it.toResponse()) }
+
+    @PostMapping("/{volumeId}/mount")
+    @WorkspaceOwnerVerification("#workspaceId")
+    fun mountVolume(
+        @PathVariable workspaceId: String,
+        @PathVariable volumeId: UUID,
+        @RequestParam applicationId: String,
+        @Validated @RequestBody mountVolumeRequest: MountVolumeRequest
+    ): ResponseEntity<Void> =
+        mountVolumeUseCase.execute(volumeId, applicationId, mountVolumeRequest.toDto())
+            .run { ResponseEntity.ok().build() }
 }
