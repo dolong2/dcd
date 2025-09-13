@@ -4,6 +4,7 @@ import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.exception.CanNotDeployApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
+import com.dcd.server.core.domain.application.service.CreateContainerService
 import com.dcd.server.core.domain.application.service.impl.CreateDockerFileServiceImpl
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -18,6 +19,7 @@ import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
@@ -32,6 +34,8 @@ class DeployApplicationUseCaseTest(
     private val commandPort: CommandPort,
     @MockkBean(relaxUnitFun = true)
     private val createDockerFileService: CreateDockerFileServiceImpl,
+    @MockkBean(relaxUnitFun = true)
+    private val createContainerService: CreateContainerService,
     private val commandUserPort: CommandUserPort,
     private val commandWorkspacePort: CommandWorkspacePort,
     private val commandApplicationPort: CommandApplicationPort,
@@ -64,13 +68,7 @@ class DeployApplicationUseCaseTest(
                 coVerify { commandPort.executeShellCommand("docker rmi ${result.containerName}") }
                 coVerify { commandPort.executeShellCommand("git clone ${result.githubUrl} '${result.name}'") }
                 coVerify { commandPort.executeShellCommand("cd ./'${result.name}' && docker build -t ${result.containerName}:latest .") }
-                coVerify {
-                    commandPort.executeShellCommand(
-                        "docker create --network ${result.workspace.title.replace(' ', '_')} " +
-                            "--name ${result.containerName} " +
-                            "-p ${result.externalPort}:${result.port} ${result.containerName}:latest"
-                    )
-                }
+                coVerify { createContainerService.createContainer(result, result.externalPort) }
                 coVerify { commandPort.executeShellCommand("rm -rf '${result.name}'") }
             }
         }

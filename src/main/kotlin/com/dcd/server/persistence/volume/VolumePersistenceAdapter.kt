@@ -28,6 +28,10 @@ class VolumePersistenceAdapter(
         volumeRepository.deleteById(volume.id)
     }
 
+    override fun saveMount(volumeMount: VolumeMount) {
+        volumeMountRepository.save(volumeMount.toEntity())
+    }
+
     override fun findById(id: UUID): Volume? =
         volumeRepository.findByIdOrNull(id)
             ?.toDomain()

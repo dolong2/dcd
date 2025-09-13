@@ -1,6 +1,7 @@
 package com.dcd.server.presentation.domain.volume
 
 import com.dcd.server.core.domain.volume.dto.request.CreateVolumeReqDto
+import com.dcd.server.core.domain.volume.dto.request.MountVolumeReqDto
 import com.dcd.server.core.domain.volume.dto.request.UpdateVolumeReqDto
 import com.dcd.server.core.domain.volume.dto.response.VolumeDetailResDto
 import com.dcd.server.core.domain.volume.dto.response.VolumeListResDto
@@ -9,9 +10,11 @@ import com.dcd.server.core.domain.volume.usecase.CreateVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.DeleteVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.GetAllVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.GetOneVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.MountVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.UpdateVolumeUseCase
 import com.dcd.server.presentation.domain.volume.data.extension.toResponse
 import com.dcd.server.presentation.domain.volume.data.request.CreateVolumeRequest
+import com.dcd.server.presentation.domain.volume.data.request.MountVolumeRequest
 import com.dcd.server.presentation.domain.volume.data.request.UpdateVolumeRequest
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -27,13 +30,15 @@ class VolumeWebAdapterTest : BehaviorSpec({
     val updateVolumeUseCase = mockk<UpdateVolumeUseCase>(relaxUnitFun = true)
     val getAllVolumeUseCase = mockk<GetAllVolumeUseCase>(relaxUnitFun = true)
     val getOneVolumeUseCase = mockk<GetOneVolumeUseCase>(relaxUnitFun = true)
+    val mountVolumeUseCase = mockk<MountVolumeUseCase>(relaxUnitFun = true)
 
     val volumeWebAdapter = VolumeWebAdapter(
         createVolumeUseCase,
         deleteVolumeUseCase,
         updateVolumeUseCase,
         getAllVolumeUseCase,
-        getOneVolumeUseCase
+        getOneVolumeUseCase,
+        mountVolumeUseCase
     )
 
     given("워크스페이스 아이디와 볼륨 생성 요청이 주어지고") {
@@ -119,6 +124,24 @@ class VolumeWebAdapterTest : BehaviorSpec({
 
             then("유스케이스의 응답이 레핑되서 반환되어야함") {
                 result.body shouldBe volumeListResDto.toResponse()
+            }
+            then("상태코드 OK가 응답되어야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
+
+    given("워크스페이스 아이디, 볼륨 아이디, 애플리케이션 아이디, 볼륨 마운트 요청 객체가 주어지고") {
+        val testWorkspaceId = UUID.randomUUID().toString()
+        val testVolumeId = UUID.randomUUID()
+        val testApplicationId = UUID.randomUUID().toString()
+        val request = MountVolumeRequest("/test", false)
+
+        `when`("볼륨 마운트 메서드를 실행할때") {
+            val result = volumeWebAdapter.mountVolume(testWorkspaceId, testVolumeId, testApplicationId, request)
+
+            then("볼륨 마운트 유스케이스가 실행되어야함") {
+                verify { mountVolumeUseCase.execute(testVolumeId, testApplicationId, any() as MountVolumeReqDto) }
             }
             then("상태코드 OK가 응답되어야함") {
                 result.statusCode shouldBe HttpStatus.OK
