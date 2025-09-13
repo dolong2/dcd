@@ -17,23 +17,22 @@ class CreateContainerServiceImpl(
     private val checkExitValuePort: CheckExitValuePort
 ) : CreateContainerService {
     override suspend fun createContainer(application: Application, externalPort: Int) {
-        val volumeMountBuilder = StringBuilder()
-        queryVolumePort.findAllMountByApplication(application)
-            .forEach {
-                val volume = it.volume
-                volumeMountBuilder.append("-v ${volume.name}:${it.mountPath}")
-                if (it.readOnly)
-                    volumeMountBuilder.append(":ro")
-                volumeMountBuilder.append(" ")
-            }
-        val volumeMountFlags = volumeMountBuilder.toString()
-
         withContext(Dispatchers.IO) {
+            val volumeMountBuilder = StringBuilder()
+            queryVolumePort.findAllMountByApplication(application)
+                .forEach {
+                    val volume = it.volume
+                    volumeMountBuilder.append("-v ${volume.name}:${it.mountPath}")
+                    if (it.readOnly)
+                        volumeMountBuilder.append(":ro")
+                    volumeMountBuilder.append(" ")
+                }
+            val volumeMountFlags = volumeMountBuilder.toString()
             val cmd =
                 "docker create --network ${application.workspace.networkName} " +
-                        "--name ${application.containerName} " +
-                        volumeMountFlags +
-                        "-p ${externalPort}:${application.port} ${application.containerName}:latest"
+                "--name ${application.containerName} " +
+                volumeMountFlags +
+                "-p ${externalPort}:${application.port} ${application.containerName}:latest"
 
             commandPort.executeShellCommand(cmd)
                 .also {exitValue ->
