@@ -32,6 +32,10 @@ class VolumePersistenceAdapter(
         volumeMountRepository.save(volumeMount.toEntity())
     }
 
+    override fun deleteMount(volumeMount: VolumeMount) {
+        volumeMountRepository.deleteById(volumeMount.id)
+    }
+
     override fun findById(id: UUID): Volume? =
         volumeRepository.findByIdOrNull(id)
             ?.toDomain()
@@ -53,4 +57,8 @@ class VolumePersistenceAdapter(
     override fun findAllMountByVolume(volume: Volume): List<VolumeMount> =
         volumeMountRepository.findAllByVolume(volume.toEntity())
             .map { it.toDomain() }
+
+    override fun findMountByApplicationAndVolume(application: Application, volume: Volume): VolumeMount? =
+        volumeMountRepository.findByVolumeAndApplication(volume.toEntity(), application.toEntity())
+            ?.toDomain()
 }

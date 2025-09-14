@@ -9,4 +9,6 @@ interface CommandVolumePort {
     fun delete(volume: Volume)
 
     fun saveMount(volumeMount: VolumeMount)
+
+    fun deleteMount(volumeMount: VolumeMount)
 }
