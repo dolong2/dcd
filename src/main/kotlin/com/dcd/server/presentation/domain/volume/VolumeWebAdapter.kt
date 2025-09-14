@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.volume.usecase.DeleteVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.GetAllVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.GetOneVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.MountVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.UnMountVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.UpdateVolumeUseCase
 import com.dcd.server.presentation.common.annotation.WebAdapter
 import com.dcd.server.presentation.domain.volume.data.extension.toDto
@@ -33,7 +34,8 @@ class VolumeWebAdapter(
     private val updateVolumeUseCase: UpdateVolumeUseCase,
     private val getAllVolumeUseCase: GetAllVolumeUseCase,
     private val getOneVolumeUseCase: GetOneVolumeUseCase,
-    private val mountVolumeUseCase: MountVolumeUseCase
+    private val mountVolumeUseCase: MountVolumeUseCase,
+    private val unMountVolumeUseCase: UnMountVolumeUseCase
 ) {
     @PostMapping
     @WorkspaceOwnerVerification("#workspaceId")
@@ -87,5 +89,15 @@ class VolumeWebAdapter(
         @Validated @RequestBody mountVolumeRequest: MountVolumeRequest
     ): ResponseEntity<Void> =
         mountVolumeUseCase.execute(volumeId, applicationId, mountVolumeRequest.toDto())
+            .run { ResponseEntity.ok().build() }
+
+    @DeleteMapping("/{volumeId}/mount")
+    @WorkspaceOwnerVerification("#workspaceId")
+    fun unMountVolume(
+        @PathVariable workspaceId: String,
+        @PathVariable volumeId: UUID,
+        @RequestParam applicationId: String,
+    ): ResponseEntity<Void> =
+        unMountVolumeUseCase.execute(volumeId, applicationId)
             .run { ResponseEntity.ok().build() }
 }

@@ -11,6 +11,7 @@ import com.dcd.server.core.domain.volume.usecase.DeleteVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.GetAllVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.GetOneVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.MountVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.UnMountVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.UpdateVolumeUseCase
 import com.dcd.server.presentation.domain.volume.data.extension.toResponse
 import com.dcd.server.presentation.domain.volume.data.request.CreateVolumeRequest
@@ -31,6 +32,7 @@ class VolumeWebAdapterTest : BehaviorSpec({
     val getAllVolumeUseCase = mockk<GetAllVolumeUseCase>(relaxUnitFun = true)
     val getOneVolumeUseCase = mockk<GetOneVolumeUseCase>(relaxUnitFun = true)
     val mountVolumeUseCase = mockk<MountVolumeUseCase>(relaxUnitFun = true)
+    val unMountVolumeUseCase = mockk<UnMountVolumeUseCase>(relaxUnitFun = true)
 
     val volumeWebAdapter = VolumeWebAdapter(
         createVolumeUseCase,
@@ -38,7 +40,8 @@ class VolumeWebAdapterTest : BehaviorSpec({
         updateVolumeUseCase,
         getAllVolumeUseCase,
         getOneVolumeUseCase,
-        mountVolumeUseCase
+        mountVolumeUseCase,
+        unMountVolumeUseCase
     )
 
     given("워크스페이스 아이디와 볼륨 생성 요청이 주어지고") {
@@ -142,6 +145,23 @@ class VolumeWebAdapterTest : BehaviorSpec({
 
             then("볼륨 마운트 유스케이스가 실행되어야함") {
                 verify { mountVolumeUseCase.execute(testVolumeId, testApplicationId, any() as MountVolumeReqDto) }
+            }
+            then("상태코드 OK가 응답되어야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
+
+    given("워크스페이스 아이디, 볼륨 아이디, 애플리케이션 아이디가 주어지고") {
+        val testWorkspaceId = UUID.randomUUID().toString()
+        val testVolumeId = UUID.randomUUID()
+        val testApplicationId = UUID.randomUUID().toString()
+
+        `when`("마운트 해제 메서드를 실행할때") {
+            val result = volumeWebAdapter.unMountVolume(testWorkspaceId, testVolumeId, testApplicationId)
+
+            then("볼륨 마운트 해제 유스케이스가 실행되어야함") {
+                verify { unMountVolumeUseCase.execute(testVolumeId, testApplicationId) }
             }
             then("상태코드 OK가 응답되어야함") {
                 result.statusCode shouldBe HttpStatus.OK
