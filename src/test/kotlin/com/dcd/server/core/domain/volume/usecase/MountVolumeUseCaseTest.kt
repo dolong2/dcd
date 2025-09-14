@@ -3,11 +3,15 @@ package com.dcd.server.core.domain.volume.usecase
 import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
+import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.volume.dto.request.MountVolumeReqDto
+import com.dcd.server.core.domain.volume.exception.AlreadyExistsVolumeMountException
 import com.dcd.server.core.domain.volume.exception.VolumeNotFoundException
 import com.dcd.server.core.domain.volume.model.Volume
+import com.dcd.server.core.domain.volume.model.VolumeMount
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.dcd.server.persistence.volume.adapter.toDomain
 import com.dcd.server.persistence.volume.adapter.toEntity
 import com.dcd.server.persistence.volume.repository.VolumeMountRepository
 import com.dcd.server.persistence.volume.repository.VolumeRepository
@@ -18,6 +22,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 import util.workspace.WorkspaceGenerator
@@ -31,6 +36,7 @@ class MountVolumeUseCaseTest(
     @MockkBean(relaxed = true)
     private val commandPort: CommandPort,
     private val queryWorkspacePort: QueryWorkspacePort,
+    private val queryApplicationPort: QueryApplicationPort,
     private val volumeRepository: VolumeRepository,
     private val volumeMountRepository: VolumeMountRepository,
     private val workspaceRepository: WorkspaceRepository,
@@ -103,6 +109,27 @@ class MountVolumeUseCaseTest(
 
             then("에러가 발생해야함") {
                 shouldThrow<VolumeNotFoundException> {
+                    mountVolumeUseCase.execute(targetVolumeId, targetApplicationId, request)
+                }
+            }
+        }
+
+        `when`("이미 볼륨에 마운트 됐을때") {
+            beforeContainer {
+                val application = queryApplicationPort.findById(targetApplicationId)!!
+                val volume = volumeRepository.findByIdOrNull(targetVolumeId)!!.toDomain()
+                val volumeMount = VolumeMount(
+                    id = UUID.randomUUID(),
+                    application = application,
+                    volume = volume,
+                    mountPath = "/test/volume",
+                    readOnly = false
+                )
+                volumeMountRepository.save(volumeMount.toEntity())
+            }
+
+            then("에러가 발생해야함") {
+                shouldThrow<AlreadyExistsVolumeMountException> {
                     mountVolumeUseCase.execute(targetVolumeId, targetApplicationId, request)
                 }
             }

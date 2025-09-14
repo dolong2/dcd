@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.application.event.DeployApplicationEvent
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.volume.dto.request.MountVolumeReqDto
+import com.dcd.server.core.domain.volume.exception.AlreadyExistsVolumeMountException
 import com.dcd.server.core.domain.volume.exception.VolumeNotFoundException
 import com.dcd.server.core.domain.volume.model.VolumeMount
 import com.dcd.server.core.domain.volume.spi.CommandVolumePort
@@ -36,6 +37,9 @@ class MountVolumeUseCase(
             ?: throw ApplicationNotFoundException())
         if (application.workspace != workspace)
             throw ApplicationNotFoundException()
+
+        if (queryVolumePort.findMountByApplicationAndVolume(application, volume) != null)
+            throw AlreadyExistsVolumeMountException()
 
         val volumeMount = VolumeMount(
             id = UUID.randomUUID(),
