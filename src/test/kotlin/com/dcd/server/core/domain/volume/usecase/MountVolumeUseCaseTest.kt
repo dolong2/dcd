@@ -119,7 +119,6 @@ class MountVolumeUseCaseTest(
                 val application = queryApplicationPort.findById(targetApplicationId)!!
                 val volume = volumeRepository.findByIdOrNull(targetVolumeId)!!.toDomain()
                 val volumeMount = VolumeMount(
-                    id = UUID.randomUUID(),
                     application = application,
                     volume = volume,
                     mountPath = "/test/volume",

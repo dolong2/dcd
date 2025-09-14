@@ -54,7 +54,6 @@ class UnMountVolumeUseCaseTest(
 
         val application = queryApplicationPort.findById(targetApplicationId)!!
         val volumeMount = VolumeMount(
-            id = UUID.randomUUID(),
             application = application,
             volume = volume,
             mountPath = "/test/volume",
