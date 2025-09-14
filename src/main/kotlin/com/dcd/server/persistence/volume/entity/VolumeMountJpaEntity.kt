@@ -30,8 +30,10 @@ class VolumeMountJpaEntity(
     @EmbeddedId
     val id: VolumeMountId = VolumeMountId(application.id, volume.id)
     @Embeddable
-    class VolumeMountId(
+    data class VolumeMountId(
+        @Column(nullable = false)
         val applicationId: UUID,
+        @Column(nullable = false)
         val volumeId: UUID
     ) : Serializable
 }
