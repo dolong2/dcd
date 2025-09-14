@@ -33,7 +33,7 @@ class VolumePersistenceAdapter(
     }
 
     override fun deleteMount(volumeMount: VolumeMount) {
-        volumeMountRepository.deleteById(volumeMount.id)
+        volumeMountRepository.delete(volumeMount.toEntity())
     }
 
     override fun findById(id: UUID): Volume? =

@@ -42,7 +42,6 @@ class MountVolumeUseCase(
             throw AlreadyExistsVolumeMountException()
 
         val volumeMount = VolumeMount(
-            id = UUID.randomUUID(),
             application = application,
             volume = volume,
             mountPath = mountVolumeReqDto.mountPath,
