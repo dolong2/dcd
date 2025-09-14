@@ -16,4 +16,6 @@ interface QueryVolumePort {
     fun findAllMountByApplication(application: Application): List<VolumeMount>
 
     fun findAllMountByVolume(volume: Volume): List<VolumeMount>
+
+    fun findMountByApplicationAndVolume(application: Application, volume: Volume): VolumeMount?
 }

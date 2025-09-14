@@ -47,6 +47,7 @@ enum class ErrorCode(
     AUTH_CODE_NOT_FOUND("인증 코드를 찾을 수 없습니다. 코드를 다시 전송 해주세요.", 404),
     DOMAIN_NOT_FOUND("해당 도메인을 찾을 수 없음", 404),
     VOLUME_NOT_FOUND("해당 볼륨을 찾을 수 없음", 404),
+    VOLUME_MOUNT_NOT_FOUND("해당 볼륨 마운트를 찾을 수 없음", 404),
 
     CONFLICT("해당 요청은 서버의 상태와 충돌됩니다.", 409),
     CAN_NOT_DEPLOY_APPLICATION("애플리케이션을 배포할 수 없습니다. 애플리케이션을 정지시킨 후 실행해주세요.", 409),

@@ -104,7 +104,6 @@ class UpdateVolumeUseCaseTest(
         val application = queryApplicationPort.findById("2fb0f315-8272-422f-8e9f-c4f765c022b2")!!
         val volume = volumeRepository.findByIdOrNull(targetVolumeId)!!.toDomain()
         val volumeMount = VolumeMount(
-            id = UUID.randomUUID(),
             application = application,
             volume = volume,
             mountPath = "/test/volume",
