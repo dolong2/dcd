@@ -22,7 +22,7 @@ class CreateContainerServiceImpl(
             queryVolumePort.findAllMountByApplication(application)
                 .forEach {
                     val volume = it.volume
-                    volumeMountBuilder.append("-v ${volume.name}:${it.mountPath}")
+                    volumeMountBuilder.append("-v ${volume.volumeName}:${it.mountPath}")
                     if (it.readOnly)
                         volumeMountBuilder.append(":ro")
                     volumeMountBuilder.append(" ")
