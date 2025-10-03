@@ -5,5 +5,6 @@ enum class ApplicationType {
     NEST_JS,
     MYSQL,
     MARIA_DB,
-    REDIS
+    REDIS,
+    H2_DB
 }
