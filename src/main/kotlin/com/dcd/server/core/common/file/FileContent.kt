@@ -47,6 +47,13 @@ object FileContent {
         ${getEnvString(env)}
        """.trimIndent()
 
+    fun getH2DBDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
+        """
+        FROM oscarfonts/h2:${version}
+        EXPOSE $port
+        ${getEnvString(env)}
+        """.trimIndent()
+
     fun getImageVersionShellScriptContent(imageName: String, minVersion: String): String =
         """
         #!/bin/bash
