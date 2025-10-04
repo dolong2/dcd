@@ -47,12 +47,21 @@ object FileContent {
         ${getEnvString(env)}
        """.trimIndent()
 
-    fun getImageVersionShellScriptContent(imageName: String, minVersion: String): String =
+    fun getH2DBDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
         """
+        FROM oscarfonts/h2:${version}
+        EXPOSE $port
+        ${getEnvString(env)}
+        """.trimIndent()
+
+    fun getImageVersionShellScriptContent(imageName: String, minVersion: String): String {
+        val imagePrefix = if (imageName.contains("/")) "" else "library/"
+
+        return """
         #!/bin/bash
     
         # 이미지, 페이지 사이즈, 최소 버전(threshold) 설정
-        IMAGE_NAME="library/$imageName"
+        IMAGE_NAME="${imagePrefix}$imageName"
         PAGE_SIZE=100
         MIN_VERSION="$minVersion"
     
@@ -100,6 +109,7 @@ object FileContent {
             echo "${'$'}sorted_numeric_tags"
         fi
         """.trimIndent()
+    }
 
     fun getApplicationHttpConfig(application: Application, domain: String): String =
         """
