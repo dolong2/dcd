@@ -17,6 +17,7 @@ class GetApplicationVersionServiceImpl(
             ApplicationType.MARIA_DB -> "mariadb" to "10"
             ApplicationType.MYSQL -> "mysql" to "8"
             ApplicationType.REDIS -> "redis" to "6"
+            ApplicationType.H2_DB -> "oscarfonts/h2" to "0"
         }
         val getVersionScript = FileContent.getImageVersionShellScriptContent(baseImageName, minVersion)
         return commandPort.executeShellCommandWithResult(getVersionScript)

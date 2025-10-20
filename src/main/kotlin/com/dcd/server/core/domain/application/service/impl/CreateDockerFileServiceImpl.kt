@@ -80,6 +80,9 @@ class CreateDockerFileServiceImpl(
 
             ApplicationType.NEST_JS ->
                 FileContent.getNestJsDockerFileContent(version, application.port, applicationEnv)
+
+            ApplicationType.H2_DB ->
+                FileContent.getH2DBDockerFileContent(version, application.port, applicationEnv)
         }
         try {
             if (!file.exists())

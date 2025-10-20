@@ -1,0 +1,171 @@
+package com.dcd.server.presentation.domain.volume
+
+import com.dcd.server.core.domain.volume.dto.request.CreateVolumeReqDto
+import com.dcd.server.core.domain.volume.dto.request.MountVolumeReqDto
+import com.dcd.server.core.domain.volume.dto.request.UpdateVolumeReqDto
+import com.dcd.server.core.domain.volume.dto.response.VolumeDetailResDto
+import com.dcd.server.core.domain.volume.dto.response.VolumeListResDto
+import com.dcd.server.core.domain.volume.dto.response.VolumeSimpleResDto
+import com.dcd.server.core.domain.volume.usecase.CreateVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.DeleteVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.GetAllVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.GetOneVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.MountVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.UnMountVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.UpdateVolumeUseCase
+import com.dcd.server.presentation.domain.volume.data.extension.toResponse
+import com.dcd.server.presentation.domain.volume.data.request.CreateVolumeRequest
+import com.dcd.server.presentation.domain.volume.data.request.MountVolumeRequest
+import com.dcd.server.presentation.domain.volume.data.request.UpdateVolumeRequest
+import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.shouldBe
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import org.springframework.http.HttpStatus
+import java.util.UUID
+
+class VolumeWebAdapterTest : BehaviorSpec({
+    val createVolumeUseCase = mockk<CreateVolumeUseCase>(relaxUnitFun = true)
+    val deleteVolumeUseCase = mockk<DeleteVolumeUseCase>(relaxUnitFun = true)
+    val updateVolumeUseCase = mockk<UpdateVolumeUseCase>(relaxUnitFun = true)
+    val getAllVolumeUseCase = mockk<GetAllVolumeUseCase>(relaxUnitFun = true)
+    val getOneVolumeUseCase = mockk<GetOneVolumeUseCase>(relaxUnitFun = true)
+    val mountVolumeUseCase = mockk<MountVolumeUseCase>(relaxUnitFun = true)
+    val unMountVolumeUseCase = mockk<UnMountVolumeUseCase>(relaxUnitFun = true)
+
+    val volumeWebAdapter = VolumeWebAdapter(
+        createVolumeUseCase,
+        deleteVolumeUseCase,
+        updateVolumeUseCase,
+        getAllVolumeUseCase,
+        getOneVolumeUseCase,
+        mountVolumeUseCase,
+        unMountVolumeUseCase
+    )
+
+    given("워크스페이스 아이디와 볼륨 생성 요청이 주어지고") {
+        val testWorkspaceId = UUID.randomUUID().toString()
+        val request = CreateVolumeRequest(name = "testVolume", description = "testDescription")
+
+        `when`("볼륨 생성 메서드를 실행하면") {
+            val result = volumeWebAdapter.createVolume(testWorkspaceId, request)
+
+            then("상태코드가 OK가 응답되어여함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+
+            then("볼륨 생성 유스케이스를 실행해야함") {
+                verify { createVolumeUseCase.execute(any() as CreateVolumeReqDto) }
+            }
+        }
+    }
+
+    given("워크스페이스 아이디와 삭제할 볼륨 아이디가 주어지고") {
+        val testWorkspaceId = UUID.randomUUID().toString()
+        val testVolumeId = UUID.randomUUID()
+
+        `when`("볼륨 삭제 메서드를 실행하면") {
+            val result = volumeWebAdapter.deleteVolume(testWorkspaceId, testVolumeId)
+
+            then("상태코드 OK가 응답되어야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+
+            then("볼륨 삭제 유스케이스를 실행해야함") {
+                verify { deleteVolumeUseCase.execute(testVolumeId) }
+            }
+        }
+    }
+
+    given("워크스페이스 아이디, 볼륨 아이디, 볼륨 수정 요청이 주어지고") {
+        val testWorkspaceId = UUID.randomUUID().toString()
+        val testVolumeId = UUID.randomUUID()
+        val request = UpdateVolumeRequest(name = "testVolume", description = "testDescription")
+
+        `when`("볼륨 수정 메서드를 실행하면") {
+            val result = volumeWebAdapter.updateVolume(testWorkspaceId, testVolumeId, request)
+
+            then("상태코드 OK가 응답되어야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+
+            then("볼륨 수정 유스케이스를 실행해야함") {
+                verify { updateVolumeUseCase.execute(testVolumeId, any() as UpdateVolumeReqDto) }
+            }
+        }
+    }
+
+    given("조회할 볼륨 아이디가 주어지고") {
+        val testWorkspaceId = UUID.randomUUID().toString()
+        val testVolumeId = UUID.randomUUID()
+
+        `when`("볼륨 단일 조회 메서드를 실행할때") {
+            val volumeDetailResDto = VolumeDetailResDto(testVolumeId, "testVolume", "testDescription", listOf())
+            every { getOneVolumeUseCase.execute(testVolumeId) } returns volumeDetailResDto
+
+            val result = volumeWebAdapter.getVolume(testWorkspaceId, testVolumeId)
+
+            then("유스케이스의 응답이 레핑되서 반환되어야함") {
+                result.body shouldBe volumeDetailResDto.toResponse()
+            }
+            then("상태코드 OK가 응답되어야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
+
+    given("워크스페이스 아이디만 주어지고") {
+        val testWorkspaceId = UUID.randomUUID().toString()
+
+        `when`("볼륨 목록 조회 메서드를 실행할때") {
+            val volumeListResDto =
+                VolumeListResDto(listOf(VolumeSimpleResDto(UUID.randomUUID(), "testVolume", "testDescription")))
+            every { getAllVolumeUseCase.execute() } returns volumeListResDto
+
+            val result = volumeWebAdapter.getAllVolume(testWorkspaceId)
+
+            then("유스케이스의 응답이 레핑되서 반환되어야함") {
+                result.body shouldBe volumeListResDto.toResponse()
+            }
+            then("상태코드 OK가 응답되어야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
+
+    given("워크스페이스 아이디, 볼륨 아이디, 애플리케이션 아이디, 볼륨 마운트 요청 객체가 주어지고") {
+        val testWorkspaceId = UUID.randomUUID().toString()
+        val testVolumeId = UUID.randomUUID()
+        val testApplicationId = UUID.randomUUID().toString()
+        val request = MountVolumeRequest("/test", false)
+
+        `when`("볼륨 마운트 메서드를 실행할때") {
+            val result = volumeWebAdapter.mountVolume(testWorkspaceId, testVolumeId, testApplicationId, request)
+
+            then("볼륨 마운트 유스케이스가 실행되어야함") {
+                verify { mountVolumeUseCase.execute(testVolumeId, testApplicationId, any() as MountVolumeReqDto) }
+            }
+            then("상태코드 OK가 응답되어야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
+
+    given("워크스페이스 아이디, 볼륨 아이디, 애플리케이션 아이디가 주어지고") {
+        val testWorkspaceId = UUID.randomUUID().toString()
+        val testVolumeId = UUID.randomUUID()
+        val testApplicationId = UUID.randomUUID().toString()
+
+        `when`("마운트 해제 메서드를 실행할때") {
+            val result = volumeWebAdapter.unMountVolume(testWorkspaceId, testVolumeId, testApplicationId)
+
+            then("볼륨 마운트 해제 유스케이스가 실행되어야함") {
+                verify { unMountVolumeUseCase.execute(testVolumeId, testApplicationId) }
+            }
+            then("상태코드 OK가 응답되어야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
+})

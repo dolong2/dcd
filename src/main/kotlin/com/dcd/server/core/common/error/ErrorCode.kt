@@ -22,6 +22,8 @@ enum class ErrorCode(
     ALREADY_EXISTS_DOMAIN("이미 존재하는 도메인", 400),
     ALREADY_CONNECTED_DOMAIN("이미 연결된 도메인", 400),
     NOT_CONNECTED_DOMAIN("도메인이 애플리케이션에 연결되어 있지 않음", 400),
+    ALREADY_EXISTS_VOLUME("이미 존재하는 볼륨", 400),
+    ALREADY_EXISTS_VOLUME_MOUNT("볼륨 마운트가 존재합니다.", 400),
 
     UNAUTHORIZED("권한이 없음", 401),
     EXPIRED_TOKEN("토큰이 만료됨", 401),
@@ -44,6 +46,8 @@ enum class ErrorCode(
     WORKSPACE_NOT_FOUND("해당 워크스페이스를 찾을 수 없음", 404),
     AUTH_CODE_NOT_FOUND("인증 코드를 찾을 수 없습니다. 코드를 다시 전송 해주세요.", 404),
     DOMAIN_NOT_FOUND("해당 도메인을 찾을 수 없음", 404),
+    VOLUME_NOT_FOUND("해당 볼륨을 찾을 수 없음", 404),
+    VOLUME_MOUNT_NOT_FOUND("해당 볼륨 마운트를 찾을 수 없음", 404),
 
     CONFLICT("해당 요청은 서버의 상태와 충돌됩니다.", 409),
     CAN_NOT_DEPLOY_APPLICATION("애플리케이션을 배포할 수 없습니다. 애플리케이션을 정지시킨 후 실행해주세요.", 409),
@@ -59,4 +63,7 @@ enum class ErrorCode(
     IMAGE_NOT_BUILT("해당 애플리케이션을 이미지로 빌드할 수 없음", 500),
     INTERNAL_ERROR("서버 내부 에러", 500),
     INVALID_PARSING_OBJECT_FIELD("파싱할 필드가 올바르게 설정되어있지 않는 객체임", 500),
+    FAILURE_VOLUME_CREATION("컨테이너 볼륨 생성에 실패했습니다.", 500),
+    FAILURE_VOLUME_DELETE("컨테이너 볼륨 삭제에 실패했습니다.", 500),
+    FAILURE_VOLUME_COPY("컨테이너 볼륨 복제에 실패했습니다.", 500),
 }
