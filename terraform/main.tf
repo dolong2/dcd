@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "deploy_bucket" {
-  bucket = var.s3_bucket
+  bucket = "${var.s3_bucket}-${random_id.bucket_suffix.hex}"
 }
 
 # Optionally create SSH key parameter in SSM

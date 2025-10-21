@@ -5,7 +5,7 @@ variable "aws_region" {
 
 variable "s3_bucket" {
   type    = string
-  default = "home-deploy-bucket-${random_id.bucket_suffix.hex}"
+  default = "home-deploy-bucket"
 }
 
 variable "lambda_memory" {
