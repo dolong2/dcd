@@ -45,3 +45,7 @@ src/main/resources/application-test.yml
 getImageVersion.sh
 
 /sql/
+
+### terraform ###
+terraform/.terraform.lock.hcl
+terraform/.terraform
