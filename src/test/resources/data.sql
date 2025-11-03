@@ -37,7 +37,7 @@ alter table if exists application_env_entity add constraint FKm22cqdjjl434jyqenp
 alter table if exists application_env_label_entity add constraint FKgd5b8upn11w2uh6voe20dm6df foreign key (application_env_id) references application_env_entity (id);
 alter table if exists application_entity add constraint FKn9drxkrx2h6wlorxfy00mr45h foreign key (workspace_id) references workspace_entity;
 alter table if exists application_label_entity add constraint FKq6iovxq5tdx2i1lwrx34kg0b9 foreign key (application_id) references application_entity;
-alter table if exists application_initial_script_entity add constraint FKq6iovxq5tdx2i1lwrx34kg0b0 foreign key (appliccation_id) references application_entity;
+alter table if exists application_initial_script_entity add constraint FKq6iovxq5tdx2i1lwrx34kg0b0 foreign key (application_id) references application_entity;
 alter table if exists role_entity add constraint FKrot6fehcor0f3sux5s6kgl0a4 foreign key (user_id) references user_entity;
 alter table if exists workspace_entity add constraint FKlfxk1bhw5knckt8vv28xvx5g2 foreign key (owner_id) references user_entity;
 alter table if exists domain_entity add constraint FKh7b0t3y0a7x5boh75j8lanww6 foreign key (application_id) references application_entity;
