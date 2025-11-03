@@ -3,6 +3,7 @@ SET MODE MySQL;
 -- 테이블 생성
 drop table if exists application_entity cascade;
 drop table if exists application_label_entity cascade;
+drop table if exists application_initial_script_entity cascade;
 drop table if exists role_entity cascade;
 drop table if exists user_entity cascade;
 drop table if exists workspace_entity cascade;
@@ -15,6 +16,7 @@ drop table if exists volume_entity cascade;
 drop table if exists volume_mount_entity cascade;
 create table application_entity (external_port integer not null, port integer not null, application_type varchar(255) check (application_type in ('SPRING_BOOT','NEST_JS','MYSQL','MARIA_DB','REDIS')), description varchar(255), failure_reason varchar(255), github_url varchar(255), id binary(16) not null, name varchar(255), status varchar(255) check (status in ('CREATED','PENDING','RUNNING','STOPPED','FAILURE')), version varchar(255), workspace_id binary(16), primary key (id));
 create table application_label_entity (application_id binary(16) not null, label varchar(255));
+create table application_initial_script_entity (id binary(16), script varchar(255), application_id binary(16) not null, primary key (id));
 create table role_entity (roles varchar(255) check (roles in ('ROLE_ADMIN','ROLE_DEVELOPER','ROLE_USER')), user_id binary(16) not null);
 create table user_entity (email varchar(255), id binary(16) not null, name varchar(255), password varchar(255), status varchar(255) check (status in ('PENDING','CREATED')), primary key (id));
 create table workspace_entity (description varchar(255), id binary(16) not null, owner_id binary(16), title varchar(255), primary key (id));
@@ -35,6 +37,7 @@ alter table if exists application_env_entity add constraint FKm22cqdjjl434jyqenp
 alter table if exists application_env_label_entity add constraint FKgd5b8upn11w2uh6voe20dm6df foreign key (application_env_id) references application_env_entity (id);
 alter table if exists application_entity add constraint FKn9drxkrx2h6wlorxfy00mr45h foreign key (workspace_id) references workspace_entity;
 alter table if exists application_label_entity add constraint FKq6iovxq5tdx2i1lwrx34kg0b9 foreign key (application_id) references application_entity;
+alter table if exists application_initial_script_entity add constraint FKq6iovxq5tdx2i1lwrx34kg0b0 foreign key (application_id) references application_entity;
 alter table if exists role_entity add constraint FKrot6fehcor0f3sux5s6kgl0a4 foreign key (user_id) references user_entity;
 alter table if exists workspace_entity add constraint FKlfxk1bhw5knckt8vv28xvx5g2 foreign key (owner_id) references user_entity;
 alter table if exists domain_entity add constraint FKh7b0t3y0a7x5boh75j8lanww6 foreign key (application_id) references application_entity;
