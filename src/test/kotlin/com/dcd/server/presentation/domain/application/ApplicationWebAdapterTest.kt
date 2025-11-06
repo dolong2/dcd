@@ -39,6 +39,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             applicationType = ApplicationType.SPRING_BOOT,
             githubUrl = "testUrl",
             port = 8080,
+            initialScripts = emptyList(),
             version = "17",
         )
 

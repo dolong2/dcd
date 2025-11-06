@@ -5,6 +5,7 @@ import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDt
 import com.dcd.server.core.domain.application.exception.AlreadyExistsApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
+import com.dcd.server.core.domain.application.spi.QueryApplicationInitialScriptPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.env.model.ApplicationEnv
 import com.dcd.server.core.domain.env.model.ApplicationEnvDetail
@@ -19,6 +20,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import util.workspace.WorkspaceGenerator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import kotlinx.coroutines.cancel
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -33,6 +35,7 @@ class CreateApplicationUseCaseTest(
     private val queryUserPort: QueryUserPort,
     private val commandWorkspacePort: CommandWorkspacePort,
     private val queryApplicationPort: QueryApplicationPort,
+    private val queryApplicationInitialScriptPort: QueryApplicationInitialScriptPort,
     private val queryWorkspacePort: QueryWorkspacePort,
     private val commandApplicationPort: CommandApplicationPort,
     private val commandApplicationEnvPort: CommandApplicationEnvPort,
@@ -56,6 +59,7 @@ class CreateApplicationUseCaseTest(
             githubUrl = "testGithub",
             version = "17",
             port = 8080,
+            initialScripts = listOf(),
             labels = listOf()
         )
 
@@ -82,6 +86,7 @@ class CreateApplicationUseCaseTest(
             githubUrl = "testGithub",
             version = "17",
             port = 8080,
+            initialScripts = listOf(),
             labels = listOf()
         )
 
@@ -104,6 +109,7 @@ class CreateApplicationUseCaseTest(
             githubUrl = "testGithub",
             version = "17",
             port = 8080,
+            initialScripts = listOf(),
             labels = listOf()
         )
 
@@ -142,6 +148,7 @@ class CreateApplicationUseCaseTest(
             githubUrl = "testGithub",
             version = "17",
             port = 8080,
+            initialScripts = listOf(),
             labels = listOf("testLabel")
         )
 
@@ -161,6 +168,30 @@ class CreateApplicationUseCaseTest(
 
                 envMatcher.application.id.toString() shouldBe application.id
                 envMatcher.applicationEnv.id shouldBe applicationEnv.id
+            }
+        }
+    }
+
+    given("초기화 스크립트 내용을 가진 애플리케이션 생성 정보가 주어지고") {
+        val request = CreateApplicationReqDto(
+            name = "testCreateApplication",
+            description = "testDescription",
+            applicationType = ApplicationType.SPRING_BOOT,
+            githubUrl = "testGithub",
+            version = "17",
+            port = 8080,
+            initialScripts = listOf("echo test"),
+            labels = listOf()
+        )
+
+        `when`("usecase를 실행하면") {
+            val applicationId = createApplicationUseCase.execute(request).applicationId
+
+            then("생성된 애플리케이션에 초기화 스크립트가 존재해야함") {
+                val application = queryApplicationPort.findById(applicationId).also { it shouldNotBe null }!!
+                val initialScript = queryApplicationInitialScriptPort.findAllByApplication(application)
+                initialScript.size shouldBe 1
+                initialScript[0].script shouldBe request.initialScripts.first()
             }
         }
     }
