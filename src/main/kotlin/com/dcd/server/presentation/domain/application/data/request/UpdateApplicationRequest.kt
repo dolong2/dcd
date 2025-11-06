@@ -9,8 +9,9 @@ data class UpdateApplicationRequest(
     @field:Pattern(regexp = "^[a-zA-Z0-9 ]{1,26}$")
     val name: String,
     val description: String?,
-    val applicationType: ApplicationType,
     val githubUrl: String?,
+    val applicationType: ApplicationType,
+    val port: Int,
     val version: String,
-    val port: Int
+    val initialScripts: List<String>,
 )
