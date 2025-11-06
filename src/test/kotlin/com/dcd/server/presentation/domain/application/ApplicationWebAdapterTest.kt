@@ -158,7 +158,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
 
     given("UpdateRequest가 주어지고") {
         val testId ="testId"
-        val request = UpdateApplicationRequest(name = "update", description = null, applicationType = ApplicationType.SPRING_BOOT, githubUrl = null, version = "11", port = 8080)
+        val request = UpdateApplicationRequest(name = "update", description = null, applicationType = ApplicationType.SPRING_BOOT, githubUrl = null, version = "11", port = 8080, initialScripts = emptyList())
 
         `when`("updateApplication 메서드를 실행할때") {
             val result = applicationWebAdapter.updateApplication(testWorkspaceId, testId, request)
