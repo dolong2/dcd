@@ -15,6 +15,8 @@ class InitialScriptServiceImpl(
         application: Application,
         initialScripts: List<String>,
     ) {
+        commandApplicationInitialScriptPort.deleteByApplication(application)
+
         val initialScriptList = initialScripts.map { script ->
             ApplicationInitialScript(
                 id = UUID.randomUUID(),
