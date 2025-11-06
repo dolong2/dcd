@@ -19,6 +19,7 @@ fun CreateApplicationRequest.toDto(): CreateApplicationReqDto =
         applicationType = this.applicationType,
         port = this.port,
         version = this.version,
+        initialScripts = this.initialScripts,
         labels = this.labels
     )
 
