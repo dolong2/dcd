@@ -7,12 +7,14 @@ import com.dcd.server.core.domain.application.exception.ApplicationNotFoundExcep
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
+import com.dcd.server.core.domain.application.spi.QueryApplicationInitialScriptPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.coVerify
@@ -29,13 +31,14 @@ class UpdateApplicationUseCaseTest(
     private val queryUserPort: QueryUserPort,
     private val queryWorkspacePort: QueryWorkspacePort,
     private val queryApplicationPort: QueryApplicationPort,
+    private val queryApplicationInitialScriptPort: QueryApplicationInitialScriptPort,
     private val commandApplicationPort: CommandApplicationPort,
     @MockkBean(relaxed = true)
     private val commandPort: CommandPort
 ) : BehaviorSpec({
     val targetUserId = "923a6407-a5f8-4e1e-bffd-0621910ddfc8"
 
-    val updateReqDto = UpdateApplicationReqDto(name = "updated application", description = "dldl", applicationType = ApplicationType.SPRING_BOOT, githubUrl = null, version = "11", port = 8080)
+    val updateReqDto = UpdateApplicationReqDto(name = "updated application", description = "dldl", applicationType = ApplicationType.SPRING_BOOT, githubUrl = null, version = "11", port = 8080, initialScripts = listOf("echo test"))
 
     given("애플리케이션 아이디가 주어지고") {
         val targetUser = queryUserPort.findById(targetUserId)!!
@@ -58,6 +61,13 @@ class UpdateApplicationUseCaseTest(
                 result?.version shouldBe updateReqDto.version
                 coVerify { commandPort.executeShellCommand("docker rm ${targetApplication.containerName}") }
                 coVerify { commandPort.executeShellCommand("docker rmi ${targetApplication.containerName}") }
+            }
+
+            then("변경된 초기화 스크립트를 가지고 있어야함") {
+                val result = queryApplicationPort.findById(applicationId).also { it shouldNotBe null }!!
+                val initialScripts = queryApplicationInitialScriptPort.findAllByApplication(result)
+                initialScripts shouldHaveSize 1
+                initialScripts[0].script shouldBe updateReqDto.initialScripts.first()
             }
         }
 

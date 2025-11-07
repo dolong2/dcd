@@ -27,7 +27,8 @@ class CreateApplicationUseCase(
     private val buildDockerImageService: BuildDockerImageService,
     private val createContainerService: CreateContainerService,
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
-    private val envAutoMatchService: EnvAutoMatchService
+    private val envAutoMatchService: EnvAutoMatchService,
+    private val initialScriptService: InitialScriptService
 ) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
     fun execute(createApplicationReqDto: CreateApplicationReqDto): CreateApplicationResDto {
         val workspace = workspaceInfo.workspace
@@ -44,6 +45,7 @@ class CreateApplicationUseCase(
         val version = application.version
 
         envAutoMatchService.match(workspace, application)
+        initialScriptService.write(application, createApplicationReqDto.initialScripts)
 
         launch {
             val applicationType = application.applicationType

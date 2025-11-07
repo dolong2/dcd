@@ -9,5 +9,6 @@ data class CreateApplicationReqDto(
     val applicationType: ApplicationType,
     val port: Int,
     val version: String,
+    val initialScripts: List<String>,
     val labels: List<String>
 )

@@ -9,6 +9,7 @@ import com.dcd.server.core.domain.application.exception.ApplicationNotFoundExcep
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.DeleteContainerService
 import com.dcd.server.core.domain.application.service.DeleteImageService
+import com.dcd.server.core.domain.application.service.InitialScriptService
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import kotlinx.coroutines.CoroutineScope
@@ -22,7 +23,8 @@ class UpdateApplicationUseCase(
     private val commandApplicationPort: CommandApplicationPort,
     private val deleteContainerService: DeleteContainerService,
     private val deleteImageService: DeleteImageService,
-    private val eventPublisher: ApplicationEventPublisher
+    private val eventPublisher: ApplicationEventPublisher,
+    private val initialScriptService: InitialScriptService
 ) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
     @Lock("#id")
     fun execute(id: String, updateApplicationReqDto: UpdateApplicationReqDto) {
@@ -50,5 +52,7 @@ class UpdateApplicationUseCase(
                 port = updateApplicationReqDto.port
             )
         commandApplicationPort.save(updatedApplication)
+
+        initialScriptService.write(updatedApplication, updateApplicationReqDto.initialScripts)
     }
 }
