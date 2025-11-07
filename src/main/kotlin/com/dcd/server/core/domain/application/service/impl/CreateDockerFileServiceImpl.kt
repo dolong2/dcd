@@ -7,9 +7,9 @@ import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
-import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.CreateDockerFileService
 import com.dcd.server.core.domain.application.spi.CheckExitValuePort
+import com.dcd.server.core.domain.application.spi.QueryApplicationInitialScriptPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.application.util.FailureCase
 import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
@@ -26,6 +26,7 @@ import java.io.IOException
 class CreateDockerFileServiceImpl(
     private val queryApplicationPort: QueryApplicationPort,
     private val queryApplicationEnvPort: QueryApplicationEnvPort,
+    private val queryApplicationInitialScriptPort: QueryApplicationInitialScriptPort,
     private val commandPort: CommandPort,
     private val checkExitValuePort: CheckExitValuePort,
     private val eventPublisher: ApplicationEventPublisher,
@@ -57,6 +58,11 @@ class CreateDockerFileServiceImpl(
                         it.key to it.value
                 }
 
+        val initialScripts =
+            queryApplicationInitialScriptPort
+                .findAllByApplication(application)
+                .map { it.script }
+
         commandPort.executeShellCommand("mkdir -p $directoryName")
             .also {exitValue ->
                 if (exitValue != 0)
@@ -65,25 +71,15 @@ class CreateDockerFileServiceImpl(
             }
 
         val file = File("./${application.name}/Dockerfile")
-        val fileContent = when (application.applicationType) {
-            ApplicationType.SPRING_BOOT ->
-                FileContent.getSpringBootDockerFileContent(version, application.port, applicationEnv)
+        val fileContent =
+            FileContent.getApplicationDockerFileContent(
+                application.applicationType,
+                version,
+                application.port,
+                applicationEnv,
+                initialScripts
+            )
 
-            ApplicationType.MYSQL ->
-                FileContent.getMYSQLDockerFileContent(version, application.port, applicationEnv)
-
-            ApplicationType.MARIA_DB ->
-                FileContent.getMARIADBDockerFileContent(version, application.port, applicationEnv)
-
-            ApplicationType.REDIS ->
-                FileContent.getRedisDockerFileContent(version, application.port, applicationEnv)
-
-            ApplicationType.NEST_JS ->
-                FileContent.getNestJsDockerFileContent(version, application.port, applicationEnv)
-
-            ApplicationType.H2_DB ->
-                FileContent.getH2DBDockerFileContent(version, application.port, applicationEnv)
-        }
         try {
             if (!file.exists())
                 file.createNewFile()

@@ -1,10 +1,27 @@
 package com.dcd.server.core.common.file
 
 import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import java.lang.StringBuilder
 
 object FileContent {
-    fun getSpringBootDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
+    fun getApplicationDockerFileContent(
+        applicationType: ApplicationType,
+        version: String,
+        port: Int,
+        env: Map<String, String>,
+        initialScripts: List<String>
+    ): String =
+        when(applicationType) {
+            ApplicationType.SPRING_BOOT -> getSpringBootDockerFileContent(version, port, env, initialScripts)
+            ApplicationType.NEST_JS -> getNestJsDockerFileContent(version, port, env, initialScripts)
+            ApplicationType.MYSQL -> getMYSQLDockerFileContent(version, port, env, initialScripts)
+            ApplicationType.MARIA_DB -> getMARIADBDockerFileContent(version, port, env, initialScripts)
+            ApplicationType.H2_DB -> getH2DBDockerFileContent(version, port, env, initialScripts)
+            ApplicationType.REDIS -> getRedisDockerFileContent(version, port, env, initialScripts)
+        }
+
+    private fun getSpringBootDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
         FROM openjdk:${version}-jdk
         COPY build/libs/*.jar build/libs/
@@ -12,10 +29,11 @@ object FileContent {
         RUN mv build/libs/*.jar build/libs/app.jar
         EXPOSE $port
         ${getEnvString(env)}
+        ${getInitialScriptsString(initialScripts)}
         CMD ["java", "-jar", "build/libs/app.jar"]
         """.trimIndent()
 
-    fun getNestJsDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
+    private fun getNestJsDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
         FROM node:${version}
         COPY . .
@@ -23,35 +41,40 @@ object FileContent {
         RUN npm run build
         EXPOSE $port
         ${getEnvString(env)}
+        ${getInitialScriptsString(initialScripts)}
         CMD ["npm", "start"]
         """.trimIndent()
 
-    fun getMYSQLDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
+    private fun getMYSQLDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
         FROM mysql:${version}
         EXPOSE $port
         ${getEnvString(env)}
+        ${getInitialScriptsString(initialScripts)}
         """.trimIndent()
 
-    fun getMARIADBDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
+    private fun getMARIADBDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
         FROM mariadb:${version}
         EXPOSE $port
         ${getEnvString(env)}
+        ${getInitialScriptsString(initialScripts)}
         """.trimIndent()
 
-    fun getRedisDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
+    private fun getRedisDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
         FROM redis:${version}
         EXPOSE $port
         ${getEnvString(env)}
+        ${getInitialScriptsString(initialScripts)}
        """.trimIndent()
 
-    fun getH2DBDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
+    private fun getH2DBDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
         FROM oscarfonts/h2:${version}
         EXPOSE $port
         ${getEnvString(env)}
+        ${getInitialScriptsString(initialScripts)}
         """.trimIndent()
 
     fun getImageVersionShellScriptContent(imageName: String, minVersion: String): String {
@@ -141,4 +164,11 @@ object FileContent {
         return envString.toString()
     }
 
+    private fun getInitialScriptsString(initialScripts: List<String>): String {
+        val initialScriptString = StringBuilder()
+        for (initialScript in initialScripts) {
+            initialScriptString.append("RUN $initialScript\n")
+        }
+        return initialScriptString.toString()
+    }
 }
