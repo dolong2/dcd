@@ -12,6 +12,7 @@ object FileContent {
         RUN mv build/libs/*.jar build/libs/app.jar
         EXPOSE $port
         ${getEnvString(env)}
+        ${getInitialScriptsString(initialScripts)}
         CMD ["java", "-jar", "build/libs/app.jar"]
         """.trimIndent()
 
@@ -23,6 +24,7 @@ object FileContent {
         RUN npm run build
         EXPOSE $port
         ${getEnvString(env)}
+        ${getInitialScriptsString(initialScripts)}
         CMD ["npm", "start"]
         """.trimIndent()
 
@@ -31,6 +33,7 @@ object FileContent {
         FROM mysql:${version}
         EXPOSE $port
         ${getEnvString(env)}
+        ${getInitialScriptsString(initialScripts)}
         """.trimIndent()
 
     fun getMARIADBDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
@@ -38,6 +41,7 @@ object FileContent {
         FROM mariadb:${version}
         EXPOSE $port
         ${getEnvString(env)}
+        ${getInitialScriptsString(initialScripts)}
         """.trimIndent()
 
     fun getRedisDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
@@ -45,6 +49,7 @@ object FileContent {
         FROM redis:${version}
         EXPOSE $port
         ${getEnvString(env)}
+        ${getInitialScriptsString(initialScripts)}
        """.trimIndent()
 
     fun getH2DBDockerFileContent(version: String, port: Int, env: Map<String, String>): String =
@@ -52,6 +57,7 @@ object FileContent {
         FROM oscarfonts/h2:${version}
         EXPOSE $port
         ${getEnvString(env)}
+        ${getInitialScriptsString(initialScripts)}
         """.trimIndent()
 
     fun getImageVersionShellScriptContent(imageName: String, minVersion: String): String {
@@ -141,4 +147,11 @@ object FileContent {
         return envString.toString()
     }
 
+    private fun getInitialScriptsString(initialScripts: List<String>): String {
+        val initialScriptString = StringBuilder()
+        for (initialScript in initialScripts) {
+            initialScriptString.append("RUN $initialScript")
+        }
+        return initialScriptString.toString()
+    }
 }
