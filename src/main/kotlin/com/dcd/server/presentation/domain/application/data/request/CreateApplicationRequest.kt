@@ -13,6 +13,6 @@ data class CreateApplicationRequest(
     val applicationType: ApplicationType,
     val port: Int,
     val version: String,
-    val initialScripts: List<String>,
+    val initialScripts: List<String> = listOf(),
     val labels: List<String> = listOf()
 )
