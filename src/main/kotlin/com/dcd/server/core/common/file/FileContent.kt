@@ -167,7 +167,7 @@ object FileContent {
     private fun getInitialScriptsString(initialScripts: List<String>): String {
         val initialScriptString = StringBuilder()
         for (initialScript in initialScripts) {
-            initialScriptString.append("RUN $initialScript")
+            initialScriptString.append("RUN $initialScript\n")
         }
         return initialScriptString.toString()
     }
