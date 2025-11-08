@@ -18,6 +18,7 @@ fun ApplicationResDto.toResponse(): ApplicationResponse =
         version = this.version,
         status = this.status,
         failureReason = this.failureReason,
+        initialScripts = this.initialScripts,
         labels = this.labels
     )
 

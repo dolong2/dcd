@@ -20,8 +20,6 @@ class ApplicationWebAdapter(
     private val runApplicationUseCase: RunApplicationUseCase,
     private val getAllApplicationUseCase: GetAllApplicationUseCase,
     private val getOneApplicationUseCase: GetOneApplicationUseCase,
-//    private val putApplicationEnvUseCase: PutApplicationEnvUseCase,
-//    private val deleteApplicationEnvUseCase: DeleteApplicationEnvUseCase,
     private val stopApplicationUseCase: StopApplicationUseCase,
     private val deleteApplicationUseCase: DeleteApplicationUseCase,
     private val updateApplicationUseCase: UpdateApplicationUseCase,

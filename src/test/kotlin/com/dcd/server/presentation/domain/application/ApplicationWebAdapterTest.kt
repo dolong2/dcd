@@ -69,7 +69,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             version = "latest",
             status = ApplicationStatus.STOPPED,
             labels = listOf(),
-            failureReason = null
+            failureReason = null,
+            initialScripts = emptyList(),
         )
         val list = listOf(applicationResponse)
         val responseDto = ListResDto(list)
@@ -98,7 +99,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             version = "latest",
             status = ApplicationStatus.STOPPED,
             labels = listOf(),
-            failureReason = null
+            failureReason = null,
+            initialScripts = emptyList(),
         )
         `when`("getOneApplication 메서드를 실행할때") {
             every { getOneApplicationUseCase.execute(testId) } returns applicationResponse
