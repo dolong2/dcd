@@ -15,5 +15,6 @@ data class ApplicationResDto(
     val version: String,
     val status: ApplicationStatus,
     val failureReason: String?,
+    val initialScripts: List<String>,
     val labels: List<String>
 )
