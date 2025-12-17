@@ -24,6 +24,7 @@ object FileContent {
     private fun getSpringBootDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
         FROM openjdk:${version}-jdk
+        WORKDIR /app
         COPY build/libs/*.jar build/libs/
         RUN rm -f build/libs/*-plain.jar
         RUN mv build/libs/*.jar build/libs/app.jar
@@ -36,6 +37,7 @@ object FileContent {
     private fun getNestJsDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
         FROM node:${version}
+        WORKDIR /app
         ${getEnvString(env)}
         ${getInitialScriptsString(initialScripts)}
         COPY package*.json ./
@@ -48,6 +50,7 @@ object FileContent {
     private fun getMYSQLDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
         FROM mysql:${version}
+        WORKDIR /app
         EXPOSE $port
         ${getEnvString(env)}
         ${getInitialScriptsString(initialScripts)}
@@ -56,6 +59,7 @@ object FileContent {
     private fun getMARIADBDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
         FROM mariadb:${version}
+        WORKDIR /app
         EXPOSE $port
         ${getEnvString(env)}
         ${getInitialScriptsString(initialScripts)}
@@ -64,6 +68,7 @@ object FileContent {
     private fun getRedisDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
         FROM redis:${version}
+        WORKDIR /app
         EXPOSE $port
         ${getEnvString(env)}
         ${getInitialScriptsString(initialScripts)}
@@ -72,6 +77,7 @@ object FileContent {
     private fun getH2DBDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
         FROM oscarfonts/h2:${version}
+        WORKDIR /app
         EXPOSE $port
         ${getEnvString(env)}
         ${getInitialScriptsString(initialScripts)}
