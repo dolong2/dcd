@@ -36,13 +36,13 @@ object FileContent {
     private fun getNestJsDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
         FROM node:${version}
-        COPY . .
-        RUN npm install
-        RUN npm run build
-        EXPOSE $port
         ${getEnvString(env)}
         ${getInitialScriptsString(initialScripts)}
-        CMD ["npm", "start"]
+        COPY package*.json ./
+        COPY dist ./dist
+        RUN npm ci --production=true
+        EXPOSE $port
+        CMD ["sh", "-c", "TZ=Asia/Seoul node dist/main.js"]
         """.trimIndent()
 
     private fun getMYSQLDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
