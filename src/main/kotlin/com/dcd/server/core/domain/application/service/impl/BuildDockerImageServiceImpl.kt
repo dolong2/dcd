@@ -52,8 +52,7 @@ class BuildDockerImageServiceImpl(
                     commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
                 }
                 ApplicationType.NEST_JS -> {
-                    commandPort.executeShellCommand("npm run build")
-                    commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
+                    commandPort.executeShellCommand("cd ./$directoryName && npm run build && docker build -t ${application.containerName}:latest .")
                 }
                 else -> {
                     commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
