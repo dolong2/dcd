@@ -51,6 +51,10 @@ class BuildDockerImageServiceImpl(
                     commandPort.executeShellCommand("cd ./$directoryName && ./gradlew clean build")
                     commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
                 }
+                ApplicationType.NEST_JS -> {
+                    commandPort.executeShellCommand("npm run build")
+                    commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
+                }
                 else -> {
                     commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
                 }
