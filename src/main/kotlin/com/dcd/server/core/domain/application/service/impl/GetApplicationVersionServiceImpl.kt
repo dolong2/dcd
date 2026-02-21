@@ -20,6 +20,6 @@ class GetApplicationVersionServiceImpl(
             ApplicationType.H2_DB -> "oscarfonts/h2" to "0"
         }
         val getVersionScript = FileContent.getImageVersionShellScriptContent(baseImageName, minVersion)
-        return commandPort.executeShellCommandWithResult(getVersionScript)
+        return commandPort.executeShellCommand(getVersionScript).result
     }
 }

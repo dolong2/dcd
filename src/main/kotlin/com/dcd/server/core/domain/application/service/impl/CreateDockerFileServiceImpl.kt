@@ -64,10 +64,10 @@ class CreateDockerFileServiceImpl(
                 .map { it.script }
 
         commandPort.executeShellCommand("mkdir -p $directoryName")
-            .also {exitValue ->
-                if (exitValue != 0)
+            .also {commandResult ->
+                if (commandResult.exitValue != 0)
                     commandPort.executeShellCommand("rm -rf $directoryName")
-                checkExitValuePort.checkApplicationExitValue(exitValue, application, coroutineScope, FailureCase.CREATE_DIRECTORY_FAILURE)
+                checkExitValuePort.checkApplicationExitValue(commandResult, application, coroutineScope, FailureCase.CREATE_DIRECTORY_FAILURE)
             }
 
         val file = File("./${application.name}/Dockerfile")

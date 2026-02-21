@@ -42,7 +42,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
                 verify { commandPort.executeShellCommand("mkdir -p '${application.name}'") }
             }
             then("실제로 애플리케이션 이름의 디렉토리가 생성되야함") {
-                commandPort.executeShellCommand("test -e '${application.name}'") shouldBe 0
+                commandPort.executeShellCommand("test -e '${application.name}'").exitValue shouldBe 0
             }
             then("생성된 DockerFile의 내용은 FileContent의 내용과 같아야함") {
                 val actualFileContent = StringBuilder()
@@ -71,7 +71,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
                 verify { commandPort.executeShellCommand("mkdir -p '${application.name}'") }
             }
             then("실제로 애플리케이션 이름의 디렉토리가 생성되야함") {
-                commandPort.executeShellCommand("test -e '${application.name}'") shouldBe 0
+                commandPort.executeShellCommand("test -e '${application.name}'").exitValue shouldBe 0
             }
             then("생성된 DockerFile의 내용은 FileContent의 내용과 같아야함") {
                 val actualFileContent = StringBuilder()
@@ -99,7 +99,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
                 verify { commandPort.executeShellCommand("mkdir -p '${application.name}'") }
             }
             then("실제로 애플리케이션 이름의 디렉토리가 생성되야함") {
-                commandPort.executeShellCommand("test -e '${application.name}'") shouldBe 0
+                commandPort.executeShellCommand("test -e '${application.name}'").exitValue shouldBe 0
             }
             then("생성된 DockerFile의 내용은 FileContent의 내용과 같아야함") {
                 val actualFileContent = StringBuilder()
@@ -127,7 +127,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
                 verify { commandPort.executeShellCommand("mkdir -p '${application.name}'") }
             }
             then("실제로 애플리케이션 이름의 디렉토리가 생성되야함") {
-                commandPort.executeShellCommand("test -e '${application.name}'") shouldBe 0
+                commandPort.executeShellCommand("test -e '${application.name}'").exitValue shouldBe 0
             }
             then("생성된 DockerFile의 내용은 FileContent의 내용과 같아야함") {
                 val actualFileContent = StringBuilder()

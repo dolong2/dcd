@@ -21,7 +21,8 @@ class StopContainerServiceImpl(
 
     override suspend fun stopContainer(application: Application) {
         withContext(Dispatchers.IO) {
-            val exitValue = commandPort.executeShellCommand("docker stop ${application.containerName}")
+            val commandResult = commandPort.executeShellCommand("docker stop ${application.containerName}")
+            val exitValue = commandResult.exitValue
             if (exitValue != 0) {
                 log.error("$exitValue")
                 eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.STOP_CONTAINER_FAILURE))

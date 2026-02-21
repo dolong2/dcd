@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.spi.adapter
 
+import com.dcd.server.core.common.command.dto.CommandResult
 import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
@@ -17,14 +18,16 @@ class CheckExitValueAdapter(
 ) : CheckExitValuePort {
     private val log = LoggerFactory.getLogger(this::class.simpleName)
 
-    override fun checkApplicationExitValue(exitValue: Int, application: Application, failureCase: FailureCase?) {
+    override fun checkApplicationExitValue(commandResult: CommandResult, application: Application, failureCase: FailureCase?) {
+        val exitValue = commandResult.exitValue
         if (exitValue != 0) {
             log.error("${application.name} - $exitValue")
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, failureCase))
         }
     }
 
-    override fun checkApplicationExitValue(exitValue: Int, application: Application, coroutineScope: CoroutineScope, failureCase: FailureCase?) {
+    override fun checkApplicationExitValue(commandResult: CommandResult, application: Application, coroutineScope: CoroutineScope, failureCase: FailureCase?) {
+        val exitValue = commandResult.exitValue
         if (exitValue != 0) {
             log.error("${application.name} - $exitValue")
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, failureCase))

@@ -17,8 +17,8 @@ class DeleteApplicationDirectoryServiceImpl(
     override suspend fun deleteApplicationDirectory(application: Application) {
         withContext(Dispatchers.IO) {
             commandPort.executeShellCommand("rm -rf '${application.name}'")
-                .also {exitValue ->
-                    checkExitValuePort.checkApplicationExitValue(exitValue, application, this, FailureCase.DELETE_DIRECTORY_FAILURE)
+                .also { commandResult ->
+                    checkExitValuePort.checkApplicationExitValue(commandResult, application, this, FailureCase.DELETE_DIRECTORY_FAILURE)
                 }
         }
     }

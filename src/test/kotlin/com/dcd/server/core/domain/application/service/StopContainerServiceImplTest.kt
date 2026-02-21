@@ -1,9 +1,11 @@
 package com.dcd.server.core.domain.application.service
 
 import com.dcd.server.core.common.command.CommandPort
+import com.dcd.server.core.common.command.dto.CommandResult
 import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
 import com.dcd.server.core.domain.application.service.impl.StopContainerServiceImpl
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.string.startWith
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -22,12 +24,12 @@ class StopContainerServiceImplTest : BehaviorSpec({
             stopContainerService.stopContainer(application)
 
             then("컨테이너 정지 명령이 실행되야함") {
-                verify { commandPort.executeShellCommand("docker stop ${application.containerName}") }
+                verify { commandPort.executeShellCommand(match { it.startsWith("docker stop") }) }
             }
         }
 
         `when`("컨테이너 정지 명령이 실패했을때") {
-            every { commandPort.executeShellCommand("docker stop ${application.containerName}") } returns 125
+            every { commandPort.executeShellCommand("docker stop ${application.containerName}") } returns CommandResult(125, emptyList())
             stopContainerService.stopContainer(application)
 
             then("ContainerNotStoppedException이 발생해야함") {

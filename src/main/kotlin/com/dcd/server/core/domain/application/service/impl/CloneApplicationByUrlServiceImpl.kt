@@ -22,8 +22,8 @@ class CloneApplicationByUrlServiceImpl(
             val application = (queryApplicationPort.findById(id)
                 ?: throw ApplicationNotFoundException())
             val githubUrl = application.githubUrl
-            val exitValue = commandPort.executeShellCommand("git clone $githubUrl '${application.name}'")
-            checkExitValuePort.checkApplicationExitValue(exitValue, application, this, FailureCase.CLONE_FAILURE)
+            val commandResult = commandPort.executeShellCommand("git clone $githubUrl '${application.name}'")
+            checkExitValuePort.checkApplicationExitValue(commandResult, application, this, FailureCase.CLONE_FAILURE)
         }
     }
 
@@ -31,8 +31,8 @@ class CloneApplicationByUrlServiceImpl(
         withContext(Dispatchers.IO) {
             val githubUrl = application.githubUrl
             commandPort.executeShellCommand("git clone $githubUrl '${application.name}'")
-                .also {exitValue ->
-                    checkExitValuePort.checkApplicationExitValue(exitValue, application, this, FailureCase.CLONE_FAILURE)
+                .also {commandResult ->
+                    checkExitValuePort.checkApplicationExitValue(commandResult, application, this, FailureCase.CLONE_FAILURE)
                 }
         }
     }

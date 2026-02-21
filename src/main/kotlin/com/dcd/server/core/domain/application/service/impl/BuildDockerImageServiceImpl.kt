@@ -23,11 +23,11 @@ class BuildDockerImageServiceImpl(
             ?: throw ApplicationNotFoundException())
         val directoryName = "'${application.name}'"
         withContext(Dispatchers.IO) {
-            val exitValue = when (application.applicationType) {
+            val commandResult = when (application.applicationType) {
                 ApplicationType.SPRING_BOOT -> {
                     commandPort.executeShellCommand("cd ./$directoryName && ./gradlew clean build")
                         .run {
-                            if (this == 0)
+                            if (this.exitValue == 0)
                                 commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
                             else this
                         }
@@ -37,16 +37,16 @@ class BuildDockerImageServiceImpl(
                     commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
                 }
             }
-            if (exitValue != 0)
+            if (commandResult.exitValue != 0)
                 commandPort.executeShellCommand("rm -rf $directoryName")
-            checkExitValuePort.checkApplicationExitValue(exitValue, application, this, FailureCase.IMAGE_BUILD_FAILURE)
+            checkExitValuePort.checkApplicationExitValue(commandResult, application, this, FailureCase.IMAGE_BUILD_FAILURE)
         }
     }
 
     override suspend fun buildImageByApplication(application: Application) {
         val directoryName = "'${application.name}'"
         withContext(Dispatchers.IO) {
-            val exitValue = when(application.applicationType) {
+            val commandResult = when(application.applicationType) {
                 ApplicationType.SPRING_BOOT -> {
                     commandPort.executeShellCommand("cd ./$directoryName && ./gradlew clean build")
                     commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
@@ -58,9 +58,9 @@ class BuildDockerImageServiceImpl(
                     commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
                 }
             }
-            if (exitValue != 0)
+            if (commandResult.exitValue != 0)
                 commandPort.executeShellCommand("rm -rf $directoryName")
-            checkExitValuePort.checkApplicationExitValue(exitValue, application, this, FailureCase.IMAGE_BUILD_FAILURE)
+            checkExitValuePort.checkApplicationExitValue(commandResult, application, this, FailureCase.IMAGE_BUILD_FAILURE)
         }
     }
 

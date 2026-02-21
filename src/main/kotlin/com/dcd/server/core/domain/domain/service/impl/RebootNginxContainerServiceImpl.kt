@@ -12,8 +12,8 @@ class RebootNginxContainerServiceImpl(
     private val log = LoggerFactory.getLogger(this::class.simpleName)
 
     override fun rebootNginx() {
-        val exitValue = commandPort.executeShellCommand("docker restart dcd-nginx")
-        if (exitValue != 0)
+        val commandResult = commandPort.executeShellCommand("docker restart dcd-nginx")
+        if (commandResult.exitValue != 0)
             log.error("nginx restart failure")
     }
 }

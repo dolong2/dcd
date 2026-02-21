@@ -18,10 +18,7 @@ class ExecContainerServiceImpl(
     private val commandPort: CommandPort
 ) : ExecContainerService {
     override fun execCmd(application: Application, cmd: String): List<String> =
-        commandPort
-            .executeShellCommandWithResult(
-                "docker exec ${application.containerName} sh -c 'cd / && $cmd'"
-            )
+        commandPort.executeShellCommand("docker exec ${application.containerName} sh -c 'cd / && $cmd'").result
 
     override fun execCmd(application: Application, session: WebSocketSession, cmd: String) {
         val cmdArray = cmd.split(" ").toTypedArray()
