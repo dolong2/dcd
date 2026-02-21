@@ -7,5 +7,6 @@ import com.dcd.server.core.domain.application.util.FailureCase
 class ChangeApplicationStatusEvent(
     val status: ApplicationStatus,
     val application: Application,
-    val failureCase: FailureCase? = null
+    val failureCase: FailureCase? = null,
+    val failureReasonDetail: String? = null
 )

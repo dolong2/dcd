@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.application.event.listener
 
 import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
 import com.dcd.server.core.domain.application.event.DeployApplicationEvent
+import com.dcd.server.core.domain.application.model.DeploymentResult
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.BuildDockerImageService
@@ -39,7 +40,7 @@ class ApplicationEventListener(
     fun process(event: ChangeApplicationStatusEvent) {
         val updatedApplication = event.application.copy(
             status = event.status,
-            failureReason = event.failureCase?.reason
+            deploymentResult = DeploymentResult.from(event.failureCase, event.failureReasonDetail)
         )
 
         commandApplicationPort.save(updatedApplication)
