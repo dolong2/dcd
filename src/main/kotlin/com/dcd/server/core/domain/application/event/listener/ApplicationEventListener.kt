@@ -52,34 +52,29 @@ class ApplicationEventListener(
 
         applicationList.forEach { application ->
             CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    deleteContainerService.deleteContainer(application)
-                    deleteImageService.deleteImage(application)
+                deleteContainerService.deleteContainer(application)
+                deleteImageService.deleteImage(application)
 
-                    val version = application.version
-                    val externalPort = application.externalPort
+                val version = application.version
+                val externalPort = application.externalPort
 
-                    val applicationType = application.applicationType
-                    when (applicationType) {
-                        ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS -> {
-                            cloneApplicationByUrlService.cloneByApplication(application)
-                        }
-
-                        else -> {}
+                val applicationType = application.applicationType
+                when (applicationType) {
+                    ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS -> {
+                        cloneApplicationByUrlService.cloneByApplication(application)
                     }
 
-                    createDockerFileService.createFileToApplication(application, version)
-                    buildDockerImageService.buildImageByApplication(application)
-                    createContainerService.createContainer(application, externalPort)
-
-                    val updatedApplication = application.copy(status = ApplicationStatus.STOPPED)
-                    commandApplicationPort.save(updatedApplication)
-                } catch (e: Exception) {
-                    val updatedApplication = application.copy(status = ApplicationStatus.FAILURE, failureReason = e.message)
-                    commandApplicationPort.save(updatedApplication)
-                } finally {
-                    deleteApplicationDirectoryService.deleteApplicationDirectory(application)
+                    else -> {}
                 }
+
+                createDockerFileService.createFileToApplication(application, version)
+                buildDockerImageService.buildImageByApplication(application)
+                createContainerService.createContainer(application, externalPort)
+
+                val updatedApplication = application.copy(status = ApplicationStatus.STOPPED)
+                commandApplicationPort.save(updatedApplication)
+
+                deleteApplicationDirectoryService.deleteApplicationDirectory(application)
             }
 
         }
