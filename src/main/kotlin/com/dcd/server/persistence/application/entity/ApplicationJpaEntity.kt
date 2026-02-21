@@ -2,7 +2,7 @@ package com.dcd.server.persistence.application.entity
 
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import com.dcd.server.persistence.env.entity.ApplicationEnvEntity
+import com.dcd.server.core.domain.application.util.FailureCase
 import com.dcd.server.persistence.workspace.entity.WorkspaceJpaEntity
 import jakarta.persistence.*
 import java.util.UUID
@@ -27,7 +27,9 @@ class ApplicationJpaEntity(
     val version: String,
     @Enumerated(EnumType.STRING)
     val status: ApplicationStatus,
-    val failureReason: String?,
+    @Enumerated(EnumType.STRING)
+    val failureCase: FailureCase?,
+    val failureReasonDetail: String?,
     @ElementCollection
     @CollectionTable(name = "application_label_entity", joinColumns = [JoinColumn(name = "application_id")])
     @Column(name = "label")

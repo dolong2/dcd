@@ -21,8 +21,8 @@ class CopyDockerVolumeServiceImpl(
                     alpine ash -c \"cp -a /from/. /to/\"
             """.trimIndent()
 
-        val exitValue = commandPort.executeShellCommand(volumeCopyCmd)
-        if (exitValue != 0) {
+        val commandResult = commandPort.executeShellCommand(volumeCopyCmd)
+        if (commandResult.exitValue != 0) {
             deleteVolumeService.deleteVolume(newVolume)
             throw VolumeCopyFailureException()
         }

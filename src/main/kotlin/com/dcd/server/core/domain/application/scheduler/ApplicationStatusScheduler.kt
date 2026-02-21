@@ -1,11 +1,13 @@
 package com.dcd.server.core.domain.application.scheduler
 
 import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.model.DeploymentResult
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.scheduler.enums.ContainerStatus
 import com.dcd.server.core.domain.application.service.GetContainerService
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
+import com.dcd.server.core.domain.application.util.FailureCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -56,8 +58,10 @@ class ApplicationStatusScheduler(
                 val updatedApplication =
                     if (exitCode == "0")
                         containerExitedApplication.copy(status = ApplicationStatus.STOPPED)
-                    else
-                        containerExitedApplication.copy(status = ApplicationStatus.FAILURE, failureReason = "컨테이너가 비정상적으로 종료됨")
+                    else {
+                        val deploymentResult = DeploymentResult.ERROR(FailureCase.RUN_CONTAINER_FAILURE, "Container terminated")
+                        containerExitedApplication.copy(status = ApplicationStatus.FAILURE, deploymentResult = deploymentResult)
+                    }
 
                 updatedApplicationList.add(updatedApplication)
             }

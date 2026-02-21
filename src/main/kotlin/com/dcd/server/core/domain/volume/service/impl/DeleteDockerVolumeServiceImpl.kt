@@ -11,9 +11,9 @@ class DeleteDockerVolumeServiceImpl(
     private val commandPort: CommandPort
 ) : DeleteVolumeService {
     override fun deleteVolume(volume: Volume) {
-        val exitValue = commandPort.executeShellCommand("docker volume rm ${volume.volumeName}")
+        val commandResult = commandPort.executeShellCommand("docker volume rm ${volume.volumeName}")
 
-        if (exitValue != 0)
+        if (commandResult.exitValue != 0)
             throw VolumeDeleteFailureException()
     }
 }

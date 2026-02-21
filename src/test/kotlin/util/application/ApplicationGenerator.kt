@@ -1,9 +1,10 @@
 package util.application
 
 import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.model.DeploymentResult
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import com.dcd.server.core.domain.env.model.ApplicationEnv
+import com.dcd.server.core.domain.application.util.FailureCase
 import com.dcd.server.core.domain.workspace.model.Workspace
 import util.workspace.WorkspaceGenerator
 import java.util.*
@@ -19,7 +20,8 @@ object ApplicationGenerator {
         workspace: Workspace = WorkspaceGenerator.generateWorkspace(),
         port: Int = 8080,
         status: ApplicationStatus = ApplicationStatus.STOPPED,
-        failureReason: String? = null,
+        failureCase: FailureCase? = null,
+        failureReasonDetail: String? = null,
         labels: List<String> = listOf()
     ): Application =
         Application(
@@ -33,7 +35,7 @@ object ApplicationGenerator {
             port = port,
             externalPort = port,
             status = status,
-            failureReason = failureReason,
+            deploymentResult = DeploymentResult.from(failureCase, failureReasonDetail),
             labels = labels
         )
 }

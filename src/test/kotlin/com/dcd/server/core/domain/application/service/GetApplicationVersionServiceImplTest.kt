@@ -1,6 +1,7 @@
 package com.dcd.server.core.domain.application.service
 
 import com.dcd.server.core.common.command.CommandPort
+import com.dcd.server.core.common.command.dto.CommandResult
 import com.dcd.server.core.common.file.FileContent
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.impl.GetApplicationVersionServiceImpl
@@ -25,7 +26,8 @@ class GetApplicationVersionServiceImplTest : BehaviorSpec({
                 "8.1.0",
                 "8.0.1"
             )
-            every { commandPort.executeShellCommandWithResult(imageVersionShellScriptContent) } returns tagList
+            val commandResult = CommandResult(0, tagList)
+            every { commandPort.executeShellCommand(imageVersionShellScriptContent) } returns commandResult
 
             val getApplicationVersionService = GetApplicationVersionServiceImpl(commandPort)
             val result = getApplicationVersionService.getAvailableVersion(applicationType)

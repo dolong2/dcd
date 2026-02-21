@@ -2,6 +2,7 @@ package com.dcd.server.persistence.application.adapter
 
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.ApplicationInitialScript
+import com.dcd.server.core.domain.application.model.DeploymentResult
 import com.dcd.server.persistence.application.entity.ApplicationInitialScriptJpaEntity
 import com.dcd.server.persistence.application.entity.ApplicationJpaEntity
 import com.dcd.server.persistence.workspace.adapter.toDomain
@@ -20,7 +21,8 @@ fun Application.toEntity(): ApplicationJpaEntity =
         externalPort = this.externalPort,
         version = this.version,
         status = this.status,
-        failureReason = this.failureReason,
+        failureCase = this.deploymentResult.failureCase,
+        failureReasonDetail = this.deploymentResult.failureReasonDetail,
         labels = this.labels
     )
 
@@ -36,7 +38,7 @@ fun ApplicationJpaEntity.toDomain(): Application =
         externalPort = this.externalPort,
         version = this.version,
         status = this.status,
-        failureReason = this.failureReason,
+        deploymentResult = DeploymentResult.from(this.failureCase, this.failureReasonDetail),
         labels = this.labels
     )
 
