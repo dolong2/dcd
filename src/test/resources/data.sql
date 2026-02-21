@@ -14,7 +14,7 @@ drop table if exists application_env_matcher_entity cascade;
 drop table if exists application_env_label_entity cascade;
 drop table if exists volume_entity cascade;
 drop table if exists volume_mount_entity cascade;
-create table application_entity (external_port integer not null, port integer not null, application_type varchar(255) check (application_type in ('SPRING_BOOT','NEST_JS','MYSQL','MARIA_DB','REDIS')), description varchar(255), failure_reason varchar(255), github_url varchar(255), id binary(16) not null, name varchar(255), status varchar(255) check (status in ('CREATED','PENDING','RUNNING','STOPPED','FAILURE')), version varchar(255), workspace_id binary(16), primary key (id));
+create table application_entity (external_port integer not null, port integer not null, application_type varchar(255) check (application_type in ('SPRING_BOOT','NEST_JS','MYSQL','MARIA_DB','REDIS')), description varchar(255), failure_case enum('CLONE_FAILURE', 'CREATE_DOCKER_FILE_FAILURE', 'IMAGE_BUILD_FAILURE', 'CREATE_CONTAINER_FAILURE', 'RUN_CONTAINER_FAILURE', 'STOP_CONTAINER_FAILURE', 'CONNECT_NETWORK_FAILURE', 'CREATE_DIRECTORY_FAILURE', 'DELETE_DIRECTORY_FAILURE', 'DELETE_CONTAINER_FAILURE', 'DELETE_IMAGE_FAILURE'), failure_reason_detail varchar(1200), github_url varchar(255), id binary(16) not null, name varchar(255), status enum('CREATED','PENDING','RUNNING','STOPPED','FAILURE'), version varchar(255), workspace_id binary(16), primary key (id));
 create table application_label_entity (application_id binary(16) not null, label varchar(255));
 create table application_initial_script_entity (id binary(16), script varchar(255), application_id binary(16) not null, primary key (id));
 create table role_entity (roles varchar(255) check (roles in ('ROLE_ADMIN','ROLE_DEVELOPER','ROLE_USER')), user_id binary(16) not null);
@@ -53,4 +53,4 @@ insert into role_entity (user_id,roles) values (X'1e1973eb3fb947ac9342c16cd63ffc
 insert into workspace_entity (description,owner_id,title,id) values ('testDescription', X'923a6407a5f84e1ebffd0621910ddfc8', 'testTitle', X'd57b42f55cc4440b8dceb4fc2e372eff');
 
 -- 애플리케이션 생성
-insert into application_entity (application_type,description,external_port,failure_reason,github_url,name,port,status,version,workspace_id,id) values ('SPRING_BOOT','testDescription', 8080, NULL, 'testUrl', 'testName', 8080, 'STOPPED','17', X'd57b42f55cc4440b8dceb4fc2e372eff', X'2fb0f3158272422f8e9fc4f765c022b2');
+insert into application_entity (application_type,description,external_port,failure_case,failure_reason_detail,github_url,name,port,status,version,workspace_id,id) values ('SPRING_BOOT','testDescription', 8080, NULL, NULL,  'testUrl', 'testName', 8080, 'STOPPED','17', X'd57b42f55cc4440b8dceb4fc2e372eff', X'2fb0f3158272422f8e9fc4f765c022b2');

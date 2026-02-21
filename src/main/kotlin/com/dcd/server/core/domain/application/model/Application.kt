@@ -2,7 +2,6 @@ package com.dcd.server.core.domain.application.model
 
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import com.dcd.server.core.domain.env.model.ApplicationEnv
 import com.dcd.server.core.domain.workspace.model.Workspace
 import java.util.*
 
@@ -17,7 +16,7 @@ data class Application(
     val port: Int,
     val externalPort: Int,
     val status: ApplicationStatus,
-    val failureReason: String? = null,
+    val deploymentResult: DeploymentResult = DeploymentResult.SUCCESS,
     val labels: List<String>
 ) {
     val containerName = "${name.replace(" ", "_").lowercase()}-$id"

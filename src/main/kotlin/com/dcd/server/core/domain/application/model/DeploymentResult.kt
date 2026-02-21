@@ -8,4 +8,12 @@ sealed class DeploymentResult(
 ) {
     object SUCCESS : DeploymentResult(failureCase = null, failureReasonDetail = null)
     class ERROR(failureCase: FailureCase, detail: String?) : DeploymentResult(failureCase = failureCase, failureReasonDetail = detail)
+
+    companion object {
+        fun from(failureCase: FailureCase?, failureReasonDetail: String?): DeploymentResult =
+            when (failureCase) {
+                null -> SUCCESS
+                else -> ERROR(failureCase, failureReasonDetail)
+            }
+    }
 }
