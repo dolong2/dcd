@@ -22,7 +22,8 @@ class CheckExitValueAdapter(
         val exitValue = commandResult.exitValue
         if (exitValue != 0) {
             log.error("${application.name} - $exitValue")
-            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, failureCase))
+            val failureReasonDetail = commandResult.result.joinToString("\n")
+            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, failureCase, failureReasonDetail))
         }
     }
 
@@ -30,7 +31,8 @@ class CheckExitValueAdapter(
         val exitValue = commandResult.exitValue
         if (exitValue != 0) {
             log.error("${application.name} - $exitValue")
-            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, failureCase))
+            val failureReasonDetail = commandResult.result.joinToString("\n")
+            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, failureCase, failureReasonDetail))
             coroutineScope.cancel()
         }
     }
