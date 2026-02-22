@@ -23,6 +23,8 @@ class GetApplicationVersionServiceImplTest : BehaviorSpec({
             "12.0.1",
             "17",
             "17.0.2",
+            "20.0.10",
+            "100.0.0",
             "invalid",
             "latest",
             "17.0.2" // duplicate
@@ -34,9 +36,11 @@ class GetApplicationVersionServiceImplTest : BehaviorSpec({
 
             then("최소 버전(12) 초과의 semver만 정렬 후 반환된다") {
                 result shouldBe listOf(
+                    "100.0.0",
+                    "20.0.10",
                     "17.0.2",
-                    "17",
-                    "12.0.1"
+                    "17.0.0",
+                    "12.0.1",
                 )
             }
 

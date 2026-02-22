@@ -51,7 +51,7 @@ class GetApplicationVersionServiceImpl(
             .filter { it > minVersion }
             .distinct()
             .sortedDescending()
-            .map { "${it.major}.${it.minor}.${it.patch}".trimEnd('.', '0') }
+            .map { "${it.major}.${it.minor}.${it.patch}" }
 
         return result
     }
