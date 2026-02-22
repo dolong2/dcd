@@ -50,3 +50,6 @@ aes:
 
 domain:
   config-path: ${DOMAIN_CONFIG_PATH}
+
+docker:
+  token: ${DOCKER_TOKEN}
