@@ -52,4 +52,5 @@ domain:
   config-path: ${DOMAIN_CONFIG_PATH}
 
 docker:
+  url: ${DOCKER_REGISTRY_URL}
   token: ${DOCKER_TOKEN}

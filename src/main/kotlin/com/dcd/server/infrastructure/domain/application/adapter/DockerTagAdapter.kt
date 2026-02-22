@@ -16,10 +16,10 @@ class DockerTagAdapter(
     private val objectMapper: ObjectMapper,
     @Value("\${docker.token}")
     private val token: String,
+    @Value("\${docker.url}")
+    private val registryUrl: String,
+    private val client: HttpClient
 ) : ImageVersionPort {
-    private val client = HttpClient.newBuilder()
-        .connectTimeout(Duration.ofSeconds(3))
-        .build()
 
     private class TagResponse(
         val next: String?,
@@ -37,7 +37,7 @@ class DockerTagAdapter(
     override fun fetchAllVersions(imageName: String): List<String> {
         val imagePrefix = if (imageName.contains("/")) "" else "library/"
 
-        var next: String? = "https://registry.hub.docker.com/v2/repositories/$imagePrefix$imageName/tags?page_size=100"
+        var next: String? = "${registryUrl}/v2/repositories/$imagePrefix$imageName/tags?page_size=100"
 
         val result = mutableListOf<String>()
 
