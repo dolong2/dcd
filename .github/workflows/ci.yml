@@ -35,7 +35,7 @@ jobs:
           ${{ runner.os }}-gradle-
         enableCrossOsArchive: true
 
-    - name: create test env file
+    - name: create test yml file
       run: |
         cat << EOF > ./src/main/resources/application-test.yml
         ${{secrets.TEST_YML}}
