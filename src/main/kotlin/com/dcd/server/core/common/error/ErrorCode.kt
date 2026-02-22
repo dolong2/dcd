@@ -66,4 +66,5 @@ enum class ErrorCode(
     FAILURE_VOLUME_CREATION("컨테이너 볼륨 생성에 실패했습니다.", 500),
     FAILURE_VOLUME_DELETE("컨테이너 볼륨 삭제에 실패했습니다.", 500),
     FAILURE_VOLUME_COPY("컨테이너 볼륨 복제에 실패했습니다.", 500),
+    IMAGE_REGISTRY_RATE_LIMIT_EXCEEDED("도커 허브의 요청 제한을 초과했습니다.", 500),
 }

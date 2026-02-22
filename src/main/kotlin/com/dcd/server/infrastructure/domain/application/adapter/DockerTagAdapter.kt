@@ -1,6 +1,7 @@
 package com.dcd.server.infrastructure.domain.application.adapter
 
 import com.dcd.server.core.domain.application.spi.ImageVersionPort
+import com.dcd.server.infrastructure.domain.application.exception.DockerHubRateLimitExceededException
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
@@ -46,14 +47,14 @@ class DockerTagAdapter(
             val request = HttpRequest.newBuilder()
                 .uri(URI.create(next))
                 .timeout(Duration.ofSeconds(5))
-                .header("Authorization", "$token")
+                .header("Authorization", token)
                 .GET()
                 .build()
 
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 
             if (response.statusCode() == 429) {
-                throw RuntimeException("Docker Hub rate limit exceeded")
+                throw DockerHubRateLimitExceededException()
             }
 
             if (response.statusCode() !in 200..299) {
