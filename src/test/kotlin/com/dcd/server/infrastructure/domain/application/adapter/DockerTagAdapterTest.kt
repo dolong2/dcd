@@ -51,7 +51,6 @@ class DockerTagAdapterTest : BehaviorSpec({
         println(mockWebServer.url("/").toString().removeSuffix("/"))
 
         `when`("태그를 조회하면") {
-            val url = mockWebServer.url("/v2/repositories/library/test/tags?page_size=100")
             val result = adapter.fetchAllVersions("test")
 
             then("태그 목록이 반환된다") {
