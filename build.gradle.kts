@@ -46,6 +46,7 @@ dependencies {
 	testImplementation("io.kotest:kotest-assertions-core:5.5.5")
 	testImplementation("io.kotest:kotest-runner-junit5:5.5.5")
 	testImplementation("io.kotest:kotest-framework-engine-jvm:5.5.5")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 
 	//jwt
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
@@ -62,7 +63,7 @@ dependencies {
 	//docker
 	implementation("com.github.docker-java:docker-java:3.4.0")
 	implementation("com.github.docker-java:docker-java-transport-okhttp:3.4.0")
-	implementation("com.squareup.okhttp3:okhttp:3.14.9")
+	implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
 	//bucket4j
 	implementation("com.bucket4j:bucket4j_jdk17-core:8.14.0")
