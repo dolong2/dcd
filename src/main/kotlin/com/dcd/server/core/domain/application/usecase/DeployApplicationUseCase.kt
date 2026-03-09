@@ -47,20 +47,21 @@ class DeployApplicationUseCase(
             ?: throw WorkspaceNotFoundException())
 
         val applicationList = queryApplicationPort.findAllByWorkspace(workspace, labels)
+            .filter { it.status != ApplicationStatus.RUNNING && it.status != ApplicationStatus.PENDING }
+
+        if(applicationList.isEmpty())
+            return
 
         val deploymentChannel = Channel<Application>(capacity = Channel.UNLIMITED)
         applicationList.forEach {
-            // 만약 애플리케이션의 상태가 배포할 수 없는 상태일때는 건너뜀
-            if (it.status == ApplicationStatus.RUNNING || it.status == ApplicationStatus.PENDING)
-                return@forEach
-
             // 배포 작업을 큐에 추가
             deploymentChannel.trySend(it).isSuccess
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, it))
         }
+        deploymentChannel.close()
 
         // 코루틴을 생성하여 작업 처리
-        repeat(3) {
+        val jobs = (1..3).map {
             launch {
                 for (application in deploymentChannel) {
                     deployApplication(application)
@@ -70,11 +71,7 @@ class DeployApplicationUseCase(
 
         // 작업 완료 후 코루틴 스코프 종료
         launch {
-            applicationList.forEach { _ ->
-                // 각 애플리케이션 배포 완료 시그널 대기
-                deploymentChannel.receive()
-            }
-            deploymentChannel.close()
+            jobs.joinAll()
         }
     }
 
