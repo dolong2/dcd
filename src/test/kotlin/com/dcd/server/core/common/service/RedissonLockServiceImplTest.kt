@@ -51,6 +51,7 @@ class RedissonLockServiceImplTest : BehaviorSpec({
     Given("락 획득이 실패했을 때") {
 
         every { lock.tryLock(any(), any(), any()) } returns false
+        every { lock.isHeldByCurrentThread } returns false
 
         When("lock을 실행하면") {
 
