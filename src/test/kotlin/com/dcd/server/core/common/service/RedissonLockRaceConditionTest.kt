@@ -1,5 +1,6 @@
 package com.dcd.server.core.common.service
 
+import com.dcd.server.core.common.service.impl.RedissonLockServiceImpl
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import java.util.concurrent.CountDownLatch

@@ -1,5 +1,6 @@
 package com.dcd.server.core.common.service
 
+import com.dcd.server.core.common.service.impl.RedissonLockServiceImpl
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.assertions.throwables.shouldThrow
@@ -21,7 +22,7 @@ class RedissonLockServiceImplTest : BehaviorSpec({
 
     beforeTest {
         clearAllMocks()
-        every { redissonClient.getLock(any()) } returns lock
+        every { redissonClient.getLock(any() as String) } returns lock
         lockService = RedissonLockServiceImpl(redissonClient)
     }
 
