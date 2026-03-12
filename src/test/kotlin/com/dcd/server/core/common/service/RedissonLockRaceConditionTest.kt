@@ -35,7 +35,7 @@ class RedissonLockRaceConditionTest(
                     try {
                         startLatch.await()
 
-                        lockService.lock("race-lock", 3000, 5000) {
+                        lockService.lock("race-lock", 0, 5000) {
                             Thread.sleep(100)
                             counter.incrementAndGet()
                         }
