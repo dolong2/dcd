@@ -23,6 +23,7 @@ class RedissonLockRaceConditionTest(
         val executor = Executors.newFixedThreadPool(threadCount)
 
         val startLatch = CountDownLatch(1)
+        val readyLatch = CountDownLatch(threadCount)
         val endLatch = CountDownLatch(threadCount)
 
         val counter = AtomicInteger(0)
@@ -33,6 +34,7 @@ class RedissonLockRaceConditionTest(
 
                 executor.submit {
                     try {
+                        readyLatch.countDown()
                         startLatch.await()
 
                         lockService.lock("race-lock", 0, 5000) {
@@ -46,8 +48,9 @@ class RedissonLockRaceConditionTest(
                 }
             }
 
+            readyLatch.await(5, java.util.concurrent.TimeUnit.SECONDS) shouldBe true
             startLatch.countDown()
-            endLatch.await()
+            endLatch.await(5, java.util.concurrent.TimeUnit.SECONDS) shouldBe true
 
             executor.shutdown()
 
