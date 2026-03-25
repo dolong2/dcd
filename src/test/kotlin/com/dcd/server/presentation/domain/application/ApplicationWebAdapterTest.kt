@@ -88,21 +88,17 @@ class ApplicationWebAdapterTest : BehaviorSpec({
 
     given("ApplicationResponseDto가 주어지고") {
         val testId = "testId"
-        val applicationResponse = ApplicationDetailResDto(
+        val applicationResponse = ApplicationResDto(
             id = testId,
             name = "test",
             description = "test",
             applicationType = ApplicationType.SPRING_BOOT,
-            env = mapOf(),
             githubUrl = "testUrl",
             port = 8080,
             externalPort = 8080,
             version = "latest",
             status = ApplicationStatus.STOPPED,
             labels = listOf(),
-            failureReason = null,
-            failureReasonDetail = null,
-            initialScripts = emptyList(),
         )
         `when`("getOneApplication 메서드를 실행할때") {
             every { getOneApplicationUseCase.execute(testId) } returns applicationResponse
