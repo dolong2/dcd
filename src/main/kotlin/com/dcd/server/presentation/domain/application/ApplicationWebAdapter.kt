@@ -65,7 +65,7 @@ class ApplicationWebAdapter(
     fun getAllApplication(
         @PathVariable workspaceId: String,
         @RequestParam(required = false) labels: List<String>? = null
-    ): ResponseEntity<ListResponse<ApplicationResponse>> =
+    ): ResponseEntity<ListResponse<ApplicationDetailResponse>> =
         getAllApplicationUseCase.execute(labels)
             .let { ResponseEntity.ok(it.toResponse { resDto -> resDto.toResponse() }) }
 

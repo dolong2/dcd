@@ -9,13 +9,9 @@ data class ApplicationResponse(
     val description: String?,
     val applicationType: ApplicationType,
     val githubUrl: String?,
-    val env: Map<String, String>,
     val port: Int,
     val externalPort: Int,
     val version: String,
     val status: ApplicationStatus,
-    val failureReason: String?,
-    val failureReasonDetail: String?,
-    val initialScripts: List<String>,
     val labels: List<String>
 )

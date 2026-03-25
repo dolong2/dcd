@@ -1,7 +1,7 @@
 package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
-import com.dcd.server.core.domain.application.dto.extenstion.toDto
+import com.dcd.server.core.domain.application.dto.extenstion.toResDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationResDto
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.spi.QueryApplicationInitialScriptPort
@@ -17,8 +17,6 @@ class GetOneApplicationUseCase(
     fun execute(id: String): ApplicationResDto {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
-        val applicationEnvList = queryApplicationEnvPort.findByApplication(application)
-        val initialScripts = queryApplicationInitialScriptPort.findAllByApplication(application)
-        return application.toDto(applicationEnvList, initialScripts)
+        return application.toResDto()
     }
 }
