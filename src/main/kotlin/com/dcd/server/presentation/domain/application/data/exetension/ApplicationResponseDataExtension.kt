@@ -5,8 +5,8 @@ import com.dcd.server.core.domain.workspace.dto.response.WorkspaceApplicationRes
 import com.dcd.server.presentation.domain.application.data.response.*
 import com.dcd.server.presentation.domain.workspace.data.response.WorkspaceApplicationResponse
 
-fun ApplicationResDto.toResponse(): ApplicationResponse =
-    ApplicationResponse(
+fun ApplicationDetailResDto.toResponse(): ApplicationDetailResponse =
+    ApplicationDetailResponse(
         id = this.id,
         name = this.name,
         description = this.description,
