@@ -70,6 +70,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             status = ApplicationStatus.STOPPED,
             labels = listOf(),
             failureReason = null,
+            failureReasonDetail = null,
             initialScripts = emptyList(),
         )
         val list = listOf(applicationResponse)
@@ -100,6 +101,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             status = ApplicationStatus.STOPPED,
             labels = listOf(),
             failureReason = null,
+            failureReasonDetail = null,
             initialScripts = emptyList(),
         )
         `when`("getOneApplication 메서드를 실행할때") {

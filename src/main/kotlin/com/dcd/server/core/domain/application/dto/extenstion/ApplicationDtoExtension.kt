@@ -42,6 +42,7 @@ fun Application.toDto(envList: List<ApplicationEnv>, initialScriptList: List<App
         version = this.version,
         status = this.status,
         failureReason = this.deploymentResult.failureCase?.reason,
+        failureReasonDetail = this.deploymentResult.failureReasonDetail,
         initialScripts = initialScriptList.map { it.script },
         labels = this.labels
     )
