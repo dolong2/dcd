@@ -60,3 +60,17 @@ fun CreateApplicationResDto.toResponse(): CreateApplicationResponse =
     CreateApplicationResponse(
         applicationId = this.applicationId
     )
+
+fun ApplicationResDto.toResponse(): ApplicationResponse =
+    ApplicationResponse(
+        id = this.id,
+        name = this.name,
+        description = this.description,
+        applicationType = this.applicationType,
+        githubUrl = this.githubUrl,
+        port = this.port,
+        externalPort = this.externalPort,
+        version = this.version,
+        status = this.status,
+        labels = this.labels
+    )
