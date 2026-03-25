@@ -2,7 +2,7 @@ package com.dcd.server.core.domain.application.dto.extenstion
 
 import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationProfileResDto
-import com.dcd.server.core.domain.application.dto.response.ApplicationResDto
+import com.dcd.server.core.domain.application.dto.response.ApplicationDetailResDto
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.ApplicationInitialScript
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
@@ -24,8 +24,8 @@ fun CreateApplicationReqDto.toEntity(workspace: Workspace, externalPort: Int): A
         labels = this.labels
     )
 
-fun Application.toDto(envList: List<ApplicationEnv>, initialScriptList: List<ApplicationInitialScript>): ApplicationResDto =
-    ApplicationResDto(
+fun Application.toDto(envList: List<ApplicationEnv>, initialScriptList: List<ApplicationInitialScript>): ApplicationDetailResDto =
+    ApplicationDetailResDto(
         id = this.id,
         name = this.name,
         description = this.description,

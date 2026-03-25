@@ -3,7 +3,7 @@ package com.dcd.server.core.domain.application.dto.response
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 
-data class ApplicationResDto(
+data class ApplicationDetailResDto(
     val id: String,
     val name: String,
     val description: String?,

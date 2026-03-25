@@ -57,7 +57,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
     }
 
     given("ApplicationListResponse가 주어지고") {
-        val applicationResponse = ApplicationResDto(
+        val applicationResponse = ApplicationDetailResDto(
             id = "testId",
             name = "test",
             description = "test",
@@ -88,7 +88,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
 
     given("ApplicationResponseDto가 주어지고") {
         val testId = "testId"
-        val applicationResponse = ApplicationResDto(
+        val applicationResponse = ApplicationDetailResDto(
             id = testId,
             name = "test",
             description = "test",
