@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.application.dto.extenstion
 import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationProfileResDto
 import com.dcd.server.core.domain.application.dto.response.ApplicationDetailResDto
+import com.dcd.server.core.domain.application.dto.response.ApplicationResDto
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.ApplicationInitialScript
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
@@ -63,4 +64,18 @@ fun Application.toWorkspaceDto(): WorkspaceApplicationResDto =
         port = this.port,
         externalPort = this.externalPort,
         status = this.status
+    )
+
+fun Application.toResDto(): ApplicationResDto =
+    ApplicationResDto(
+        id = this.id,
+        name = this.name,
+        description = this.description,
+        applicationType = this.applicationType,
+        githubUrl = this.githubUrl,
+        port = this.port,
+        externalPort = this.externalPort,
+        version = this.version,
+        status = this.status,
+        labels = this.labels
     )
