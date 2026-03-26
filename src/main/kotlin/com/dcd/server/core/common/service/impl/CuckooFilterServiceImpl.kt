@@ -17,7 +17,7 @@ class CuckooFilterServiceImpl(
         if (redisTemplate.hasKey(filterName).not()) {
             redisTemplate.execute { connection ->
                 val result = connection.commands().execute("CF.RESERVE", filterName.toByteArray(), "100000".toByteArray()) as? String
-                if (result != "OK") {
+                if (result != "OK" && result?.contains("item exists")!!.not()) {
                     log.error("Failed to reserve Cuckoo Filter: {}", filterName)
                     throw BloomFilterReservationException()
                 }
