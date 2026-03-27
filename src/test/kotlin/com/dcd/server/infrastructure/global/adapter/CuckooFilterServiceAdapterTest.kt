@@ -1,7 +1,6 @@
-package com.dcd.server.core.common.service
+package com.dcd.server.infrastructure.global.adapter
 
 import com.dcd.server.core.common.service.exception.BloomFilterReservationException
-import com.dcd.server.core.common.service.impl.CuckooFilterServiceImpl
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -19,11 +18,11 @@ import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
 @ActiveProfiles("test")
-class CuckooFilterServiceImplTest(
+class CuckooFilterServiceAdapterTest(
     rawTemplate: StringRedisTemplate
 ) : BehaviorSpec({
     val redisTemplate = spyk(rawTemplate)
-    val cuckooFilterService = CuckooFilterServiceImpl(redisTemplate)
+    val cuckooFilterService = CuckooFilterServiceAdapter(redisTemplate)
     val redisConnection = spyk(redisTemplate.getConnectionFactory()!!.getConnection())
     val redisCommands = spyk(redisConnection.commands())
 

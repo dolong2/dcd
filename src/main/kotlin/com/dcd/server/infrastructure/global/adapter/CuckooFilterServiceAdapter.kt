@@ -1,15 +1,15 @@
-package com.dcd.server.core.common.service.impl
+package com.dcd.server.infrastructure.global.adapter
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.data.redis.core.StringRedisTemplate
-import com.dcd.server.core.common.service.CountBloomFilterService
+import com.dcd.server.core.common.spi.CountBloomFilterPort
 import com.dcd.server.core.common.service.exception.BloomFilterReservationException
 
 @Service
-class CuckooFilterServiceImpl(
+class CuckooFilterServiceAdapter(
     private val redisTemplate: StringRedisTemplate
-) : CountBloomFilterService {
+) : CountBloomFilterPort {
     private val log = LoggerFactory.getLogger(this::class.simpleName)
 
     override fun add(filterName: String, item: String): Boolean {

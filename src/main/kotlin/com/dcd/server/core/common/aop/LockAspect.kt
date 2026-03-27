@@ -2,7 +2,7 @@ package com.dcd.server.core.common.aop
 
 import com.dcd.server.core.common.annotation.Lock
 import com.dcd.server.core.common.aop.util.CustomExpressionParser
-import com.dcd.server.core.common.service.LockService
+import com.dcd.server.core.common.spi.LockPort
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -13,7 +13,7 @@ import java.lang.reflect.Method
 @Aspect
 @Component
 class LockAspect(
-    private val lockService: LockService,
+    private val lockPort: LockPort,
 ) {
     @Around("@annotation(com.dcd.server.core.common.annotation.Lock)")
     @Throws(Throwable::class)
@@ -24,7 +24,7 @@ class LockAspect(
         val parameterValue =
             CustomExpressionParser.getDynamicValue(signature.parameterNames, joinPoint.args, annotation.lockName)
         val lockKey = "${method.declaringClass.simpleName}_${method.name}_$parameterValue"
-        lockService.lock(lockKey, annotation.waitTime, annotation.leaseTime) {
+        lockPort.lock(lockKey, annotation.waitTime, annotation.leaseTime) {
             joinPoint.proceed()
         }
     }

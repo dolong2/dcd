@@ -1,6 +1,7 @@
 package com.dcd.server.core.common.service
 
-import com.dcd.server.core.common.service.impl.RedissonLockServiceImpl
+import com.dcd.server.core.common.spi.LockPort
+import com.dcd.server.infrastructure.global.adapter.RedissonLockServiceAdapter
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import java.util.concurrent.CountDownLatch
@@ -14,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 @SpringBootTest
 @ActiveProfiles("test")
 class RedissonLockRaceConditionTest(
-    private val lockService: LockService
+    private val lockService: LockPort
 ) : BehaviorSpec({
 
     Given("동시에 여러 스레드가 같은 락을 요청할 때") {
