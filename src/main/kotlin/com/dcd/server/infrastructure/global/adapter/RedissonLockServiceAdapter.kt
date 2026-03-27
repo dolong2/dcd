@@ -1,15 +1,15 @@
-package com.dcd.server.core.common.service.impl
+package com.dcd.server.infrastructure.global.adapter
 
-import com.dcd.server.core.common.service.LockService
+import com.dcd.server.core.common.spi.LockPort
 import org.redisson.api.RedissonClient
 import org.springframework.stereotype.Service
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
 @Service
-class RedissonLockServiceImpl(
-    private val redissonClient: RedissonClient,
-) : LockService {
+class RedissonLockServiceAdapter(
+    private val redissonClient: RedissonClient
+) : LockPort {
     private val log = LoggerFactory.getLogger(this::class.simpleName)
 
     override fun <T> lock(lockKey: String, waitTime: Long, leaseTime: Long, block: () -> T): T? {

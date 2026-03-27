@@ -1,5 +1,5 @@
-package com.dcd.server.core.common.service
+package com.dcd.server.core.common.spi
 
-interface LockService {
+interface LockPort {
     fun <T> lock(lockKey: String, waitTime: Long, leaseTime: Long, block: () -> T): T?
 }

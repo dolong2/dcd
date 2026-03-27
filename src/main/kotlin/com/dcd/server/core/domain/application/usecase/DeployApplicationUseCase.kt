@@ -2,7 +2,7 @@ package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.data.WorkspaceInfo
-import com.dcd.server.core.common.service.LockService
+import com.dcd.server.core.common.spi.LockPort
 import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.exception.CanNotDeployApplicationException
@@ -26,7 +26,7 @@ class DeployApplicationUseCase(
     private val buildDockerImageService: BuildDockerImageService,
     private val createContainerService: CreateContainerService,
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
-    private val lockService: LockService,
+    private val lockPort: LockPort,
     private val eventPublisher: ApplicationEventPublisher,
     private val workspaceInfo: WorkspaceInfo
 ) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
@@ -57,7 +57,7 @@ class DeployApplicationUseCase(
         val deploymentChannel = Channel<Application>(capacity = Channel.UNLIMITED)
         applicationList.forEach {
             //락 적용
-            lockService.lock(it.id, 1000 * 10 * 3, 1000 * 10 * 6) {
+            lockPort.lock(it.id, 1000 * 10 * 3, 1000 * 10 * 6) {
                 // 배포 작업을 큐에 추가
                 deploymentChannel.trySend(it).isSuccess
                 eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, it))
