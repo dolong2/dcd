@@ -7,7 +7,7 @@ import com.dcd.server.core.common.spi.CountBloomFilterPort
 import com.dcd.server.core.common.service.exception.BloomFilterReservationException
 
 @Service
-class CuckooFilterServiceAdapter(
+class CuckooFilterAdapter(
     private val redissonClient: RedissonClient
 ) : CountBloomFilterPort {
     private val log = LoggerFactory.getLogger(this::class.simpleName)

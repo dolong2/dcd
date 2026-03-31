@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
 @Service
-class RedissonLockServiceAdapter(
+class RedissonLockAdapter(
     private val redissonClient: RedissonClient
 ) : LockPort {
     private val log = LoggerFactory.getLogger(this::class.simpleName)

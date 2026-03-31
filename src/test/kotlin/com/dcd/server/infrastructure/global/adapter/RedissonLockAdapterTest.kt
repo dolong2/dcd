@@ -1,6 +1,5 @@
-package com.dcd.server.core.common.service
+package com.dcd.server.infrastructure.global.adapter
 
-import com.dcd.server.infrastructure.global.adapter.RedissonLockServiceAdapter
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.assertions.throwables.shouldThrow
@@ -14,10 +13,10 @@ import java.util.concurrent.TimeUnit
 import org.redisson.api.RLock
 import org.redisson.api.RedissonClient
 
-class RedissonLockServiceImplTest : BehaviorSpec({
+class RedissonLockAdapterTest : BehaviorSpec({
     val redissonClient = mockk<RedissonClient>()
     val lock = mockk<RLock>()
-    val lockService = RedissonLockServiceAdapter(redissonClient)
+    val lockService = RedissonLockAdapter(redissonClient)
 
     Given("락 획득이 성공했을 때") {
         clearAllMocks()

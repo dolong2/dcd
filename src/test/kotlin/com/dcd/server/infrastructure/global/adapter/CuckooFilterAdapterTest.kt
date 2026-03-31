@@ -9,8 +9,8 @@ import java.util.UUID
 
 @SpringBootTest
 @ActiveProfiles("test")
-class CuckooFilterServiceAdapterTest(
-    private val cuckooFilterAdapter: CuckooFilterServiceAdapter,
+class CuckooFilterAdapterTest(
+    private val cuckooFilterAdapter: CuckooFilterAdapter,
     private val redissonClient: RedissonClient
 ) : BehaviorSpec({
 
