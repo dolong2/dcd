@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import org.redisson.api.RedissonClient
 import com.dcd.server.core.common.spi.CountBloomFilterPort
 import com.dcd.server.core.common.service.exception.BloomFilterReservationException
+import org.redisson.client.RedisException
 import org.springframework.stereotype.Component
 
 @Component
@@ -36,8 +37,12 @@ class CuckooFilterAdapter(
             val cuckooFilter = redissonClient.getCuckooFilter<String>(filterName)
             cuckooFilter.remove(item)
         } catch (e: Exception) {
-            log.error("Error removing from Cuckoo Filter: {}", filterName, e)
-            false
+            if (e is RedisException && e.message?.contains("Not found") == true)
+                false
+            else {
+                log.error("Error removing from Cuckoo Filter: {}", filterName, e)
+                throw e
+            }
         }
     }
 
