@@ -2,12 +2,12 @@ package com.dcd.server.infrastructure.global.adapter
 
 import com.dcd.server.core.common.spi.LockPort
 import org.redisson.api.RedissonClient
-import org.springframework.stereotype.Service
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
 
-@Service
-class RedissonLockServiceAdapter(
+@Component
+class RedissonLockAdapter(
     private val redissonClient: RedissonClient
 ) : LockPort {
     private val log = LoggerFactory.getLogger(this::class.simpleName)

@@ -36,6 +36,7 @@ dependencies {
 	runtimeOnly("com.h2database:h2")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+	implementation("org.redisson:redisson:4.3.0")
 
 	//test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

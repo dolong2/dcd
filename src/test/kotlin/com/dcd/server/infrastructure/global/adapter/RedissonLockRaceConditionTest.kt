@@ -1,7 +1,6 @@
-package com.dcd.server.core.common.service
+package com.dcd.server.infrastructure.global.adapter
 
 import com.dcd.server.core.common.spi.LockPort
-import com.dcd.server.infrastructure.global.adapter.RedissonLockServiceAdapter
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import java.util.concurrent.CountDownLatch
@@ -10,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.util.concurrent.TimeUnit
 
 @Transactional
 @SpringBootTest
@@ -49,9 +49,9 @@ class RedissonLockRaceConditionTest(
                 }
             }
 
-            readyLatch.await(5, java.util.concurrent.TimeUnit.SECONDS) shouldBe true
+            readyLatch.await(5, TimeUnit.SECONDS) shouldBe true
             startLatch.countDown()
-            endLatch.await(5, java.util.concurrent.TimeUnit.SECONDS) shouldBe true
+            endLatch.await(5, TimeUnit.SECONDS) shouldBe true
 
             executor.shutdown()
 
