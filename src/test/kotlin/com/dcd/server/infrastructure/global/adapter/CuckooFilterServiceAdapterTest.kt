@@ -1,177 +1,185 @@
 package com.dcd.server.infrastructure.global.adapter
 
-import com.dcd.server.core.common.service.exception.BloomFilterReservationException
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.clearMocks
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.spyk
-import io.mockk.verify
+import org.redisson.api.RedissonClient
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.redis.connection.RedisCommands
-import org.springframework.data.redis.connection.RedisConnection
-import org.springframework.data.redis.core.RedisCallback
-import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.test.context.ActiveProfiles
+import java.util.UUID
 
 @SpringBootTest
 @ActiveProfiles("test")
 class CuckooFilterServiceAdapterTest(
-    rawTemplate: StringRedisTemplate
+    private val cuckooFilterAdapter: CuckooFilterServiceAdapter,
+    private val redissonClient: RedissonClient
 ) : BehaviorSpec({
-    val redisTemplate = spyk(rawTemplate)
-    val cuckooFilterService = CuckooFilterServiceAdapter(redisTemplate)
-    val redisConnection = spyk(redisTemplate.getConnectionFactory()!!.getConnection())
-    val redisCommands = spyk(redisConnection.commands())
 
-    beforeSpec {
-        // redisTemplate.execute() 호출 시 콜백을 직접 실행하도록 설정
-        every { redisTemplate.execute(any<RedisCallback<Any>>()) } answers {
-            val callback = firstArg<RedisCallback<Any>>()
-            callback.doInRedis(redisConnection)
+    val filterNamesToCleanup = mutableListOf<String>()
+
+    afterEach {
+        filterNamesToCleanup.forEach { filterName ->
+            try {
+                redissonClient.getCuckooFilter<String>(filterName).delete()
+            } catch (e: Exception) {
+                // 필터가 없는 경우 무시
+            }
         }
-        // redisConnection에서 commands() 호출 시 redisCommands 반환
-        every { redisConnection.commands() } returns redisCommands
+        filterNamesToCleanup.clear()
     }
 
     given("Cuckoo filter add 동작") {
 
-        `when`("필터가 존재하지 않으면 CF.RESERVE 호출 후 CF.ADDNX 성공") {
-            val filterName = "test-filter"
-            val item = "item"
+        `when`("필터가 존재하지 않으면 init 호출 후 add 성공") {
 
-            every { redisTemplate.hasKey(filterName) } returns false
-            every {
-                redisCommands.execute("CF.RESERVE", filterName.toByteArray(), "100000".toByteArray())
-            } returns "OK"
-            every {
-                redisCommands.execute("CF.ADDNX", filterName.toByteArray(), item.toByteArray())
-            } returns 1L
+            then("true를 반환해야 한다") {
+                val filterName = "test-filter-${UUID.randomUUID()}"
+                filterNamesToCleanup.add(filterName)
+                val item = "item"
 
-            then("true를 반환하고, CF.RESERVE와 CF.ADDNX가 호출되어야 한다") {
-                val result = cuckooFilterService.add(filterName, item)
-                
+                val result = cuckooFilterAdapter.add(filterName, item)
+
                 result shouldBe true
-                verify(exactly = 1) { redisTemplate.hasKey(filterName) }
-                verify(exactly = 1) { redisCommands.execute("CF.RESERVE", filterName.toByteArray(), "100000".toByteArray()) }
-                verify(exactly = 1) { redisCommands.execute("CF.ADDNX", filterName.toByteArray(), item.toByteArray()) }
+
+                // 필터가 생성되었는지 확인
+                val cuckooFilter = redissonClient.getCuckooFilter<String>(filterName)
+                cuckooFilter.isExists shouldBe true
+                cuckooFilter.exists(item) shouldBe true
             }
         }
 
-        `when`("필터가 이미 존재하면 CF.RESERVE를 생략하고 CF.ADDNX만 호출") {
-            val filterName = "test-filter"
-            val item = "item"
+        `when`("필터가 이미 존재하고 같은 아이템을 다시 추가하면") {
 
-            clearMocks(redisTemplate, redisCommands, answers = false)
-            every { redisTemplate.hasKey(filterName) } returns true
-            every {
-                redisCommands.execute("CF.ADDNX", filterName.toByteArray(), item.toByteArray())
-            } returns 0L
+            then("첫 번째는 true, 두 번째는 false를 반환해야 한다") {
+                val filterName = "test-filter-${UUID.randomUUID()}"
+                filterNamesToCleanup.add(filterName)
+                val item = "item"
 
-            then("false를 반환하고, CF.RESERVE는 호출되지 않아야 한다") {
-                val result = cuckooFilterService.add(filterName, item)
-                
-                result shouldBe false
-                verify(exactly = 1) { redisTemplate.hasKey(filterName) }
-                verify(exactly = 0) { redisCommands.execute("CF.RESERVE", any(), any()) }
-                verify(exactly = 1) { redisCommands.execute("CF.ADDNX", filterName.toByteArray(), item.toByteArray()) }
+                val firstAdd = cuckooFilterAdapter.add(filterName, item)
+                val secondAdd = cuckooFilterAdapter.add(filterName, item)
+
+                firstAdd shouldBe true
+                secondAdd shouldBe false
             }
         }
 
-        `when`("필터 예약(CF.RESERVE) 실패 시 예외 발생") {
-            val filterName = "test-filter"
-            val item = "item"
+        `when`("필터에 여러 아이템을 추가하면") {
 
-            clearMocks(redisTemplate, redisCommands, answers = false)
-            every { redisTemplate.hasKey(filterName) } returns false
-            every {
-                redisCommands.execute("CF.RESERVE", filterName.toByteArray(), "100000".toByteArray())
-            } returns "ERROR"
+            then("모두 true를 반환해야 한다") {
+                val filterName = "test-filter-${UUID.randomUUID()}"
+                filterNamesToCleanup.add(filterName)
+                val item1 = "item1"
+                val item2 = "item2"
 
-            then("BloomFilterReservationException 예외가 발생해야 하고, CF.ADDNX는 호출되지 않아야 한다") {
-                shouldThrow<BloomFilterReservationException> {
-                    cuckooFilterService.add(filterName, item)
-                }
-                
-                verify(exactly = 1) { redisTemplate.hasKey(filterName) }
-                verify(exactly = 1) { redisCommands.execute("CF.RESERVE", filterName.toByteArray(), "100000".toByteArray()) }
-                verify(exactly = 0) { redisCommands.execute("CF.ADDNX", any(), any()) }
+                val result1 = cuckooFilterAdapter.add(filterName, item1)
+                val result2 = cuckooFilterAdapter.add(filterName, item2)
+
+                result1 shouldBe true
+                result2 shouldBe true
+
+                val cuckooFilter = redissonClient.getCuckooFilter<String>(filterName)
+                cuckooFilter.exists(item1) shouldBe true
+                cuckooFilter.exists(item2) shouldBe true
             }
         }
     }
 
     given("Cuckoo filter remove 동작") {
 
-        `when`("CF.DEL이 1을 반환하면 true") {
-            val filterName = "test-filter"
-            val item = "item"
+        `when`("존재하는 아이템을 삭제하면") {
 
-            clearMocks(redisTemplate, redisCommands, answers = false)
-            every {
-                redisCommands.execute("CF.DEL", filterName.toByteArray(), item.toByteArray())
-            } returns 1L
+            then("true를 반환해야 한다") {
+                val filterName = "test-filter-${UUID.randomUUID()}"
+                filterNamesToCleanup.add(filterName)
+                val item = "item"
 
-            then("true를 반환하고, CF.DEL이 호출되어야 한다") {
-                val result = cuckooFilterService.remove(filterName, item)
-                
+                cuckooFilterAdapter.add(filterName, item)
+                val result = cuckooFilterAdapter.remove(filterName, item)
+
                 result shouldBe true
-                verify(exactly = 1) { redisCommands.execute("CF.DEL", filterName.toByteArray(), item.toByteArray()) }
+
+                val cuckooFilter = redissonClient.getCuckooFilter<String>(filterName)
+                cuckooFilter.exists(item) shouldBe false
             }
         }
 
-        `when`("CF.DEL이 0을 반환하면 false") {
-            val filterName = "test-filter"
-            val item = "item"
-
-            clearMocks(redisTemplate, redisCommands, answers = false)
-            every {
-                redisCommands.execute("CF.DEL", filterName.toByteArray(), item.toByteArray())
-            } returns 0L
+        `when`("존재하지 않는 아이템을 삭제하면") {
 
             then("false를 반환해야 한다") {
-                val result = cuckooFilterService.remove(filterName, item)
-                
+                val filterName = "test-filter-${UUID.randomUUID()}"
+                filterNamesToCleanup.add(filterName)
+                val item = "non-existent-item"
+
+                cuckooFilterAdapter.add(filterName, "other-item")
+                val result = cuckooFilterAdapter.remove(filterName, item)
+
                 result shouldBe false
-                verify(exactly = 1) { redisCommands.execute("CF.DEL", filterName.toByteArray(), item.toByteArray()) }
+            }
+        }
+
+        `when`("필터가 존재하지 않는 상태에서 삭제하면") {
+            then("false를 반환해야 한다") {
+                val filterName = "test-filter-${UUID.randomUUID()}"
+                filterNamesToCleanup.add(filterName)
+                val item = "item"
+
+                val result = cuckooFilterAdapter.remove(filterName, item)
+
+                result shouldBe false
             }
         }
     }
 
     given("Cuckoo filter exists 동작") {
 
-        `when`("CF.EXISTS가 1을 반환하면 true") {
-            val filterName = "test-filter"
-            val item = "item"
-
-            clearMocks(redisTemplate, redisCommands, answers = false)
-            every {
-                redisCommands.execute("CF.EXISTS", filterName.toByteArray(), item.toByteArray())
-            } returns 1L
-
+        `when`("존재하는 아이템을 확인하면") {
             then("true를 반환해야 한다") {
-                val result = cuckooFilterService.exists(filterName, item)
-                
+                val filterName = "test-filter-${UUID.randomUUID()}"
+                filterNamesToCleanup.add(filterName)
+                val item = "item"
+
+                cuckooFilterAdapter.add(filterName, item)
+                val result = cuckooFilterAdapter.exists(filterName, item)
+
                 result shouldBe true
-                verify(exactly = 1) { redisCommands.execute("CF.EXISTS", filterName.toByteArray(), item.toByteArray()) }
             }
         }
 
-        `when`("CF.EXISTS가 0을 반환하면 false") {
-            val filterName = "test-filter"
-            val item = "item"
-
-            clearMocks(redisTemplate, redisCommands, answers = false)
-            every {
-                redisCommands.execute("CF.EXISTS", filterName.toByteArray(), item.toByteArray())
-            } returns 0L
-
+        `when`("존재하지 않는 아이템을 확인하면") {
             then("false를 반환해야 한다") {
-                val result = cuckooFilterService.exists(filterName, item)
-                
+                val filterName = "test-filter-${UUID.randomUUID()}"
+                filterNamesToCleanup.add(filterName)
+                val item = "non-existent-item"
+
+                cuckooFilterAdapter.add(filterName, "other-item")
+                val result = cuckooFilterAdapter.exists(filterName, item)
+
                 result shouldBe false
-                verify(exactly = 1) { redisCommands.execute("CF.EXISTS", filterName.toByteArray(), item.toByteArray()) }
+            }
+        }
+
+        `when`("필터가 존재하지 않는 상태에서 확인하면") {
+            then("false를 반환해야 한다") {
+                val filterName = "test-filter-${UUID.randomUUID()}"
+                filterNamesToCleanup.add(filterName)
+                val item = "item"
+
+                val result = cuckooFilterAdapter.exists(filterName, item)
+
+                result shouldBe false
+            }
+        }
+
+        `when`("아이템 추가 후 삭제하고 확인하면") {
+            then("false를 반환해야 한다") {
+                val filterName = "test-filter-${UUID.randomUUID()}"
+                filterNamesToCleanup.add(filterName)
+                val item = "item"
+
+                cuckooFilterAdapter.add(filterName, item)
+                cuckooFilterAdapter.remove(filterName, item)
+                val result = cuckooFilterAdapter.exists(filterName, item)
+
+                result shouldBe false
             }
         }
     }
