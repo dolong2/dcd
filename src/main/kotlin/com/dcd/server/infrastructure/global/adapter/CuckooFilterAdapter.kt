@@ -1,12 +1,12 @@
 package com.dcd.server.infrastructure.global.adapter
 
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
 import org.redisson.api.RedissonClient
 import com.dcd.server.core.common.spi.CountBloomFilterPort
 import com.dcd.server.core.common.service.exception.BloomFilterReservationException
+import org.springframework.stereotype.Component
 
-@Service
+@Component
 class CuckooFilterAdapter(
     private val redissonClient: RedissonClient
 ) : CountBloomFilterPort {
