@@ -27,8 +27,12 @@ class SignUpUseCase(
         val bloomFilterQueryResult = bloomFilterPort.exists(User.USER_INFO_BLOOM_FILTER, email)
         if(bloomFilterQueryResult && queryUserPort.existsByEmail(email))
             throw AlreadyExistsUserException()
+
         val encodePassword = securityService.encodePassword(signUpReqDto.password)
         val user = signUpReqDto.toEntity(encodePassword)
         commandUserPort.save(user)
+
+        // 유저 가입후 bloomFilter에 유저 이메일 저장
+        bloomFilterPort.add(User.USER_INFO_BLOOM_FILTER, user.email)
     }
 }
