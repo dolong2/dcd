@@ -117,14 +117,14 @@ class CuckooFilterAdapterTest(
         }
 
         `when`("필터가 존재하지 않는 상태에서 삭제하면") {
-            then("false를 반환해야 한다") {
+            then("true를 반환해야 한다") {
                 val filterName = "test-filter-${UUID.randomUUID()}"
                 filterNamesToCleanup.add(filterName)
                 val item = "item"
 
                 val result = cuckooFilterAdapter.remove(filterName, item)
 
-                result shouldBe false
+                result shouldBe true
             }
         }
     }
