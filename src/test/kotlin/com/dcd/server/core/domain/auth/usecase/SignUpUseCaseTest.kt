@@ -1,11 +1,13 @@
 package com.dcd.server.core.domain.auth.usecase
 
 import com.dcd.server.core.common.aop.exception.NotCertificateEmailException
+import com.dcd.server.core.common.spi.CountBloomFilterPort
 import com.dcd.server.core.domain.auth.dto.request.SignUpReqDto
 import com.dcd.server.core.domain.auth.exception.AlreadyExistsUserException
 import com.dcd.server.core.domain.auth.model.EmailAuth
 import com.dcd.server.core.domain.auth.model.enums.EmailAuthUsage
 import com.dcd.server.core.domain.auth.spi.CommandEmailAuthPort
+import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.persistence.auth.repository.EmailAuthRepository
 import io.kotest.assertions.throwables.shouldThrow
@@ -20,12 +22,13 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 @SpringBootTest
 @ActiveProfiles("test")
-class SignupUseCaseTest(
+class SignUpUseCaseTest(
     private val signUpUseCase: SignUpUseCase,
     private val commandEmailAuthPort: CommandEmailAuthPort,
     private val emailAuthRepository: EmailAuthRepository,
     private val queryUserPort: QueryUserPort,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val bloomFilterPort: CountBloomFilterPort
 ) : BehaviorSpec({
 
     val targetEmail = "targetEmail"
@@ -47,6 +50,14 @@ class SignupUseCaseTest(
         val testEmail = "testEmail"
         val testName = "testName"
         val testPassword = "testPassword"
+
+        beforeContainer {
+            bloomFilterPort.add(User.USER_INFO_BLOOM_FILTER, testEmail)
+        }
+        afterContainer {
+            bloomFilterPort.remove(User.USER_INFO_BLOOM_FILTER, testEmail)
+            bloomFilterPort.remove(User.USER_INFO_BLOOM_FILTER, targetEmail)
+        }
 
         `when`("이메일 인증을 하지 않은 유저가 실행할때") {
             val request = SignUpReqDto(testEmail, testPassword, testName)
@@ -82,6 +93,10 @@ class SignupUseCaseTest(
                 result?.email shouldBe targetEmail
                 result?.name shouldBe testName
                 passwordEncoder.matches(request.password, result?.password) shouldBe true
+            }
+
+            then("유저 정보 bloomFilter에 유저 정보가 존재해야함") {
+                bloomFilterPort.exists(User.USER_INFO_BLOOM_FILTER, targetEmail) shouldBe true
             }
         }
 

@@ -13,7 +13,9 @@ class CuckooFilterAdapter(
 ) : CountBloomFilterPort {
     private val log = LoggerFactory.getLogger(this::class.simpleName)
 
-    private val DEFAULT_CAPACITY = 100000L
+    companion object {
+        private const val DEFAULT_CAPACITY = 100000L
+    }
 
     override fun add(filterName: String, item: String): Boolean {
         return try {
@@ -21,14 +23,19 @@ class CuckooFilterAdapter(
 
             // CuckooFilter가 없으면 생성
             if (!cuckooFilter.isExists) {
-                cuckooFilter.init(DEFAULT_CAPACITY)
+                try {
+                    cuckooFilter.init(DEFAULT_CAPACITY)
+                } catch (e: Exception) {
+                    log.error("Error initializing Cuckoo Filter: {}", filterName, e)
+                    throw BloomFilterReservationException()
+                }
             }
 
             cuckooFilter.addIfAbsent(item)
         } catch (e: Exception) {
             if (e is BloomFilterReservationException) throw e
             log.error("Error adding to Cuckoo Filter: {}", filterName, e)
-            throw BloomFilterReservationException()
+            true
         }
     }
 
@@ -37,12 +44,9 @@ class CuckooFilterAdapter(
             val cuckooFilter = redissonClient.getCuckooFilter<String>(filterName)
             cuckooFilter.remove(item)
         } catch (e: Exception) {
-            if (e is RedisException && e.message?.contains("Not found") == true)
-                false
-            else {
-                log.error("Error removing from Cuckoo Filter: {}", filterName, e)
-                throw e
-            }
+            // 에러 발생시 로깅후 false positive
+            log.error("Error removing from Cuckoo Filter: {}", filterName, e)
+            true
         }
     }
 
@@ -52,7 +56,7 @@ class CuckooFilterAdapter(
             cuckooFilter.exists(item)
         } catch (e: Exception) {
             log.error("Error checking existence in Cuckoo Filter: {}", filterName, e)
-            throw BloomFilterReservationException()
+            true
         }
     }
 }
