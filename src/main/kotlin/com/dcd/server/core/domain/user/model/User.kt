@@ -12,6 +12,10 @@ data class User(
     val roles: MutableList<Role>,
     val status: Status
 ) {
+    companion object {
+        const val USER_INFO_BLOOM_FILTER = "user-info-bloom-filter"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other !is User) return false
         return this.id == other.id
