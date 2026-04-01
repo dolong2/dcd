@@ -2,10 +2,12 @@ package com.dcd.server.core.domain.auth.usecase
 
 import com.dcd.server.ServerApplication
 import com.dcd.server.core.common.service.exception.PasswordNotCorrectException
+import com.dcd.server.core.common.spi.CountBloomFilterPort
 import com.dcd.server.core.domain.auth.dto.request.SignInReqDto
 import com.dcd.server.core.domain.auth.dto.response.TokenResDto
 import com.dcd.server.core.domain.auth.exception.UserNotFoundException
 import com.dcd.server.core.domain.auth.spi.GenerateTokenPort
+import com.dcd.server.core.domain.user.model.User
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -19,12 +21,20 @@ import java.time.LocalDateTime
 @SpringBootTest(classes = [ServerApplication::class])
 class SignInUseCaseTest(
     private val signInUseCase: SignInUseCase,
+    private val bloomFilterPort: CountBloomFilterPort,
     @MockkBean
     private val generateTokenPort: GenerateTokenPort
 ) : BehaviorSpec({
 
     given("이메일이 주어지고") {
         val testEmail = "testEmail"
+
+        beforeContainer {
+            bloomFilterPort.add(User.USER_INFO_BLOOM_FILTER, testEmail)
+        }
+        afterContainer {
+            bloomFilterPort.remove(User.USER_INFO_BLOOM_FILTER, testEmail)
+        }
 
         `when`("올바른 패스워드로 실행할때") {
             val accessTokenExp = LocalDateTime.of(2023, 9, 5, 8, 3)
@@ -60,7 +70,7 @@ class SignInUseCaseTest(
         }
     }
 
-    given("존재하지 않는 이메일이 주어지고") {
+    given("블룸 필터에 존재하지 않는 이메일이 주어지고") {
         val testEmail = "notFoundEmail"
         val testPassword = "password"
 
@@ -70,6 +80,27 @@ class SignInUseCaseTest(
             then("해당 유저가 없을때 UserNotFoundException을 반환해야함") {
                 shouldThrow<UserNotFoundException> {
                     signInUseCase.execute(requestDto)
+                }
+            }
+        }
+    }
+
+    given("블룸 필터에서 거짓 긍정 문제가 발생하는 경우") {
+        val testEmail = "falsePositiveEmail"
+        val testPassword = "password"
+
+        beforeContainer {
+            bloomFilterPort.add(User.USER_INFO_BLOOM_FILTER, testEmail)
+        }
+        afterContainer {
+            bloomFilterPort.remove(User.USER_INFO_BLOOM_FILTER, testEmail)
+        }
+
+        `when`("usecase를 실행하면") {
+
+            then("DB 조회에서 막혀야함") {
+                shouldThrow<UserNotFoundException> {
+                    signInUseCase.execute(SignInReqDto(testEmail, testPassword))
                 }
             }
         }
