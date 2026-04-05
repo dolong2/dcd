@@ -13,7 +13,7 @@ class CreateDockerVolumeServiceImpl(
     override fun create(volume: Volume) {
         StringBuilder().apply {
             append("docker volume create")
-            volume.size?.let { append(" --opt size=${it}${volume.sizeUnit?.value ?: "b"}") }
+            volume.size?.let { append(" --opt size=${it}${volume.sizeUnit?.symbol ?: "b"}") }
             append(" ${volume.volumeName}")
         }.toString().also { command ->
             val commandResult = commandPort.executeShellCommand(command)

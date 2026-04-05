@@ -5,6 +5,8 @@ import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.volume.dto.extension.toEntity
 import com.dcd.server.core.domain.volume.dto.request.CreateVolumeReqDto
 import com.dcd.server.core.domain.volume.exception.AlreadyExistsVolumeException
+import com.dcd.server.core.domain.volume.exception.InvalidVolumeOptionException
+import com.dcd.server.core.domain.volume.model.enums.VolumeSizeUnit
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import com.dcd.server.persistence.user.adapter.toEntity
@@ -103,6 +105,57 @@ class CreateVolumeUseCaseTest(
                 shouldThrow<WorkspaceNotFoundException> {
                     createVolumeUseCase.execute(createVolumeReqDto)
                 }
+            }
+        }
+    }
+
+    given("목표 워크스페이스와 크기는 지정되지 않았으나 크기 단위가 지정된 볼륨 생성 요청이 주어지고") {
+        val targetWorkspace = queryWorkspacePort.findById("d57b42f5-5cc4-440b-8dce-b4fc2e372eff")!!
+        workspaceInfo.workspace = targetWorkspace
+        volumeRepository.deleteAll()
+
+        val createVolumeReqDto = CreateVolumeReqDto(
+            name = "testVolumeInvalid",
+            description = "test without size but with sizeUnit",
+            size = null,
+            sizeUnit = VolumeSizeUnit.MB
+        )
+
+        `when`("유스케이스를 실행할때") {
+
+            then("InvalidVolumeOptionException이 발생해야함") {
+                shouldThrow<InvalidVolumeOptionException> {
+                    createVolumeUseCase.execute(createVolumeReqDto)
+                }
+            }
+        }
+    }
+
+    given("목표 워크스페이스와 크기 지정이 포함된 볼륨 생성 요청이 주어지고") {
+        val targetWorkspace = queryWorkspacePort.findById("d57b42f5-5cc4-440b-8dce-b4fc2e372eff")!!
+        workspaceInfo.workspace = targetWorkspace
+        volumeRepository.deleteAll()
+
+        val createVolumeReqDto = CreateVolumeReqDto(
+            name = "testVolumeWithSize",
+            description = "test with size",
+            size = 1024,
+            sizeUnit = VolumeSizeUnit.MB
+        )
+
+        `when`("목표 워크스페이스에 중복되는 이름의 볼륨이 없을때") {
+            createVolumeUseCase.execute(createVolumeReqDto)
+
+            then("크기 정보가 포함된 볼륨이 정상적으로 생성되어야함") {
+                val volumeList = volumeRepository.findAll()
+                volumeList.size shouldBe 1
+
+                val targetVolume = volumeList.first()
+                targetVolume.name shouldBe createVolumeReqDto.name
+                targetVolume.description shouldBe createVolumeReqDto.description
+                targetVolume.size shouldBe createVolumeReqDto.size
+                targetVolume.sizeUnit shouldBe createVolumeReqDto.sizeUnit
+                targetVolume.workspace.id.toString() shouldBe workspaceInfo.workspace!!.id
             }
         }
     }
