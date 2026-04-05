@@ -16,6 +16,8 @@ fun CreateVolumeReqDto.toEntity(workspace: Workspace): Volume =
         id = UUID.randomUUID(),
         name = this.name,
         description = this.description,
+        size = this.size,
+        sizeUnit = this.sizeUnit,
         workspace = workspace,
     )
 
@@ -24,6 +26,8 @@ fun UpdateVolumeReqDto.toEntity(volume: Volume): Volume =
         id = volume.id,
         name = this.name,
         description = this.description,
+        size = this.size,
+        sizeUnit = this.sizeUnit,
         workspace = volume.workspace,
     )
 
@@ -31,7 +35,9 @@ fun Volume.toResDto(): VolumeSimpleResDto =
     VolumeSimpleResDto(
         id = this.id,
         name = this.name,
-        description = this.description
+        description = this.description,
+        size = this.size,
+        sizeUnit = this.sizeUnit
     )
 
 fun Volume.toDetailResDto(volumeMountList: List<VolumeMount>): VolumeDetailResDto =
@@ -39,6 +45,8 @@ fun Volume.toDetailResDto(volumeMountList: List<VolumeMount>): VolumeDetailResDt
         id = this.id,
         name = this.name,
         description = this.description,
+        size = this.size,
+        sizeUnit = this.sizeUnit,
         mountList = volumeMountList.map { it.toResDto() }
     )
 
