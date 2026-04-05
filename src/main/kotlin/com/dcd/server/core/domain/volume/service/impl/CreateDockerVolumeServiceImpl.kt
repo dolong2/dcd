@@ -11,9 +11,14 @@ class CreateDockerVolumeServiceImpl(
     private val commandPort: CommandPort
 ) : CreateVolumeService {
     override fun create(volume: Volume) {
-        val commandResult = commandPort.executeShellCommand("docker volume create ${volume.volumeName}")
-
-        if (commandResult.exitValue != 0)
-            throw VolumeCreationFailureException()
+        StringBuilder().apply {
+            append("docker volume create")
+            volume.size?.let { append(" --opt size=${it}${volume.sizeUnit?.value ?: "b"}") }
+            append(" ${volume.volumeName}")
+        }.toString().also { command ->
+            val commandResult = commandPort.executeShellCommand(command)
+            if (commandResult.exitValue != 0)
+                throw VolumeCreationFailureException()
+        }
     }
 }
