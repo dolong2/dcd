@@ -24,6 +24,7 @@ enum class ErrorCode(
     NOT_CONNECTED_DOMAIN("도메인이 애플리케이션에 연결되어 있지 않음", 400),
     ALREADY_EXISTS_VOLUME("이미 존재하는 볼륨", 400),
     ALREADY_EXISTS_VOLUME_MOUNT("볼륨 마운트가 존재합니다.", 400),
+    INVALID_VOLUME_OPTION("볼륨 설정이 올바르지않음", 400),
 
     UNAUTHORIZED("권한이 없음", 401),
     EXPIRED_TOKEN("토큰이 만료됨", 401),

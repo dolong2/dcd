@@ -101,7 +101,7 @@ class VolumeWebAdapterTest : BehaviorSpec({
         val testVolumeId = UUID.randomUUID()
 
         `when`("볼륨 단일 조회 메서드를 실행할때") {
-            val volumeDetailResDto = VolumeDetailResDto(testVolumeId, "testVolume", "testDescription", listOf())
+            val volumeDetailResDto = VolumeDetailResDto(testVolumeId, "testVolume", "testDescription", null, null,listOf())
             every { getOneVolumeUseCase.execute(testVolumeId) } returns volumeDetailResDto
 
             val result = volumeWebAdapter.getVolume(testWorkspaceId, testVolumeId)
@@ -120,7 +120,7 @@ class VolumeWebAdapterTest : BehaviorSpec({
 
         `when`("볼륨 목록 조회 메서드를 실행할때") {
             val volumeListResDto =
-                VolumeListResDto(listOf(VolumeSimpleResDto(UUID.randomUUID(), "testVolume", "testDescription")))
+                VolumeListResDto(listOf(VolumeSimpleResDto(UUID.randomUUID(), "testVolume", "testDescription", null, null)))
             every { getAllVolumeUseCase.execute() } returns volumeListResDto
 
             val result = volumeWebAdapter.getAllVolume(testWorkspaceId)

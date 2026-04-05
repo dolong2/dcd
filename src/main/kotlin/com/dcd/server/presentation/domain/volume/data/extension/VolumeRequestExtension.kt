@@ -10,13 +10,17 @@ import com.dcd.server.presentation.domain.volume.data.request.UpdateVolumeReques
 fun CreateVolumeRequest.toDto(): CreateVolumeReqDto =
     CreateVolumeReqDto(
         name = this.name,
-        description = this.description
+        description = this.description,
+        size = this.size,
+        sizeUnit = this.sizeUnit
     )
 
 fun UpdateVolumeRequest.toDto(): UpdateVolumeReqDto =
     UpdateVolumeReqDto(
         name = this.name,
-        description = this.description
+        description = this.description,
+        size = this.size,
+        sizeUnit = this.sizeUnit
     )
 
 fun MountVolumeRequest.toDto(): MountVolumeReqDto =

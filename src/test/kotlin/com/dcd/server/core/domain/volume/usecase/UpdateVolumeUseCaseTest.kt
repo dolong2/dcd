@@ -8,6 +8,8 @@ import com.dcd.server.core.domain.volume.exception.AlreadyExistsVolumeMountExcep
 import com.dcd.server.core.domain.volume.exception.VolumeNotFoundException
 import com.dcd.server.core.domain.volume.model.Volume
 import com.dcd.server.core.domain.volume.model.VolumeMount
+import com.dcd.server.core.domain.volume.exception.InvalidVolumeOptionException
+import com.dcd.server.core.domain.volume.model.enums.VolumeSizeUnit
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
 import com.dcd.server.persistence.volume.adapter.toDomain
 import com.dcd.server.persistence.volume.adapter.toEntity
@@ -139,6 +141,57 @@ class UpdateVolumeUseCaseTest(
                 shouldThrow<VolumeNotFoundException> {
                     updateVolumeUseCase.execute(targetVolumeId, request)
                 }
+            }
+        }
+    }
+
+    given("타겟 볼륨 아이디와 크기는 지정되지 않았으나 크기 단위가 지정된 수정 요청이 주어지고") {
+        beforeContainer {
+            val targetWorkspace = queryWorkspacePort.findById("d57b42f5-5cc4-440b-8dce-b4fc2e372eff")!!
+            workspaceInfo.workspace = targetWorkspace
+        }
+
+        val request = UpdateVolumeReqDto(
+            name = "updateInvalid",
+            description = "updateDescription",
+            size = null,
+            sizeUnit = VolumeSizeUnit.GB
+        )
+
+        `when`("유스케이스를 실행할때") {
+
+            then("InvalidVolumeOptionException이 발생해야함") {
+                shouldThrow<InvalidVolumeOptionException> {
+                    updateVolumeUseCase.execute(targetVolumeId, request)
+                }
+            }
+        }
+    }
+
+    given("타겟 볼륨 아이디와 크기 정보가 포함된 수정 요청이 주어지고") {
+        beforeContainer {
+            val targetWorkspace = queryWorkspacePort.findById("d57b42f5-5cc4-440b-8dce-b4fc2e372eff")!!
+            workspaceInfo.workspace = targetWorkspace
+        }
+
+        val request = UpdateVolumeReqDto(
+            name = "updateWithSize",
+            description = "updateDescription",
+            size = 2048,
+            sizeUnit = VolumeSizeUnit.MB
+        )
+
+        `when`("유스케이스를 실행할때") {
+            updateVolumeUseCase.execute(targetVolumeId, request)
+
+            then("크기 정보가 포함된 볼륨 정보가 수정되어야함") {
+                val targetVolume = volumeRepository.findByIdOrNull(targetVolumeId)
+
+                targetVolume shouldNotBe null
+                targetVolume!!.name shouldBe request.name
+                targetVolume.description shouldBe request.description
+                targetVolume.size shouldBe request.size
+                targetVolume.sizeUnit shouldBe request.sizeUnit
             }
         }
     }

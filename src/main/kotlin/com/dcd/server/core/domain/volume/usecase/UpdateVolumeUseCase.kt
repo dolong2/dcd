@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.volume.dto.extension.toEntity
 import com.dcd.server.core.domain.volume.dto.request.UpdateVolumeReqDto
 import com.dcd.server.core.domain.volume.exception.AlreadyExistsVolumeMountException
 import com.dcd.server.core.domain.volume.exception.VolumeNotFoundException
+import com.dcd.server.core.domain.volume.exception.InvalidVolumeOptionException
 import com.dcd.server.core.domain.volume.service.CopyVolumeService
 import com.dcd.server.core.domain.volume.service.CreateVolumeService
 import com.dcd.server.core.domain.volume.service.DeleteVolumeService
@@ -32,6 +33,9 @@ class UpdateVolumeUseCase(
 
         if (workspace != volume.workspace)
             throw VolumeNotFoundException()
+
+        if(request.size == null && request.sizeUnit != null)
+            throw InvalidVolumeOptionException()
 
         val volumeMountList = queryVolumePort.findAllMountByVolume(volume)
         if (volumeMountList.isNotEmpty())
