@@ -14,7 +14,9 @@ fun VolumeSimpleResDto.toResponse(): VolumeSimpleResponse =
     VolumeSimpleResponse(
         id = this.id,
         name = this.name,
-        description = this.description
+        description = this.description,
+        size = this.size,
+        sizeUnit = this.sizeUnit
     )
 
 fun VolumeListResDto.toResponse(): VolumeListResponse =
@@ -34,5 +36,7 @@ fun VolumeDetailResDto.toResponse(): VolumeDetailResponse =
         id = this.id,
         name = this.name,
         description = this.description,
+        size = this.size,
+        sizeUnit = this.sizeUnit,
         mountList = this.mountList.map { it.toResponse() }
     )
