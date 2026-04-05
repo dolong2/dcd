@@ -5,6 +5,7 @@ import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.volume.dto.extension.toEntity
 import com.dcd.server.core.domain.volume.dto.request.CreateVolumeReqDto
 import com.dcd.server.core.domain.volume.exception.AlreadyExistsVolumeException
+import com.dcd.server.core.domain.volume.exception.InvalidVolumeOptionException
 import com.dcd.server.core.domain.volume.service.CreateVolumeService
 import com.dcd.server.core.domain.volume.spi.CommandVolumePort
 import com.dcd.server.core.domain.volume.spi.QueryVolumePort
@@ -20,6 +21,9 @@ class CreateVolumeUseCase(
     fun execute(createVolumeReqDto: CreateVolumeReqDto) {
         val workspace = (workspaceInfo.workspace
             ?: throw WorkspaceNotFoundException())
+
+        if(createVolumeReqDto.size == null && createVolumeReqDto.sizeUnit != null)
+            throw InvalidVolumeOptionException()
 
         val existsVolume = queryVolumePort.existsVolumeByNameAndWorkspace(createVolumeReqDto.name, workspace)
         if (existsVolume)
