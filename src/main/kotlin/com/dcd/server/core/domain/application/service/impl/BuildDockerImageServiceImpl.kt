@@ -21,26 +21,7 @@ class BuildDockerImageServiceImpl(
     override suspend fun buildImageByApplicationId(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
-        val directoryName = "'${application.name}'"
-        withContext(Dispatchers.IO) {
-            val commandResult = when (application.applicationType) {
-                ApplicationType.SPRING_BOOT -> {
-                    commandPort.executeShellCommand("cd ./$directoryName && ./gradlew clean build")
-                        .run {
-                            if (this.exitValue == 0)
-                                commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
-                            else this
-                        }
-                }
-
-                else -> {
-                    commandPort.executeShellCommand("cd ./$directoryName && docker build -t ${application.containerName}:latest .")
-                }
-            }
-            if (commandResult.exitValue != 0)
-                commandPort.executeShellCommand("rm -rf $directoryName")
-            checkExitValuePort.checkApplicationExitValue(commandResult, application, this, FailureCase.IMAGE_BUILD_FAILURE)
-        }
+        buildImageByApplication(application)
     }
 
     override suspend fun buildImageByApplication(application: Application) {
