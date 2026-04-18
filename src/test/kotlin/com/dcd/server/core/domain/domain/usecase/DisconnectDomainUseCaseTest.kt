@@ -51,7 +51,7 @@ class DisconnectDomainUseCaseTest(
 
             then("Nginx 설정 파일을 삭제해야함") {
                 val httpConfigDirectory = "./nginx/conf/${domain.id}"
-                verify { commandPort.executeShellCommand("rm -r $httpConfigDirectory") }
+                verify { commandPort.executeShellCommand("rm -r '$httpConfigDirectory'") }
             }
             then("도메인에 해당 애플리케이션이 null로 변경되어야함") {
                 val domainEntity = queryDomainPort.findById(domainId)!!
