@@ -13,8 +13,8 @@ class CommandAdapter : CommandPort {
     private val log = LoggerFactory.getLogger(this::class.simpleName)
 
     override fun executeShellCommand(cmd: String): CommandResult {
-        val shellScriptCmd = arrayOf("/bin/sh", "-c", cmd)
-        val p = Runtime.getRuntime().exec(shellScriptCmd)
+        val processBuilder = ProcessBuilder("/bin/sh", "-c", cmd)
+        val p = processBuilder.start()
         val stdout = BufferedReader(InputStreamReader(p.inputStream))
         val stderr = BufferedReader(InputStreamReader(p.errorStream))
 
