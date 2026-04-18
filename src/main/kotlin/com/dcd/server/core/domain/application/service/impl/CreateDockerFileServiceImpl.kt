@@ -86,8 +86,8 @@ class CreateDockerFileServiceImpl(
             file.writeText(fileContent)
         } catch (e: IOException) {
             commandPort.executeShellCommand("rm -rf $directoryName")
-            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.CREATE_DOCKER_FILE_FAILURE))
             coroutineScope.cancel()
+            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.CREATE_DOCKER_FILE_FAILURE))
         }
     }
 }
