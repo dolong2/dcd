@@ -19,7 +19,7 @@ class RemoveHttpConfigServiceImpl(
             throw DomainNotConnectedException()
 
         val httpConfigDirectory = "${domainConfigPath}/nginx/conf/${domain.id}"
-        val commandResult = commandPort.executeShellCommand("rm -r $httpConfigDirectory")
+        val commandResult = commandPort.executeShellCommand("rm -r '$httpConfigDirectory'")
 
         if (commandResult.exitValue != 0)
             throw HttpConfigRemoveFailureException()

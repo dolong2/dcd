@@ -19,9 +19,10 @@ class GenerateHttpConfigServiceImpl(
     override fun generateWebServerConfig(application: Application, domain: Domain) {
         val webServerConfig = FileContent.getApplicationHttpConfig(application, domain.getDomainName())
         val httpConfigDirectory = "${domainConfigPath}/nginx/conf/${domain.id}"
+        val configFileName = "${application.name.replace(" ", "-")}-http.conf"
         val commandResult = commandPort.executeShellCommand(
-            "mkdir -p $httpConfigDirectory && " +
-            "cat <<'EOF' > ${httpConfigDirectory}/${application.name.replace(" ", "-")}-http.conf \n${webServerConfig}\nEOF"
+            "mkdir -p '$httpConfigDirectory' && " +
+            "cat <<'EOF' > '$httpConfigDirectory/$configFileName'\n${webServerConfig}\nEOF"
         )
 
         if (commandResult.exitValue != 0)
