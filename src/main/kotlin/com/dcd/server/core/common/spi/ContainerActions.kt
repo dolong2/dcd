@@ -5,12 +5,12 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.volume.model.VolumeMount
 
 interface ContainerActions {
-    fun createContainer(application: Application, volumeMounts: List<VolumeMount>): String
-    fun startContainer(application: Application): Boolean
-    fun stopContainer(application: Application): Boolean
-    fun deleteContainer(application: Application): Boolean
-    fun deleteImage(application: Application): Boolean
+    fun createContainer(application: Application, volumeMounts: List<VolumeMount>)
+    fun startContainer(application: Application)
+    fun stopContainer(application: Application)
+    fun deleteContainer(application: Application)
+    fun deleteImage(application: Application)
     fun getContainer(status: ContainerStatus): List<String>
     fun getContainerLogs(application: Application): List<String>
-    fun buildImage(application: Application, dockerfilePath: String): String
+    fun buildImage(application: Application, dockerfilePath: String)
 }
