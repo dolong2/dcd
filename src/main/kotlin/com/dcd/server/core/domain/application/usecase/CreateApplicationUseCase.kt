@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.data.WorkspaceInfo
+import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.application.dto.extenstion.toEntity
 import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDto
 import com.dcd.server.core.domain.application.dto.response.CreateApplicationResDto
@@ -11,6 +12,7 @@ import com.dcd.server.core.domain.application.service.*
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.env.service.EnvAutoMatchService
+import com.dcd.server.core.domain.volume.spi.QueryVolumePort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,11 +23,11 @@ class CreateApplicationUseCase(
     private val commandApplicationPort: CommandApplicationPort,
     private val queryApplicationPort: QueryApplicationPort,
     private val workspaceInfo: WorkspaceInfo,
+    private val containerPort: ContainerPort,
+    private val queryVolumePort: QueryVolumePort,
     private val cloneApplicationByUrlService: CloneApplicationByUrlService,
     private val createDockerFileService: CreateDockerFileService,
     private val getExternalPortService: GetExternalPortService,
-    private val buildDockerImageService: BuildDockerImageService,
-    private val createContainerService: CreateContainerService,
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
     private val envAutoMatchService: EnvAutoMatchService,
     private val initialScriptService: InitialScriptService
@@ -57,8 +59,12 @@ class CreateApplicationUseCase(
             }
 
             createDockerFileService.createFileToApplication(application, version)
-            buildDockerImageService.buildImageByApplication(application)
-            createContainerService.createContainer(application, externalPort)
+
+            containerPort.execute {
+                val volumeMounts = queryVolumePort.findAllMountByApplication(application)
+                buildImage(application, "./${application.name}/Dockerfile")
+                createContainer(application, volumeMounts)
+            }
 
             deleteApplicationDirectoryService.deleteApplicationDirectory(application)
         }
