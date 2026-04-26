@@ -4,18 +4,26 @@ import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.common.spi.ContainerActions
 import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
 import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.scheduler.enums.ContainerStatus
 import com.dcd.server.core.domain.application.util.FailureCase
+import com.dcd.server.core.domain.volume.model.VolumeMount
 import com.dcd.server.infrastructure.global.thirdparty.docker.exception.DockerCommandException
 import com.github.dockerjava.api.DockerClient
 import com.github.dockerjava.api.async.ResultCallback
+import com.github.dockerjava.api.model.AccessMode
+import com.github.dockerjava.api.model.Bind
+import com.github.dockerjava.api.model.ContainerNetwork
 import com.github.dockerjava.api.model.ExposedPort
+import com.github.dockerjava.api.model.Frame
+import com.github.dockerjava.api.model.HostConfig
 import com.github.dockerjava.api.model.PortBinding
 import com.github.dockerjava.api.model.Ports
-import com.github.dockerjava.api.model.Frame
+import com.github.dockerjava.api.model.Volume
 import com.github.dockerjava.api.model.BuildResponseItem
 import com.github.dockerjava.api.command.BuildImageResultCallback
 import com.github.dockerjava.core.command.LogContainerResultCallback
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 import org.slf4j.LoggerFactory
 
@@ -25,11 +33,12 @@ class DockerCommandExecutor(
     private val eventPublisher: ApplicationEventPublisher
 ) : ContainerPort {
     
-    override fun <T> execute(action: ContainerActions.() -> T): T {
+    override fun <T> execute(action: ContainerActions.() -> T): T? {
         try {
             return DockerActionsImpl(dockerClient).action()
         } catch (ex: DockerCommandException) {
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, ex.application, ex.failureCase, ex.message))
+            return null
         } catch (ex: Exception) {
             throw ex
         }
@@ -38,7 +47,7 @@ class DockerCommandExecutor(
     private class DockerActionsImpl(
         private val dockerClient: DockerClient
     ) : ContainerActions {
-        private const val PRIMARY_NETWORK = "dcd"
+        private val PRIMARY_NETWORK = "dcd"
         
         override fun createContainer(application: Application, volumeMounts: List<VolumeMount>) {
             try {
@@ -175,5 +184,6 @@ class DockerCommandExecutor(
             } catch (e: Exception) {
                 throw DockerCommandException(application, FailureCase.DELETE_IMAGE_FAILURE, e.message)
             }
+        }
     }
 }
