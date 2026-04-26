@@ -2,6 +2,7 @@ package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.data.WorkspaceInfo
+import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.application.exception.AlreadyRunningException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
@@ -14,7 +15,7 @@ import kotlinx.coroutines.channels.Channel
 
 @UseCase
 class RunApplicationUseCase(
-    private val runContainerService: RunContainerService,
+    private val containerPort: ContainerPort,
     private val queryApplicationPort: QueryApplicationPort,
     private val changeApplicationStatusService: ChangeApplicationStatusService,
     private val workspaceInfo: WorkspaceInfo
@@ -27,7 +28,9 @@ class RunApplicationUseCase(
             throw AlreadyRunningException()
 
         launch  {
-            runContainerService.runContainer(application)
+            containerPort.execute {
+                startContainer(application)
+            }
         }
 
         changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.PENDING)
@@ -54,7 +57,9 @@ class RunApplicationUseCase(
         repeat(3) {
             scope.launch {
                 for (application in runChannel) {
-                    runContainerService.runContainer(application)
+                    containerPort.execute {
+                        startContainer(application)
+                    }
                 }
             }
         }
