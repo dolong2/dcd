@@ -10,7 +10,6 @@ interface ContainerActions {
     fun stopContainer(application: Application): Boolean
     fun deleteContainer(application: Application): Boolean
     fun deleteImage(application: Application): Boolean
-    fun getContainerStatus(application: Application): String
     fun getContainer(status: ContainerStatus): List<String>
     fun getContainerLogs(application: Application): List<String>
     fun buildImage(application: Application, dockerfilePath: String): String

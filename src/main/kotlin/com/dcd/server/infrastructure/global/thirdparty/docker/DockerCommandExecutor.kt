@@ -103,14 +103,6 @@ class DockerCommandExecutor(
             }
         }
 
-        override fun getContainerStatus(application: Application): String {
-            return try {
-                dockerClient.inspectContainerCmd(application.containerName).exec().state.status ?: "unknown"
-            } catch (e: Exception) {
-                "unknown"
-            }
-        }
-
         override fun getContainer(status: ContainerStatus): List<String> {
             return try {
                 dockerClient.listContainersCmd()
