@@ -29,13 +29,14 @@ class DockerCommandExecutor(
     private class DockerActionsImpl(
         private val dockerClient: DockerClient
     ) : ContainerActions {
+        private const val PRIMARY_NETWORK = "dcd"
         
         override fun createContainer(application: Application, volumeMounts: List<VolumeMount>): String {
             try {
                 val exposedPort = ExposedPort.tcp(application.port)
                 val portBindings = Ports()
                 portBindings.bind(exposedPort, Ports.Binding.bindPort(application.externalPort))
-                
+
                 val binds = volumeMounts.map { mount ->
                     val accessMode =
                         if (mount.readOnly) AccessMode.ro
@@ -50,13 +51,22 @@ class DockerCommandExecutor(
                 
                 val response = dockerClient.createContainerCmd("${application.containerName}:latest")
                     .withName(application.containerName)
-                    .withNetworkMode(application.workspace.networkName)
+                    .withNetworkMode(PRIMARY_NETWORK)
                     .withExposedPorts(exposedPort)
                     .withVolumes(containerVolumes)
                     .withHostConfig(
                         HostConfig.newHostConfig()
-                    .withPortBindings(portBindings)
+                            .withPortBindings(portBindings)
                             .withBinds(binds)
+                    )
+                    .exec()
+
+                
+                dockerClient.connectToNetworkCmd()
+                    .withContainerId(response.id)
+                    .withNetworkId(application.workspace.networkName)
+                    .withContainerNetwork(
+                        ContainerNetwork().withAliases(listOf("${application.name}"))
                     )
                     .exec()
 
