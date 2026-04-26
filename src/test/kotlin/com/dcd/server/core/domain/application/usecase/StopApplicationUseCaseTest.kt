@@ -1,6 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
-import com.dcd.server.core.common.command.CommandPort
+import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.application.exception.AlreadyStoppedException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
@@ -28,7 +28,7 @@ import java.util.*
 class StopApplicationUseCaseTest(
     private val stopApplicationUseCase: StopApplicationUseCase,
     @MockkBean(relaxed = true)
-    private val commandPort: CommandPort,
+    private val containerPort: ContainerPort,
     private val queryApplicationPort: QueryApplicationPort,
     private val commandUserPort: CommandUserPort,
     private val commandWorkspacePort: CommandWorkspacePort,
@@ -56,7 +56,7 @@ class StopApplicationUseCaseTest(
                 targetApplication shouldNotBe null
                 targetApplication!!.status shouldBe ApplicationStatus.PENDING
 
-                coVerify { commandPort.executeShellCommand("docker stop ${targetApplication.containerName}") }
+                coVerify { containerPort.execute<Any>(any()) }
             }
         }
     }
