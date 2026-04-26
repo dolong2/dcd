@@ -2,9 +2,10 @@ package com.dcd.server.core.common.spi
 
 import com.dcd.server.core.domain.application.scheduler.enums.ContainerStatus
 import com.dcd.server.core.domain.application.model.Application
+import com.dcd.server.core.domain.volume.model.VolumeMount
 
 interface ContainerActions {
-    fun createContainer(application: Application): String
+    fun createContainer(application: Application, volumeMounts: List<VolumeMount>): String
     fun startContainer(application: Application): Boolean
     fun stopContainer(application: Application): Boolean
     fun deleteContainer(application: Application): Boolean

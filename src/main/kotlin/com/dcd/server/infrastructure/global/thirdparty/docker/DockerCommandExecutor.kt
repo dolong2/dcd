@@ -30,18 +30,36 @@ class DockerCommandExecutor(
         private val dockerClient: DockerClient
     ) : ContainerActions {
         
-        override fun createContainer(application: Application): String {
+        override fun createContainer(application: Application, volumeMounts: List<VolumeMount>): String {
             try {
                 val exposedPort = ExposedPort.tcp(application.port)
                 val portBindings = Ports()
                 portBindings.bind(exposedPort, Ports.Binding.bindPort(application.externalPort))
                 
-                dockerClient.createContainerCmd("${application.containerName}:latest")
+                val binds = volumeMounts.map { mount ->
+                    val accessMode =
+                        if (mount.readOnly) AccessMode.ro
+                        else AccessMode.rw
+                    Bind(
+                        mount.volume.volumeName,
+                        Volume(mount.mountPath),
+                        accessMode
+                     )
+                }
+                val containerVolumes = volumeMounts.map { Volume(it.mountPath) }
+                
+                val response = dockerClient.createContainerCmd("${application.containerName}:latest")
                     .withName(application.containerName)
                     .withNetworkMode(application.workspace.networkName)
                     .withExposedPorts(exposedPort)
+                    .withVolumes(containerVolumes)
+                    .withHostConfig(
+                        HostConfig.newHostConfig()
                     .withPortBindings(portBindings)
+                            .withBinds(binds)
+                    )
                     .exec()
+
                 return application.containerName
             } catch (e: Exception) {
                 throw RuntimeException("Failed to create container: ${e.message}", e)
