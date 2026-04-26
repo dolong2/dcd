@@ -2,13 +2,12 @@ package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.Lock
 import com.dcd.server.core.common.annotation.UseCase
+import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
 import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
 import com.dcd.server.core.domain.application.exception.AlreadyRunningException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
-import com.dcd.server.core.domain.application.service.DeleteContainerService
-import com.dcd.server.core.domain.application.service.DeleteImageService
 import com.dcd.server.core.domain.application.service.InitialScriptService
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -21,8 +20,7 @@ import org.springframework.context.ApplicationEventPublisher
 class UpdateApplicationUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val commandApplicationPort: CommandApplicationPort,
-    private val deleteContainerService: DeleteContainerService,
-    private val deleteImageService: DeleteImageService,
+    private val containerPort: ContainerPort,
     private val eventPublisher: ApplicationEventPublisher,
     private val initialScriptService: InitialScriptService
 ) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
@@ -35,11 +33,11 @@ class UpdateApplicationUseCase(
             throw AlreadyRunningException()
 
         if (application.name != updateApplicationReqDto.name) {
-            runBlocking {
-                deleteContainerService.deleteContainer(application)
-                deleteImageService.deleteImage(application)
-                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.STOPPED, application))
+            containerPort.execute {
+                deleteContainer(application)
+                deleteImage(application)
             }
+            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.STOPPED, application))
         }
 
         val updatedApplication =

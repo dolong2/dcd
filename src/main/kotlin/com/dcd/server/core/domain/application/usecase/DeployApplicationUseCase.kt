@@ -86,7 +86,6 @@ class DeployApplicationUseCase(
             deleteImage(application)
 
             val version = application.version
-            val externalPort = application.externalPort
 
             runBlocking {
                 val applicationType = application.applicationType
