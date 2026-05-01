@@ -4,10 +4,10 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.DeploymentResult
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.scheduler.enums.ContainerStatus
-import com.dcd.server.core.domain.application.service.GetContainerService
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.application.util.FailureCase
+import com.dcd.server.core.common.spi.ContainerPort
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 @Component
 class ApplicationStatusScheduler(
     private val queryApplicationPort: QueryApplicationPort,
-    private val getContainerService: GetContainerService,
+    private val containerPort: ContainerPort,
     private val commandApplicationPort: CommandApplicationPort
 ) {
     /**
@@ -49,22 +49,17 @@ class ApplicationStatusScheduler(
     fun checkExitedContainer(targetApplicationList: List<Application>): List<Application> {
         val updatedApplicationList = mutableListOf<Application>()
 
-        getContainerService.getContainerNameByStatus(ContainerStatus.EXITED)
-            .forEach { result ->
-                val (containerName, exitCode) = result.split(" ")
+        containerPort.execute {
+            val exitedContainer = getContainer(ContainerStatus.EXITED)
+            exitedContainer.forEach { containerName ->
                 val containerExitedApplication = targetApplicationList.lastOrNull { it.containerName == containerName }
                     ?: return@forEach
 
                 val updatedApplication =
-                    if (exitCode == "0")
-                        containerExitedApplication.copy(status = ApplicationStatus.STOPPED)
-                    else {
-                        val deploymentResult = DeploymentResult.ERROR(FailureCase.RUN_CONTAINER_FAILURE, "Container terminated")
-                        containerExitedApplication.copy(status = ApplicationStatus.FAILURE, deploymentResult = deploymentResult)
-                    }
-
-                updatedApplicationList.add(updatedApplication)
+                    containerExitedApplication.copy(status = ApplicationStatus.STOPPED)
+                updatedApplicationList.add(containerExitedApplication.copy(status = ApplicationStatus.STOPPED))
             }
+        }
 
         return updatedApplicationList
     }
@@ -77,17 +72,17 @@ class ApplicationStatusScheduler(
     fun checkRunningContainer(targetApplicationList: List<Application>): List<Application> {
         val updatedApplicationList = mutableListOf<Application>()
 
-        getContainerService.getContainerNameByStatus(ContainerStatus.RUNNING)
-            .forEach { result ->
-                val (containerName, _) = result.split(" ")
+        containerPort.execute {
+            val runningContainer = getContainer(ContainerStatus.RUNNING)
+            runningContainer.forEach { containerName ->
                 val containerRunningApplication = targetApplicationList.lastOrNull { it.containerName == containerName }
                     ?: return@forEach
 
-                val updatedApplication = containerRunningApplication.copy(
-                    status = ApplicationStatus.RUNNING
-                )
+                val updatedApplication = 
+                    containerRunningApplication.copy(status = ApplicationStatus.RUNNING)
                 updatedApplicationList.add(updatedApplication)
             }
+        }
 
         return updatedApplicationList
     }
@@ -100,17 +95,16 @@ class ApplicationStatusScheduler(
     fun checkCreatedContainer(targetApplicationList: List<Application>): List<Application> {
         val updatedApplicationList = mutableListOf<Application>()
 
-        getContainerService.getContainerNameByStatus(ContainerStatus.CREATED)
-            .forEach { result ->
-                val (containerName, _) = result.split(" ")
-                val containerExitedApplication = targetApplicationList.find { it.containerName == containerName }
+        containerPort.execute {
+            val createdContainer = getContainer(ContainerStatus.CREATED)
+            createdContainer.forEach { containerName ->
+                val containerCreatedApplication = targetApplicationList.lastOrNull { it.containerName == containerName }
                     ?: return@forEach
-
-                val updatedApplication = containerExitedApplication.copy(
-                    status = ApplicationStatus.STOPPED
-                )
+                
+                val updatedApplication = containerCreatedApplication.copy(status = ApplicationStatus.STOPPED)
                 updatedApplicationList.add(updatedApplication)
             }
+        }
 
         return updatedApplicationList
     }
