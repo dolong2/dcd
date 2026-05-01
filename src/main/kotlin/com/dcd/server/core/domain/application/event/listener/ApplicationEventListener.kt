@@ -50,27 +50,29 @@ class ApplicationEventListener(
             containerPort.execute {
                 deleteContainer(application)
                 deleteImage(application)
+            }
 
-                CoroutineScope(Dispatchers.IO).launch {
-                    val version = application.version
-                    val externalPort = application.externalPort
+            CoroutineScope(Dispatchers.IO).launch {
+                val version = application.version
+                val externalPort = application.externalPort
 
-                    val applicationType = application.applicationType
-                    when(applicationType) {
-                        ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS -> {
-                            cloneApplicationByUrlService.cloneByApplication(application)
-                        }
-                        else -> {}
+                val applicationType = application.applicationType
+                when(applicationType) {
+                    ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS -> {
+                        cloneApplicationByUrlService.cloneByApplication(application)
                     }
-                    createDockerFileService.createFileToApplication(application, version)
-
+                    else -> {}
+                }
+                createDockerFileService.createFileToApplication(application, version)
+                
+                containerPort.execute {
                     buildImage(application, "./${application.name}/Dockerfile")
                     val volumeMounts = queryVolumePort.findAllMountByApplication(application)
                     createContainer(application, volumeMounts)
-
-                    val updatedApplication = application.copy(status = ApplicationStatus.STOPPED)
-                    commandApplicationPort.save(updatedApplication)
                 }
+
+                val updatedApplication = application.copy(status = ApplicationStatus.STOPPED)
+                commandApplicationPort.save(updatedApplication)
             }
         }
     }
