@@ -36,8 +36,8 @@ class UpdateApplicationUseCase(
             containerPort.execute {
                 deleteContainer(application)
                 deleteImage(application)
+                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.STOPPED, application))
             }
-            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.STOPPED, application))
         }
 
         val updatedApplication =
