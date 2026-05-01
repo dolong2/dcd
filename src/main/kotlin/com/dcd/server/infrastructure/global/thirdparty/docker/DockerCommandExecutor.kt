@@ -67,7 +67,7 @@ class DockerCommandExecutor(
                 }
                 val containerVolumes = volumeMounts.map { Volume(it.mountPath) }
                 
-                val response = dockerClient.createContainerCmd("${application.containerName}:latest")
+                val response = dockerClient.createContainerCmd("${application.containerName}:${application.version}")
                     .withName(application.containerName)
                     .withNetworkMode(PRIMARY_NETWORK)
                     .withExposedPorts(exposedPort)
