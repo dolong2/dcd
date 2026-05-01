@@ -4,7 +4,6 @@ import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.exception.CanNotDeployApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
-import com.dcd.server.core.domain.application.service.CreateContainerService
 import com.dcd.server.core.domain.application.service.impl.CreateDockerFileServiceImpl
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -34,8 +33,6 @@ class DeployApplicationUseCaseTest(
     private val containerPort: ContainerPort,
     @MockkBean(relaxUnitFun = true)
     private val createDockerFileService: CreateDockerFileServiceImpl,
-    @MockkBean(relaxUnitFun = true)
-    private val createContainerService: CreateContainerService,
     private val commandUserPort: CommandUserPort,
     private val commandWorkspacePort: CommandWorkspacePort,
     private val commandApplicationPort: CommandApplicationPort,
