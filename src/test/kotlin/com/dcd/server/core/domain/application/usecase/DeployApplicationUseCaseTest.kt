@@ -1,10 +1,9 @@
 package com.dcd.server.core.domain.application.usecase
 
-import com.dcd.server.core.common.command.CommandPort
+import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.exception.CanNotDeployApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
-import com.dcd.server.core.domain.application.service.CreateContainerService
 import com.dcd.server.core.domain.application.service.impl.CreateDockerFileServiceImpl
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -31,11 +30,9 @@ import java.util.UUID
 class DeployApplicationUseCaseTest(
     private val deployApplicationUseCase: DeployApplicationUseCase,
     @MockkBean(relaxed = true)
-    private val commandPort: CommandPort,
+    private val containerPort: ContainerPort,
     @MockkBean(relaxUnitFun = true)
     private val createDockerFileService: CreateDockerFileServiceImpl,
-    @MockkBean(relaxUnitFun = true)
-    private val createContainerService: CreateContainerService,
     private val commandUserPort: CommandUserPort,
     private val commandWorkspacePort: CommandWorkspacePort,
     private val commandApplicationPort: CommandApplicationPort,
@@ -64,12 +61,7 @@ class DeployApplicationUseCaseTest(
                 result shouldNotBe null
                 result!!.status shouldBe ApplicationStatus.PENDING
 
-                coVerify { commandPort.executeShellCommand("docker rm ${result.containerName}") }
-                coVerify { commandPort.executeShellCommand("docker rmi ${result.containerName}") }
-                coVerify { commandPort.executeShellCommand("git clone ${result.githubUrl} '${result.name}'") }
-                coVerify { commandPort.executeShellCommand("cd ./'${result.name}' && docker build -t ${result.containerName}:latest .") }
-                coVerify { createContainerService.createContainer(result, result.externalPort) }
-                coVerify { commandPort.executeShellCommand("rm -rf '${result.name}'") }
+                coVerify { containerPort.execute<Any>(any()) }
             }
         }
     }

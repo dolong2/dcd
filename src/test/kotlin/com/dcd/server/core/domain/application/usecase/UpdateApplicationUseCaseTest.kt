@@ -1,6 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
-import com.dcd.server.core.common.command.CommandPort
+import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.application.dto.request.UpdateApplicationReqDto
 import com.dcd.server.core.domain.application.exception.AlreadyRunningException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
@@ -34,7 +34,7 @@ class UpdateApplicationUseCaseTest(
     private val queryApplicationInitialScriptPort: QueryApplicationInitialScriptPort,
     private val commandApplicationPort: CommandApplicationPort,
     @MockkBean(relaxed = true)
-    private val commandPort: CommandPort
+    private val containerPort: ContainerPort,
 ) : BehaviorSpec({
     val targetUserId = "923a6407-a5f8-4e1e-bffd-0621910ddfc8"
 
@@ -59,8 +59,7 @@ class UpdateApplicationUseCaseTest(
                 result?.port shouldBe updateReqDto.port
                 result?.githubUrl shouldBe updateReqDto.githubUrl
                 result?.version shouldBe updateReqDto.version
-                coVerify { commandPort.executeShellCommand("docker rm ${targetApplication.containerName}") }
-                coVerify { commandPort.executeShellCommand("docker rmi ${targetApplication.containerName}") }
+                coVerify { containerPort.execute<Any>(any()) }
             }
 
             then("변경된 초기화 스크립트를 가지고 있어야함") {

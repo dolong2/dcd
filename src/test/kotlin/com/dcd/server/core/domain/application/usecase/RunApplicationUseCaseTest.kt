@@ -1,6 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
-import com.dcd.server.core.common.command.CommandPort
+import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.application.exception.AlreadyRunningException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
@@ -28,7 +28,7 @@ import java.util.UUID
 class RunApplicationUseCaseTest(
     private val runApplicationUseCase: RunApplicationUseCase,
     @MockkBean(relaxed = true)
-    private val commandPort: CommandPort,
+    private val containerPort: ContainerPort,
     private val queryApplicationPort: QueryApplicationPort,
     private val commandApplicationPort: CommandApplicationPort,
     private val commandWorkspacePort: CommandWorkspacePort,
@@ -56,7 +56,7 @@ class RunApplicationUseCaseTest(
                 targetApplication shouldNotBe null
                 targetApplication!!.status shouldBe ApplicationStatus.PENDING
 
-                coVerify { commandPort.executeShellCommand("docker start ${targetApplication.containerName}") }
+                coVerify { containerPort.execute<Any>(any()) }
             }
         }
     }

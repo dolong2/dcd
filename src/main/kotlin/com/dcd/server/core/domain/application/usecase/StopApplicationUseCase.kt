@@ -2,12 +2,12 @@ package com.dcd.server.core.domain.application.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.data.WorkspaceInfo
+import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.application.exception.AlreadyStoppedException
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.ChangeApplicationStatusService
-import com.dcd.server.core.domain.application.service.StopContainerService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import kotlinx.coroutines.*
@@ -16,7 +16,7 @@ import kotlinx.coroutines.channels.Channel
 @UseCase
 class StopApplicationUseCase(
     private val queryApplicationPort: QueryApplicationPort,
-    private val stopContainerService: StopContainerService,
+    private val containerPort: ContainerPort,
     private val changeApplicationStatusService: ChangeApplicationStatusService,
     private val workspaceInfo: WorkspaceInfo
 ) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
@@ -28,7 +28,9 @@ class StopApplicationUseCase(
             throw AlreadyStoppedException()
 
         launch {
-            stopContainerService.stopContainer(application)
+            containerPort.execute {
+                stopContainer(application)
+            }
         }
 
         changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.PENDING)
@@ -54,7 +56,9 @@ class StopApplicationUseCase(
         repeat(3) {
             scope.launch {
                 for (application in runChannel) {
-                    stopContainerService.stopContainer(application)
+                    containerPort.execute {
+                        stopContainer(application)
+                    }
                 }
             }
         }
