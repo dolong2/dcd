@@ -38,7 +38,7 @@ class DockerCommandExecutor(
             return DockerActionsImpl(dockerClient).action()
         } catch (ex: DockerCommandException) {
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, ex.application, ex.failureCase, ex.message))
-            return null
+            throw RuntimeException("Docker command execution failed for application ${ex.application.name}")
         } catch (ex: Exception) {
             throw ex
         }
