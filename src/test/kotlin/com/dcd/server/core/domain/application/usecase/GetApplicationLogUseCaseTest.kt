@@ -1,6 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
-import com.dcd.server.core.common.command.CommandPort
+import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.common.command.dto.CommandResult
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
@@ -25,7 +25,7 @@ import java.util.UUID
 class GetApplicationLogUseCaseTest(
     private val getApplicationLogUseCase: GetApplicationLogUseCase,
     @MockkBean
-    private val commandPort: CommandPort,
+    private val containerPort: ContainerPort,
     private val commandUserPort: CommandUserPort,
     private val commandWorkspacePort: CommandWorkspacePort,
     private val commandApplicationPort: CommandApplicationPort
@@ -37,8 +37,7 @@ class GetApplicationLogUseCaseTest(
         val workspace = WorkspaceGenerator.generateWorkspace(user = user)
         val application = ApplicationGenerator.generateApplication(id = targetApplicationId, workspace = workspace)
         val expectedResult = listOf("test logs")
-        val commandResult = CommandResult(0, expectedResult)
-        every { commandPort.executeShellCommand("docker logs ${application.containerName}") } returns commandResult
+        every { containerPort.execute<Any>(any()) } returns listOf("test logs")
 
         commandUserPort.save(user)
         commandWorkspacePort.save(workspace)
