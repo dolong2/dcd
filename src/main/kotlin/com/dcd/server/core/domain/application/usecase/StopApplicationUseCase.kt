@@ -8,7 +8,6 @@ import com.dcd.server.core.domain.application.exception.ApplicationNotFoundExcep
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.ChangeApplicationStatusService
-import com.dcd.server.core.domain.application.service.StopContainerService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import kotlinx.coroutines.*
