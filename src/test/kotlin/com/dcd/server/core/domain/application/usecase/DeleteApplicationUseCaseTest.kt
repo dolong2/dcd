@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.usecase
 
+import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.exception.CanNotDeleteApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
@@ -7,6 +8,7 @@ import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
+import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -20,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional
 class DeleteApplicationUseCaseTest(
     private val deleteApplicationUseCase: DeleteApplicationUseCase,
     private val queryApplicationPort: QueryApplicationPort,
-    private val commandApplicationPort: CommandApplicationPort
+    private val commandApplicationPort: CommandApplicationPort,
+    @MockkBean(relaxed = true)
+    private val containerPort: ContainerPort
 ) : BehaviorSpec({
     val targetApplicationId = "2fb0f315-8272-422f-8e9f-c4f765c022b2"
 
