@@ -23,6 +23,7 @@ import com.github.dockerjava.api.model.Volume
 import com.github.dockerjava.api.model.BuildResponseItem
 import com.github.dockerjava.api.command.BuildImageResultCallback
 import com.github.dockerjava.core.command.LogContainerResultCallback
+import java.util.concurrent.TimeUnit
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 import org.slf4j.LoggerFactory
@@ -184,6 +185,34 @@ class DockerCommandExecutor(
             } catch (e: Exception) {
                 throw DockerCommandException(application, FailureCase.DELETE_IMAGE_FAILURE, e.message)
             }
+        }
+
+        override fun executeCmd(application: Application, workingDir: String, cmd: String, onResponse: (String) -> Unit) {
+            val cmdArray = arrayOf("/bin/sh", "-c", cmd)
+
+            // Docker attach API 호출
+            val execInstance = dockerClient.execCreateCmd(application.containerName)
+                .withAttachStdout(true)
+                .withAttachStderr(true)
+                .withCmd(*cmdArray)
+                .withWorkingDir(workingDir)
+                .exec()
+
+
+            dockerClient.execStartCmd(execInstance.id)
+                .withDetach(false)
+                .exec(object : ResultCallback.Adapter<Frame>() {
+                    override fun onNext(frame: Frame?) {
+                        frame?.let {
+                            onResponse(String(it.payload).trim())
+                        }
+                    }
+
+                    override fun onError(throwable: Throwable?) {
+                        onResponse("Error: ${throwable?.message}")
+                    }
+                })
+                .awaitCompletion(60, TimeUnit.SECONDS)
         }
     }
 }
