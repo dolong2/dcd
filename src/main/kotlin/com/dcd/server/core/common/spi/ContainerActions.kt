@@ -13,4 +13,5 @@ interface ContainerActions {
     fun getContainer(status: ContainerStatus): List<String>
     fun getContainerLogs(application: Application): List<String>
     fun buildImage(application: Application, dockerfilePath: String)
+    fun executeCmd(application: Application, workingDir: String, cmd: String, onResponse: (String) -> Unit)
 }

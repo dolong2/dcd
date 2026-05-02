@@ -185,5 +185,32 @@ class DockerCommandExecutor(
                 throw DockerCommandException(application, FailureCase.DELETE_IMAGE_FAILURE, e.message)
             }
         }
+
+        override fun executeCmd(application: Application, workingDir: String, cmd: String, onResponse: (String) -> Unit) {
+            val cmdArray = cmd.split(" ").toTypedArray()
+
+            // Docker attach API 호출
+            val execInstance = dockerClient.execCreateCmd(application.containerName)
+                .withAttachStdout(true)
+                .withAttachStderr(true)
+                .withCmd(*cmdArray)
+                .withWorkingDir(workingDir)
+                .exec()
+
+
+            dockerClient.execStartCmd(execInstance.id)
+                .withDetach(false)
+                .exec(object : ResultCallback.Adapter<Frame>() {
+                    override fun onNext(frame: Frame?) {
+                        frame?.let {
+                            onResponse(String(it.payload).trim())
+                        }
+                    }
+
+                    override fun onError(throwable: Throwable?) {
+                        onResponse("Error: ${throwable?.message}")
+                    }
+                })
+        }
     }
 }
