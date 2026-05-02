@@ -23,6 +23,7 @@ import com.github.dockerjava.api.model.Volume
 import com.github.dockerjava.api.model.BuildResponseItem
 import com.github.dockerjava.api.command.BuildImageResultCallback
 import com.github.dockerjava.core.command.LogContainerResultCallback
+import java.util.concurrent.TimeUnit
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 import org.slf4j.LoggerFactory
@@ -211,6 +212,7 @@ class DockerCommandExecutor(
                         onResponse("Error: ${throwable?.message}")
                     }
                 })
+                .awaitCompletion(60, TimeUnit.SECONDS)
         }
     }
 }
