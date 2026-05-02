@@ -208,7 +208,7 @@ class DockerCommandExecutor(
                     }
 
                     override fun onError(throwable: Throwable?) {
-                        onResponse("Error: ${throwable?.message}")
+                        throwable?.printStackTrace()
                     }
                 })
         }
