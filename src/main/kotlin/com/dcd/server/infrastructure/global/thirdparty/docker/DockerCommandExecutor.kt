@@ -187,7 +187,7 @@ class DockerCommandExecutor(
         }
 
         override fun executeCmd(application: Application, workingDir: String, cmd: String, onResponse: (String) -> Unit) {
-            val cmdArray = arrayOf("/bin/sh", "-c", "'$cmd'")
+            val cmdArray = arrayOf("/bin/sh", "-c", cmd)
 
             // Docker attach API 호출
             val execInstance = dockerClient.execCreateCmd(application.containerName)
