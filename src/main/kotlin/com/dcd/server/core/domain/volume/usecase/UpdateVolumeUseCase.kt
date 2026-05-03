@@ -43,7 +43,12 @@ class UpdateVolumeUseCase(
         // 수정된 볼륨을 생성후 내용을 복사하고, 기존 볼륨 삭제
         containerPort.execute {
             createVolume(newVolume)
-            copyVolume(volume, newVolume)
+            try {
+                copyVolume(volume, newVolume)
+            } catch (ex: Exception) {
+                runCatching { deleteVolume(newVolume) }
+                throw ex
+            }
             deleteVolume(volume)
         }
     }
