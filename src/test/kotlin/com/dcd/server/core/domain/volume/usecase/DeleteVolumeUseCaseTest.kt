@@ -1,7 +1,7 @@
 package com.dcd.server.core.domain.volume.usecase
 
-import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.common.data.WorkspaceInfo
+import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.volume.exception.AlreadyExistsVolumeMountException
 import com.dcd.server.core.domain.volume.exception.VolumeNotFoundException
@@ -32,7 +32,7 @@ import java.util.UUID
 class DeleteVolumeUseCaseTest(
     private val deleteVolumeUseCase: DeleteVolumeUseCase,
     @MockkBean(relaxed = true)
-    private val commandPort: CommandPort,
+    private val containerPort: ContainerPort,
     private val volumeRepository: VolumeRepository,
     private val volumeMountRepository: VolumeMountRepository,
     private val workspaceRepository: WorkspaceRepository,
