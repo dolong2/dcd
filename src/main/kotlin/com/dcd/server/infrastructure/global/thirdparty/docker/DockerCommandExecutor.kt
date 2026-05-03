@@ -273,11 +273,11 @@ class DockerCommandExecutor(
                     .exec(WaitContainerResultCallback())
                     .awaitStatusCode()
                 if (statusCode != 0) {
-                    deleteVolume(targetVolume)
                     throw VolumeCopyFailureException()
                 }
+            } catch (e: VolumeCopyFailureException) {
+                throw e
             } catch (e: Exception) {
-                deleteVolume(targetVolume)
                 throw VolumeCopyFailureException()
             }
         }
