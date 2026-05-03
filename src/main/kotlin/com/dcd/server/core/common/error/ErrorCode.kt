@@ -58,6 +58,10 @@ enum class ErrorCode(
     TOO_MANY_REQUESTS("너무 많은 요청 발생", 429),
     REQUEST_LIMIT_EXCEEDED("너무 많은 요청시도가 발생했습니다. 잠시후 다시 시도해주세요.", 429),
 
+    WORKSPACE_CREATION_FAILED("워크스페이스 생성에 실패했습니다.", 500),
+    WORKSPACE_DELETION_FAILED("워크스페이스 삭제에 실패했습니다.", 500),
+    WORKSPACE_CONNECTION_FAILED("워크스페이스 연결에 실패했습니다.", 500),
+    WORKSPACE_DISCONNECTION_FAILED("워크스페이스 연결 해제에 실패했습니다.", 500),
     CONTAINER_NOT_RUN("해당 애플리케이션을 실행할 수 없음", 500),
     CONTAINER_NOT_STOPPED("해당 애플리케이션을 정지할 수 없음", 500),
     CONTAINER_NOT_CREATED("해당 애플리케이션의 이미지를 컨테이너로 빌드할 수 없음", 500),
