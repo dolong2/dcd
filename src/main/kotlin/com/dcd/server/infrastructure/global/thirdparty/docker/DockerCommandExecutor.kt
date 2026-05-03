@@ -11,6 +11,11 @@ import com.dcd.server.core.domain.volume.model.VolumeMount
 import com.dcd.server.core.domain.volume.exception.VolumeCopyFailureException
 import com.dcd.server.core.domain.volume.exception.VolumeCreationFailureException
 import com.dcd.server.core.domain.volume.exception.VolumeDeleteFailureException
+import com.dcd.server.core.domain.workspace.model.Workspace
+import com.dcd.server.core.domain.workspace.exception.WorkspaceConnectionException
+import com.dcd.server.core.domain.workspace.exception.WorkspaceCreationException
+import com.dcd.server.core.domain.workspace.exception.WorkspaceDeletionException
+import com.dcd.server.core.domain.workspace.exception.WorkspaceDisconnectionException
 import com.dcd.server.infrastructure.global.thirdparty.docker.exception.DockerCommandException
 import com.github.dockerjava.api.DockerClient
 import com.github.dockerjava.api.async.ResultCallback
@@ -276,5 +281,49 @@ class DockerCommandExecutor(
                 throw VolumeCopyFailureException()
             }
         }
+
+        override fun createNetwork(workspace: Workspace) {
+            try {
+                dockerClient.createNetworkCmd()
+                    .withName(workspace.networkName)
+                    .exec()
+            } catch (e: Exception) {
+                throw WorkspaceCreationException()
+            }
+        }
+
+        override fun deleteNetwork(workspace: Workspace) {
+            try {
+                dockerClient.removeNetworkCmd(workspace.networkName).exec()
+            } catch (e: Exception) {
+                throw WorkspaceDeletionException()
+            }
+        }
+
+        override fun connectNetwork(workspace: Workspace, application: Application) {
+            try {
+                dockerClient.connectToNetworkCmd()
+                    .withContainerId(application.containerName)
+                    .withNetworkId(workspace.networkName)
+                    .withContainerNetwork(
+                        ContainerNetwork().withAliases(listOf("${application.name}"))
+                    )
+                    .exec()
+            } catch (e: Exception) {
+                throw WorkspaceConnectionException()
+            }
+        }
+
+        override fun disconnectNetwork(workspace: Workspace, application: Application) {
+            try {
+                dockerClient.disconnectFromNetworkCmd()
+                    .withContainerId(application.containerName)
+                    .withNetworkId(workspace.networkName)
+                    .exec()
+            } catch (e: Exception) {
+                throw WorkspaceDisconnectionException()
+            }
+        }
+
     }
 }

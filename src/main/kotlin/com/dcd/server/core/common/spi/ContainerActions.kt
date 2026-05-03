@@ -4,6 +4,7 @@ import com.dcd.server.core.domain.application.scheduler.enums.ContainerStatus
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.volume.model.Volume
 import com.dcd.server.core.domain.volume.model.VolumeMount
+import com.dcd.server.core.domain.workspace.model.Workspace
 
 interface ContainerActions {
     fun createContainer(application: Application, volumeMounts: List<VolumeMount>)
@@ -19,4 +20,9 @@ interface ContainerActions {
     fun createVolume(volume: Volume)
     fun deleteVolume(volume: Volume)
     fun copyVolume(sourceVolume: Volume, targetVolume: Volume)
+
+    fun createNetwork(workspace: Workspace)
+    fun deleteNetwork(workspace: Workspace)
+    fun connectNetwork(workspace: Workspace, application: Application)
+    fun disconnectNetwork(workspace: Workspace, application: Application)
 }
