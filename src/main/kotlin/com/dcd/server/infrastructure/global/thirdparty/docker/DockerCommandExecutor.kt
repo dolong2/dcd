@@ -8,6 +8,14 @@ import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.scheduler.enums.ContainerStatus
 import com.dcd.server.core.domain.application.util.FailureCase
 import com.dcd.server.core.domain.volume.model.VolumeMount
+import com.dcd.server.core.domain.volume.exception.VolumeCopyFailureException
+import com.dcd.server.core.domain.volume.exception.VolumeCreationFailureException
+import com.dcd.server.core.domain.volume.exception.VolumeDeleteFailureException
+import com.dcd.server.core.domain.workspace.model.Workspace
+import com.dcd.server.core.domain.workspace.exception.WorkspaceConnectionException
+import com.dcd.server.core.domain.workspace.exception.WorkspaceCreationException
+import com.dcd.server.core.domain.workspace.exception.WorkspaceDeletionException
+import com.dcd.server.core.domain.workspace.exception.WorkspaceDisconnectionException
 import com.dcd.server.infrastructure.global.thirdparty.docker.exception.DockerCommandException
 import com.github.dockerjava.api.DockerClient
 import com.github.dockerjava.api.async.ResultCallback
@@ -23,6 +31,7 @@ import com.github.dockerjava.api.model.Volume
 import com.github.dockerjava.api.model.BuildResponseItem
 import com.github.dockerjava.api.command.BuildImageResultCallback
 import com.github.dockerjava.core.command.LogContainerResultCallback
+import com.github.dockerjava.core.command.WaitContainerResultCallback
 import java.util.concurrent.TimeUnit
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
@@ -214,5 +223,107 @@ class DockerCommandExecutor(
                 })
                 .awaitCompletion(60, TimeUnit.SECONDS)
         }
+
+        override fun createVolume(volume: com.dcd.server.core.domain.volume.model.Volume) {
+            try {
+                val driverOpts = mutableMapOf<String, String>()
+
+                volume.size?.let { sizeValue ->
+                    val unit = volume.sizeUnit?.symbol ?: "b"
+                    driverOpts["size"] = "$sizeValue$unit"
+                }
+                dockerClient.createVolumeCmd().withName(volume.volumeName).withDriverOpts(driverOpts).exec()
+            } catch (e: Exception) {
+                throw VolumeCreationFailureException()
+            }
+        }
+
+        override fun deleteVolume(volume: com.dcd.server.core.domain.volume.model.Volume) {
+            try {
+                dockerClient.removeVolumeCmd(volume.volumeName).exec()
+            } catch (e: Exception) {
+                throw VolumeDeleteFailureException()
+            }
+        }
+
+        override fun copyVolume(sourceVolume: com.dcd.server.core.domain.volume.model.Volume, targetVolume: com.dcd.server.core.domain.volume.model.Volume) {
+            try {
+                // 임시 컨테이너 생성
+                val tempContainerName = "temp-copy-${sourceVolume.id}"
+                dockerClient.createContainerCmd("alpine:latest")
+                    .withName(tempContainerName)
+                    .withTty(true)
+                    .withStdinOpen(true)
+                    .withHostConfig(
+                        HostConfig.newHostConfig()
+                            .withAutoRemove(true)
+                            .withBinds(
+                                Bind(sourceVolume.volumeName, Volume("/source")),
+                                Bind(targetVolume.volumeName, Volume("/target"))
+                            )
+                    )
+                    .withCmd("sh", "-c", "cp -a /source/. /target/")
+                    .exec()
+
+                // 임시 컨테이너 시작 및 명령 실행
+                dockerClient.startContainerCmd(tempContainerName).exec()
+
+                // 명령 실행 완료 대기
+                val statusCode = dockerClient.waitContainerCmd(tempContainerName)
+                    .exec(WaitContainerResultCallback())
+                    .awaitStatusCode()
+                if (statusCode != 0) {
+                    throw VolumeCopyFailureException()
+                }
+            } catch (e: VolumeCopyFailureException) {
+                throw e
+            } catch (e: Exception) {
+                throw VolumeCopyFailureException()
+            }
+        }
+
+        override fun createNetwork(workspace: Workspace) {
+            try {
+                dockerClient.createNetworkCmd()
+                    .withName(workspace.networkName)
+                    .exec()
+            } catch (e: Exception) {
+                throw WorkspaceCreationException()
+            }
+        }
+
+        override fun deleteNetwork(workspace: Workspace) {
+            try {
+                dockerClient.removeNetworkCmd(workspace.networkName).exec()
+            } catch (e: Exception) {
+                throw WorkspaceDeletionException()
+            }
+        }
+
+        override fun connectNetwork(workspace: Workspace, application: Application) {
+            try {
+                dockerClient.connectToNetworkCmd()
+                    .withContainerId(application.containerName)
+                    .withNetworkId(workspace.networkName)
+                    .withContainerNetwork(
+                        ContainerNetwork().withAliases(listOf("${application.name}"))
+                    )
+                    .exec()
+            } catch (e: Exception) {
+                throw WorkspaceConnectionException()
+            }
+        }
+
+        override fun disconnectNetwork(workspace: Workspace, application: Application) {
+            try {
+                dockerClient.disconnectFromNetworkCmd()
+                    .withContainerId(application.containerName)
+                    .withNetworkId(workspace.networkName)
+                    .exec()
+            } catch (e: Exception) {
+                throw WorkspaceDisconnectionException()
+            }
+        }
+
     }
 }

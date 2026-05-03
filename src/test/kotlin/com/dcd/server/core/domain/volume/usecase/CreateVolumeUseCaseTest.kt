@@ -1,7 +1,7 @@
 package com.dcd.server.core.domain.volume.usecase
 
-import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.common.data.WorkspaceInfo
+import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.volume.dto.extension.toEntity
 import com.dcd.server.core.domain.volume.dto.request.CreateVolumeReqDto
 import com.dcd.server.core.domain.volume.exception.AlreadyExistsVolumeException
@@ -31,7 +31,7 @@ import util.workspace.WorkspaceGenerator
 class CreateVolumeUseCaseTest(
     private val createVolumeUseCase: CreateVolumeUseCase,
     @MockkBean(relaxed = true)
-    private val commandPort: CommandPort,
+    private val containerPort: ContainerPort,
     private val volumeRepository: VolumeRepository,
     private val workspaceRepository: WorkspaceRepository,
     private val userRepository: UserRepository,

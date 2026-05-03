@@ -2,9 +2,9 @@ package com.dcd.server.core.domain.volume.usecase
 
 import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.data.WorkspaceInfo
+import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.volume.exception.AlreadyExistsVolumeMountException
 import com.dcd.server.core.domain.volume.exception.VolumeNotFoundException
-import com.dcd.server.core.domain.volume.service.DeleteVolumeService
 import com.dcd.server.core.domain.volume.spi.CommandVolumePort
 import com.dcd.server.core.domain.volume.spi.QueryVolumePort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
@@ -14,7 +14,7 @@ import java.util.UUID
 class DeleteVolumeUseCase(
     private val queryVolumePort: QueryVolumePort,
     private val commandVolumePort: CommandVolumePort,
-    private val deleteVolumeService: DeleteVolumeService,
+    private val containerPort: ContainerPort,
     private val workspaceInfo: WorkspaceInfo
 ) {
     fun execute(volumeId: UUID) {
@@ -31,8 +31,7 @@ class DeleteVolumeUseCase(
         if (volumeMountList.isNotEmpty())
             throw AlreadyExistsVolumeMountException()
 
-        deleteVolumeService.deleteVolume(volume)
-
         commandVolumePort.delete(volume)
+        containerPort.execute { deleteVolume(volume) }
     }
 }

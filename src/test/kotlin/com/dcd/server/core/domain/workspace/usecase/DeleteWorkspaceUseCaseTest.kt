@@ -1,6 +1,6 @@
 package com.dcd.server.core.domain.workspace.usecase
 
-import com.dcd.server.core.common.command.CommandPort
+import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
@@ -28,7 +28,7 @@ class DeleteWorkspaceUseCaseTest(
     private val commandWorkspacePort: CommandWorkspacePort,
     private val queryUserPort: QueryUserPort,
     @MockkBean(relaxed = true)
-    private val commandPort: CommandPort
+    private val containerPort: ContainerPort
 ) : BehaviorSpec({
     val userId = "923a6407-a5f8-4e1e-bffd-0621910ddfc8"
     val workspaceId = "d57b42f5-5cc4-440b-8dce-b4fc2e372eff"
@@ -49,7 +49,6 @@ class DeleteWorkspaceUseCaseTest(
 
             then("워크스페이스가 조회되지 않아야함") {
                 queryWorkspacePort.findById(workspaceId) shouldBe null
-                commandPort.executeShellCommand("docker network rm ${workspace.title.replace(" ", "_")}")
             }
         }
     }

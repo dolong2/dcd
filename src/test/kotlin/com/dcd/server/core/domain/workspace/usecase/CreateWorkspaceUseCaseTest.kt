@@ -1,6 +1,6 @@
 package com.dcd.server.core.domain.workspace.usecase
 
-import com.dcd.server.core.common.command.CommandPort
+import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.user.spi.QueryUserPort
 import com.dcd.server.core.domain.workspace.dto.request.CreateWorkspaceReqDto
 import com.dcd.server.core.domain.workspace.spi.QueryWorkspacePort
@@ -24,7 +24,7 @@ class CreateWorkspaceUseCaseTest(
     private val queryWorkspacePort: QueryWorkspacePort,
     private val queryUserPort: QueryUserPort,
     @MockkBean(relaxed = true)
-    private val commandPort: CommandPort
+    private val containerPort: ContainerPort
 ) : BehaviorSpec({
     val userId = "923a6407-a5f8-4e1e-bffd-0621910ddfc8"
 

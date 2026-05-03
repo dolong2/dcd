@@ -1,7 +1,7 @@
 package com.dcd.server.core.domain.volume.usecase
 
-import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.common.data.WorkspaceInfo
+import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.volume.dto.request.UpdateVolumeReqDto
 import com.dcd.server.core.domain.volume.exception.AlreadyExistsVolumeMountException
@@ -35,7 +35,7 @@ import java.util.UUID
 class UpdateVolumeUseCaseTest(
     private val updateVolumeUseCase: UpdateVolumeUseCase,
     @MockkBean(relaxed = true)
-    private val commandPort: CommandPort,
+    private val containerPort: ContainerPort,
     private val workspaceInfo: WorkspaceInfo,
     private val volumeRepository: VolumeRepository,
     private val volumeMountRepository: VolumeMountRepository,
