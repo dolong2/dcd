@@ -31,8 +31,7 @@ class DeleteVolumeUseCase(
         if (volumeMountList.isNotEmpty())
             throw AlreadyExistsVolumeMountException()
 
-        containerPort.execute { deleteVolume(volume) }
-
         commandVolumePort.delete(volume)
+        containerPort.execute { deleteVolume(volume) }
     }
 }

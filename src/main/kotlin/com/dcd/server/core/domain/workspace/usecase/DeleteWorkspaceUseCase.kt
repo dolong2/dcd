@@ -16,8 +16,7 @@ class DeleteWorkspaceUseCase(
         val workspace = (queryWorkspacePort.findById(workspaceId)
             ?: throw WorkspaceNotFoundException())
 
-        containerPort.execute { deleteNetwork(workspace) }
-
         commandWorkspacePort.delete(workspace)
+        containerPort.execute { deleteNetwork(workspace) }
     }
 }
