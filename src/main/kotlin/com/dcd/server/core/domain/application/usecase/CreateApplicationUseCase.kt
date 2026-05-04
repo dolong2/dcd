@@ -9,6 +9,7 @@ import com.dcd.server.core.domain.application.dto.response.CreateApplicationResD
 import com.dcd.server.core.domain.application.exception.AlreadyExistsApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
+import com.dcd.server.core.domain.application.spi.ApplicationRemoteRepoPort
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.env.service.EnvAutoMatchService
@@ -25,7 +26,7 @@ class CreateApplicationUseCase(
     private val workspaceInfo: WorkspaceInfo,
     private val containerPort: ContainerPort,
     private val queryVolumePort: QueryVolumePort,
-    private val cloneApplicationByUrlService: CloneApplicationByUrlService,
+    private val applicationRemoteRepoPort: ApplicationRemoteRepoPort,
     private val createDockerFileService: CreateDockerFileService,
     private val getExternalPortService: GetExternalPortService,
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
@@ -53,7 +54,7 @@ class CreateApplicationUseCase(
             val applicationType = application.applicationType
             when(applicationType) {
                 ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS -> {
-                    cloneApplicationByUrlService.cloneByApplication(application)
+                    applicationRemoteRepoPort.cloneApplicationRemoteRepo(application)
                 }
                 else -> {}
             }

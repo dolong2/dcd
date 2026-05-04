@@ -6,9 +6,9 @@ import com.dcd.server.core.domain.application.event.DeployApplicationEvent
 import com.dcd.server.core.domain.application.model.DeploymentResult
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import com.dcd.server.core.domain.application.service.CloneApplicationByUrlService
 import com.dcd.server.core.domain.application.service.CreateDockerFileService
 import com.dcd.server.core.domain.application.service.DeleteApplicationDirectoryService
+import com.dcd.server.core.domain.application.spi.ApplicationRemoteRepoPort
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.volume.spi.QueryVolumePort
@@ -24,7 +24,7 @@ import org.springframework.transaction.event.TransactionalEventListener
 @Component
 class ApplicationEventListener(
     private val commandApplicationPort: CommandApplicationPort,
-    private val cloneApplicationByUrlService: CloneApplicationByUrlService,
+    private val applicationRemoteRepoPort: ApplicationRemoteRepoPort,
     private val createDockerFileService: CreateDockerFileService,
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
     private val containerPort: ContainerPort,
@@ -54,12 +54,11 @@ class ApplicationEventListener(
 
             CoroutineScope(Dispatchers.IO).launch {
                 val version = application.version
-                val externalPort = application.externalPort
 
                 val applicationType = application.applicationType
                 when(applicationType) {
                     ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS -> {
-                        cloneApplicationByUrlService.cloneByApplication(application)
+                        applicationRemoteRepoPort.cloneApplicationRemoteRepo(application)
                     }
                     else -> {}
                 }
