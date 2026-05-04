@@ -70,7 +70,7 @@ class RedissonLockAdapterTest : BehaviorSpec({
             Then("unlock은 반드시 호출된다") {
 
                 shouldThrow<RuntimeException> {
-                    lockService.lock("test-lock", 1000, 3000) {
+                    lockService.lock<Unit>("test-lock", 1000L, 3000L) {
                         throw RuntimeException("error")
                     }
                 }

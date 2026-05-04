@@ -55,9 +55,8 @@ class ApplicationStatusScheduler(
                 val containerExitedApplication = targetApplicationList.lastOrNull { it.containerName == containerName }
                     ?: return@forEach
 
-                val updatedApplication =
-                    containerExitedApplication.copy(status = ApplicationStatus.STOPPED)
-                updatedApplicationList.add(containerExitedApplication.copy(status = ApplicationStatus.STOPPED))
+                val updatedApplication = containerExitedApplication.copy(status = ApplicationStatus.STOPPED)
+                updatedApplicationList.add(updatedApplication)
             }
         }
 
@@ -78,8 +77,7 @@ class ApplicationStatusScheduler(
                 val containerRunningApplication = targetApplicationList.lastOrNull { it.containerName == containerName }
                     ?: return@forEach
 
-                val updatedApplication = 
-                    containerRunningApplication.copy(status = ApplicationStatus.RUNNING)
+                val updatedApplication = containerRunningApplication.copy(status = ApplicationStatus.RUNNING)
                 updatedApplicationList.add(updatedApplication)
             }
         }
