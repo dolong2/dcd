@@ -19,6 +19,9 @@ class ApplicationGitRepoAdapter(
 
     override fun cloneApplicationRemoteRepo(application: Application) {
         try {
+            application.githubUrl 
+                ?: throw IllegalArgumentException("GitHub URL is null for application: ${application.name}")
+            
             Git.cloneRepository()
                 .setURI(application.githubUrl)
                 .setDirectory(File("./${application.name}"))
