@@ -29,6 +29,7 @@ class ApplicationGitRepoAdapter(
         } catch (e: Exception) {
             val cloneFailureEvent = ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.CLONE_FAILURE, e.message)
             eventPublisher.publishEvent(cloneFailureEvent)
+            throw e
         }
     }
 }
