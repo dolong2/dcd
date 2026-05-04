@@ -11,6 +11,7 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.*
+import com.dcd.server.core.domain.application.spi.ApplicationRemoteRepoPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.volume.spi.QueryVolumePort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
@@ -23,7 +24,7 @@ class DeployApplicationUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val containerPort: ContainerPort,
     private val queryVolumePort: QueryVolumePort,
-    private val cloneApplicationByUrlService: CloneApplicationByUrlService,
+    private val applicationRemoteRepoPort: ApplicationRemoteRepoPort,
     private val createDockerFileService: CreateDockerFileService,
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
     private val lockPort: LockPort,
@@ -91,7 +92,7 @@ class DeployApplicationUseCase(
                 val applicationType = application.applicationType
                 when(applicationType) {
                     ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS -> {
-                        cloneApplicationByUrlService.cloneByApplication(application)
+                        applicationRemoteRepoPort.cloneApplicationRemoteRepo(application)
                     }
                     else -> {}
                 }

@@ -36,7 +36,6 @@ class GetApplicationLogUseCaseTest(
         val user = UserGenerator.generateUser()
         val workspace = WorkspaceGenerator.generateWorkspace(user = user)
         val application = ApplicationGenerator.generateApplication(id = targetApplicationId, workspace = workspace)
-        val expectedResult = listOf("test logs")
         every { containerPort.execute<Any>(any()) } returns listOf("test logs")
 
         commandUserPort.save(user)

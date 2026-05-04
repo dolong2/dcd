@@ -70,6 +70,9 @@ dependencies {
 	implementation("com.bucket4j:bucket4j_jdk17-core:8.14.0")
 	implementation("com.bucket4j:bucket4j_jdk17-redis-common:8.14.0")
 	implementation("com.bucket4j:bucket4j_jdk17-lettuce:8.14.0")
+
+	//git
+	implementation("org.eclipse.jgit:org.eclipse.jgit:7.3.0.202506031305-r")
 }
 
 tasks.withType<KotlinCompile> {
