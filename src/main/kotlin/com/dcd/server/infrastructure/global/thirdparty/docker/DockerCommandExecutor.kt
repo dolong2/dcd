@@ -29,9 +29,8 @@ import com.github.dockerjava.api.model.PortBinding
 import com.github.dockerjava.api.model.Ports
 import com.github.dockerjava.api.model.Volume
 import com.github.dockerjava.api.model.BuildResponseItem
+import com.github.dockerjava.api.model.WaitResponse
 import com.github.dockerjava.api.command.BuildImageResultCallback
-import com.github.dockerjava.core.command.LogContainerResultCallback
-import com.github.dockerjava.core.command.WaitContainerResultCallback
 import java.util.concurrent.TimeUnit
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
@@ -79,11 +78,11 @@ class DockerCommandExecutor(
                 
                 val response = dockerClient.createContainerCmd("${application.containerName}:${application.version}")
                     .withName(application.containerName)
-                    .withNetworkMode(PRIMARY_NETWORK)
                     .withExposedPorts(exposedPort)
                     .withVolumes(containerVolumes)
                     .withHostConfig(
                         HostConfig.newHostConfig()
+                            .withNetworkMode(PRIMARY_NETWORK)
                             .withPortBindings(portBindings)
                             .withBinds(binds)
                     )
@@ -146,15 +145,16 @@ class DockerCommandExecutor(
                 val logList = mutableListOf<String>()
 
                 // 콜백 클래스 정의
-                val callback = object : LogContainerResultCallback() {
-                    override fun onNext(item: Frame?) {
-                        item?.let {
-                            // trimEnd를 사용해 불필요한 개행 문자를 제거
-                            logList.add(String(it.payload).trimEnd())
+                val callback =
+                    object : ResultCallback.Adapter<Frame>() {
+                        override fun onNext(item: Frame?) {
+                            item?.let {
+                                // trimEnd를 사용해 불필요한 개행 문자를 제거
+                                logList.add(String(it.payload).trimEnd())
+                            }
+                            super.onNext(item)
                         }
-                        super.onNext(item)
                     }
-                }
 
                 // 로그 조회 명령 설정
                 dockerClient.logContainerCmd(application.containerName)
@@ -207,10 +207,9 @@ class DockerCommandExecutor(
                 .withWorkingDir(workingDir)
                 .exec()
 
-
-            dockerClient.execStartCmd(execInstance.id)
-                .withDetach(false)
-                .exec(object : ResultCallback.Adapter<Frame>() {
+            //콜백 클래스 정의
+            val callback =
+                object : ResultCallback.Adapter<Frame>() {
                     override fun onNext(frame: Frame?) {
                         frame?.let {
                             onResponse(String(it.payload).trim())
@@ -220,7 +219,11 @@ class DockerCommandExecutor(
                     override fun onError(throwable: Throwable?) {
                         onResponse("Error: ${throwable?.message}")
                     }
-                })
+                }
+
+            dockerClient.execStartCmd(execInstance.id)
+                .withDetach(false)
+                .exec(callback)
                 .awaitCompletion(60, TimeUnit.SECONDS)
         }
 
@@ -268,13 +271,21 @@ class DockerCommandExecutor(
                 // 임시 컨테이너 시작 및 명령 실행
                 dockerClient.startContainerCmd(tempContainerName).exec()
 
-                // 명령 실행 완료 대기
-                val statusCode = dockerClient.waitContainerCmd(tempContainerName)
-                    .exec(WaitContainerResultCallback())
-                    .awaitStatusCode()
-                if (statusCode != 0) {
-                    throw VolumeCopyFailureException()
+                var exitCode = -1
+                val callback = object : ResultCallback.Adapter<WaitResponse>() {
+                    override fun onNext(item: WaitResponse?) {
+                        exitCode = item?.statusCode ?: -1
+                        super.onNext(item)
+                    }
                 }
+
+                // 명령 실행 완료 대기
+                dockerClient.waitContainerCmd(tempContainerName)
+                    .exec(callback)
+                    .awaitCompletion()
+
+                if (exitCode != 0)
+                    throw VolumeCopyFailureException()
             } catch (e: VolumeCopyFailureException) {
                 throw e
             } catch (e: Exception) {
