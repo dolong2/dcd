@@ -30,8 +30,6 @@ import com.github.dockerjava.api.model.Ports
 import com.github.dockerjava.api.model.Volume
 import com.github.dockerjava.api.model.BuildResponseItem
 import com.github.dockerjava.api.command.BuildImageResultCallback
-import com.github.dockerjava.core.command.LogContainerResultCallback
-import com.github.dockerjava.core.command.WaitContainerResultCallback
 import java.util.concurrent.TimeUnit
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
@@ -146,7 +144,8 @@ class DockerCommandExecutor(
                 val logList = mutableListOf<String>()
 
                 // 콜백 클래스 정의
-                val callback = object : LogContainerResultCallback() {
+                val callback =
+                    object : ResultCallback.Adapter<Frame>() {
                     override fun onNext(item: Frame?) {
                         item?.let {
                             // trimEnd를 사용해 불필요한 개행 문자를 제거
