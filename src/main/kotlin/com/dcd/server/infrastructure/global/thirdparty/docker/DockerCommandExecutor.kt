@@ -268,14 +268,9 @@ class DockerCommandExecutor(
                 dockerClient.startContainerCmd(tempContainerName).exec()
 
                 // 명령 실행 완료 대기
-                val statusCode = dockerClient.waitContainerCmd(tempContainerName)
-                    .exec(WaitContainerResultCallback())
-                    .awaitStatusCode()
-                if (statusCode != 0) {
-                    throw VolumeCopyFailureException()
-                }
-            } catch (e: VolumeCopyFailureException) {
-                throw e
+                dockerClient.waitContainerCmd(tempContainerName)
+                    .exec(ResultCallback.Adapter<WaitResponse>())
+                    .awaitCompletion()
             } catch (e: Exception) {
                 throw VolumeCopyFailureException()
             }
