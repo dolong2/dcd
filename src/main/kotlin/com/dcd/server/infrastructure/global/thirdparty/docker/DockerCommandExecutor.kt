@@ -275,6 +275,12 @@ class DockerCommandExecutor(
                 dockerClient.waitContainerCmd(tempContainerName)
                     .exec(ResultCallback.Adapter<WaitResponse>())
                     .awaitCompletion()
+                    .also {
+                        if (it.statusCode != 0)
+                            throw VolumeCopyFailureException()
+                    }
+            } catch (e: VolumeCopyFailureException) {
+                throw e
             } catch (e: Exception) {
                 throw VolumeCopyFailureException()
             }
