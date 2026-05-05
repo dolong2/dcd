@@ -271,14 +271,21 @@ class DockerCommandExecutor(
                 // 임시 컨테이너 시작 및 명령 실행
                 dockerClient.startContainerCmd(tempContainerName).exec()
 
+                var exitCode = -1
+                val callback = object : ResultCallback.Adapter<WaitResponse>() {
+                    override fun onNext(item: WaitResponse?) {
+                        exitCode = item?.statusCode ?: -1
+                        super.onNext(item)
+                    }
+                }
+
                 // 명령 실행 완료 대기
                 dockerClient.waitContainerCmd(tempContainerName)
-                    .exec(ResultCallback.Adapter<WaitResponse>())
+                    .exec(callback)
                     .awaitCompletion()
-                    .also {
-                        if (it.statusCode != 0)
-                            throw VolumeCopyFailureException()
-                    }
+
+                if (exitCode != 0)
+                    throw VolumeCopyFailureException()
             } catch (e: VolumeCopyFailureException) {
                 throw e
             } catch (e: Exception) {
