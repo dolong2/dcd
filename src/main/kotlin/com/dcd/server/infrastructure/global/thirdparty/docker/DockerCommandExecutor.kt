@@ -29,6 +29,7 @@ import com.github.dockerjava.api.model.PortBinding
 import com.github.dockerjava.api.model.Ports
 import com.github.dockerjava.api.model.Volume
 import com.github.dockerjava.api.model.BuildResponseItem
+import com.github.dockerjava.api.model.WaitResponse
 import com.github.dockerjava.api.command.BuildImageResultCallback
 import java.util.concurrent.TimeUnit
 import org.springframework.context.ApplicationEventPublisher
@@ -77,11 +78,11 @@ class DockerCommandExecutor(
                 
                 val response = dockerClient.createContainerCmd("${application.containerName}:${application.version}")
                     .withName(application.containerName)
-                    .withNetworkMode(PRIMARY_NETWORK)
                     .withExposedPorts(exposedPort)
                     .withVolumes(containerVolumes)
                     .withHostConfig(
                         HostConfig.newHostConfig()
+                            .withNetworkMode(PRIMARY_NETWORK)
                             .withPortBindings(portBindings)
                             .withBinds(binds)
                     )
@@ -146,14 +147,14 @@ class DockerCommandExecutor(
                 // 콜백 클래스 정의
                 val callback =
                     object : ResultCallback.Adapter<Frame>() {
-                    override fun onNext(item: Frame?) {
-                        item?.let {
-                            // trimEnd를 사용해 불필요한 개행 문자를 제거
-                            logList.add(String(it.payload).trimEnd())
+                        override fun onNext(item: Frame?) {
+                            item?.let {
+                                // trimEnd를 사용해 불필요한 개행 문자를 제거
+                                logList.add(String(it.payload).trimEnd())
+                            }
+                            super.onNext(item)
                         }
-                        super.onNext(item)
                     }
-                }
 
                 // 로그 조회 명령 설정
                 dockerClient.logContainerCmd(application.containerName)
