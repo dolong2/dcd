@@ -206,10 +206,9 @@ class DockerCommandExecutor(
                 .withWorkingDir(workingDir)
                 .exec()
 
-
-            dockerClient.execStartCmd(execInstance.id)
-                .withDetach(false)
-                .exec(object : ResultCallback.Adapter<Frame>() {
+            //콜백 클래스 정의
+            val callback =
+                object : ResultCallback.Adapter<Frame>() {
                     override fun onNext(frame: Frame?) {
                         frame?.let {
                             onResponse(String(it.payload).trim())
@@ -219,7 +218,11 @@ class DockerCommandExecutor(
                     override fun onError(throwable: Throwable?) {
                         onResponse("Error: ${throwable?.message}")
                     }
-                })
+                }
+
+            dockerClient.execStartCmd(execInstance.id)
+                .withDetach(false)
+                .exec(callback)
                 .awaitCompletion(60, TimeUnit.SECONDS)
         }
 
