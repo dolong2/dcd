@@ -4,6 +4,7 @@ import com.dcd.server.core.common.command.CommandPort
 import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.domain.exception.DomainNotFoundException
+import com.dcd.server.core.domain.domain.service.ApplyHttpConfigService
 import com.dcd.server.core.domain.domain.spi.CommandDomainPort
 import com.dcd.server.core.domain.domain.spi.QueryDomainPort
 import com.dcd.server.core.domain.workspace.spi.CommandWorkspacePort
@@ -33,6 +34,8 @@ class DisconnectDomainUseCaseTest(
     private val workspaceInfo: WorkspaceInfo,
     @MockkBean(relaxed = true)
     private val commandPort: CommandPort,
+    @MockkBean(relaxUnitFun = true)
+    private val applyHttpConfigService: ApplyHttpConfigService,
 ) : BehaviorSpec({
     val domainId = UUID.randomUUID().toString()
     val applicationId = "2fb0f315-8272-422f-8e9f-c4f765c022b2"
@@ -58,7 +61,7 @@ class DisconnectDomainUseCaseTest(
                 domainEntity.application shouldBe null
             }
             then("nginx 재실행이 명령되어야함") {
-                verify { commandPort.executeShellCommand("docker restart dcd-nginx") }
+                verify { applyHttpConfigService.applyHttpConfig() }
             }
         }
 

@@ -227,6 +227,23 @@ class DockerCommandExecutor(
                 .awaitCompletion(60, TimeUnit.SECONDS)
         }
 
+        override fun executeCmd(containerName: String, cmd: String) {
+            val cmdArray = arrayOf("/bin/sh", "-c", cmd)
+
+            val execInstance = dockerClient.execCreateCmd(containerName)
+                .withAttachStdout(true)
+                .withAttachStderr(true)
+                .withCmd(*cmdArray)
+                .exec()
+
+            val callback = object : ResultCallback.Adapter<Frame>() {}
+
+            dockerClient.execStartCmd(execInstance.id)
+                .withDetach(false)
+                .exec(callback)
+                .awaitCompletion(60, TimeUnit.SECONDS)
+        }
+
         override fun createVolume(volume: com.dcd.server.core.domain.volume.model.Volume) {
             try {
                 val driverOpts = mutableMapOf<String, String>()

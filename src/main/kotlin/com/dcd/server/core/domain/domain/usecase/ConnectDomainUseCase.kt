@@ -7,8 +7,7 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.domain.dto.request.ConnectDomainReqDto
 import com.dcd.server.core.domain.domain.exception.AlreadyConnectedDomainException
 import com.dcd.server.core.domain.domain.exception.DomainNotFoundException
-import com.dcd.server.core.domain.domain.service.GenerateHttpConfigService
-import com.dcd.server.core.domain.domain.service.RebootNginxService
+import com.dcd.server.core.domain.domain.service.*
 import com.dcd.server.core.domain.domain.spi.CommandDomainPort
 import com.dcd.server.core.domain.domain.spi.QueryDomainPort
 
@@ -19,7 +18,8 @@ class ConnectDomainUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val workspaceInfo: WorkspaceInfo,
     private val generateHttpConfigService: GenerateHttpConfigService,
-    private val rebootNginxService: RebootNginxService
+    private val removeHttpConfigService: RemoveHttpConfigService,
+    private val applyHttpConfigService: ApplyHttpConfigService
 ) {
     fun execute(domainId: String, connectDomainReqDto: ConnectDomainReqDto) {
         val domain = (queryDomainPort.findById(domainId)
@@ -41,6 +41,13 @@ class ConnectDomainUseCase(
         commandDomainPort.save(updatedDomain)
 
         generateHttpConfigService.generateWebServerConfig(application, domain)
-        rebootNginxService.rebootNginx()
+        try {
+            applyHttpConfigService.applyHttpConfig()
+        } catch (e: Exception) {
+            // HTTP config 적용 실패 시 도메인 연결 해제후 설정 롤백
+            commandDomainPort.save(domain)
+            removeHttpConfigService.removeHttpConfig(domain)
+            throw e
+        }
     }
 }
