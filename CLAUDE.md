@@ -1,98 +1,96 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for working with the DCD codebase.
 
 ## Project Overview
 
-DCD is a Spring Boot REST API built with Kotlin that manages containerized applications. It supports creating, deploying, running, and managing Docker-based applications with various frameworks (Spring Boot, Django, etc.). The system uses MariaDB for persistence, Redis for caching/rate limiting, and Docker Java client for container management.
+DCD is a Spring Boot REST API (Kotlin, Java 17) managing Docker-based applications. Supports multiple frameworks (Spring Boot, Django, etc.), Docker container orchestration, and application lifecycle management. Infrastructure: MariaDB, Redis (caching/rate limiting), Docker Java client.
 
-## Architecture
-
-The project uses a **layered architecture** organized as follows:
+## Architecture: Hexagonal + Ports & Adapters
 
 ```
 src/main/kotlin/com/dcd/server/
-├── core/
-│   ├── domain/           # Business logic, use cases, domain models
-│   └── common/           # Shared utilities, DTOs, enums
-├── persistence/          # Data access layer (repositories, entities)
-│   ├── application, auth, user, workspace, volume, env, domain/
-│   └── *PersistenceAdapter.kt
-├── presentation/         # REST controllers (web adapters)
-│   └── domain/
-│       ├── application, auth, user, workspace, domain/
-│       └── *WebAdapter.kt
-└── infrastructure/       # For Spring configuration & third-party integrations
-    └── global/
-        ├── config/       # Security, WebSocket, Filter, Redis configs
-        ├── security/     # JWT, authentication
-        ├── jwt/          # Token utilities
-        └── thirdparty/   # Docker client, mail, etc.
+├── core/domain/              # Business logic & use cases
+│   ├── {feature}/usecase/    # *UseCase interfaces
+│   ├── {feature}/spi/        # Ports (QueryPort, CommandPort)
+│   ├── {feature}/dto/        # Data transfer objects
+│   ├── {feature}/exception/  # Custom domain exceptions
+│   └── {feature}/model/      # Domain models
+├── persistence/              # SPI implementations (adapters)
+│   └── {feature}/\*PersistenceAdapter.kt
+├── presentation/             # HTTP adapters (REST controllers)
+│   └── {feature}/\*WebAdapter.kt
+└── infrastructure/           # Spring config, third-party clients
+    ├── global/config/        # Security, WebSocket, Caching
+    ├── global/security/      # JWT, authentication
+    └── global/thirdparty/    # Docker, Git, Mail clients
 ```
 
-**Key Pattern**: Each domain feature (application, user, auth, workspace, volume) has:
-- `*UseCase` interfaces in `core.domain.*.usecase`
-- `*PersistenceAdapter` in `persistence` (implements repository pattern)
-- `*WebAdapter` (REST controller) in `presentation`
-- `*ResDto` / `*ReqDto` for API contracts
-
-## Development Commands
-
-### Building
-```bash
-./gradlew clean build          # Full build with tests
-./gradlew build -x test        # Build without tests
+**Dependency Flow**: 
+```
+Presentation (Request) → .toDto() → ReqDto
+                ↓
+            UseCase (domain logic)
+                ↓
+            ResDto → .toResponse() → Response (Presentation)
 ```
 
-### Running Tests
-```bash
-./gradlew test                 # Run all tests
-./gradlew test --tests "*ApplicationWebAdapterTest"  # Run single test class
-./gradlew test --tests "*ApplicationWebAdapterTest.createApplication*"  # Run specific test
+**Ports & Adapters Flow**:
+```
+UseCase → Port (interface) ← Adapter (implementation)
+                           ├── *PersistenceAdapter (persistence layer)
+                           └── *Adapter (infrastructure layer)
 ```
 
-### Running the Application
-```bash
-# Start infrastructure
-docker network create dcd      # Create network (one time)
-docker-compose up -d           # Start MariaDB, Redis, Nginx
+**Each Feature Has**:
+- `*UseCase` interface + implementation in `core.domain.{feature}.usecase`
+- `*Port` interfaces (Query/Command) in `core.domain.{feature}.spi`
+- `*Request`/`*Response` objects in `presentation.{feature}.data.request/response` (API contracts)
+- `*ReqDto`/`*ResDto` in `core.domain.{feature}.dto` (UseCase contracts)
+- `.toDto()` extension to convert Request → ReqDto
+- `.toResponse()` extension to convert ResDto → Response
+- `*PersistenceAdapter` in `persistence.{feature}` implementing ports
+- `*Adapter` in `infrastructure.{feature}` or `infrastructure.global` implementing ports
+- `*WebAdapter` (REST controller) in `presentation.{feature}`
 
-# Run application
+## Development Quick Start
+
+**Build & Test**:
+```bash
+./gradlew clean build              # Full build + tests
+./gradlew build -x test            # Build without tests
+./gradlew test --tests "*ApplicationWebAdapterTest"
+./gradlew test --tests "*ApplicationWebAdapterTest.createApplication*"
+```
+
+**Run Application** (port 8081):
+```bash
+# One-time setup
+docker network create dcd
+
+# Start infrastructure + app
+docker-compose up -d               # MariaDB, Redis, Nginx
 ./gradlew bootRun
-
-# Or build and run jar
-./gradlew clean build
-java -jar build/libs/server-0.0.1-SNAPSHOT.jar
 ```
 
-The application runs on **port 8081** by default.
+**Code Quality**: Kotlin 1.8.22 + strict JSR305 annotations enforced by compiler.
 
-### Linting & Code Quality
-The project uses Kotlin compiler with strict JSR305 annotations. Gradle build includes Kotlin compilation checks.
+## Configuration
 
-## Configuration & Environment
-
-Configuration uses Spring Boot's environment-based approach:
-
-### Required Environment Variables
+**Environment Variables** (required):
 - **Database**: `DB_URL`, `DB_USER`, `DB_PASSWORD`, `DB_DRIVER`, `DB_HIBERNATE_DIALECT`
 - **Redis**: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
 - **JWT**: `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `JWT_ACCESS_TIME`, `JWT_REFRESH_TIME`
 - **Security**: `AES_SECRET`, `AES_INIT_VECTOR`
-- **Mail**: `MAIL_ADDRESS`, `MAIL_PASSWORD` (Gmail SMTP)
+- **Mail**: `MAIL_ADDRESS`, `MAIL_PASSWORD`
 - **Docker**: `DOCKER_REGISTRY_URL`, `DOCKER_TOKEN`
 - **Paths**: `DOMAIN_CONFIG_PATH`
 
-### Configuration Files
-- `src/main/resources/application.yml` - Main Spring Boot config
-- `src/main/resources/application-test.yml` - Test profile (generated in CI from secrets)
-- `docker-compose.yml` - Infrastructure services
-- `dcd-db.env`, `dcd-redis.env` - Service credentials
-- `.env.example` files in deployment directories
+**Files**: `src/main/resources/application.yml` (main), `application-test.yml` (test profile), `docker-compose.yml` (infrastructure).
 
-## Testing Strategy
+## Testing: Kotest + MockK
 
-Tests use **Kotest** (BehaviorSpec style) with **MockK** for mocking:
+**Style**: BehaviorSpec with given/when/then. **Location**: `src/test/kotlin/` mirrors source structure.
 
 ```kotlin
 class ApplicationWebAdapterTest : BehaviorSpec({
@@ -101,13 +99,8 @@ class ApplicationWebAdapterTest : BehaviorSpec({
 
     given("Setup") {
         `when`("Action") {
-            // Arrange
             every { mockUseCase.execute(any()) } returns expectedResult
-
-            // Act
             val result = adapter.someMethod()
-
-            // Assert
             then("Expectation") {
                 result shouldBe expected
                 verify { mockUseCase.execute(any()) }
@@ -117,94 +110,100 @@ class ApplicationWebAdapterTest : BehaviorSpec({
 })
 ```
 
-**Test Location Pattern**: Tests mirror source structure in `src/test/kotlin/`
+**Key**: Mock only UseCases (in *WebAdapterTest). Integration tests hit real DB via *PersistenceAdapterTest.
 
-## Key Features & Components
+## Key Patterns
 
-### Authentication & Security
-- JWT tokens (access + refresh)
-- Spring Security with custom filters
-- Located in `infrastructure.global.security` and `infrastructure.global.jwt`
+### 1. Ports & Adapters (SPI)
+Domain defines interfaces, infrastructure implements:
+- `*Port` (query/command operations) in `core.domain.{feature}.spi`
+- `*PersistenceAdapter` implements in `persistence`
+- Enables testing with mocks, swapping implementations
 
-### Database
-- **ORM**: Spring Data JPA with Hibernate
-- **Dialect**: MySQL (MariaDB compatible)
-- **DDL**: `ddl-auto: none` - migrations are manual
-- **Entities**: Located in `persistence.*.domain` packages
+### 2. AOP for Cross-Cutting Concerns
+Annotations handle authorization, rate limiting, validation:
+- `@Limit` → `LimitAspect` (rate limiting via bucket4j)
+- `@WorkspaceOwnerVerification` → `OwnerValidateAspect`
+- `@CheckEmailCertificate` → `EmailCertificateAspect`
+- `@Lock` → distributed locking
 
-### Caching & Rate Limiting
-- **Caching**: Spring Cache + Redis (Redisson client)
-- **Rate Limiting**: bucket4j with Redis backing
-- `@EnableCaching` at application startup
+Use for validation logic that doesn't belong in UseCases.
 
-### WebSocket Support
-- Enabled with `@EnableWebSocket`
-- Config in `infrastructure.global.config.WebSocketConfig`
-- Used for real-time application logs and status updates
+### 3. Domain Exceptions
+Extend `BasicException` in `core.domain.{feature}.exception`:
+- Application layer catches and translates to HTTP responses
+- Clear error propagation path
 
-### Docker Integration
-- Uses `docker-java` client library
-- `DockerClientConfig` manages Docker daemon connection
-- Registry authentication via environment variables
-- Used for building, pushing, and running containerized applications
+### 4. Event-Driven Actions
+Application lifecycle events (e.g., `DeployApplicationEvent`) trigger side effects. Publish from UseCases, handle in listeners.
 
-### Scheduling
-- `@EnableScheduling` at startup
-- Background tasks configured in various use cases
+### 5. DTO & Data Mapping
+**Presentation Layer Flow**:
+- **Request**: Client → `*Request` object → `.toDto()` → `*ReqDto` → UseCase
+- **Response**: UseCase → `*ResDto` → `.toResponse()` → `*Response` object → Client
 
-## Important Patterns & Conventions
+**Conversion Layer**:
+- `*Request` (API input contract) in `presentation.{feature}.data.request`
+- `*Response` (API output contract) in `presentation.{feature}.data.response`
+- `*ReqDto` (UseCase input) in `core.domain.{feature}.dto`
+- `*ResDto` (UseCase output) in `core.domain.{feature}.dto`
 
-1. **Use Case Pattern**: Domain logic separated into `*UseCase` interfaces/implementations. Web adapters inject and call these.
+**Rules**:
+- Never serialize entities directly; always use Request/Response
+- UseCase always works with ReqDto/ResDto, never Request/Response
+- Extensions `.toDto()` and `.toResponse()` handle conversions
 
-2. **Data Transfer**: DTOs separate API contracts from domain models.
-   - `*ReqDto` for incoming requests
-   - `*ResDto` for outgoing responses
-   - Extensions (`.toResponse()`) for model-to-DTO conversions
+## Infrastructure Components
 
-3. **Exception Handling**: Custom exceptions per domain feature under `core.domain.*.exception`
+Ports can be implemented in infrastructure layer for cross-cutting concerns:
 
-4. **Repository Pattern**: `*PersistenceAdapter` implements the repository interface, abstracting database details
+| Feature | Library | Port Implementation | Location |
+|---------|---------|-------------------|----------|
+| **Authentication** | Spring Security + JWT (JJWT) | `GenerateTokenPort`, `ParseTokenPort` → `GenerateTokenAdapter`, `ParseTokenAdapter` | `infrastructure.global.jwt.adapter` |
+| **Security** | Spring Security | `SecurityPort` → `SecurityAdapter` | `infrastructure.global.security` |
+| **Encryption** | AES | `EncryptPort` → `EncryptAdapter` | `infrastructure.global.security` |
+| **Database** | Spring Data JPA + Hibernate, MariaDB | `*Port` → `*PersistenceAdapter` | `persistence.{feature}` |
+| **Caching** | Spring Cache + Redis (Redisson) | Configured in `infrastructure.global.config` | `infrastructure.global.config` |
+| **Rate Limiting** | bucket4j + Redis | `LimitPort` → `RedisLimitAdapter`, `LocalLimitAdapter` | `infrastructure.global.thirdparty.bucket4j` |
+| **WebSocket** | Spring WebSocket | WebSocket message handling | `infrastructure.global.config.WebSocketConfig` |
+| **Container Management** | docker-java | `*Adapter` for Docker operations | `infrastructure.domain.application.adapter` |
+| **Version Control** | JGit | `*Adapter` for Git operations | `infrastructure.domain.application.adapter` |
+| **Locking** | Redisson | `@Lock` AOP | `infrastructure.global.aop` |
+| **Token Blacklist** | Redis | `TokenBlackListPort` | `infrastructure.global` |
 
-5. **Logging**: Check `logback-spring.xml` for logging configuration
+## Adding a New Feature
 
-6. **WebSocket Handler Pattern**: Command/listener architecture in `infrastructure.global.socket.command`
+Follow this complete structure:
 
-## CI/CD
+1. **Domain** (`core/domain/{feature}/`)
+   - `usecase/*UseCase.kt` (interface + impl)
+   - `spi/*Port.kt` (Query/Command interfaces)
+   - `dto/*ReqDto.kt`, `*ResDto.kt`
+   - `exception/*Exception.kt` (extend BasicException)
+   - `model/` (domain models)
 
-- **CI Workflow** (`.github/workflows/ci.yml`): Runs on each PR to develop/main
-  - Builds with Gradle
-  - Runs all tests with Redis service
-  - Test config from GitHub secrets
-- **CD Workflow** (`.github/workflows/cd.yml`): For deployment automation
+2. **Presentation** (`presentation/{feature}/`)
+   - `data/request/*Request.kt` (API input contracts)
+   - `data/response/*Response.kt` (API output contracts)
+   - `data/extension/*Extension.kt` (.toDto(), .toResponse() converters)
+   - `*WebAdapter.kt` (REST controller)
+   - Call: Request → .toDto() → UseCase → .toResponse() → Response
 
-## Common Development Tasks
+3. **Persistence** (`persistence/{feature}/`)
+   - `domain/*Entity.kt` (JPA entity)
+   - `*Repository.kt` (JPA repository)
+   - `*PersistenceAdapter.kt` (implements Port)
 
-### Adding a New Domain Feature
-1. Create use case interfaces in `core/domain/{feature}/usecase`
-2. Create entity in `persistence/{feature}/domain`
-3. Create repository interface and adapter in `persistence/{feature}`
-4. Create web adapter (controller) in `presentation/domain/{feature}`
-5. Create request/response DTOs in `core/domain/{feature}/dto`
-6. Create request/response Object in `presentation/domain/{feature}/data`
-7. Add tests for each layer
+4. **Infrastructure** (conditional, if needed)
+   - `infrastructure/{feature}/adapter/*Adapter.kt` (implements Port)
+   - Or `infrastructure/global/adapter/*Adapter.kt` (cross-cutting)
+   - Examples: Token generation, encryption, external APIs, caching
 
-### Debugging Tests
-```bash
-# Run with debug output
-./gradlew test --debug
+5. **Tests** (mirror structure in `src/test/kotlin/`)
+   - `*WebAdapterTest` (mock UseCase)
+   - `*PersistenceAdapterTest` (real DB via H2/test profile)
 
-# Run single test with more info
-./gradlew test --tests "*SomeTest" -i
-```
-
-### Updating Dependencies
-Dependencies are managed in `build.gradle.kts`. After changes, run:
-```bash
-./gradlew build --refresh-dependencies
-```
-
-## Git Guidelines
-- Main branch: `develop`
-- Feature branches follow pattern: `feature/{name}` or `fix/{name}`
-- Commits in Korean are common in this repo
-- Commit Keywords: feat, refac, fix, docs, test
+**Ports Can Be Implemented In**:
+- `persistence.{feature}.*PersistenceAdapter` (database operations)
+- `infrastructure.{feature}.adapter.*Adapter` (feature-specific external services)
+- `infrastructure.global.adapter.*Adapter` (shared services: JWT, encryption, rate limiting)
