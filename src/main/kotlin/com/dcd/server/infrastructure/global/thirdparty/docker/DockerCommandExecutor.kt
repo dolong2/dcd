@@ -228,29 +228,20 @@ class DockerCommandExecutor(
         }
 
         override fun executeCmd(containerName: String, cmd: String) {
-            try {
-                val cmdArray = arrayOf("/bin/sh", "-c", cmd)
+            val cmdArray = arrayOf("/bin/sh", "-c", cmd)
 
-                val execInstance = dockerClient.execCreateCmd(containerName)
-                    .withAttachStdout(true)
-                    .withAttachStderr(true)
-                    .withCmd(*cmdArray)
-                    .exec()
+            val execInstance = dockerClient.execCreateCmd(containerName)
+                .withAttachStdout(true)
+                .withAttachStderr(true)
+                .withCmd(*cmdArray)
+                .exec()
 
-                val callback =
-                    object : ResultCallback.Adapter<Frame>() {
-                        override fun onError(throwable: Throwable?) {
-                            throwable?.let { throw it }
-                        }
-                    }
+            val callback = object : ResultCallback.Adapter<Frame>() {}
 
-                dockerClient.execStartCmd(execInstance.id)
-                    .withDetach(false)
-                    .exec(callback)
-                    .awaitCompletion(60, TimeUnit.SECONDS)
-            } catch (e: Exception) {
-                throw e
-            }
+            dockerClient.execStartCmd(execInstance.id)
+                .withDetach(false)
+                .exec(callback)
+                .awaitCompletion(60, TimeUnit.SECONDS)
         }
 
         override fun createVolume(volume: com.dcd.server.core.domain.volume.model.Volume) {
