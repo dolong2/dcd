@@ -1,6 +1,6 @@
 package com.dcd.server.core.domain.domain.usecase
 
-import com.dcd.server.core.common.command.CommandPort
+import com.dcd.server.core.common.file.spi.FileOperationPort
 import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.common.file.FileContent
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
@@ -25,6 +25,7 @@ import util.application.ApplicationGenerator
 import util.domain.DomainGenerator
 import util.workspace.WorkspaceGenerator
 import java.util.*
+import java.nio.file.Paths
 
 @Transactional
 @SpringBootTest
@@ -38,8 +39,8 @@ class ConnectDomainUseCaseTest(
     private val queryApplicationPort: QueryApplicationPort,
     private val commandApplicationPort: CommandApplicationPort,
     private val workspaceInfo: WorkspaceInfo,
-    @MockkBean(relaxed = true)
-    private val commandPort: CommandPort,
+    @MockkBean(relaxUnitFun = true)
+    private val fileOperationPort: FileOperationPort,
     @MockkBean(relaxUnitFun = true)
     private val applyHttpConfigService: ApplyHttpConfigService
 ) : BehaviorSpec({
@@ -63,7 +64,9 @@ class ConnectDomainUseCaseTest(
                 val application = queryApplicationPort.findById(applicationId)!!
                 val webServerConfig = FileContent.getApplicationHttpConfig(application, domain.getDomainName())
                 val httpConfigDirectory = "./nginx/conf/${domain.id}"
-                verify { commandPort.executeShellCommand("mkdir -p '$httpConfigDirectory' && cat <<'EOF' > '${httpConfigDirectory}/${application.name.replace(" ", "-")}-http.conf'\n${webServerConfig}\nEOF") }
+                val httpConfigFilePath = "${httpConfigDirectory}/${application.name.replace(" ", "-")}-http.conf"
+                verify { fileOperationPort.createDirectory(match { it.toString() == httpConfigDirectory }) }
+                verify { fileOperationPort.writeFile(match { it.toString() == httpConfigFilePath }, webServerConfig) }
             }
             then("도메인에 해당 애플리케이션이 연결되어야함") {
                 val domainEntity = queryDomainPort.findById(domainId)!!

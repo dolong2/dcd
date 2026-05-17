@@ -1,17 +1,17 @@
 package com.dcd.server.core.domain.application.service.impl
 
-import com.dcd.server.core.common.command.CommandPort
-import com.dcd.server.core.common.file.FileContent
+import com.dcd.server.core.common.file.exception.FileOperationException
+import com.dcd.server.core.common.file.spi.FileOperationPort
 import com.dcd.server.core.common.spi.EncryptPort
 import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.CreateDockerFileService
-import com.dcd.server.core.domain.application.spi.CheckExitValuePort
 import com.dcd.server.core.domain.application.spi.QueryApplicationInitialScriptPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.application.util.FailureCase
+import com.dcd.server.core.common.file.FileContent
 import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,14 +21,14 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import java.io.File
 import java.io.IOException
+import java.nio.file.Paths
 
 @Service
 class CreateDockerFileServiceImpl(
     private val queryApplicationPort: QueryApplicationPort,
     private val queryApplicationEnvPort: QueryApplicationEnvPort,
     private val queryApplicationInitialScriptPort: QueryApplicationInitialScriptPort,
-    private val commandPort: CommandPort,
-    private val checkExitValuePort: CheckExitValuePort,
+    private val fileOperationPort: FileOperationPort,
     private val eventPublisher: ApplicationEventPublisher,
     private val encryptPort: EncryptPort
 ) : CreateDockerFileService {
@@ -47,7 +47,7 @@ class CreateDockerFileServiceImpl(
     }
 
     private fun createFile(application: Application, version: String, coroutineScope: CoroutineScope) {
-        val directoryName = "'${application.name}'"
+        val applicationPath = Paths.get(application.name)
         val applicationEnv =
             queryApplicationEnvPort.findByApplication(application)
                 .flatMap { it.details }
@@ -63,14 +63,18 @@ class CreateDockerFileServiceImpl(
                 .findAllByApplication(application)
                 .map { it.script }
 
-        commandPort.executeShellCommand("mkdir -p $directoryName")
-            .also {commandResult ->
-                if (commandResult.exitValue != 0)
-                    commandPort.executeShellCommand("rm -rf $directoryName")
-                checkExitValuePort.checkApplicationExitValue(commandResult, application, coroutineScope, FailureCase.CREATE_DIRECTORY_FAILURE)
+        try {
+            fileOperationPort.createDirectory(applicationPath)
+        } catch (e: FileOperationException) {
+            try {
+                fileOperationPort.deleteDirectory(applicationPath)
+            } catch (ignored: FileOperationException) {
             }
+            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.CREATE_DIRECTORY_FAILURE))
+            coroutineScope.cancel()
+            return
+        }
 
-        val file = File("./${application.name}/Dockerfile")
         val fileContent =
             FileContent.getApplicationDockerFileContent(
                 application.applicationType,
@@ -81,13 +85,14 @@ class CreateDockerFileServiceImpl(
             )
 
         try {
-            if (!file.exists())
-                file.createNewFile()
-            file.writeText(fileContent)
-        } catch (e: IOException) {
-            commandPort.executeShellCommand("rm -rf $directoryName")
-            coroutineScope.cancel()
+            fileOperationPort.writeFile(Paths.get("${applicationPath}", "Dockerfile"), fileContent)
+        } catch (e: FileOperationException) {
+            try {
+                fileOperationPort.deleteDirectory(applicationPath)
+            } catch (ignored: FileOperationException) {
+            }
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.CREATE_DOCKER_FILE_FAILURE))
+            coroutineScope.cancel()
         }
     }
 }
