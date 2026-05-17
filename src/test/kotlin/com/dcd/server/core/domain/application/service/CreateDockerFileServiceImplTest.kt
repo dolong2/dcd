@@ -6,7 +6,7 @@ import com.dcd.server.core.common.spi.EncryptPort
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.impl.CreateDockerFileServiceImpl
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
-import com.dcd.server.infrastructure.global.file.adapter.FileOperationAdapter
+import com.dcd.server.infrastructure.global.adapter.FileOperationAdapter
 import com.dcd.server.core.domain.application.spi.QueryApplicationInitialScriptPort
 import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
 import io.kotest.core.spec.style.BehaviorSpec
