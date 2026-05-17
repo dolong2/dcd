@@ -86,7 +86,7 @@ class CreateDockerFileServiceImpl(
 
         try {
             fileOperationPort.writeFile(Paths.get("${applicationPath}", "Dockerfile"), fileContent)
-        } catch (e: IOException) {
+        } catch (e: FileOperationException) {
             try {
                 fileOperationPort.deleteDirectory(applicationPath)
             } catch (ignored: FileOperationException) {
