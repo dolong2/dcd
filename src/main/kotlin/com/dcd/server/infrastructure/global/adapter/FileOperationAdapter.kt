@@ -27,11 +27,10 @@ class FileOperationAdapter : FileOperationPort {
             if (!Files.exists(path)) {
                 return
             }
-            Files.walk(path)
-                .sorted(Comparator.reverseOrder())
-                .forEach { p ->
-                    Files.delete(p)
-                }
+            Files.walk(path).use { stream ->
+                stream.sorted(Comparator.reverseOrder())
+                    .forEach { p -> Files.delete(p)}
+            }
         } catch (e: Exception) {
             log.error("Failed to delete directory: ${path.toAbsolutePath()}", e)
             throw FileOperationException()
