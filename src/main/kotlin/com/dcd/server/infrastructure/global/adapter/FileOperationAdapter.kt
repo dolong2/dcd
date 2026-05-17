@@ -1,4 +1,4 @@
-package com.dcd.server.infrastructure.global.file.adapter
+package com.dcd.server.infrastructure.global.adapter
 
 import com.dcd.server.core.common.file.exception.FileOperationException
 import com.dcd.server.core.common.file.spi.FileOperationPort
