@@ -1,33 +1,31 @@
 package com.dcd.server.core.domain.application.service
 
 import com.dcd.server.core.common.file.FileContent
+import com.dcd.server.core.common.file.spi.FileOperationPort
 import com.dcd.server.core.common.spi.EncryptPort
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
 import com.dcd.server.core.domain.application.service.impl.CreateDockerFileServiceImpl
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
-import com.dcd.server.infrastructure.global.command.adapter.CommandAdapter
-import com.dcd.server.core.domain.application.spi.CheckExitValuePort
+import com.dcd.server.infrastructure.global.file.adapter.FileOperationAdapter
 import com.dcd.server.core.domain.application.spi.QueryApplicationInitialScriptPort
 import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.spyk
-import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
 import util.application.ApplicationGenerator
 import java.io.File
+import java.nio.file.Paths
 
 class CreateDockerFileServiceImplTest : BehaviorSpec({
     val queryApplicationPort = mockk<QueryApplicationPort>()
     val queryApplicationEnvPort = mockk<QueryApplicationEnvPort>()
     val queryApplicationInitialScriptPort = mockk<QueryApplicationInitialScriptPort>()
-    val commandPort = spyk(CommandAdapter())
+    val fileOperationPort = FileOperationAdapter()
     val eventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
-    val checkExitValuePort = mockk<CheckExitValuePort>(relaxUnitFun = true)
     val encryptPort = mockk<EncryptPort>()
-    val createDockerFileService = CreateDockerFileServiceImpl(queryApplicationPort, queryApplicationEnvPort, queryApplicationInitialScriptPort, commandPort, checkExitValuePort, eventPublisher, encryptPort)
+    val createDockerFileService = CreateDockerFileServiceImpl(queryApplicationPort, queryApplicationEnvPort, queryApplicationInitialScriptPort, fileOperationPort, eventPublisher, encryptPort)
 
     given("스프링 애플리케이션이 주어지고") {
         val application =
@@ -38,11 +36,8 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
         `when`("서비스를 실행할때") {
             createDockerFileService.createFileToApplication(application, application.version)
 
-            then("애플리케이션의 이름을 가진 디렉토리를 생성해야함") {
-                verify { commandPort.executeShellCommand("mkdir -p '${application.name}'") }
-            }
-            then("실제로 애플리케이션 이름의 디렉토리가 생성되야함") {
-                commandPort.executeShellCommand("test -e '${application.name}'").exitValue shouldBe 0
+            then("애플리케이션의 이름을 가진 디렉토리가 생성되야함") {
+                Paths.get(application.name).toFile().exists() shouldBe true
             }
             then("생성된 DockerFile의 내용은 FileContent의 내용과 같아야함") {
                 val actualFileContent = StringBuilder()
@@ -55,7 +50,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
             }
         }
 
-        commandPort.executeShellCommand("rm -rf '${application.name}'") // 실제로 생성된 디렉토리 제거
+        fileOperationPort.deleteDirectory(Paths.get(application.name))
     }
 
     given("레디스 애플리케이션이 주어지고") {
@@ -67,11 +62,8 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
         `when`("서비스를 실행할때") {
             createDockerFileService.createFileToApplication(application, application.version)
 
-            then("애플리케이션의 이름을 가진 디렉토리를 생성해야함") {
-                verify { commandPort.executeShellCommand("mkdir -p '${application.name}'") }
-            }
-            then("실제로 애플리케이션 이름의 디렉토리가 생성되야함") {
-                commandPort.executeShellCommand("test -e '${application.name}'").exitValue shouldBe 0
+            then("애플리케이션의 이름을 가진 디렉토리가 생성되야함") {
+                Paths.get(application.name).toFile().exists() shouldBe true
             }
             then("생성된 DockerFile의 내용은 FileContent의 내용과 같아야함") {
                 val actualFileContent = StringBuilder()
@@ -83,7 +75,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
             }
         }
 
-        commandPort.executeShellCommand("rm -rf '${application.name}'") // 실제로 생성된 디렉토리 제거
+        fileOperationPort.deleteDirectory(Paths.get(application.name))
     }
 
     given("MYSQL 애플리케이션이 주어지고") {
@@ -95,11 +87,8 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
         `when`("서비스를 실행할때") {
             createDockerFileService.createFileToApplication(application, application.version)
 
-            then("애플리케이션의 이름을 가진 디렉토리를 생성해야함") {
-                verify { commandPort.executeShellCommand("mkdir -p '${application.name}'") }
-            }
-            then("실제로 애플리케이션 이름의 디렉토리가 생성되야함") {
-                commandPort.executeShellCommand("test -e '${application.name}'").exitValue shouldBe 0
+            then("애플리케이션의 이름을 가진 디렉토리가 생성되야함") {
+                Paths.get(application.name).toFile().exists() shouldBe true
             }
             then("생성된 DockerFile의 내용은 FileContent의 내용과 같아야함") {
                 val actualFileContent = StringBuilder()
@@ -111,7 +100,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
             }
         }
 
-        commandPort.executeShellCommand("rm -rf '${application.name}'") // 실제로 생성된 디렉토리 제거
+        fileOperationPort.deleteDirectory(Paths.get(application.name))
     }
 
     given("MARIADB 애플리케이션이 주어지고") {
@@ -123,11 +112,8 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
         `when`("서비스를 실행할때") {
             createDockerFileService.createFileToApplication(application, application.version)
 
-            then("애플리케이션의 이름을 가진 디렉토리를 생성해야함") {
-                verify { commandPort.executeShellCommand("mkdir -p '${application.name}'") }
-            }
-            then("실제로 애플리케이션 이름의 디렉토리가 생성되야함") {
-                commandPort.executeShellCommand("test -e '${application.name}'").exitValue shouldBe 0
+            then("애플리케이션의 이름을 가진 디렉토리가 생성되야함") {
+                Paths.get(application.name).toFile().exists() shouldBe true
             }
             then("생성된 DockerFile의 내용은 FileContent의 내용과 같아야함") {
                 val actualFileContent = StringBuilder()
@@ -139,7 +125,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
             }
         }
 
-        commandPort.executeShellCommand("rm -rf '${application.name}'") // 실제로 생성된 디렉토리 제거
+        fileOperationPort.deleteDirectory(Paths.get(application.name))
     }
 
 })
