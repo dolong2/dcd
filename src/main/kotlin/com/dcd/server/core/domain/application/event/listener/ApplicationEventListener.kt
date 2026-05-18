@@ -53,8 +53,6 @@ class ApplicationEventListener(
             }
 
             CoroutineScope(Dispatchers.IO).launch {
-                val version = application.version
-
                 val applicationType = application.applicationType
                 when(applicationType) {
                     ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS -> {
@@ -62,7 +60,7 @@ class ApplicationEventListener(
                     }
                     else -> {}
                 }
-                createDockerFileService.createFileToApplication(application, version)
+                createDockerFileService.createFileToApplication(application)
                 
                 containerPort.execute {
                     buildImage(application, "./${application.name}/Dockerfile")

@@ -34,7 +34,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
         every { queryApplicationInitialScriptPort.findAllByApplication(application) } returns emptyList()
 
         `when`("서비스를 실행할때") {
-            createDockerFileService.createFileToApplication(application, application.version)
+            createDockerFileService.createFileToApplication(application)
 
             then("애플리케이션의 이름을 가진 디렉토리가 생성되야함") {
                 Paths.get(application.name).toFile().exists() shouldBe true
@@ -60,7 +60,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
         every { queryApplicationInitialScriptPort.findAllByApplication(application) } returns emptyList()
 
         `when`("서비스를 실행할때") {
-            createDockerFileService.createFileToApplication(application, application.version)
+            createDockerFileService.createFileToApplication(application)
 
             then("애플리케이션의 이름을 가진 디렉토리가 생성되야함") {
                 Paths.get(application.name).toFile().exists() shouldBe true
@@ -85,7 +85,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
         every { queryApplicationInitialScriptPort.findAllByApplication(application) } returns emptyList()
 
         `when`("서비스를 실행할때") {
-            createDockerFileService.createFileToApplication(application, application.version)
+            createDockerFileService.createFileToApplication(application)
 
             then("애플리케이션의 이름을 가진 디렉토리가 생성되야함") {
                 Paths.get(application.name).toFile().exists() shouldBe true
@@ -110,7 +110,7 @@ class CreateDockerFileServiceImplTest : BehaviorSpec({
         every { queryApplicationInitialScriptPort.findAllByApplication(application) } returns emptyList()
 
         `when`("서비스를 실행할때") {
-            createDockerFileService.createFileToApplication(application, application.version)
+            createDockerFileService.createFileToApplication(application)
 
             then("애플리케이션의 이름을 가진 디렉토리가 생성되야함") {
                 Paths.get(application.name).toFile().exists() shouldBe true

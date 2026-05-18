@@ -59,7 +59,7 @@ class CreateApplicationUseCase(
                 else -> {}
             }
 
-            createDockerFileService.createFileToApplication(application, version)
+            createDockerFileService.createFileToApplication(application)
 
             containerPort.execute {
                 buildImage(application, "./${application.name}/Dockerfile")

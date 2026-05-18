@@ -86,8 +86,6 @@ class DeployApplicationUseCase(
             deleteContainer(application)
             deleteImage(application)
 
-            val version = application.version
-
             runBlocking {
                 val applicationType = application.applicationType
                 when(applicationType) {
@@ -96,7 +94,7 @@ class DeployApplicationUseCase(
                     }
                     else -> {}
                 }
-                createDockerFileService.createFileToApplication(application, version)
+                createDockerFileService.createFileToApplication(application)
             }
 
             buildImage(application, "./${application.name}/Dockerfile")
