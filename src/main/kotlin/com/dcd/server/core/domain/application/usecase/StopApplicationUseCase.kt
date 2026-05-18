@@ -31,6 +31,7 @@ class StopApplicationUseCase(
             containerPort.execute {
                 stopContainer(application)
             }
+            changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.STOPPED)
         }
 
         changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.PENDING)
@@ -59,6 +60,7 @@ class StopApplicationUseCase(
                     containerPort.execute {
                         stopContainer(application)
                     }
+                    changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.STOPPED)
                 }
             }
         }
