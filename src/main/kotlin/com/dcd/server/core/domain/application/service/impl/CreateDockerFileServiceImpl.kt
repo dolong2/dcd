@@ -7,7 +7,7 @@ import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
-import com.dcd.server.core.domain.application.service.CreateDockerFileService
+import com.dcd.server.core.domain.application.service.CreateImageFileService
 import com.dcd.server.core.domain.application.spi.QueryApplicationInitialScriptPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.application.util.FailureCase
@@ -31,22 +31,23 @@ class CreateDockerFileServiceImpl(
     private val fileOperationPort: FileOperationPort,
     private val eventPublisher: ApplicationEventPublisher,
     private val encryptPort: EncryptPort
-) : CreateDockerFileService {
-    override suspend fun createFileByApplicationId(id: String, version: String) {
+) : CreateImageFileService {
+    override suspend fun createFileByApplicationId(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
         withContext(Dispatchers.IO) {
-            createFile(application, version, this)
+            createFile(application, this)
         }
     }
 
-    override suspend fun createFileToApplication(application: Application, version: String) {
+    override suspend fun createFileToApplication(application: Application) {
         withContext(Dispatchers.IO) {
-            createFile(application, version, this)
+            createFile(application, this)
         }
     }
 
-    private fun createFile(application: Application, version: String, coroutineScope: CoroutineScope) {
+    private fun createFile(application: Application, coroutineScope: CoroutineScope) {
+        val version = application.version
         val applicationPath = Paths.get(application.name)
         val applicationEnv =
             queryApplicationEnvPort.findByApplication(application)

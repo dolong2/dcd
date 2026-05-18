@@ -32,7 +32,7 @@ class DeployApplicationUseCaseTest(
     @MockkBean(relaxed = true)
     private val containerPort: ContainerPort,
     @MockkBean(relaxUnitFun = true)
-    private val createDockerFileService: CreateDockerFileServiceImpl,
+    private val createImageFileService: CreateDockerFileServiceImpl,
     private val commandUserPort: CommandUserPort,
     private val commandWorkspacePort: CommandWorkspacePort,
     private val commandApplicationPort: CommandApplicationPort,
