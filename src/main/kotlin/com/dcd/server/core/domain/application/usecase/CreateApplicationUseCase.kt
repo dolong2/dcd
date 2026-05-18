@@ -8,7 +8,10 @@ import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDt
 import com.dcd.server.core.domain.application.dto.response.CreateApplicationResDto
 import com.dcd.server.core.domain.application.exception.AlreadyExistsApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import com.dcd.server.core.domain.application.service.*
+import com.dcd.server.core.domain.application.service.CreateImageFileService
+import com.dcd.server.core.domain.application.service.DeleteApplicationDirectoryService
+import com.dcd.server.core.domain.application.service.GetExternalPortService
+import com.dcd.server.core.domain.application.service.InitialScriptService
 import com.dcd.server.core.domain.application.spi.ApplicationRemoteRepoPort
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
@@ -27,7 +30,7 @@ class CreateApplicationUseCase(
     private val containerPort: ContainerPort,
     private val queryVolumePort: QueryVolumePort,
     private val applicationRemoteRepoPort: ApplicationRemoteRepoPort,
-    private val createDockerFileService: CreateDockerFileService,
+    private val createImageFileService: CreateImageFileService,
     private val getExternalPortService: GetExternalPortService,
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
     private val envAutoMatchService: EnvAutoMatchService,
@@ -59,7 +62,7 @@ class CreateApplicationUseCase(
                 else -> {}
             }
 
-            createDockerFileService.createFileToApplication(application)
+            createImageFileService.createFileToApplication(application)
 
             containerPort.execute {
                 buildImage(application, "./${application.name}/Dockerfile")
