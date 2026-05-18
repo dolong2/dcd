@@ -31,6 +31,7 @@ class RunApplicationUseCase(
             containerPort.execute {
                 startContainer(application)
             }
+            changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING)
         }
 
         changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.PENDING)
@@ -60,6 +61,7 @@ class RunApplicationUseCase(
                     containerPort.execute {
                         startContainer(application)
                     }
+                    changeApplicationStatusService.changeApplicationStatus(application, ApplicationStatus.RUNNING)
                 }
             }
         }
