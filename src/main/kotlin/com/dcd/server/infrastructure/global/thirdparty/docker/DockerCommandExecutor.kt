@@ -31,6 +31,9 @@ import com.github.dockerjava.api.model.Volume
 import com.github.dockerjava.api.model.BuildResponseItem
 import com.github.dockerjava.api.model.WaitResponse
 import com.github.dockerjava.api.command.BuildImageResultCallback
+import java.io.PipedInputStream
+import java.io.PipedOutputStream
+import java.io.OutputStream
 import java.util.concurrent.TimeUnit
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
@@ -194,6 +197,38 @@ class DockerCommandExecutor(
             } catch (e: Exception) {
                 throw DockerCommandException(application, FailureCase.DELETE_IMAGE_FAILURE, e.message)
             }
+        }
+
+        override fun attachContainer(application: Application, onResponse: (String) -> Unit): OutputStream {
+            val execCreateCmdResponse = dockerClient.execCreateCmd(application.containerName)
+                .withAttachStdin(true)
+                .withAttachStdout(true)
+                .withAttachStderr(true)
+                .withTty(true)
+                .withCmd("/bin/sh")
+                .exec()
+
+            val execId = execCreateCmdResponse.id
+
+            val execCallback = object : ResultCallback.Adapter<Frame>() {
+                override fun onNext(frame: Frame) {
+                    runCatching {
+                        onResponse(String(frame.payload).trim())
+                    }.onFailure { onResponse("Error sending message: ${it.message}") }
+                }
+            }
+
+            // 3. 사용자의 입력을 Docker로 전달할 파이프라인 연결
+            val pipedOut = PipedOutputStream()
+            val pipedIn = PipedInputStream(pipedOut)
+
+            // Docker Exec 프로세스 시작
+            dockerClient.execStartCmd(execId)
+                .withStdIn(pipedIn)
+                .withTty(true)
+                .exec(execCallback)
+
+            return pipedOut
         }
 
         override fun executeCmd(application: Application, workingDir: String, cmd: String, onResponse: (String) -> Unit) {

@@ -5,6 +5,8 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.volume.model.Volume
 import com.dcd.server.core.domain.volume.model.VolumeMount
 import com.dcd.server.core.domain.workspace.model.Workspace
+import java.io.InputStream
+import java.io.OutputStream
 
 interface ContainerActions {
     fun createContainer(application: Application, volumeMounts: List<VolumeMount>)
@@ -15,6 +17,7 @@ interface ContainerActions {
     fun getContainer(status: ContainerStatus): List<String>
     fun getContainerLogs(application: Application): List<String>
     fun buildImage(application: Application, dockerfilePath: String)
+    fun attachContainer(application: Application, onResponse: (String) -> Unit): OutputStream
     fun executeCmd(application: Application, workingDir: String, cmd: String, onResponse: (String) -> Unit)
     fun executeCmd(containerName: String, cmd: String)
 
