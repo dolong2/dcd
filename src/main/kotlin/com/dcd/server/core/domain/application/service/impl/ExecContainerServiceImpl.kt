@@ -26,52 +26,15 @@ class ExecContainerServiceImpl(
     }
 
     override fun execCmd(application: Application, session: WebSocketSession, cmd: String) {
-        val cmdArray = cmd.split(" ").toTypedArray()
-
-        @Suppress("UNCHECKED_CAST")
-        val dirStack = (session.attributes["workingDir"] as? Stack<String>) ?: Stack<String>()
-        val workingDir = "/${dirStack.joinToString("/")}"
-
-        if (cmd.contains("cd")) {
-            val newDirList = cmdArray[1].split("/")
-
-            newDirList.forEach { newDir ->
-                updateWorkingDir(dirStack, newDir)
-            }
-            val updatedWorkingDir = "/${dirStack.joinToString("/")}"
-
-            session.sendMessage(TextMessage("current dir = $updatedWorkingDir"))
-            session.sendMessage(TextMessage("cmd end"))
-
-            session.attributes["workingDir"] = dirStack
-            return
-        }
-
-        session.sendMessage(TextMessage("cmd start"))
-
+    override fun initContainerTty(application: Application, session: WebSocketSession) =
         containerPort.execute {
-            executeCmd(application, workingDir, cmd) { output ->
-                session.sendMessage(TextMessage(output))
-            }
-        }
-
-        session.sendMessage(TextMessage("current dir = $workingDir"))
-        session.sendMessage(TextMessage("cmd end"))
-
-        session.close()
+            attachContainer(application) { response ->
+                if (session.isOpen) {
+                    println("ws test1: ${response}")
+                    session.sendMessage(TextMessage(response))
     }
-
-    private fun updateWorkingDir(dirStack: Stack<String>, newDir: String) {
-        when {
-            newDir == "/" -> dirStack.removeAllElements()
-            newDir == ".." -> if (dirStack.isNotEmpty()) dirStack.pop()
-            newDir.startsWith("/") -> {
-                dirStack.removeAllElements()
-                dirStack.push(newDir)
             }
-            newDir == "." -> return
-            newDir.isBlank() -> return
-            else -> { dirStack.push(newDir) }
-        }
-    }
+        }?.let {
+            containerInputStreams[session.id] = it
+        } ?: throw RuntimeException("컨테이너에 연결되지 않았습니다.")
 }
