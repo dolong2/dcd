@@ -63,8 +63,7 @@ dependencies {
 
 	//docker
 	implementation("com.github.docker-java:docker-java:3.4.0")
-	implementation("com.github.docker-java:docker-java-transport-okhttp:3.4.0")
-	implementation("com.squareup.okhttp3:okhttp:4.12.0")
+	implementation("com.github.docker-java:docker-java-transport-httpclient5:3.4.0")
 
 	//bucket4j
 	implementation("com.bucket4j:bucket4j_jdk17-core:8.14.0")
