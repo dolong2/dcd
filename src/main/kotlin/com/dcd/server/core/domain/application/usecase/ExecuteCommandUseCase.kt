@@ -35,6 +35,12 @@ class ExecuteCommandUseCase(
         return CommandResultResDto(result)
     }
 
+    fun initContainerTty(applicationId: String, session: WebSocketSession) {
+        val application = (queryApplicationPort.findById(applicationId)
+            ?: throw ApplicationNotFoundException())
+        execContainerService.initContainerTty(application, session)
+    }
+
     fun execute(applicationId: String, session: WebSocketSession, cmd: String) {
         validateCmd(cmd)
 
@@ -61,7 +67,7 @@ class ExecuteCommandUseCase(
 
         val pattern = Regex("^(?:(?!(;|\\|\\||&&)|rm\\s+-rf\\s+\\/|(wget|curl)\\s+.*\\|\\s*(sh|bash|zsh|ksh)|cat\\s+/etc/passwd|(cat|grep|awk|sed)\\s+/.*ssh/.*(id_rsa|authorized_keys|known_hosts)).)*$")
 
-        if (pattern.matches(cmd).not())
+        if (!pattern.containsMatchIn(cmd))
             throw InvalidCmdException()
     }
 }
