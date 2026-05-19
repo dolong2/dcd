@@ -213,21 +213,32 @@ class DockerCommandExecutor(
             val execCallback = object : ResultCallback.Adapter<Frame>() {
                 override fun onNext(frame: Frame) {
                     runCatching {
-                        onResponse(String(frame.payload).trim())
-                    }.onFailure { onResponse("Error sending message: ${it.message}") }
+                        val output = String(frame.payload)
+                        if (output.isNotEmpty()) {
+                            onResponse(output)
+                        }
+                    }.onFailure {
+                        onResponse("Error sending message: ${it.message}")
+                    }
                 }
             }
 
-            // 3. 사용자의 입력을 Docker로 전달할 파이프라인 연결
             val pipedOut = PipedOutputStream()
             val pipedIn = PipedInputStream(pipedOut)
 
-            // Docker Exec 프로세스 시작
-            dockerClient.execStartCmd(execId)
-                .withStdIn(pipedIn)
-                .withTty(true)
-                .exec(execCallback)
+            // 별도 스레드에서 exec 시작
+            Thread {
+                try {
+                    dockerClient.execStartCmd(execId)
+                        .withStdIn(pipedIn)
+                        .withTty(true)
+                        .exec(execCallback)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }.start()
 
+            Thread.sleep(100)
             return pipedOut
         }
 
