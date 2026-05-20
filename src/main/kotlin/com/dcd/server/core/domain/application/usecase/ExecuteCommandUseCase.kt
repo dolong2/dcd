@@ -36,8 +36,20 @@ class ExecuteCommandUseCase(
     }
 
     fun initContainerTty(applicationId: String, session: WebSocketSession) {
+        val accessToken = (session.attributes["accessToken"] as? String
+            ?: throw InvalidConnectionInfoException("세션에 인증 정보가 존재하지 않음", CloseStatus.PROTOCOL_ERROR))
+
+        val userId = parseTokenPort.getUserId(accessToken)
+
         val application = (queryApplicationPort.findById(applicationId)
             ?: throw ApplicationNotFoundException())
+
+        if (application.status != ApplicationStatus.RUNNING)
+            throw InvalidApplicationStatusException()
+
+        if (userId != application.workspace.owner.id)
+            throw WorkspaceOwnerNotSameException()
+
         execContainerService.initContainerTty(application, session)
     }
 
