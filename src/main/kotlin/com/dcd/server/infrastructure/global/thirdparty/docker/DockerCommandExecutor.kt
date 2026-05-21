@@ -31,7 +31,11 @@ import com.github.dockerjava.api.model.Volume
 import com.github.dockerjava.api.model.BuildResponseItem
 import com.github.dockerjava.api.model.WaitResponse
 import com.github.dockerjava.api.command.BuildImageResultCallback
+import java.io.PipedInputStream
+import java.io.PipedOutputStream
+import java.io.OutputStream
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.CompletableFuture
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 import org.slf4j.LoggerFactory
@@ -194,6 +198,51 @@ class DockerCommandExecutor(
             } catch (e: Exception) {
                 throw DockerCommandException(application, FailureCase.DELETE_IMAGE_FAILURE, e.message)
             }
+        }
+
+        override fun attachContainer(application: Application, onResponse: (String) -> Unit): OutputStream {
+            val execCreateCmdResponse = dockerClient.execCreateCmd(application.containerName)
+                .withAttachStdin(true)
+                .withAttachStdout(true)
+                .withAttachStderr(true)
+                .withTty(true)
+                .withCmd("/bin/sh")
+                .exec()
+
+            val execId = execCreateCmdResponse.id
+
+            val execCallback = object : ResultCallback.Adapter<Frame>() {
+                override fun onNext(frame: Frame) {
+                    runCatching {
+                        val output = String(frame.payload)
+                        if (output.isNotEmpty()) {
+                            onResponse(output)
+                        }
+                    }.onFailure {
+                        onResponse("Error sending message: ${it.message}")
+                    }
+                }
+            }
+
+            val pipedOut = PipedOutputStream()
+            val pipedIn = PipedInputStream(pipedOut)
+            val startSignal = CompletableFuture<Unit>()
+
+            // 별도 스레드에서 exec 시작
+            Thread {
+                try {
+                    dockerClient.execStartCmd(execId)
+                        .withStdIn(pipedIn)
+                        .withTty(true)
+                        .exec(execCallback)
+                    startSignal.complete(Unit)
+                } catch (e: Exception) {
+                    startSignal.completeExceptionally(e)
+                }
+            }.start()
+
+            startSignal.get(5, TimeUnit.SECONDS)
+            return pipedOut
         }
 
         override fun executeCmd(application: Application, workingDir: String, cmd: String, onResponse: (String) -> Unit) {

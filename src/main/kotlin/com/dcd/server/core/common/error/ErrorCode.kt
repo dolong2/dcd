@@ -64,6 +64,7 @@ enum class ErrorCode(
     WORKSPACE_DISCONNECTION_FAILED("워크스페이스 연결 해제에 실패했습니다.", 500),
     CONTAINER_NOT_RUN("해당 애플리케이션을 실행할 수 없음", 500),
     CONTAINER_NOT_STOPPED("해당 애플리케이션을 정지할 수 없음", 500),
+    CONTAINER_NOT_CONNECTED("컨테이너에 연결되지 않았습니다.", 500),
     CONTAINER_NOT_CREATED("해당 애플리케이션의 이미지를 컨테이너로 빌드할 수 없음", 500),
     IMAGE_NOT_BUILT("해당 애플리케이션을 이미지로 빌드할 수 없음", 500),
     INTERNAL_ERROR("서버 내부 에러", 500),

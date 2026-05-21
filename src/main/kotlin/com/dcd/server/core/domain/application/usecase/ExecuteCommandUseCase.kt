@@ -55,13 +55,35 @@ class ExecuteCommandUseCase(
         execContainerService.execCmd(application, session, cmd)
     }
 
+    fun initContainerTty(applicationId: String, session: WebSocketSession) {
+        val accessToken = (session.attributes["accessToken"] as? String
+            ?: throw InvalidConnectionInfoException("세션에 인증 정보가 존재하지 않음", CloseStatus.PROTOCOL_ERROR))
+
+        val userId = parseTokenPort.getUserId(accessToken)
+
+        val application = (queryApplicationPort.findById(applicationId)
+            ?: throw ApplicationNotFoundException())
+
+        if (application.status != ApplicationStatus.RUNNING)
+            throw InvalidApplicationStatusException()
+
+        if (userId != application.workspace.owner.id)
+            throw WorkspaceOwnerNotSameException()
+
+        execContainerService.initContainerTty(application, session)
+    }
+
+     fun closeContainerTty(session: WebSocketSession) {
+        execContainerService.closeContainerTty(session)
+    }
+
     private fun validateCmd(cmd: String) {
         if (cmd.length > 100)
             throw InvalidCmdException()
 
         val pattern = Regex("^(?:(?!(;|\\|\\||&&)|rm\\s+-rf\\s+\\/|(wget|curl)\\s+.*\\|\\s*(sh|bash|zsh|ksh)|cat\\s+/etc/passwd|(cat|grep|awk|sed)\\s+/.*ssh/.*(id_rsa|authorized_keys|known_hosts)).)*$")
 
-        if (pattern.matches(cmd).not())
+        if (!pattern.containsMatchIn(cmd))
             throw InvalidCmdException()
     }
 }

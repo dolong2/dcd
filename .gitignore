@@ -49,3 +49,6 @@ getImageVersion.sh
 ### terraform ###
 terraform/.terraform.lock.hcl
 terraform/.terraform
+
+## dcd ##
+dcd-info
