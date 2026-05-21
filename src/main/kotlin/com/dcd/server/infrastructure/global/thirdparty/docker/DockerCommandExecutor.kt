@@ -234,7 +234,7 @@ class DockerCommandExecutor(
                         .withTty(true)
                         .exec(execCallback)
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    throw e
                 }
             }.start()
 
