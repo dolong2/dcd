@@ -45,4 +45,8 @@ class ExecContainerServiceImpl(
         }?.let {
             containerInputStreams[session.id] = it
         } ?: throw ContainerNotConnectedException()
+
+    override fun closeContainerTty(session: WebSocketSession) {
+        containerInputStreams.remove(session.id)?.close()
+    }
 }

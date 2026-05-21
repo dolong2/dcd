@@ -8,4 +8,5 @@ interface ExecContainerService {
     fun execCmd(application: Application, cmd: String): List<String>
     fun execCmd(application: Application, session: WebSocketSession, cmd: String)
     fun initContainerTty(application: Application, session: WebSocketSession)
+    fun closeContainerTty(session: WebSocketSession)
 }

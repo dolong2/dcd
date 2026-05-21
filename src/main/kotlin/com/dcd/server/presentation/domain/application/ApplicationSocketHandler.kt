@@ -58,4 +58,8 @@ class ApplicationSocketHandler(
 
         session.close(closeStatus)
     }
+
+    override fun afterConnectionClosed(session: WebSocketSession, status: CloseStatus) {
+        executeCommandUseCase.closeContainerTty(session)
+    }
 }
