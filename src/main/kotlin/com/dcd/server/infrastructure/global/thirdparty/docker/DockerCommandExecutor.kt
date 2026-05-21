@@ -35,6 +35,7 @@ import java.io.PipedInputStream
 import java.io.PipedOutputStream
 import java.io.OutputStream
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.CompletableFuture
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 import org.slf4j.LoggerFactory
@@ -225,6 +226,7 @@ class DockerCommandExecutor(
 
             val pipedOut = PipedOutputStream()
             val pipedIn = PipedInputStream(pipedOut)
+            val startSignal = CompletableFuture<Unit>()
 
             // 별도 스레드에서 exec 시작
             Thread {
@@ -233,12 +235,13 @@ class DockerCommandExecutor(
                         .withStdIn(pipedIn)
                         .withTty(true)
                         .exec(execCallback)
+                    startSignal.complete(Unit)
                 } catch (e: Exception) {
-                    throw e
+                    startSignal.completeExceptionally(e)
                 }
             }.start()
 
-            Thread.sleep(100)
+            startSignal.get(5, TimeUnit.SECONDS)
             return pipedOut
         }
 
