@@ -4,7 +4,7 @@ import com.github.dockerjava.api.DockerClient
 import com.github.dockerjava.core.DefaultDockerClientConfig
 import com.github.dockerjava.core.DockerClientBuilder
 import com.github.dockerjava.core.DockerClientConfig
-import com.github.dockerjava.httpclient5.ApacheDockerHttpClient
+import com.github.dockerjava.zerodep.ZerodepDockerHttpClient
 import com.github.dockerjava.transport.DockerHttpClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,7 +15,7 @@ class DockerClientConfig {
     fun dockerClient(): DockerClient {
         val config = getDockerConfig()
 
-        val httpClient: DockerHttpClient = ApacheDockerHttpClient.Builder()
+        val httpClient: DockerHttpClient = ZerodepDockerHttpClient.Builder()
             .dockerHost(config.dockerHost)
             .sslConfig(config.sslConfig)
             .build()
