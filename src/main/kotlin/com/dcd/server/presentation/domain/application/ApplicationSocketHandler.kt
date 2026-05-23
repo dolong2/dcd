@@ -17,9 +17,9 @@ class ApplicationSocketHandler(
     @Throws(Exception::class)
     override fun afterConnectionEstablished(session: WebSocketSession) {
         try {
-        val applicationId = (session.attributes["applicationId"] as? String
-                ?: throw ApplicationNotFoundException())
-        executeCommandUseCase.initContainerTty(applicationId, session)
+            val applicationId = (session.attributes["applicationId"] as? String
+                    ?: throw ApplicationNotFoundException())
+            executeCommandUseCase.initContainerTty(applicationId, session)
         } catch (ex: Exception) {
             handleTransportError(session, ex)
         }
@@ -60,12 +60,14 @@ class ApplicationSocketHandler(
             }
         }
 
-        session.close(closeStatus)
+        if (session.isOpen) {
+            session.close(closeStatus)
+        }
     }
 
     override fun afterConnectionClosed(session: WebSocketSession, status: CloseStatus) {
         try {
-        executeCommandUseCase.closeContainerTty(session)
+            executeCommandUseCase.closeContainerTty(session)
         } catch (ex: Exception) {
             handleTransportError(session, ex)
         }
