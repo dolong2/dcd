@@ -64,6 +64,10 @@ class ApplicationSocketHandler(
     }
 
     override fun afterConnectionClosed(session: WebSocketSession, status: CloseStatus) {
+        try {
         executeCommandUseCase.closeContainerTty(session)
+        } catch (ex: Exception) {
+            handleTransportError(session, ex)
+        }
     }
 }
