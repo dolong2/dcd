@@ -16,9 +16,13 @@ class ApplicationSocketHandler(
 ) : SocketHandler() {
     @Throws(Exception::class)
     override fun afterConnectionEstablished(session: WebSocketSession) {
-        val applicationId = (session.attributes["applicationId"] as? String
-                ?: throw ApplicationNotFoundException())
-        executeCommandUseCase.initContainerTty(applicationId, session)
+        try {
+            val applicationId = (session.attributes["applicationId"] as? String
+                    ?: throw ApplicationNotFoundException())
+            executeCommandUseCase.initContainerTty(applicationId, session)
+        } catch (ex: Exception) {
+            handleTransportError(session, ex)
+        }
     }
 
     @Throws(Exception::class)
@@ -39,27 +43,35 @@ class ApplicationSocketHandler(
     override fun handleTransportError(session: WebSocketSession, ex: Throwable) {
         val closeStatus = when (ex) {
             is InvalidConnectionInfoException -> {
-                session.sendMessage(TextMessage(ex.message!!))
+                if (session.isOpen)
+                    session.sendMessage(TextMessage("${ex.message!!}\n"))
                 ex.closeStatus
             }
 
             is BasicException -> {
                 val errorCode = ex.errorCode
-                session.sendMessage(TextMessage(errorCode.msg))
+                if (session.isOpen)
+                    session.sendMessage(TextMessage("${errorCode.msg}\n"))
                 CloseStatus.BAD_DATA
             }
 
             else -> {
                 if (session.isOpen)
-                    session.sendMessage(TextMessage(ex.message ?: "서버 내부 에러"))
+                    session.sendMessage(TextMessage("${ex.message ?: "서버 내부 에러"}\n"))
                 CloseStatus.SERVER_ERROR
             }
         }
 
-        session.close(closeStatus)
+        if (session.isOpen) {
+            session.close(closeStatus)
+        }
     }
 
     override fun afterConnectionClosed(session: WebSocketSession, status: CloseStatus) {
-        executeCommandUseCase.closeContainerTty(session)
+        try {
+            executeCommandUseCase.closeContainerTty(session)
+        } catch (ex: Exception) {
+            handleTransportError(session, ex)
+        }
     }
 }
