@@ -16,9 +16,13 @@ class ApplicationSocketHandler(
 ) : SocketHandler() {
     @Throws(Exception::class)
     override fun afterConnectionEstablished(session: WebSocketSession) {
+        try {
         val applicationId = (session.attributes["applicationId"] as? String
                 ?: throw ApplicationNotFoundException())
         executeCommandUseCase.initContainerTty(applicationId, session)
+        } catch (ex: Exception) {
+            handleTransportError(session, ex)
+        }
     }
 
     @Throws(Exception::class)
