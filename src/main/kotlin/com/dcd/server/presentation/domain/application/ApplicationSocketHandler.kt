@@ -43,13 +43,15 @@ class ApplicationSocketHandler(
     override fun handleTransportError(session: WebSocketSession, ex: Throwable) {
         val closeStatus = when (ex) {
             is InvalidConnectionInfoException -> {
-                session.sendMessage(TextMessage("${ex.message!!}\n"))
+                if (session.isOpen)
+                    session.sendMessage(TextMessage("${ex.message!!}\n"))
                 ex.closeStatus
             }
 
             is BasicException -> {
                 val errorCode = ex.errorCode
-                session.sendMessage(TextMessage("${errorCode.msg}\n"))
+                if (session.isOpen)
+                    session.sendMessage(TextMessage("${errorCode.msg}\n"))
                 CloseStatus.BAD_DATA
             }
 
