@@ -48,8 +48,6 @@ class CreateApplicationUseCase(
         val application = createApplicationReqDto.toEntity(workspace, externalPort)
         commandApplicationPort.save(application)
 
-        val version = application.version
-
         envAutoMatchService.match(workspace, application)
         initialScriptService.write(application, createApplicationReqDto.initialScripts)
 
