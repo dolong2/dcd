@@ -19,8 +19,8 @@ fun CreateApplicationRequest.toDto(): CreateApplicationReqDto =
         applicationType = this.applicationType,
         port = this.port,
         version = this.version,
-        initialScripts = this.initialScripts,
-        labels = this.labels
+        initialScripts = this.initialScripts ?: emptyList(),
+        labels = this.labels ?: emptyList()
     )
 
 fun UpdateApplicationRequest.toDto(): UpdateApplicationReqDto =
