@@ -31,7 +31,7 @@ fun UpdateApplicationRequest.toDto(): UpdateApplicationReqDto =
         githubUrl = this.githubUrl,
         version = this.version,
         port = this.port,
-        initialScripts = this.initialScripts,
+        initialScripts = this.initialScripts ?: emptyList()
     )
 
 fun ExecuteCommandRequest.toDto(): ExecuteCommandReqDto =
