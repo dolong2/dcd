@@ -64,6 +64,7 @@ dependencies {
 	//docker
 	implementation("com.github.docker-java:docker-java:3.6.0")
 	implementation("com.github.docker-java:docker-java-transport-zerodep:3.6.0")
+	implementation("org.apache.commons:commons-lang3:3.18.0")
 
 	//bucket4j
 	implementation("com.bucket4j:bucket4j_jdk17-core:8.14.0")
