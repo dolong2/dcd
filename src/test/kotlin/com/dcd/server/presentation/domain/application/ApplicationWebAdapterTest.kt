@@ -84,7 +84,7 @@ class ApplicationWebAdapterTest : BehaviorSpec({
 
     given("ApplicationResponseDto가 주어지고") {
         val testId = "testId"
-        val applicationResponse = ApplicationResDto(
+        val applicationResponse = ApplicationDetailResDto(
             id = testId,
             name = "test",
             description = "test",
@@ -95,6 +95,10 @@ class ApplicationWebAdapterTest : BehaviorSpec({
             version = "latest",
             status = ApplicationStatus.STOPPED,
             labels = listOf(),
+            env = emptyMap(),
+            initialScripts = emptyList(),
+            failureReason = null,
+            failureReasonDetail = null,
         )
         `when`("getOneApplication 메서드를 실행할때") {
             every { getOneApplicationUseCase.execute(testId) } returns applicationResponse

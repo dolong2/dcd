@@ -71,7 +71,7 @@ class ApplicationWebAdapter(
 
     @GetMapping("/{applicationId}")
     @WorkspaceOwnerVerification("#workspaceId")
-    fun getOneApplication(@PathVariable workspaceId: String, @PathVariable applicationId: String): ResponseEntity<ApplicationResponse> =
+    fun getOneApplication(@PathVariable workspaceId: String, @PathVariable applicationId: String): ResponseEntity<ApplicationDetailResponse> =
         getOneApplicationUseCase.execute(applicationId)
             .let { ResponseEntity.ok(it.toResponse()) }
 
