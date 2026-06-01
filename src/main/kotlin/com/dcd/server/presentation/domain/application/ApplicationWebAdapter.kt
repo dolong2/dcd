@@ -65,13 +65,13 @@ class ApplicationWebAdapter(
     fun getAllApplication(
         @PathVariable workspaceId: String,
         @RequestParam(required = false) labels: List<String>? = null
-    ): ResponseEntity<ListResponse<ApplicationDetailResponse>> =
+    ): ResponseEntity<ListResponse<ApplicationResponse>> =
         getAllApplicationUseCase.execute(labels)
             .let { ResponseEntity.ok(it.toResponse { resDto -> resDto.toResponse() }) }
 
     @GetMapping("/{applicationId}")
     @WorkspaceOwnerVerification("#workspaceId")
-    fun getOneApplication(@PathVariable workspaceId: String, @PathVariable applicationId: String): ResponseEntity<ApplicationResponse> =
+    fun getOneApplication(@PathVariable workspaceId: String, @PathVariable applicationId: String): ResponseEntity<ApplicationDetailResponse> =
         getOneApplicationUseCase.execute(applicationId)
             .let { ResponseEntity.ok(it.toResponse()) }
 
