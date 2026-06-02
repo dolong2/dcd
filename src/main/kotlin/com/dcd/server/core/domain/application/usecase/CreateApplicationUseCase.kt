@@ -54,7 +54,7 @@ class CreateApplicationUseCase(
         launch {
             val applicationType = application.applicationType
             when(applicationType) {
-                ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS -> {
+                ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS, ApplicationType.GIN -> {
                     applicationRemoteRepoPort.cloneApplicationRemoteRepo(application)
                 }
                 else -> {}
