@@ -38,6 +38,7 @@ class GetApplicationVersionServiceImpl(
         val (baseImageName, minVersion) = when (applicationType) {
             ApplicationType.SPRING_BOOT -> "openjdk" to SemVer.parse("12")
             ApplicationType.NEST_JS -> "node" to SemVer.parse("17")
+            ApplicationType.GIN -> "golang" to SemVer.parse("1")
             ApplicationType.MARIA_DB -> "mariadb" to SemVer.parse("10")
             ApplicationType.MYSQL -> "mysql" to SemVer.parse("8")
             ApplicationType.REDIS -> "redis" to SemVer.parse("6")
