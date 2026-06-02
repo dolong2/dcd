@@ -15,6 +15,7 @@ object FileContent {
         when(applicationType) {
             ApplicationType.SPRING_BOOT -> getSpringBootDockerFileContent(version, port, env, initialScripts)
             ApplicationType.NEST_JS -> getNestJsDockerFileContent(version, port, env, initialScripts)
+            ApplicationType.GIN -> getGinDockerFileContent(version, port, env, initialScripts)
             ApplicationType.MYSQL -> getMYSQLDockerFileContent(version, port, env, initialScripts)
             ApplicationType.MARIA_DB -> getMARIADBDockerFileContent(version, port, env, initialScripts)
             ApplicationType.H2_DB -> getH2DBDockerFileContent(version, port, env, initialScripts)
@@ -45,6 +46,19 @@ object FileContent {
         RUN npm ci --production=true
         EXPOSE $port
         CMD ["sh", "-c", "TZ=Asia/Seoul node dist/main.js"]
+        """.trimIndent()
+
+    private fun getGinDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
+        """
+        FROM golang:${version}
+        WORKDIR /app
+        ${getEnvString(env)}
+        ${getInitialScriptsString(initialScripts)}
+        COPY . .
+        RUN go mod tidy
+        RUN go build -o main .
+        EXPOSE $port
+        CMD ["./main"]
         """.trimIndent()
 
     private fun getMYSQLDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =

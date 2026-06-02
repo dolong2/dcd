@@ -77,6 +77,7 @@ docker-compose up -d
 ### 백엔드
 - **Spring Boot** - Java/Kotlin 기반 엔터프라이즈 애플리케이션
 - **Nest.js** - Node.js 기반 현대적인 웹 프레임워크
+- **Gin** - Go lang 기반 매우 빠른 속도와 높은 생산성을 제공하는 경량 웹 프레임워크
 
 ### 데이터베이스
 - **MySQL** - 관계형 데이터베이스
