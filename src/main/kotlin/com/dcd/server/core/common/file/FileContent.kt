@@ -59,7 +59,7 @@ object FileContent {
         RUN go build -o main .
         EXPOSE $port
         CMD ["./main"]
-        """
+        """.trimIndent()
 
     private fun getMYSQLDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
