@@ -61,13 +61,20 @@ object FileContent {
 
     private fun getGinDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
-        FROM golang:${version}
-        WORKDIR /app
-        ${getEnvString(env)}
-        ${getInitialScriptsString(initialScripts)}
+        FROM golang:${version} AS builder
+        WORKDIR /builder
+        COPY go.mod go.sum ./
+        RUN go mod download
         COPY . .
         RUN go mod tidy
-        RUN go build -o main .
+        RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+
+        FROM golang:${version}-alpine
+        WORKDIR /app
+        RUN apk --no-cache add ca-certificates tzdata
+        ${getEnvString(env)}
+        ${getInitialScriptsString(initialScripts)}
+        COPY --from=builder /builder/main .
         EXPOSE $port
         CMD ["./main"]
         """.trimIndent()
