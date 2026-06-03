@@ -41,13 +41,20 @@ object FileContent {
 
     private fun getNestJsDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
-        FROM node:${version}
+        FROM node:${version} AS builder
+        WORKDIR /builder
+        COPY package*.json ./
+        RUN npm ci
+        COPY . .
+        RUN npm run build
+
+        FROM node:${version}-alpine
         WORKDIR /app
         ${getEnvString(env)}
         ${getInitialScriptsString(initialScripts)}
         COPY package*.json ./
-        COPY dist ./dist
         RUN npm ci --production=true
+        COPY --from=builder /builder/dist ./dist
         EXPOSE $port
         CMD ["sh", "-c", "TZ=Asia/Seoul node dist/main.js"]
         """.trimIndent()
