@@ -24,39 +24,57 @@ object FileContent {
 
     private fun getSpringBootDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
-        FROM openjdk:${version}-jdk
+        FROM amazoncorretto:${version} AS builder
+        WORKDIR /builder
+        COPY . .
+        RUN chmod +x ./gradlew && ./gradlew bootJar
+        RUN rm -f build/libs/*-plain.jar && mv build/libs/*.jar build/libs/app.jar
+
+        FROM amazoncorretto:${version}-alpine
         WORKDIR /app
-        COPY build/libs/*.jar build/libs/
-        RUN rm -f build/libs/*-plain.jar
-        RUN mv build/libs/*.jar build/libs/app.jar
+        COPY --from=builder /builder/build/libs/app.jar app.jar
         EXPOSE $port
         ${getEnvString(env)}
         ${getInitialScriptsString(initialScripts)}
-        CMD ["java", "-jar", "build/libs/app.jar"]
+        CMD ["java", "-jar", "app.jar"]
         """.trimIndent()
 
     private fun getNestJsDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
-        FROM node:${version}
+        FROM node:${version} AS builder
+        WORKDIR /builder
+        COPY package*.json ./
+        RUN npm ci
+        COPY . .
+        RUN npm run build
+
+        FROM node:${version}-alpine
         WORKDIR /app
         ${getEnvString(env)}
         ${getInitialScriptsString(initialScripts)}
         COPY package*.json ./
-        COPY dist ./dist
         RUN npm ci --production=true
+        COPY --from=builder /builder/dist ./dist
         EXPOSE $port
         CMD ["sh", "-c", "TZ=Asia/Seoul node dist/main.js"]
         """.trimIndent()
 
     private fun getGinDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
-        FROM golang:${version}
-        WORKDIR /app
-        ${getEnvString(env)}
-        ${getInitialScriptsString(initialScripts)}
+        FROM golang:${version} AS builder
+        WORKDIR /builder
+        COPY go.mod go.sum ./
+        RUN go mod download
         COPY . .
         RUN go mod tidy
-        RUN go build -o main .
+        RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+
+        FROM golang:${version}-alpine
+        WORKDIR /app
+        RUN apk --no-cache add ca-certificates tzdata
+        ${getEnvString(env)}
+        ${getInitialScriptsString(initialScripts)}
+        COPY --from=builder /builder/main .
         EXPOSE $port
         CMD ["./main"]
         """.trimIndent()
