@@ -16,7 +16,7 @@ class GetApplicationVersionServiceImplTest : BehaviorSpec({
 
     given("Docker 태그 목록이 주어졌을 때") {
 
-        every { imageVersionPort.fetchAllVersions("openjdk") } returns listOf(
+        every { imageVersionPort.fetchAllVersions("amazoncorretto") } returns listOf(
             "8",
             "11",
             "12",
@@ -46,7 +46,7 @@ class GetApplicationVersionServiceImplTest : BehaviorSpec({
 
             then("올바른 이미지명이 Port에 전달된다") {
                 verify(exactly = 1) {
-                    imageVersionPort.fetchAllVersions("openjdk")
+                    imageVersionPort.fetchAllVersions("amazoncorretto")
                 }
             }
         }
