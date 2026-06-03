@@ -27,7 +27,7 @@ object FileContent {
         FROM amazoncorretto:${version} AS builder
         WORKDIR /builder
         COPY . .
-        RUN ./gradlew bootJar
+        RUN chmod +x ./gradlew && ./gradlew bootJar
         RUN rm -f build/libs/*-plain.jar && mv build/libs/*.jar build/libs/app.jar
 
         FROM amazoncorretto:${version}-alpine
