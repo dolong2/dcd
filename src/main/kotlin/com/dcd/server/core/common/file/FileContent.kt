@@ -24,15 +24,19 @@ object FileContent {
 
     private fun getSpringBootDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
         """
-        FROM openjdk:${version}-jdk
+        FROM amazoncorretto:${version} AS builder
+        WORKDIR /builder
+        COPY . .
+        RUN ./gradlew bootJar
+        RUN rm -f build/libs/*-plain.jar && mv build/libs/*.jar build/libs/app.jar
+
+        FROM amazoncorretto:${version}-alpine
         WORKDIR /app
-        COPY build/libs/*.jar build/libs/
-        RUN rm -f build/libs/*-plain.jar
-        RUN mv build/libs/*.jar build/libs/app.jar
+        COPY --from=builder /builder/build/libs/app.jar app.jar
         EXPOSE $port
         ${getEnvString(env)}
         ${getInitialScriptsString(initialScripts)}
-        CMD ["java", "-jar", "build/libs/app.jar"]
+        CMD ["java", "-jar", "app.jar"]
         """.trimIndent()
 
     private fun getNestJsDockerFileContent(version: String, port: Int, env: Map<String, String>, initialScripts: List<String>): String =
