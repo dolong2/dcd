@@ -1,4 +1,4 @@
-package com.dcd.server.core.domain.application.service.impl
+package com.dcd.server.infrastructure.domain.application.adapter
 
 import com.dcd.server.core.common.file.exception.FileOperationException
 import com.dcd.server.core.common.file.spi.FileOperationPort
@@ -7,40 +7,31 @@ import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
 import com.dcd.server.core.domain.application.exception.ApplicationNotFoundException
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
-import com.dcd.server.core.domain.application.service.CreateImageFileService
+import com.dcd.server.core.domain.application.spi.ApplicationImageFilePort
 import com.dcd.server.core.domain.application.spi.QueryApplicationInitialScriptPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.application.util.FailureCase
-import com.dcd.server.core.common.file.FileContent
 import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
+import com.dcd.server.infrastructure.domain.application.file.ImageFileContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.withContext
 import org.springframework.context.ApplicationEventPublisher
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import java.io.File
 import java.io.IOException
 import java.nio.file.Paths
 
-@Service
-class CreateDockerFileServiceImpl(
-    private val queryApplicationPort: QueryApplicationPort,
+@Component
+class ApplicationImageFileAdapter(
     private val queryApplicationEnvPort: QueryApplicationEnvPort,
     private val queryApplicationInitialScriptPort: QueryApplicationInitialScriptPort,
     private val fileOperationPort: FileOperationPort,
     private val eventPublisher: ApplicationEventPublisher,
     private val encryptPort: EncryptPort
-) : CreateImageFileService {
-    override suspend fun createFileByApplicationId(id: String) {
-        val application = (queryApplicationPort.findById(id)
-            ?: throw ApplicationNotFoundException())
-        withContext(Dispatchers.IO) {
-            createFile(application, this)
-        }
-    }
-
-    override suspend fun createFileToApplication(application: Application) {
+) : ApplicationImageFilePort {
+    override suspend fun createImageFile(application: Application) {
         withContext(Dispatchers.IO) {
             createFile(application, this)
         }
@@ -77,7 +68,7 @@ class CreateDockerFileServiceImpl(
         }
 
         val fileContent =
-            FileContent.getApplicationDockerFileContent(
+            ImageFileContent.getApplicationDockerFileContent(
                 application.applicationType,
                 version,
                 application.port,
