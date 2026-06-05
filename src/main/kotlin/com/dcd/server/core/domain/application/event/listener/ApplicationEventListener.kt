@@ -6,9 +6,9 @@ import com.dcd.server.core.domain.application.event.DeployApplicationEvent
 import com.dcd.server.core.domain.application.model.DeploymentResult
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import com.dcd.server.core.domain.application.service.CreateImageFileService
 import com.dcd.server.core.domain.application.service.DeleteApplicationDirectoryService
 import com.dcd.server.core.domain.application.spi.ApplicationRemoteRepoPort
+import com.dcd.server.core.domain.application.spi.ApplicationImageFilePort
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.volume.spi.QueryVolumePort
@@ -25,7 +25,7 @@ import org.springframework.transaction.event.TransactionalEventListener
 class ApplicationEventListener(
     private val commandApplicationPort: CommandApplicationPort,
     private val applicationRemoteRepoPort: ApplicationRemoteRepoPort,
-    private val createImageFileService: CreateImageFileService,
+    private val applicationImageFilePort: ApplicationImageFilePort,
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
     private val containerPort: ContainerPort,
     private val queryApplicationPort: QueryApplicationPort,
@@ -60,7 +60,7 @@ class ApplicationEventListener(
                     }
                     else -> {}
                 }
-                createImageFileService.createFileToApplication(application)
+                applicationImageFilePort.createImageFile(application)
                 
                 containerPort.execute {
                     buildImage(application, "./${application.name}/Dockerfile")
