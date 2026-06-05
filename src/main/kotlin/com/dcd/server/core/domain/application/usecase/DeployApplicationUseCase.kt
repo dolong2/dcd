@@ -10,9 +10,9 @@ import com.dcd.server.core.domain.application.exception.CanNotDeployApplicationE
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import com.dcd.server.core.domain.application.service.CreateImageFileService
 import com.dcd.server.core.domain.application.service.DeleteApplicationDirectoryService
 import com.dcd.server.core.domain.application.spi.ApplicationRemoteRepoPort
+import com.dcd.server.core.domain.application.spi.ApplicationImageFilePort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.volume.spi.QueryVolumePort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
@@ -26,7 +26,7 @@ class DeployApplicationUseCase(
     private val containerPort: ContainerPort,
     private val queryVolumePort: QueryVolumePort,
     private val applicationRemoteRepoPort: ApplicationRemoteRepoPort,
-    private val createImageFileService: CreateImageFileService,
+    private val applicationImageFilePort: ApplicationImageFilePort,
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
     private val lockPort: LockPort,
     private val eventPublisher: ApplicationEventPublisher,
@@ -95,7 +95,7 @@ class DeployApplicationUseCase(
                     }
                     else -> {}
                 }
-                createImageFileService.createFileToApplication(application)
+                applicationImageFilePort.createImageFile(application)
             }
 
             buildImage(application, "./${application.name}/Dockerfile")
