@@ -24,7 +24,7 @@ class ApplicationGitRepoAdapter(
             
             Git.cloneRepository()
                 .setURI(application.githubUrl)
-                .setDirectory(File("./${application.name}"))
+                .setDirectory(File("./${application.directoryName}"))
                 .call().use { log.debug("Git clone completed for application: ${application.name}") }
         } catch (e: Exception) {
             val cloneFailureEvent = ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.CLONE_FAILURE, e.message)
