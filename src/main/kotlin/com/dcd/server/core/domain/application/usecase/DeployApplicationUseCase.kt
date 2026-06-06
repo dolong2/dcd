@@ -98,7 +98,7 @@ class DeployApplicationUseCase(
                 applicationImageFilePort.createImageFile(application)
             }
 
-            buildImage(application, "./${application.name}/Dockerfile")
+            buildImage(application)
             val volumeMounts = queryVolumePort.findAllMountByApplication(application)
             createContainer(application, volumeMounts)
 
