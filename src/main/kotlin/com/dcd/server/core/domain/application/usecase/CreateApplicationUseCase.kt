@@ -63,7 +63,7 @@ class CreateApplicationUseCase(
             applicationImageFilePort.createImageFile(application)
 
             containerPort.execute {
-                buildImage(application, "./${application.name}/Dockerfile")
+                buildImage(application)
                 val volumeMounts = queryVolumePort.findAllMountByApplication(application)
                 createContainer(application, volumeMounts)
             }

@@ -57,7 +57,7 @@ class ApplicationImageFileAdapterTest : BehaviorSpec({
 
                 verify {
                     fileOperationPort.writeFile(
-                        Paths.get(application.name, "Dockerfile"),
+                        Paths.get(application.directoryName, "Dockerfile"),
                         expectedContent
                     )
                 }
@@ -88,7 +88,7 @@ class ApplicationImageFileAdapterTest : BehaviorSpec({
 
                 verify {
                     fileOperationPort.writeFile(
-                        Paths.get(application.name, "Dockerfile"),
+                        Paths.get(application.directoryName, "Dockerfile"),
                         expectedContent
                     )
                 }
@@ -119,7 +119,7 @@ class ApplicationImageFileAdapterTest : BehaviorSpec({
 
                 verify {
                     fileOperationPort.writeFile(
-                        Paths.get(application.name, "Dockerfile"),
+                        Paths.get(application.directoryName, "Dockerfile"),
                         expectedContent
                     )
                 }
@@ -150,7 +150,7 @@ class ApplicationImageFileAdapterTest : BehaviorSpec({
 
                 verify {
                     fileOperationPort.writeFile(
-                        Paths.get(application.name, "Dockerfile"),
+                        Paths.get(application.directoryName, "Dockerfile"),
                         expectedContent
                     )
                 }
@@ -181,7 +181,7 @@ class ApplicationImageFileAdapterTest : BehaviorSpec({
 
                 verify {
                     fileOperationPort.writeFile(
-                        Paths.get(application.name, "Dockerfile"),
+                        Paths.get(application.directoryName, "Dockerfile"),
                         expectedContent
                     )
                 }
@@ -212,7 +212,7 @@ class ApplicationImageFileAdapterTest : BehaviorSpec({
 
                 verify {
                     fileOperationPort.writeFile(
-                        Paths.get(application.name, "Dockerfile"),
+                        Paths.get(application.directoryName, "Dockerfile"),
                         expectedContent
                     )
                 }
@@ -243,7 +243,7 @@ class ApplicationImageFileAdapterTest : BehaviorSpec({
 
                 verify {
                     fileOperationPort.writeFile(
-                        Paths.get(application.name, "Dockerfile"),
+                        Paths.get(application.directoryName, "Dockerfile"),
                         expectedContent
                     )
                 }
@@ -291,7 +291,7 @@ class ApplicationImageFileAdapterTest : BehaviorSpec({
 
                 verify {
                     fileOperationPort.writeFile(
-                        Paths.get(application.name, "Dockerfile"),
+                        Paths.get(application.directoryName, "Dockerfile"),
                         expectedContent
                     )
                 }
@@ -333,7 +333,7 @@ class ApplicationImageFileAdapterTest : BehaviorSpec({
 
                 verify {
                     fileOperationPort.writeFile(
-                        Paths.get(application.name, "Dockerfile"),
+                        Paths.get(application.directoryName, "Dockerfile"),
                         expectedContent
                     )
                 }

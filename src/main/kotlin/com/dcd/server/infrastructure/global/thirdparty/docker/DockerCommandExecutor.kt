@@ -175,7 +175,8 @@ class DockerCommandExecutor(
             }
         }
 
-        override fun buildImage(application: Application, dockerfilePath: String) {
+        override fun buildImage(application: Application) {
+            val dockerfilePath = "./${application.directoryName}/Dockerfile"
             try {
                 dockerClient.buildImageCmd()
                     .withDockerfile(java.io.File(dockerfilePath))

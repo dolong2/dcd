@@ -16,7 +16,7 @@ interface ContainerActions {
     fun deleteImage(application: Application)
     fun getContainer(status: ContainerStatus): List<String>
     fun getContainerLogs(application: Application): List<String>
-    fun buildImage(application: Application, dockerfilePath: String)
+    fun buildImage(application: Application)
     fun attachContainer(application: Application, onResponse: (String) -> Unit): OutputStream
     fun executeCmd(application: Application, workingDir: String, cmd: String, onResponse: (String) -> Unit)
     fun executeCmd(containerName: String, cmd: String)

@@ -39,7 +39,7 @@ class ApplicationImageFileAdapter(
 
     private fun createFile(application: Application, coroutineScope: CoroutineScope) {
         val version = application.version
-        val applicationPath = Paths.get(application.name)
+        val applicationPath = Paths.get(application.directoryName)
         val applicationEnv =
             queryApplicationEnvPort.findByApplication(application)
                 .flatMap { it.details }

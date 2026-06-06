@@ -21,7 +21,7 @@ class DeleteApplicationDirectoryServiceImplTest : BehaviorSpec({
             service.deleteApplicationDirectory(application)
 
             then("fileOperationPort.deleteDirectory가 실행되어야함") {
-                verify { fileOperationPort.deleteDirectory(Paths.get(application.name)) }
+                verify { fileOperationPort.deleteDirectory(Paths.get(application.directoryName)) }
             }
         }
     }

@@ -22,7 +22,7 @@ class DeleteApplicationDirectoryServiceImpl(
     override suspend fun deleteApplicationDirectory(application: Application) {
         withContext(Dispatchers.IO) {
             try {
-                fileOperationPort.deleteDirectory(Paths.get(application.name))
+                fileOperationPort.deleteDirectory(Paths.get(application.directoryName))
             } catch (e: FileOperationException) {
                 eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.DELETE_DIRECTORY_FAILURE))
                 this.cancel()
