@@ -19,6 +19,7 @@ data class Application(
     val deploymentResult: DeploymentResult = DeploymentResult.SUCCESS,
     val labels: List<String>
 ) {
+    val directoryName = "${name.replace(" ", "-")}-$id"
     val containerName = "${name.replace(" ", "_").lowercase()}-$id"
 
     override fun equals(other: Any?): Boolean {
