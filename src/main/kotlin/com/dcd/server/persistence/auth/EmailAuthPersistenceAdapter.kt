@@ -49,8 +49,8 @@ class EmailAuthPersistenceAdapter(
     override fun incrementFailCount(email: String, usage: EmailAuthUsage) {
         val existing = emailAuthRepository.findByEmailAndUsage(email, usage)
         if (existing != null) {
-            val updated = existing.copy(failCount = existing.failCount + 1)
-            emailAuthRepository.save(updated)
+            existing.failCount += 1
+            emailAuthRepository.save(existing)
         }
     }
 
@@ -58,7 +58,8 @@ class EmailAuthPersistenceAdapter(
         val allAuth = emailAuthRepository.findByEmail(email)
         allAuth.forEach { auth ->
             if (auth.failCount > 0) {
-                emailAuthRepository.save(auth.copy(failCount = 0))
+                auth.failCount = 0
+                emailAuthRepository.save(auth)
             }
         }
     }
