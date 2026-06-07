@@ -1,17 +1,23 @@
 package com.dcd.server.persistence.auth
 
 import com.dcd.server.core.domain.auth.model.EmailAuth
+import com.dcd.server.core.domain.auth.model.enums.EmailAuthUsage
+import com.dcd.server.core.domain.auth.spi.EmailAuthBlackListPort
 import com.dcd.server.core.domain.auth.spi.EmailAuthPort
 import com.dcd.server.persistence.auth.adapter.toDomain
 import com.dcd.server.persistence.auth.adapter.toEntity
+import com.dcd.server.persistence.auth.entity.EmailAuthBlackListEntity
+import com.dcd.server.persistence.auth.repository.EmailAuthBlackListRepository
 import com.dcd.server.persistence.auth.repository.EmailAuthRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 
 @Component
 class EmailAuthPersistenceAdapter(
-    private val emailAuthRepository: EmailAuthRepository
-) : EmailAuthPort{
+    private val emailAuthRepository: EmailAuthRepository,
+    private val emailAuthBlackListRepository: EmailAuthBlackListRepository
+) : EmailAuthPort, EmailAuthBlackListPort {
+
     override fun save(emailAuth: EmailAuth) {
         emailAuthRepository.save(emailAuth.toEntity())
     }
@@ -57,4 +63,16 @@ class EmailAuthPersistenceAdapter(
         }
     }
 
+    override fun isBlocked(email: String, usage: EmailAuthUsage): Boolean =
+        emailAuthBlackListRepository.existsByEmailAndUsage(email, usage)
+
+    override fun addToBlackList(email: String, usage: EmailAuthUsage) {
+        val id = "$email:${usage.name}"
+        val blackListEntity = EmailAuthBlackListEntity(
+            id = id,
+            email = email,
+            usage = usage
+        )
+        emailAuthBlackListRepository.save(blackListEntity)
+    }
 }
