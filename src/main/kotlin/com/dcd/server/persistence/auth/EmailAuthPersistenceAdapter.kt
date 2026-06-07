@@ -30,10 +30,31 @@ class EmailAuthPersistenceAdapter(
         emailAuthRepository.findByIdOrNull(code)
             ?.toDomain()
 
+    override fun findByEmailAndUsage(email: String, usage: EmailAuthUsage): EmailAuth? =
+        emailAuthRepository.findByEmailAndUsage(email, usage)
+            ?.toDomain()
+
     override fun existsByCodeAndEmail(email: String, code: String): Boolean =
         emailAuthRepository.existsByEmailAndCode(email, code)
 
     override fun existsByEmail(email: String): Boolean =
         emailAuthRepository.existsByEmail(email)
+
+    override fun incrementFailCount(email: String, usage: EmailAuthUsage) {
+        val existing = emailAuthRepository.findByEmailAndUsage(email, usage)
+        if (existing != null) {
+            val updated = existing.copy(failCount = existing.failCount + 1)
+            emailAuthRepository.save(updated)
+        }
+    }
+
+    override fun resetFailCount(email: String) {
+        val allAuth = emailAuthRepository.findByEmail(email)
+        allAuth.forEach { auth ->
+            if (auth.failCount > 0) {
+                emailAuthRepository.save(auth.copy(failCount = 0))
+            }
+        }
+    }
 
 }

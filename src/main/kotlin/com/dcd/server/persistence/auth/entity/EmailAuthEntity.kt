@@ -13,5 +13,6 @@ class EmailAuthEntity(
     @Indexed
     val code: String,
     val certificate: Boolean,
-    val usage: EmailAuthUsage
+    val usage: EmailAuthUsage,
+    val failCount: Int = 0
 )

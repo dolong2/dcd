@@ -7,5 +7,6 @@ data class EmailAuth(
     val email: String,
     val code: String = UUID.randomUUID().toString().split("-")[0],
     val certificate: Boolean = false,
-    val usage: EmailAuthUsage
+    val usage: EmailAuthUsage,
+    val failCount: Int = 0
 )

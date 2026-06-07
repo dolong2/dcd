@@ -8,7 +8,8 @@ fun EmailAuth.toEntity(): EmailAuthEntity =
         email = this.email,
         code = this.code,
         certificate = this.certificate,
-        usage = this.usage
+        usage = this.usage,
+        failCount = this.failCount
     )
 
 fun EmailAuthEntity.toDomain(): EmailAuth =
@@ -16,5 +17,6 @@ fun EmailAuthEntity.toDomain(): EmailAuth =
         email = this.email,
         code = this.code,
         certificate = this.certificate,
-        usage = this.usage
+        usage = this.usage,
+        failCount = this.failCount
     )
