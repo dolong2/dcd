@@ -3,6 +3,7 @@ package com.dcd.server.persistence.auth
 import com.dcd.server.core.domain.auth.model.EmailAuth
 import com.dcd.server.core.domain.auth.model.enums.EmailAuthUsage
 import com.dcd.server.persistence.auth.adapter.toEntity
+import com.dcd.server.persistence.auth.repository.EmailAuthBlackListRepository
 import com.dcd.server.persistence.auth.repository.EmailAuthRepository
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -13,7 +14,8 @@ import org.springframework.data.repository.findByIdOrNull
 
 class EmailAuthPersistenceAdapterTest : BehaviorSpec({
     val emailAuthRepository = mockk<EmailAuthRepository>()
-    val adapter = EmailAuthPersistenceAdapter(emailAuthRepository)
+    val emailAuthBlackListRepository = mockk<EmailAuthBlackListRepository>()
+    val adapter = EmailAuthPersistenceAdapter(emailAuthRepository, emailAuthBlackListRepository)
 
     given("이메일 인증객체가 주어지고") {
         val testCode = "testCode"
