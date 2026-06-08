@@ -78,7 +78,7 @@ class AuthWebAdapter(
 
     @PatchMapping("/password")
     @Limit(target = "#nonAuthChangePasswordRequest.email", capacity = 3)
-    fun changePassword(@RequestBody nonAuthChangePasswordRequest: NonAuthChangePasswordRequest): ResponseEntity<Void> =
+    fun changePassword(@Validated @RequestBody nonAuthChangePasswordRequest: NonAuthChangePasswordRequest): ResponseEntity<Void> =
         nonAuthChangePasswordUseCase
             .execute(nonAuthChangePasswordRequest.toDto())
             .run { ResponseEntity.ok().build() }
