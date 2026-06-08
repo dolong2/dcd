@@ -39,6 +39,7 @@ class AuthWebAdapter(
             .run { ResponseEntity.ok().build() }
 
     @PostMapping("/email/certificate")
+    @Limit(target = "#certificateMailRequest.email", capacity = 5)
     fun certificateEmail(
         @Validated
         @RequestBody
@@ -76,7 +77,8 @@ class AuthWebAdapter(
             .run { ResponseEntity.ok().build() }
 
     @PatchMapping("/password")
-    fun changePassword(@RequestBody nonAuthChangePasswordRequest: NonAuthChangePasswordRequest): ResponseEntity<Void> =
+    @Limit(target = "#nonAuthChangePasswordRequest.email", capacity = 3)
+    fun changePassword(@Validated @RequestBody nonAuthChangePasswordRequest: NonAuthChangePasswordRequest): ResponseEntity<Void> =
         nonAuthChangePasswordUseCase
             .execute(nonAuthChangePasswordRequest.toDto())
             .run { ResponseEntity.ok().build() }
