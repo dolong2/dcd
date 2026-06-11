@@ -8,6 +8,7 @@ import com.dcd.server.core.domain.env.exception.ApplicationEnvNotFoundException
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.env.dto.extension.toModel
 import com.dcd.server.core.domain.env.dto.request.PutApplicationEnvReqDto
+import com.dcd.server.core.domain.env.dto.response.PutApplicationEnvResDto
 import com.dcd.server.core.domain.env.model.ApplicationEnvMatcher
 import com.dcd.server.core.domain.env.spi.CommandApplicationEnvPort
 import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
@@ -25,7 +26,7 @@ class PutApplicationEnvUseCase(
     private val eventPublisher: ApplicationEventPublisher
 ) {
 
-    fun execute(putApplicationEnvReqDto: PutApplicationEnvReqDto) {
+    fun execute(putApplicationEnvReqDto: PutApplicationEnvReqDto): PutApplicationEnvResDto {
         val workspace = (workspaceInfo.workspace
             ?: throw WorkspaceNotFoundException())
 
@@ -52,9 +53,11 @@ class PutApplicationEnvUseCase(
         if (applicationSet.isNotEmpty()) {
             eventPublisher.publishEvent(DeployApplicationEvent(applicationSet.map { it.id }))
         }
+
+        return PutApplicationEnvResDto(applicationEnv.id.toString())
     }
 
-    fun execute(id: UUID, putApplicationEnvReqDto: PutApplicationEnvReqDto) {
+    fun execute(id: UUID, putApplicationEnvReqDto: PutApplicationEnvReqDto): PutApplicationEnvResDto {
         val workspace = (workspaceInfo.workspace
             ?: throw WorkspaceNotFoundException())
 
@@ -95,5 +98,7 @@ class PutApplicationEnvUseCase(
         if (applicationSet.isNotEmpty()) {
             eventPublisher.publishEvent(DeployApplicationEvent(applicationSet.map { it.id }))
         }
+
+        return PutApplicationEnvResDto(applicationEnv.id.toString())
     }
 }

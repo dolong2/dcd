@@ -4,6 +4,7 @@ import com.dcd.server.core.domain.env.dto.response.ApplicationEnvDetailResDto
 import com.dcd.server.core.domain.env.dto.response.ApplicationEnvListResDto
 import com.dcd.server.core.domain.env.dto.response.ApplicationEnvResDto
 import com.dcd.server.core.domain.env.dto.response.ApplicationEnvSimpleResDto
+import com.dcd.server.core.domain.env.dto.response.PutApplicationEnvResDto
 import com.dcd.server.core.domain.env.usecase.DeleteApplicationEnvUseCase
 import com.dcd.server.core.domain.env.usecase.GetApplicationEnvUseCase
 import com.dcd.server.core.domain.env.usecase.PutApplicationEnvUseCase
@@ -34,7 +35,7 @@ class EnvWebAdapterTest : BehaviorSpec({
             applicationLabelList = null
         )
         `when`("addApplicationEnv메서드를 실행할때") {
-            every { putApplicationEnvUseCase.execute(any()) } returns Unit
+            every { putApplicationEnvUseCase.execute(any()) } returns PutApplicationEnvResDto(envId = testId)
             val result = applicationEnvWebAdapter.putApplicationEnv(testId, request)
             then("status는 200이여야함") {
                 result.statusCode shouldBe HttpStatus.OK
@@ -43,7 +44,7 @@ class EnvWebAdapterTest : BehaviorSpec({
 
         `when`("updateApplicationEnv 메서드를 실행할때") {
             val targetEnvId = UUID.randomUUID()
-            every { putApplicationEnvUseCase.execute(targetEnvId, any()) } returns Unit
+            every { putApplicationEnvUseCase.execute(targetEnvId, any()) } returns PutApplicationEnvResDto(envId = testId)
             val result = applicationEnvWebAdapter.updateApplicationEnv(testId, targetEnvId, request)
 
             then("status는 200이여야함") {
