@@ -57,11 +57,15 @@ class UpdateApplicationUseCase(
 
         if (application.name != updateApplicationReqDto.name) {
             launch {
+                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, updatedApplication))
+
+                // 이름이 변경되기 전 애플리케이션의 이미지및, 컨테이너 제거
                 containerPort.execute {
                     deleteContainer(application)
                     deleteImage(application)
                 }
 
+                // 이름이 변경된 애플리케이션의 이미지및, 컨테이너 생성
                 val applicationType = updatedApplication.applicationType
                 when(applicationType) {
                     ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS, ApplicationType.GIN -> {
@@ -79,6 +83,8 @@ class UpdateApplicationUseCase(
                 }
 
                 deleteApplicationDirectoryService.deleteApplicationDirectory(updatedApplication)
+
+                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.STOPPED, updatedApplication))
             }
         }
     }
