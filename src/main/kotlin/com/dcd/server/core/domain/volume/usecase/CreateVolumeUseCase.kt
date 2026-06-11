@@ -5,6 +5,7 @@ import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.volume.dto.extension.toEntity
 import com.dcd.server.core.domain.volume.dto.request.CreateVolumeReqDto
+import com.dcd.server.core.domain.volume.dto.response.CreateVolumeResDto
 import com.dcd.server.core.domain.volume.exception.AlreadyExistsVolumeException
 import com.dcd.server.core.domain.volume.exception.InvalidVolumeOptionException
 import com.dcd.server.core.domain.volume.spi.CommandVolumePort
@@ -18,7 +19,7 @@ class CreateVolumeUseCase(
     private val commandVolumePort: CommandVolumePort,
     private val containerPort: ContainerPort
 ) {
-    fun execute(createVolumeReqDto: CreateVolumeReqDto) {
+    fun execute(createVolumeReqDto: CreateVolumeReqDto): CreateVolumeResDto {
         val workspace = (workspaceInfo.workspace
             ?: throw WorkspaceNotFoundException())
 
@@ -33,5 +34,7 @@ class CreateVolumeUseCase(
         commandVolumePort.save(volume)
 
         containerPort.execute { createVolume(volume) }
+
+        return CreateVolumeResDto(volume.id.toString())
     }
 }

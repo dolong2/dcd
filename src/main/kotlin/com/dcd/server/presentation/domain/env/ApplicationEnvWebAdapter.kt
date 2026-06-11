@@ -10,6 +10,7 @@ import com.dcd.server.presentation.domain.env.data.extension.toResponse
 import com.dcd.server.presentation.domain.env.data.request.PutApplicationEnvRequest
 import com.dcd.server.presentation.domain.env.data.response.ApplicationEnvListResponse
 import com.dcd.server.presentation.domain.env.data.response.ApplicationEnvResponse
+import com.dcd.server.presentation.domain.env.data.response.PutApplicationEnvResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -30,9 +31,9 @@ class ApplicationEnvWebAdapter(
     fun putApplicationEnv(
         @PathVariable workspaceId: String,
         @RequestBody putApplicationEnvRequest: PutApplicationEnvRequest
-    ): ResponseEntity<Void> =
+    ): ResponseEntity<PutApplicationEnvResponse> =
         putApplicationEnvUseCase.execute(putApplicationEnvRequest.toDto())
-            .run { ResponseEntity.ok().build() }
+            .let { ResponseEntity.ok(it.toResponse()) }
 
     @DeleteMapping("/{envId}")
     @WorkspaceOwnerVerification("#workspaceId")
@@ -49,9 +50,9 @@ class ApplicationEnvWebAdapter(
         @PathVariable workspaceId: String,
         @PathVariable envId: UUID,
         @RequestBody putApplicationEnvRequest: PutApplicationEnvRequest
-    ): ResponseEntity<Void> =
+    ): ResponseEntity<PutApplicationEnvResponse> =
         putApplicationEnvUseCase.execute(envId, putApplicationEnvRequest.toDto())
-            .run { ResponseEntity.ok().build() }
+            .let { ResponseEntity.ok(it.toResponse()) }
 
     @GetMapping
     @WorkspaceOwnerVerification("#workspaceId")

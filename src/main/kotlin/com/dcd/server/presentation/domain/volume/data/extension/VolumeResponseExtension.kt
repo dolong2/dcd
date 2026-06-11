@@ -1,10 +1,12 @@
 package com.dcd.server.presentation.domain.volume.data.extension
 
+import com.dcd.server.core.domain.volume.dto.response.CreateVolumeResDto
 import com.dcd.server.core.domain.volume.dto.response.VolumeDetailResDto
 import com.dcd.server.core.domain.volume.dto.response.VolumeListResDto
 import com.dcd.server.core.domain.volume.dto.response.VolumeMountResDto
 import com.dcd.server.core.domain.volume.dto.response.VolumeSimpleResDto
 import com.dcd.server.presentation.domain.application.data.exetension.toResponse
+import com.dcd.server.presentation.domain.volume.data.response.CreateVolumeResponse
 import com.dcd.server.presentation.domain.volume.data.response.VolumeDetailResponse
 import com.dcd.server.presentation.domain.volume.data.response.VolumeListResponse
 import com.dcd.server.presentation.domain.volume.data.response.VolumeMountResponse
@@ -39,4 +41,9 @@ fun VolumeDetailResDto.toResponse(): VolumeDetailResponse =
         size = this.size,
         sizeUnit = this.sizeUnit,
         mountList = this.mountList.map { it.toResponse() }
+    )
+
+fun CreateVolumeResDto.toResponse(): CreateVolumeResponse =
+    CreateVolumeResponse(
+        volumeId = this.volumeId
     )
