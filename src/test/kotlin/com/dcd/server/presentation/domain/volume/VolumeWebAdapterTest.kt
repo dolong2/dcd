@@ -3,6 +3,7 @@ package com.dcd.server.presentation.domain.volume
 import com.dcd.server.core.domain.volume.dto.request.CreateVolumeReqDto
 import com.dcd.server.core.domain.volume.dto.request.MountVolumeReqDto
 import com.dcd.server.core.domain.volume.dto.request.UpdateVolumeReqDto
+import com.dcd.server.core.domain.volume.dto.response.CreateVolumeResDto
 import com.dcd.server.core.domain.volume.dto.response.VolumeDetailResDto
 import com.dcd.server.core.domain.volume.dto.response.VolumeListResDto
 import com.dcd.server.core.domain.volume.dto.response.VolumeSimpleResDto
@@ -49,6 +50,7 @@ class VolumeWebAdapterTest : BehaviorSpec({
         val request = CreateVolumeRequest(name = "testVolume", description = "testDescription")
 
         `when`("볼륨 생성 메서드를 실행하면") {
+            every { createVolumeUseCase.execute(any() as CreateVolumeReqDto) } returns CreateVolumeResDto(volumeId = UUID.randomUUID().toString())
             val result = volumeWebAdapter.createVolume(testWorkspaceId, request)
 
             then("상태코드가 OK가 응답되어여함") {

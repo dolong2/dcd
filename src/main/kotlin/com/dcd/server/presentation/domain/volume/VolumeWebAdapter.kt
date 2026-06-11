@@ -14,6 +14,7 @@ import com.dcd.server.presentation.domain.volume.data.extension.toResponse
 import com.dcd.server.presentation.domain.volume.data.request.CreateVolumeRequest
 import com.dcd.server.presentation.domain.volume.data.request.MountVolumeRequest
 import com.dcd.server.presentation.domain.volume.data.request.UpdateVolumeRequest
+import com.dcd.server.presentation.domain.volume.data.response.CreateVolumeResponse
 import com.dcd.server.presentation.domain.volume.data.response.VolumeDetailResponse
 import com.dcd.server.presentation.domain.volume.data.response.VolumeListResponse
 import org.springframework.http.ResponseEntity
@@ -42,9 +43,9 @@ class VolumeWebAdapter(
     fun createVolume(
         @PathVariable workspaceId: String,
         @Validated @RequestBody createVolumeRequest: CreateVolumeRequest
-    ): ResponseEntity<Void> =
+    ): ResponseEntity<CreateVolumeResponse> =
         createVolumeUseCase.execute(createVolumeRequest.toDto())
-            .run { ResponseEntity.ok().build() }
+            .let { ResponseEntity.ok(it.toResponse()) }
 
     @DeleteMapping("/{volumeId}")
     @WorkspaceOwnerVerification("#workspaceId")
