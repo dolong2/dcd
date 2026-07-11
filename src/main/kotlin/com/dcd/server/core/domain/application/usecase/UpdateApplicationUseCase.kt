@@ -49,9 +49,8 @@ class UpdateApplicationUseCase(
         initialScriptService.write(updatedApplication, updateApplicationReqDto.initialScripts)
 
         if (application.name != updateApplicationReqDto.name) {
+            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, updatedApplication))
             launch {
-                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, updatedApplication))
-
                 refreshApplicationService.refresh(updatedApplication)
 
                 // 이름이 변경되기 전 애플리케이션의 이미지및, 컨테이너 제거
