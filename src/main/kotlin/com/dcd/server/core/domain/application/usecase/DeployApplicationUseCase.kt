@@ -10,11 +10,8 @@ import com.dcd.server.core.domain.application.exception.CanNotDeployApplicationE
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import com.dcd.server.core.domain.application.service.DeleteApplicationDirectoryService
-import com.dcd.server.core.domain.application.spi.ApplicationRemoteRepoPort
-import com.dcd.server.core.domain.application.spi.ApplicationImageFilePort
+import com.dcd.server.core.domain.application.service.RefreshApplicationService
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
-import com.dcd.server.core.domain.volume.spi.QueryVolumePort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -24,10 +21,7 @@ import org.springframework.context.ApplicationEventPublisher
 class DeployApplicationUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val containerPort: ContainerPort,
-    private val queryVolumePort: QueryVolumePort,
-    private val applicationRemoteRepoPort: ApplicationRemoteRepoPort,
-    private val applicationImageFilePort: ApplicationImageFilePort,
-    private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
+    private val refreshApplicationService: RefreshApplicationService,
     private val lockPort: LockPort,
     private val eventPublisher: ApplicationEventPublisher,
     private val workspaceInfo: WorkspaceInfo
@@ -83,28 +77,14 @@ class DeployApplicationUseCase(
     }
 
     private suspend fun deployApplication(application: Application) {
-        containerPort.execute {
-            deleteContainer(application)
-            deleteImage(application)
-
-            runBlocking {
-                val applicationType = application.applicationType
-                when(applicationType) {
-                    ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS, ApplicationType.GIN -> {
-                        applicationRemoteRepoPort.cloneApplicationRemoteRepo(application)
-                    }
-                    else -> {}
-                }
-                applicationImageFilePort.createImageFile(application)
+        runBlocking {
+            containerPort.execute {
+                deleteContainer(application)
+                deleteImage(application)
             }
 
-            buildImage(application)
-            val volumeMounts = queryVolumePort.findAllMountByApplication(application)
-            createContainer(application, volumeMounts)
+            refreshApplicationService.refresh(application)
 
-            runBlocking {
-                deleteApplicationDirectoryService.deleteApplicationDirectory(application)
-            }
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.STOPPED, application))
         }
     }

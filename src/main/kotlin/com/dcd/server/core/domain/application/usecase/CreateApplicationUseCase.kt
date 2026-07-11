@@ -8,15 +8,12 @@ import com.dcd.server.core.domain.application.dto.request.CreateApplicationReqDt
 import com.dcd.server.core.domain.application.dto.response.CreateApplicationResDto
 import com.dcd.server.core.domain.application.exception.AlreadyExistsApplicationException
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import com.dcd.server.core.domain.application.service.DeleteApplicationDirectoryService
 import com.dcd.server.core.domain.application.service.GetExternalPortService
+import com.dcd.server.core.domain.application.service.RefreshApplicationService
 import com.dcd.server.core.domain.application.service.InitialScriptService
-import com.dcd.server.core.domain.application.spi.ApplicationRemoteRepoPort
-import com.dcd.server.core.domain.application.spi.ApplicationImageFilePort
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.env.service.EnvAutoMatchService
-import com.dcd.server.core.domain.volume.spi.QueryVolumePort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,12 +24,8 @@ class CreateApplicationUseCase(
     private val commandApplicationPort: CommandApplicationPort,
     private val queryApplicationPort: QueryApplicationPort,
     private val workspaceInfo: WorkspaceInfo,
-    private val containerPort: ContainerPort,
-    private val queryVolumePort: QueryVolumePort,
-    private val applicationRemoteRepoPort: ApplicationRemoteRepoPort,
-    private val applicationImageFilePort: ApplicationImageFilePort,
     private val getExternalPortService: GetExternalPortService,
-    private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
+    private val refreshApplicationService: RefreshApplicationService,
     private val envAutoMatchService: EnvAutoMatchService,
     private val initialScriptService: InitialScriptService
 ) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
@@ -52,23 +45,7 @@ class CreateApplicationUseCase(
         initialScriptService.write(application, createApplicationReqDto.initialScripts)
 
         launch {
-            val applicationType = application.applicationType
-            when(applicationType) {
-                ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS, ApplicationType.GIN -> {
-                    applicationRemoteRepoPort.cloneApplicationRemoteRepo(application)
-                }
-                else -> {}
-            }
-
-            applicationImageFilePort.createImageFile(application)
-
-            containerPort.execute {
-                buildImage(application)
-                val volumeMounts = queryVolumePort.findAllMountByApplication(application)
-                createContainer(application, volumeMounts)
-            }
-
-            deleteApplicationDirectoryService.deleteApplicationDirectory(application)
+            refreshApplicationService.refresh(application)
         }
 
         return CreateApplicationResDto(application.id)

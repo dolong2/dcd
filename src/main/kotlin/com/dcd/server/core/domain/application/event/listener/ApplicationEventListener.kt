@@ -5,13 +5,9 @@ import com.dcd.server.core.domain.application.event.ChangeApplicationStatusEvent
 import com.dcd.server.core.domain.application.event.DeployApplicationEvent
 import com.dcd.server.core.domain.application.model.DeploymentResult
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
-import com.dcd.server.core.domain.application.model.enums.ApplicationType
-import com.dcd.server.core.domain.application.service.DeleteApplicationDirectoryService
-import com.dcd.server.core.domain.application.spi.ApplicationRemoteRepoPort
-import com.dcd.server.core.domain.application.spi.ApplicationImageFilePort
+import com.dcd.server.core.domain.application.service.RefreshApplicationService
 import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
-import com.dcd.server.core.domain.volume.spi.QueryVolumePort
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,13 +19,10 @@ import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
 class ApplicationEventListener(
+    private val refreshApplicationService: RefreshApplicationService,
     private val commandApplicationPort: CommandApplicationPort,
-    private val applicationRemoteRepoPort: ApplicationRemoteRepoPort,
-    private val applicationImageFilePort: ApplicationImageFilePort,
-    private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
     private val containerPort: ContainerPort,
-    private val queryApplicationPort: QueryApplicationPort,
-    private val queryVolumePort: QueryVolumePort
+    private val queryApplicationPort: QueryApplicationPort
 ) {
     @EventListener
     @Transactional(rollbackFor = [Exception::class])
@@ -53,20 +46,7 @@ class ApplicationEventListener(
             }
 
             CoroutineScope(Dispatchers.IO).launch {
-                val applicationType = application.applicationType
-                when(applicationType) {
-                    ApplicationType.SPRING_BOOT, ApplicationType.NEST_JS, ApplicationType.GIN -> {
-                        applicationRemoteRepoPort.cloneApplicationRemoteRepo(application)
-                    }
-                    else -> {}
-                }
-                applicationImageFilePort.createImageFile(application)
-                
-                containerPort.execute {
-                    buildImage(application)
-                    val volumeMounts = queryVolumePort.findAllMountByApplication(application)
-                    createContainer(application, volumeMounts)
-                }
+                refreshApplicationService.refresh(application)
 
                 val updatedApplication = application.copy(status = ApplicationStatus.STOPPED)
                 commandApplicationPort.save(updatedApplication)
