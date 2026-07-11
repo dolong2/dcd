@@ -1,5 +1,6 @@
 package com.dcd.server.core.domain.application.service.impl
 
+import com.dcd.server.core.common.annotation.Lock
 import com.dcd.server.core.common.spi.ContainerPort
 import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationType
@@ -18,6 +19,7 @@ class RefreshApplicationServiceImpl(
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
     private val queryVolumePort: QueryVolumePort
 ) : RefreshApplicationService {
+    @Lock("#application.id", waitTime = 1000 * 10, leaseTime = 1000 * 60 * 3)
     override suspend fun refresh(application: Application) {
         val applicationType = application.applicationType
         when(applicationType) {
