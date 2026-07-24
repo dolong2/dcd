@@ -3,6 +3,7 @@ package com.dcd.server.core.domain.auth.service
 import com.dcd.server.core.domain.auth.exception.ExpiredCodeException
 import com.dcd.server.core.domain.auth.exception.InvalidAuthCodeException
 import com.dcd.server.core.domain.auth.exception.NotFoundAuthCodeException
+import com.dcd.server.core.domain.auth.dto.request.CertificateMailReqDto
 import com.dcd.server.core.domain.auth.model.EmailAuth
 import com.dcd.server.core.domain.auth.model.enums.EmailAuthUsage
 import com.dcd.server.core.domain.auth.service.impl.VerifyEmailAuthServiceImpl
@@ -23,27 +24,34 @@ class VerifyEmailAuthServiceImplTest : BehaviorSpec({
     given("이메일과 코드가 주어질때") {
         val testEmail = "testEmail"
         val testCode = "testCode"
+        val testUsage = EmailAuthUsage.SIGNUP
+        val certificateMailReqDto = CertificateMailReqDto(
+            email = testEmail,
+            code = testCode,
+            usage = testUsage
+        )
+
         `when`("verifyCode메서드를 실행할때") {
             every { queryEmailAuthPort.existsByCodeAndEmail(testEmail, testCode) } returns false
             every { queryEmailAuthPort.existsByEmail(testEmail) } returns false
             every { queryEmailAuthPort.findByCode(testCode) } returns null
             then("코드가 만료되었다면 ExpiredEmailAuthCodeException이 throw되야함") {
                 shouldThrow<NotFoundAuthCodeException> {
-                    serviceImpl.verifyCode(testEmail, testCode)
+                    serviceImpl.verifyCode(certificateMailReqDto)
                 }
             }
 
             every { queryEmailAuthPort.existsByEmail(testEmail) } returns true
             then("코드가 올바르지 않으면 InvalidAuthCodeException이 throw되야함") {
                 shouldThrow<InvalidAuthCodeException> {
-                    serviceImpl.verifyCode(testEmail, testCode)
+                    serviceImpl.verifyCode(certificateMailReqDto)
                 }
             }
 
             every { queryEmailAuthPort.existsByCodeAndEmail(testEmail, testCode) } returns true
-            every { queryEmailAuthPort.findByCode(testCode) } returns EmailAuth(testEmail, testCode, false, EmailAuthUsage.SIGNUP)
+            every { queryEmailAuthPort.findByCode(testCode) } returns EmailAuth(testEmail, testCode, false, testUsage)
             every { commandEmailAuthPort.save(any()) } answers { callOriginal() }
-            serviceImpl.verifyCode(testEmail, testCode)
+            serviceImpl.verifyCode(certificateMailReqDto)
             then("코드도 올바르면 업데이트 되야함") {
                 verify { commandEmailAuthPort.save(any()) }
             }
