@@ -1,5 +1,7 @@
 package com.dcd.server.core.domain.auth.service
 
+import com.dcd.server.core.domain.auth.dto.request.CertificateMailReqDto
+
 interface VerifyEmailAuthService {
-    fun verifyCode(email: String, code: String)
+    fun verifyCode(certificateEmailReqDto: CertificateMailReqDto)
 }

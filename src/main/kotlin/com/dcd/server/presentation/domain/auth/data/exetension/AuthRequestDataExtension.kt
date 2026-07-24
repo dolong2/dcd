@@ -12,7 +12,8 @@ fun EmailSendRequest.toDto(): EmailSendReqDto =
 fun CertificateMailRequest.toDto(): CertificateMailReqDto =
     CertificateMailReqDto(
         email = this.email,
-        code = this.code
+        code = this.code,
+        usage = this.usage
     )
 
 fun SignInRequest.toDto(): SignInReqDto =

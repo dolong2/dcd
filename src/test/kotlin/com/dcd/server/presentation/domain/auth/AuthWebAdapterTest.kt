@@ -67,7 +67,7 @@ class AuthWebAdapterTest : BehaviorSpec({
     given("CertificateMailRequest가 주어지고") {
         val testEmail = "testEmail"
         val testCode = "testCode"
-        val request = CertificateMailRequest(testEmail, testCode)
+        val request = CertificateMailRequest(testEmail, testCode, EmailAuthUsage.SIGNUP)
         `when`("certificateMail 메서드를 실행할때") {
             every { authenticateMailUseCase.execute(any()) } returns Unit
             val result = authWebAdapter.certificateEmail(request)

@@ -9,6 +9,6 @@ class AuthenticateMailUseCase(
     private val verifyEmailAuthService: VerifyEmailAuthService
 ) {
     fun execute(certificateMailReqDto: CertificateMailReqDto) {
-        verifyEmailAuthService.verifyCode(certificateMailReqDto.email, certificateMailReqDto.code)
+        verifyEmailAuthService.verifyCode(certificateMailReqDto)
     }
 }

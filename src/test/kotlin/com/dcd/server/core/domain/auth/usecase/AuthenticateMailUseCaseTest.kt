@@ -37,7 +37,7 @@ class AuthenticateMailUseCaseTest(
     }
 
     given("이메일, 발급받은 코드가 주어지고") {
-        val request = CertificateMailReqDto(targetEmail, targetCode)
+        val request = CertificateMailReqDto(targetEmail, targetCode, EmailAuthUsage.SIGNUP)
 
         `when`("실행할때") {
             authenticateMailUseCase.execute(request)
@@ -54,7 +54,7 @@ class AuthenticateMailUseCaseTest(
 
     given("발급받지 않은 코드가 주어지고") {
         val invalidCode = "invalidCode"
-        val request = CertificateMailReqDto(targetEmail, invalidCode)
+        val request = CertificateMailReqDto(targetEmail, invalidCode, EmailAuthUsage.SIGNUP)
 
         `when`("실행할때") {
 
@@ -68,7 +68,7 @@ class AuthenticateMailUseCaseTest(
 
     given("코드를 요청하지 않은 이메일이 주어지고") {
         val invalidEmail = "invalidEmail"
-        val request = CertificateMailReqDto(invalidEmail, targetCode)
+        val request = CertificateMailReqDto(invalidEmail, targetCode, EmailAuthUsage.SIGNUP)
 
         `when`("실행할때") {
 
