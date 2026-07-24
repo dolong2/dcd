@@ -1,5 +1,6 @@
 package com.dcd.server.presentation.domain.auth.data.request
 
+import com.dcd.server.core.domain.auth.model.enums.EmailAuthUsage
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 
@@ -8,5 +9,6 @@ data class CertificateMailRequest(
     @field:NotBlank
     val email: String,
     @field:NotBlank
-    val code: String
+    val code: String,
+    val usage: EmailAuthUsage
 )
