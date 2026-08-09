@@ -9,5 +9,7 @@ interface FileOperationPort {
 
     fun writeFile(path: Path, content: String)
 
+    fun writeFileByBytes(path: Path, content: ByteArray)
+
     fun deleteFile(path: Path)
 }

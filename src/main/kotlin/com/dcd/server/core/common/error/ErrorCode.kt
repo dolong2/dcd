@@ -25,6 +25,7 @@ enum class ErrorCode(
     ALREADY_EXISTS_VOLUME("이미 존재하는 볼륨", 400),
     ALREADY_EXISTS_VOLUME_MOUNT("볼륨 마운트가 존재합니다.", 400),
     INVALID_VOLUME_OPTION("볼륨 설정이 올바르지않음", 400),
+    INVALID_VOLUME_FILE_PATH("볼륨 경로가 올바르지 않습니다.", 400),
 
     UNAUTHORIZED("권한이 없음", 401),
     EXPIRED_TOKEN("토큰이 만료됨", 401),
@@ -72,6 +73,7 @@ enum class ErrorCode(
     FAILURE_VOLUME_CREATION("컨테이너 볼륨 생성에 실패했습니다.", 500),
     FAILURE_VOLUME_DELETE("컨테이너 볼륨 삭제에 실패했습니다.", 500),
     FAILURE_VOLUME_COPY("컨테이너 볼륨 복제에 실패했습니다.", 500),
+    FAILURE_VOLUME_UPLOAD("볼륨 파일 업로드에 실패했습니다.", 500),
     FAILURE_BLOOM_FILTER_RESERVATION("블룸 필터 예약에 실패했습니다.", 500),
     IMAGE_REGISTRY_RATE_LIMIT_EXCEEDED("도커 허브의 요청 제한을 초과했습니다.", 500),
     FILE_OPERATION_FAILED("파일 작업에 실패했습니다.", 500),

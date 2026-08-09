@@ -8,6 +8,7 @@ import com.dcd.server.core.domain.volume.usecase.GetOneVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.MountVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.UnMountVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.UpdateVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.UploadVolumeFileUseCase
 import com.dcd.server.presentation.common.annotation.WebAdapter
 import com.dcd.server.presentation.domain.volume.data.extension.toDto
 import com.dcd.server.presentation.domain.volume.data.extension.toResponse
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
 
 @WebAdapter("/{workspaceId}/volume")
@@ -36,7 +38,8 @@ class VolumeWebAdapter(
     private val getAllVolumeUseCase: GetAllVolumeUseCase,
     private val getOneVolumeUseCase: GetOneVolumeUseCase,
     private val mountVolumeUseCase: MountVolumeUseCase,
-    private val unMountVolumeUseCase: UnMountVolumeUseCase
+    private val unMountVolumeUseCase: UnMountVolumeUseCase,
+    private val uploadVolumeFileUseCase: UploadVolumeFileUseCase
 ) {
     @PostMapping
     @WorkspaceOwnerVerification("#workspaceId")
@@ -100,5 +103,17 @@ class VolumeWebAdapter(
         @RequestParam applicationId: String,
     ): ResponseEntity<Void> =
         unMountVolumeUseCase.execute(volumeId, applicationId)
+            .run { ResponseEntity.ok().build() }
+
+    @PostMapping("/{volumeId}/files")
+    @WorkspaceOwnerVerification("#workspaceId")
+    fun uploadFile(
+        @PathVariable workspaceId: String,
+        @PathVariable volumeId: UUID,
+        @RequestParam path: String,
+        @RequestParam file: MultipartFile,
+        @RequestParam(defaultValue = "false") createDirectory: Boolean
+    ): ResponseEntity<Void> =
+        uploadVolumeFileUseCase.execute(volumeId, path, file, createDirectory)
             .run { ResponseEntity.ok().build() }
 }
