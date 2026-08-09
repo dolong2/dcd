@@ -180,10 +180,10 @@ class VolumeWebAdapterTest : BehaviorSpec({
         val mockFile = mockk<org.springframework.web.multipart.MultipartFile>()
 
         `when`("볼륨 파일 업로드 메서드를 실행하면") {
-            val result = volumeWebAdapter.uploadFile(testWorkspaceId, testVolumeId, "file", mockFile)
+            val result = volumeWebAdapter.uploadFile(testWorkspaceId, testVolumeId, "file", mockFile, true)
 
             then("업로드 유스케이스가 실행되어야함") {
-                verify { uploadVolumeFileUseCase.execute(testVolumeId, "file", mockFile) }
+                verify { uploadVolumeFileUseCase.execute(testVolumeId, "file", mockFile, true) }
             }
             then("상태코드 OK가 응답되어야함") {
                 result.statusCode shouldBe HttpStatus.OK

@@ -22,7 +22,7 @@ class UploadVolumeFileUseCase(
     private val fileOperationPort: FileOperationPort,
     private val volumeFileStoragePort: VolumeFileStoragePort
 ) {
-    fun execute(volumeId: UUID, filePath: String, file: MultipartFile) {
+    fun execute(volumeId: UUID, filePath: String, file: MultipartFile, createDirectory: Boolean) {
         val workspace = workspaceInfo.workspace
             ?: throw WorkspaceNotFoundException()
         val volume = queryVolumePort.findById(volumeId)
@@ -43,8 +43,11 @@ class UploadVolumeFileUseCase(
         }
 
         val parentDir = targetPath.parent ?: throw InvalidVolumeFilePathException()
-        if (!Files.exists(parentDir)) {
-            fileOperationPort.createDirectory(parentDir)
+        when {
+            createDirectory && !Files.exists(parentDir) -> fileOperationPort.createDirectory(parentDir)
+            createDirectory -> Unit
+            !createDirectory && !Files.exists(parentDir) -> throw InvalidVolumeFilePathException()
+            else -> Unit
         }
 
         try {

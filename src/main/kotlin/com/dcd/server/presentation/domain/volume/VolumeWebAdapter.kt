@@ -111,8 +111,9 @@ class VolumeWebAdapter(
         @PathVariable workspaceId: String,
         @PathVariable volumeId: UUID,
         @RequestParam path: String,
-        @RequestParam file: MultipartFile
+        @RequestParam file: MultipartFile,
+        @RequestParam(defaultValue = "false") createDirectory: Boolean
     ): ResponseEntity<Void> =
-        uploadVolumeFileUseCase.execute(volumeId, path, file)
+        uploadVolumeFileUseCase.execute(volumeId, path, file, createDirectory)
             .run { ResponseEntity.ok().build() }
 }
