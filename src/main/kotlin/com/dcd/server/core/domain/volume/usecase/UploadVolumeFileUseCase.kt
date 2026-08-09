@@ -32,8 +32,8 @@ class UploadVolumeFileUseCase(
             throw VolumeNotFoundException()
         }
 
-        if (file.isEmpty) {
-            return
+        if (file.originalFilename == null || file.originalFilename!!.isBlank()) {
+            throw InvalidVolumeFilePathException()
         }
 
         val targetPath = resolveVolumePath(volume, filePath)
