@@ -1,9 +1,11 @@
 package com.dcd.server.infrastructure.domain.volume.adapter
 
+import com.dcd.server.core.domain.volume.exception.InvalidVolumeFilePathException
 import com.dcd.server.core.domain.volume.model.Volume
 import com.dcd.server.core.domain.volume.spi.VolumeFileStoragePort
 import com.github.dockerjava.api.DockerClient
 import org.springframework.stereotype.Component
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -14,22 +16,45 @@ class DockerVolumeFileStorageAdapter(
     override fun resolveVolumeRootPath(volume: Volume): Path {
         val volumeInfo = dockerClient.inspectVolumeCmd(volume.volumeName).exec()
         val mountPoint = volumeInfo.mountpoint ?: throw IllegalStateException("Volume mountpoint is null: ${volume.volumeName}")
-        return Paths.get(mountPoint)
+        return Paths.get(mountPoint).toAbsolutePath().normalize()
     }
 
     override fun resolveTargetPath(volume: Volume, relativePath: String): Path {
-        val normalizedPath = relativePath.trim().removePrefix("/")
         val rootPath = resolveVolumeRootPath(volume)
+        val normalizedPath = relativePath.trim().removePrefix("/")
 
-        return if (normalizedPath.isBlank()) {
-            rootPath
-        } else {
-            val sanitized = normalizedPath.split("/")
-                .filter { it.isNotBlank() }
-                .filter { it != "." && it != ".." }
-                .joinToString("/")
-
-            rootPath.resolve(sanitized)
+        if (normalizedPath.isBlank()) {
+            return rootPath
         }
+
+        val segments = normalizedPath.split('/')
+            .filter { it.isNotBlank() }
+            .map { it.trim() }
+            .filter { it != "." && it != ".." }
+
+        if (segments.isEmpty() || segments.any { it == ".." || it == "." || it.isBlank() }) {
+            throw InvalidVolumeFilePathException()
+        }
+
+        var current = rootPath
+        for (segment in segments) {
+            current = current.resolve(segment).normalize()
+            if (!current.startsWith(rootPath)) {
+                throw InvalidVolumeFilePathException()
+            }
+            if (Files.exists(current) && Files.isSymbolicLink(current)) {
+                throw InvalidVolumeFilePathException()
+            }
+        }
+
+        val finalPath = rootPath.resolve(segments.joinToString("/")).normalize()
+        if (!finalPath.startsWith(rootPath)) {
+            throw InvalidVolumeFilePathException()
+        }
+        if (Files.exists(finalPath) && Files.isSymbolicLink(finalPath)) {
+            throw InvalidVolumeFilePathException()
+        }
+
+        return finalPath
     }
 }

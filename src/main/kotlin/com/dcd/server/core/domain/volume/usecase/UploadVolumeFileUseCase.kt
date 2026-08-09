@@ -50,6 +50,10 @@ class UploadVolumeFileUseCase(
             else -> Unit
         }
 
+        if (Files.exists(targetPath) && Files.isSymbolicLink(targetPath)) {
+            throw InvalidVolumeFilePathException()
+        }
+
         try {
             fileOperationPort.writeFileByBytes(targetPath, file.bytes)
         } catch (e: FileOperationException) {

@@ -61,6 +61,9 @@ class FileOperationAdapter : FileOperationPort {
             if (parentDir != null && !Files.exists(parentDir)) {
                 Files.createDirectories(parentDir)
             }
+            if (Files.exists(path) && Files.isSymbolicLink(path)) {
+                throw FileOperationException()
+            }
             Files.write(
                 path,
                 content,
