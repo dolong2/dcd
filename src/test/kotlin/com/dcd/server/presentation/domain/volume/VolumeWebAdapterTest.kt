@@ -14,6 +14,7 @@ import com.dcd.server.core.domain.volume.usecase.GetOneVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.MountVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.UnMountVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.UpdateVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.UploadVolumeFileUseCase
 import com.dcd.server.presentation.domain.volume.data.extension.toResponse
 import com.dcd.server.presentation.domain.volume.data.request.CreateVolumeRequest
 import com.dcd.server.presentation.domain.volume.data.request.MountVolumeRequest
@@ -34,6 +35,7 @@ class VolumeWebAdapterTest : BehaviorSpec({
     val getOneVolumeUseCase = mockk<GetOneVolumeUseCase>(relaxUnitFun = true)
     val mountVolumeUseCase = mockk<MountVolumeUseCase>(relaxUnitFun = true)
     val unMountVolumeUseCase = mockk<UnMountVolumeUseCase>(relaxUnitFun = true)
+    val uploadVolumeFileUseCase = mockk<UploadVolumeFileUseCase>(relaxUnitFun = true)
 
     val volumeWebAdapter = VolumeWebAdapter(
         createVolumeUseCase,
@@ -42,7 +44,8 @@ class VolumeWebAdapterTest : BehaviorSpec({
         getAllVolumeUseCase,
         getOneVolumeUseCase,
         mountVolumeUseCase,
-        unMountVolumeUseCase
+        unMountVolumeUseCase,
+        uploadVolumeFileUseCase
     )
 
     given("워크스페이스 아이디와 볼륨 생성 요청이 주어지고") {
@@ -164,6 +167,23 @@ class VolumeWebAdapterTest : BehaviorSpec({
 
             then("볼륨 마운트 해제 유스케이스가 실행되어야함") {
                 verify { unMountVolumeUseCase.execute(testVolumeId, testApplicationId) }
+            }
+            then("상태코드 OK가 응답되어야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
+
+    given("워크스페이스 아이디와 볼륨 아이디, 업로드 파일이 주어지고") {
+        val testWorkspaceId = UUID.randomUUID().toString()
+        val testVolumeId = UUID.randomUUID()
+        val mockFile = mockk<org.springframework.web.multipart.MultipartFile>()
+
+        `when`("볼륨 파일 업로드 메서드를 실행하면") {
+            val result = volumeWebAdapter.uploadFile(testWorkspaceId, testVolumeId, "file", mockFile)
+
+            then("업로드 유스케이스가 실행되어야함") {
+                verify { uploadVolumeFileUseCase.execute(testVolumeId, "file", mockFile) }
             }
             then("상태코드 OK가 응답되어야함") {
                 result.statusCode shouldBe HttpStatus.OK
