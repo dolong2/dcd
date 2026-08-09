@@ -6,6 +6,7 @@ import com.dcd.server.core.domain.volume.spi.VolumeFileStoragePort
 import com.github.dockerjava.api.DockerClient
 import org.springframework.stereotype.Component
 import java.nio.file.Files
+import java.nio.file.LinkOption
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -42,7 +43,7 @@ class DockerVolumeFileStorageAdapter(
             if (!current.startsWith(rootPath)) {
                 throw InvalidVolumeFilePathException()
             }
-            if (Files.exists(current) && Files.isSymbolicLink(current)) {
+            if (Files.isSymbolicLink(current) || Files.exists(current, LinkOption.NOFOLLOW_LINKS) == false && Files.isSymbolicLink(current)) {
                 throw InvalidVolumeFilePathException()
             }
         }
@@ -51,7 +52,7 @@ class DockerVolumeFileStorageAdapter(
         if (!finalPath.startsWith(rootPath)) {
             throw InvalidVolumeFilePathException()
         }
-        if (Files.exists(finalPath) && Files.isSymbolicLink(finalPath)) {
+        if (Files.isSymbolicLink(finalPath) || Files.exists(finalPath, LinkOption.NOFOLLOW_LINKS) == false && Files.isSymbolicLink(finalPath)) {
             throw InvalidVolumeFilePathException()
         }
 

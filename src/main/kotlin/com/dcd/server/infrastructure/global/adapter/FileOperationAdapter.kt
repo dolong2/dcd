@@ -4,8 +4,11 @@ import com.dcd.server.core.common.file.exception.FileOperationException
 import com.dcd.server.core.common.file.spi.FileOperationPort
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
+import java.nio.file.LinkOption
+import java.nio.file.OpenOption
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 
@@ -43,12 +46,18 @@ class FileOperationAdapter : FileOperationPort {
             if (parentDir != null && !Files.exists(parentDir)) {
                 Files.createDirectories(parentDir)
             }
-            Files.write(
-                path,
-                content.toByteArray(StandardCharsets.UTF_8),
+            if (Files.isSymbolicLink(path)) {
+                throw FileOperationException()
+            }
+            val options = setOf<OpenOption>(
                 StandardOpenOption.CREATE,
-                StandardOpenOption.TRUNCATE_EXISTING
+                StandardOpenOption.TRUNCATE_EXISTING,
+                StandardOpenOption.WRITE,
+                LinkOption.NOFOLLOW_LINKS
             )
+            Files.newByteChannel(path, options).use { channel ->
+                channel.write(ByteBuffer.wrap(content.toByteArray(StandardCharsets.UTF_8)))
+            }
         } catch (e: Exception) {
             log.error("Failed to write file: ${path.toAbsolutePath()}", e)
             throw FileOperationException()
@@ -61,15 +70,18 @@ class FileOperationAdapter : FileOperationPort {
             if (parentDir != null && !Files.exists(parentDir)) {
                 Files.createDirectories(parentDir)
             }
-            if (Files.exists(path) && Files.isSymbolicLink(path)) {
+            if (Files.isSymbolicLink(path)) {
                 throw FileOperationException()
             }
-            Files.write(
-                path,
-                content,
+            val options = setOf<OpenOption>(
                 StandardOpenOption.CREATE,
-                StandardOpenOption.TRUNCATE_EXISTING
+                StandardOpenOption.TRUNCATE_EXISTING,
+                StandardOpenOption.WRITE,
+                LinkOption.NOFOLLOW_LINKS
             )
+            Files.newByteChannel(path, options).use { channel ->
+                channel.write(ByteBuffer.wrap(content))
+            }
         } catch (e: Exception) {
             log.error("Failed to write file: ${path.toAbsolutePath()}", e)
             throw FileOperationException()
