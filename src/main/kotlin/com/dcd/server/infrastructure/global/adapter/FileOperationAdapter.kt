@@ -55,6 +55,24 @@ class FileOperationAdapter : FileOperationPort {
         }
     }
 
+    override fun writeFileByBytes(path: Path, content: ByteArray) {
+        try {
+            val parentDir = path.parent
+            if (parentDir != null && !Files.exists(parentDir)) {
+                Files.createDirectories(parentDir)
+            }
+            Files.write(
+                path,
+                content,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING
+            )
+        } catch (e: Exception) {
+            log.error("Failed to write file: ${path.toAbsolutePath()}", e)
+            throw FileOperationException()
+        }
+    }
+
     override fun deleteFile(path: Path) {
         try {
             if (Files.exists(path)) {
