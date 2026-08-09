@@ -4,11 +4,14 @@ import com.dcd.server.core.common.annotation.UseCase
 import com.dcd.server.core.common.data.WorkspaceInfo
 import com.dcd.server.core.common.file.exception.FileOperationException
 import com.dcd.server.core.common.file.spi.FileOperationPort
+import com.dcd.server.core.domain.volume.exception.InvalidVolumeFilePathException
 import com.dcd.server.core.domain.volume.exception.VolumeNotFoundException
+import com.dcd.server.core.domain.volume.exception.VolumeUploadFailureException
 import com.dcd.server.core.domain.volume.spi.QueryVolumePort
 import com.dcd.server.core.domain.volume.spi.VolumeFileStoragePort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import org.springframework.web.multipart.MultipartFile
+import java.nio.file.Files
 import java.nio.file.Path
 import java.util.UUID
 
@@ -34,14 +37,29 @@ class UploadVolumeFileUseCase(
         }
 
         val targetPath = resolveVolumePath(volume, filePath)
+
+        if (targetPath.fileName.toString().isBlank()) {
+            throw InvalidVolumeFilePathException()
+        }
+
+        val parentDir = targetPath.parent ?: throw InvalidVolumeFilePathException()
+        if (!Files.exists(parentDir)) {
+            fileOperationPort.createDirectory(parentDir)
+        }
+
         try {
             fileOperationPort.writeFileByBytes(targetPath, file.bytes)
         } catch (e: FileOperationException) {
-            throw e
+            throw VolumeUploadFailureException()
         }
     }
 
     private fun resolveVolumePath(volume: com.dcd.server.core.domain.volume.model.Volume, filePath: String): Path {
-        return volumeFileStoragePort.resolveTargetPath(volume, filePath)
+        val normalizedPath = filePath.trim()
+        val invalid = normalizedPath.contains("..") || normalizedPath.contains("\\")
+        if (normalizedPath.isBlank() || invalid) {
+            throw InvalidVolumeFilePathException()
+        }
+        return volumeFileStoragePort.resolveTargetPath(volume, normalizedPath)
     }
 }
