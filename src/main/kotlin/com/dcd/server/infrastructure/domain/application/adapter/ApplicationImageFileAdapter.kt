@@ -13,9 +13,7 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.application.util.FailureCase
 import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
 import com.dcd.server.infrastructure.domain.application.file.ImageFileContent
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.withContext
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
@@ -33,11 +31,11 @@ class ApplicationImageFileAdapter(
 ) : ApplicationImageFilePort {
     override suspend fun createImageFile(application: Application) {
         withContext(Dispatchers.IO) {
-            createFile(application, this)
+            createFile(application)
         }
     }
 
-    private fun createFile(application: Application, coroutineScope: CoroutineScope) {
+    private fun createFile(application: Application) {
         val version = application.version
         val applicationPath = Paths.get(application.directoryName)
         val applicationEnv =
@@ -58,13 +56,9 @@ class ApplicationImageFileAdapter(
         try {
             fileOperationPort.createDirectory(applicationPath)
         } catch (e: FileOperationException) {
-            try {
-                fileOperationPort.deleteDirectory(applicationPath)
-            } catch (ignored: FileOperationException) {
-            }
+            runCatching { fileOperationPort.deleteDirectory(applicationPath) }
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.CREATE_DIRECTORY_FAILURE))
-            coroutineScope.cancel()
-            return
+            throw e
         }
 
         val fileContent =
@@ -79,12 +73,9 @@ class ApplicationImageFileAdapter(
         try {
             fileOperationPort.writeFile(Paths.get("${applicationPath}", "Dockerfile"), fileContent)
         } catch (e: FileOperationException) {
-            try {
-                fileOperationPort.deleteDirectory(applicationPath)
-            } catch (ignored: FileOperationException) {
-            }
+            runCatching { fileOperationPort.deleteDirectory(applicationPath) }
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.CREATE_DOCKER_FILE_FAILURE))
-            coroutineScope.cancel()
+            throw e
         }
     }
 }
