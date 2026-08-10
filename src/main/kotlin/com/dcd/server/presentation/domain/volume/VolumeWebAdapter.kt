@@ -2,6 +2,7 @@ package com.dcd.server.presentation.domain.volume
 
 import com.dcd.server.core.common.annotation.WorkspaceOwnerVerification
 import com.dcd.server.core.domain.volume.usecase.CreateVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.DeleteVolumeFileUseCase
 import com.dcd.server.core.domain.volume.usecase.DeleteVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.GetAllVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.GetOneVolumeUseCase
@@ -39,7 +40,8 @@ class VolumeWebAdapter(
     private val getOneVolumeUseCase: GetOneVolumeUseCase,
     private val mountVolumeUseCase: MountVolumeUseCase,
     private val unMountVolumeUseCase: UnMountVolumeUseCase,
-    private val uploadVolumeFileUseCase: UploadVolumeFileUseCase
+    private val uploadVolumeFileUseCase: UploadVolumeFileUseCase,
+    private val deleteVolumeFileUseCase: DeleteVolumeFileUseCase
 ) {
     @PostMapping
     @WorkspaceOwnerVerification("#workspaceId")
@@ -115,5 +117,15 @@ class VolumeWebAdapter(
         @RequestParam(defaultValue = "false") createDirectory: Boolean
     ): ResponseEntity<Void> =
         uploadVolumeFileUseCase.execute(volumeId, path, file, createDirectory)
+            .run { ResponseEntity.ok().build() }
+
+    @DeleteMapping("/{volumeId}/files")
+    @WorkspaceOwnerVerification("#workspaceId")
+    fun deleteFile(
+        @PathVariable workspaceId: String,
+        @PathVariable volumeId: UUID,
+        @RequestParam path: String
+    ): ResponseEntity<Void> =
+        deleteVolumeFileUseCase.execute(volumeId, path)
             .run { ResponseEntity.ok().build() }
 }

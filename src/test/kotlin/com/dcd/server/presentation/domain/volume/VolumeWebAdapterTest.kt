@@ -8,6 +8,7 @@ import com.dcd.server.core.domain.volume.dto.response.VolumeDetailResDto
 import com.dcd.server.core.domain.volume.dto.response.VolumeListResDto
 import com.dcd.server.core.domain.volume.dto.response.VolumeSimpleResDto
 import com.dcd.server.core.domain.volume.usecase.CreateVolumeUseCase
+import com.dcd.server.core.domain.volume.usecase.DeleteVolumeFileUseCase
 import com.dcd.server.core.domain.volume.usecase.DeleteVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.GetAllVolumeUseCase
 import com.dcd.server.core.domain.volume.usecase.GetOneVolumeUseCase
@@ -36,6 +37,7 @@ class VolumeWebAdapterTest : BehaviorSpec({
     val mountVolumeUseCase = mockk<MountVolumeUseCase>(relaxUnitFun = true)
     val unMountVolumeUseCase = mockk<UnMountVolumeUseCase>(relaxUnitFun = true)
     val uploadVolumeFileUseCase = mockk<UploadVolumeFileUseCase>(relaxUnitFun = true)
+    val deleteVolumeFileUseCase = mockk<DeleteVolumeFileUseCase>(relaxUnitFun = true)
 
     val volumeWebAdapter = VolumeWebAdapter(
         createVolumeUseCase,
@@ -45,7 +47,8 @@ class VolumeWebAdapterTest : BehaviorSpec({
         getOneVolumeUseCase,
         mountVolumeUseCase,
         unMountVolumeUseCase,
-        uploadVolumeFileUseCase
+        uploadVolumeFileUseCase,
+        deleteVolumeFileUseCase
     )
 
     given("워크스페이스 아이디와 볼륨 생성 요청이 주어지고") {
@@ -184,6 +187,22 @@ class VolumeWebAdapterTest : BehaviorSpec({
 
             then("업로드 유스케이스가 실행되어야함") {
                 verify { uploadVolumeFileUseCase.execute(testVolumeId, "file", mockFile, true) }
+            }
+            then("상태코드 OK가 응답되어야함") {
+                result.statusCode shouldBe HttpStatus.OK
+            }
+        }
+    }
+
+    given("워크스페이스 아이디와 볼륨 아이디, 삭제할 파일 경로가 주어지고") {
+        val testWorkspaceId = UUID.randomUUID().toString()
+        val testVolumeId = UUID.randomUUID()
+
+        `when`("볼륨 파일 삭제 메서드를 실행하면") {
+            val result = volumeWebAdapter.deleteFile(testWorkspaceId, testVolumeId, "file")
+
+            then("파일 삭제 유스케이스가 실행되어야함") {
+                verify { deleteVolumeFileUseCase.execute(testVolumeId, "file") }
             }
             then("상태코드 OK가 응답되어야함") {
                 result.statusCode shouldBe HttpStatus.OK
