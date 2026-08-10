@@ -34,7 +34,12 @@ class RefreshApplicationServiceImpl(
         containerPort.execute {
             buildImage(application)
             val volumeMounts = queryVolumePort.findAllMountByApplication(application)
-            createContainer(application, volumeMounts)
+            try {
+                createContainer(application, volumeMounts)
+            } catch (e: Exception) {
+                runCatching { deleteImage(application) }
+                throw e
+            }
         }
 
         deleteApplicationDirectoryService.deleteApplicationDirectory(application)
