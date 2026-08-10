@@ -17,7 +17,9 @@ import com.dcd.server.core.domain.env.service.EnvAutoMatchService
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 
 @UseCase
 class CreateApplicationUseCase(
@@ -28,7 +30,9 @@ class CreateApplicationUseCase(
     private val refreshApplicationService: RefreshApplicationService,
     private val envAutoMatchService: EnvAutoMatchService,
     private val initialScriptService: InitialScriptService
-) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
+) : CoroutineScope by CoroutineScope(Dispatchers.IO + SupervisorJob()) {
+    private val log = LoggerFactory.getLogger(this::class.java)
+
     fun execute(createApplicationReqDto: CreateApplicationReqDto): CreateApplicationResDto {
         val workspace = workspaceInfo.workspace
             ?: throw WorkspaceNotFoundException()
@@ -45,7 +49,11 @@ class CreateApplicationUseCase(
         initialScriptService.write(application, createApplicationReqDto.initialScripts)
 
         launch {
-            refreshApplicationService.refresh(application)
+            try {
+                refreshApplicationService.refresh(application)
+            } catch (e: Exception) {
+                log.error("Failed to build and deploy application on creation: ${application.name}", e)
+            }
         }
 
         return CreateApplicationResDto(application.id)

@@ -12,6 +12,7 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 
 @UseCase
@@ -20,7 +21,9 @@ class RunApplicationUseCase(
     private val queryApplicationPort: QueryApplicationPort,
     private val eventPublisher: ApplicationEventPublisher,
     private val workspaceInfo: WorkspaceInfo
-): CoroutineScope by CoroutineScope(Dispatchers.IO) {
+): CoroutineScope by CoroutineScope(Dispatchers.IO + SupervisorJob()) {
+    private val log = LoggerFactory.getLogger(this::class.java)
+
     fun execute(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
@@ -29,10 +32,14 @@ class RunApplicationUseCase(
             throw AlreadyRunningException()
 
         launch  {
-            containerPort.execute {
-                startContainer(application)
+            try {
+                containerPort.execute {
+                    startContainer(application)
+                }
+                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.RUNNING, application))
+            } catch (e: Exception) {
+                log.error("Failed to run application: ${application.name}", e)
             }
-            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.RUNNING, application))
         }
 
         eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, application))
@@ -59,10 +66,14 @@ class RunApplicationUseCase(
         repeat(3) {
             scope.launch {
                 for (application in runChannel) {
-                    containerPort.execute {
-                        startContainer(application)
+                    try {
+                        containerPort.execute {
+                            startContainer(application)
+                        }
+                        eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.RUNNING, application))
+                    } catch (e: Exception) {
+                        log.error("Failed to run application: ${application.name}", e)
                     }
-                    eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.RUNNING, application))
                 }
             }
         }

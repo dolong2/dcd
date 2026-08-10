@@ -14,8 +14,10 @@ import com.dcd.server.core.domain.application.spi.CommandApplicationPort
 import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 
 @UseCase
@@ -26,7 +28,9 @@ class UpdateApplicationUseCase(
     private val containerPort: ContainerPort,
     private val eventPublisher: ApplicationEventPublisher,
     private val initialScriptService: InitialScriptService
-) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
+) : CoroutineScope by CoroutineScope(Dispatchers.IO + SupervisorJob()) {
+    private val log = LoggerFactory.getLogger(this::class.java)
+
     @Lock("#id")
     fun execute(id: String, updateApplicationReqDto: UpdateApplicationReqDto) {
         val application = (queryApplicationPort.findById(id)
@@ -51,15 +55,19 @@ class UpdateApplicationUseCase(
         if (application.name != updateApplicationReqDto.name) {
             eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, updatedApplication))
             launch {
-                refreshApplicationService.refresh(updatedApplication)
+                try {
+                    refreshApplicationService.refresh(updatedApplication)
 
-                // 이름이 변경되기 전 애플리케이션의 이미지및, 컨테이너 제거
-                containerPort.execute {
-                    deleteContainer(application)
-                    deleteImage(application)
+                    // 이름이 변경되기 전 애플리케이션의 이미지및, 컨테이너 제거
+                    containerPort.execute {
+                        deleteContainer(application)
+                        deleteImage(application)
+                    }
+
+                    eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.STOPPED, updatedApplication))
+                } catch (e: Exception) {
+                    log.error("Failed to refresh application on update: ${updatedApplication.name}", e)
                 }
-
-                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.STOPPED, updatedApplication))
             }
         }
     }

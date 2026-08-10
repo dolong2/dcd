@@ -15,6 +15,7 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 
 @UseCase
@@ -25,7 +26,9 @@ class DeployApplicationUseCase(
     private val lockPort: LockPort,
     private val eventPublisher: ApplicationEventPublisher,
     private val workspaceInfo: WorkspaceInfo
-) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
+) : CoroutineScope by CoroutineScope(Dispatchers.IO + SupervisorJob()) {
+    private val log = LoggerFactory.getLogger(this::class.java)
+
     fun execute(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
@@ -34,7 +37,11 @@ class DeployApplicationUseCase(
             throw CanNotDeployApplicationException()
 
         launch {
-            deployApplication(application)
+            try {
+                deployApplication(application)
+            } catch (e: Exception) {
+                log.error("Failed to deploy application: ${application.name}", e)
+            }
         }
 
         eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, application))
@@ -65,7 +72,11 @@ class DeployApplicationUseCase(
         val jobs = (1..3).map {
             launch {
                 for (application in deploymentChannel) {
-                    deployApplication(application)
+                    try {
+                        deployApplication(application)
+                    } catch (e: Exception) {
+                        log.error("Failed to deploy application: ${application.name}", e)
+                    }
                 }
             }
         }
