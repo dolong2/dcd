@@ -63,6 +63,7 @@ class DockerCommandExecutor(
         private val PRIMARY_NETWORK = "dcd"
         
         override fun createContainer(application: Application, volumeMounts: List<VolumeMount>) {
+            var createdContainerId: String? = null
             try {
                 val exposedPort = ExposedPort.tcp(application.port)
                 val portBindings = Ports()
@@ -91,8 +92,8 @@ class DockerCommandExecutor(
                             .withBinds(binds)
                     )
                     .exec()
+                createdContainerId = response.id
 
-                
                 dockerClient.connectToNetworkCmd()
                     .withContainerId(response.id)
                     .withNetworkId(application.workspace.networkName)
@@ -101,6 +102,9 @@ class DockerCommandExecutor(
                     )
                     .exec()
             } catch (e: Exception) {
+                createdContainerId?.let {
+                    runCatching { dockerClient.removeContainerCmd(application.containerName).exec() }
+                }
                 throw DockerCommandException(application, FailureCase.CREATE_CONTAINER_FAILURE, e.message)
             }
         }

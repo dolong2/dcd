@@ -12,6 +12,7 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.workspace.exception.WorkspaceNotFoundException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 
 @UseCase
@@ -20,7 +21,9 @@ class StopApplicationUseCase(
     private val containerPort: ContainerPort,
     private val eventPublisher: ApplicationEventPublisher,
     private val workspaceInfo: WorkspaceInfo
-) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
+) : CoroutineScope by CoroutineScope(Dispatchers.IO + SupervisorJob()) {
+    private val log = LoggerFactory.getLogger(this::class.java)
+
     fun execute(id: String) {
         val application = (queryApplicationPort.findById(id)
             ?: throw ApplicationNotFoundException())
@@ -29,10 +32,14 @@ class StopApplicationUseCase(
             throw AlreadyStoppedException()
 
         launch {
-            containerPort.execute {
-                stopContainer(application)
+            try {
+                containerPort.execute {
+                    stopContainer(application)
+                }
+                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.STOPPED, application))
+            } catch (e: Exception) {
+                log.error("Failed to stop application: ${application.name}", e)
             }
-            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.STOPPED, application))
         }
 
         eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.PENDING, application))
@@ -58,10 +65,14 @@ class StopApplicationUseCase(
         repeat(3) {
             scope.launch {
                 for (application in runChannel) {
-                    containerPort.execute {
-                        stopContainer(application)
+                    try {
+                        containerPort.execute {
+                            stopContainer(application)
+                        }
+                        eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.STOPPED, application))
+                    } catch (e: Exception) {
+                        log.error("Failed to stop application: ${application.name}", e)
                     }
-                    eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.STOPPED, application))
                 }
             }
         }
