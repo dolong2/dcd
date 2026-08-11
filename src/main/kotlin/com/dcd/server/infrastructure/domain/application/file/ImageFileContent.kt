@@ -25,6 +25,7 @@ object ImageFileContent {
         """
         FROM amazoncorretto:${version} AS builder
         WORKDIR /builder
+        RUN yum install -y findutils && yum clean all
         COPY . .
         RUN chmod +x ./gradlew && ./gradlew bootJar
         RUN rm -f build/libs/*-plain.jar && mv build/libs/*.jar build/libs/app.jar
