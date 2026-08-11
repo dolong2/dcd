@@ -191,7 +191,7 @@ class DockerCommandExecutor(
                             super.onNext(item)
                         }
                     })
-                    .awaitCompletion(120, java.util.concurrent.TimeUnit.SECONDS)
+                    .awaitCompletion(30, TimeUnit.MINUTES)
             } catch (e: Exception) {
                 throw DockerCommandException(application, FailureCase.IMAGE_BUILD_FAILURE, e.message)
             }

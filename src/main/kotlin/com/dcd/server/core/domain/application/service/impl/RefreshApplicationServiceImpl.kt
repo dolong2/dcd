@@ -19,7 +19,7 @@ class RefreshApplicationServiceImpl(
     private val deleteApplicationDirectoryService: DeleteApplicationDirectoryService,
     private val queryVolumePort: QueryVolumePort
 ) : RefreshApplicationService {
-    @Lock("#application.id", waitTime = 1000 * 10, leaseTime = 1000 * 60 * 3)
+    @Lock("#application.id", waitTime = 1000 * 10, leaseTime = 1000 * 60 * 30)
     override suspend fun refresh(application: Application) {
         val applicationType = application.applicationType
         when(applicationType) {
