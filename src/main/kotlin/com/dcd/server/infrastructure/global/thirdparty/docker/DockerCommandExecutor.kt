@@ -182,7 +182,7 @@ class DockerCommandExecutor(
         override fun buildImage(application: Application) {
             val dockerfilePath = "./${application.directoryName}/Dockerfile"
             try {
-                dockerClient.buildImageCmd()
+                val completed = dockerClient.buildImageCmd()
                     .withDockerfile(java.io.File(dockerfilePath))
                     .withTags(setOf("${application.containerName}:${application.version}"))
                     .exec(object : BuildImageResultCallback() {
@@ -192,6 +192,11 @@ class DockerCommandExecutor(
                         }
                     })
                     .awaitCompletion(30, TimeUnit.MINUTES)
+                if (!completed) {
+                    throw DockerCommandException(application, FailureCase.IMAGE_BUILD_FAILURE, "이미지 빌드중 타임아웃이 발생함.")
+                }
+            } catch (e: DockerCommandException) {
+                throw e
             } catch (e: Exception) {
                 throw DockerCommandException(application, FailureCase.IMAGE_BUILD_FAILURE, e.message)
             }
