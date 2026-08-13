@@ -10,4 +10,13 @@ data class ApplicationEnv(
     val details: List<ApplicationEnvDetail>,
     val workspace: Workspace,
     val labels: List<String>
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (other !is ApplicationEnv) return false
+        return this.id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return this.id.hashCode()
+    }
+}

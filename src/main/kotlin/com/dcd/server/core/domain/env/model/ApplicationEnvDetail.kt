@@ -7,4 +7,13 @@ data class ApplicationEnvDetail(
     val key: String,
     val value: String,
     val encryption: Boolean = false
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (other !is ApplicationEnvDetail) return false
+        return this.id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return this.id.hashCode()
+    }
+}

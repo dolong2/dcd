@@ -13,4 +13,13 @@ class Volume(
     val workspace: Workspace
 ) {
     val volumeName: String = "${name.replace(" ", "_")}-$id"
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is Volume) return false
+        return this.id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return this.id.hashCode()
+    }
 }

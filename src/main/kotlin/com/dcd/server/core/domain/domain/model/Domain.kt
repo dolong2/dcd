@@ -12,4 +12,13 @@ data class Domain(
 ) {
     fun getDomainName(): String =
         "${name}.dolong2.co.kr"
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is Domain) return false
+        return this.id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return this.id.hashCode()
+    }
 }
