@@ -15,7 +15,7 @@ fun CreateApplicationRequest.toDto(): CreateApplicationReqDto =
     CreateApplicationReqDto(
         name = this.name,
         description = this.description,
-        githubUrl = this.githubUrl,
+        gitRepoUrl = this.gitRepoUrl,
         applicationType = this.applicationType,
         port = this.port,
         version = this.version,
@@ -28,7 +28,7 @@ fun UpdateApplicationRequest.toDto(): UpdateApplicationReqDto =
         name = this.name,
         description = this.description,
         applicationType = this.applicationType,
-        githubUrl = this.githubUrl,
+        gitRepoUrl = this.gitRepoUrl,
         version = this.version,
         port = this.port,
         initialScripts = this.initialScripts ?: emptyList()
