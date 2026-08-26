@@ -18,7 +18,7 @@ class ApplicationJpaEntity(
     val description: String?,
     @Enumerated(EnumType.STRING)
     val applicationType: ApplicationType,
-    val githubUrl: String?,
+    val gitRepoUrl: String?,
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "workspace_id")
     val workspace: WorkspaceJpaEntity,
