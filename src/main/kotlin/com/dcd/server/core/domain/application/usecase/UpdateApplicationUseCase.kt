@@ -44,7 +44,7 @@ class UpdateApplicationUseCase(
                 name = updateApplicationReqDto.name,
                 description = updateApplicationReqDto.description,
                 applicationType = updateApplicationReqDto.applicationType,
-                githubUrl = updateApplicationReqDto.githubUrl,
+                gitRepoUrl = updateApplicationReqDto.gitRepoUrl,
                 version = updateApplicationReqDto.version,
                 port = updateApplicationReqDto.port
             )
