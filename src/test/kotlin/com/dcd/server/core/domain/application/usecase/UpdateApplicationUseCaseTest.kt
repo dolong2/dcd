@@ -38,7 +38,7 @@ class UpdateApplicationUseCaseTest(
 ) : BehaviorSpec({
     val targetUserId = "923a6407-a5f8-4e1e-bffd-0621910ddfc8"
 
-    val updateReqDto = UpdateApplicationReqDto(name = "testName", description = "dldl", applicationType = ApplicationType.SPRING_BOOT, githubUrl = null, version = "11", port = 8080, initialScripts = listOf("echo test"))
+    val updateReqDto = UpdateApplicationReqDto(name = "testName", description = "dldl", applicationType = ApplicationType.SPRING_BOOT, gitRepoUrl = null, version = "11", port = 8080, initialScripts = listOf("echo test"))
 
     given("애플리케이션 아이디가 주어지고") {
         val targetUser = queryUserPort.findById(targetUserId)!!
@@ -57,7 +57,7 @@ class UpdateApplicationUseCaseTest(
                 result?.description shouldBe updateReqDto.description
                 result?.applicationType shouldBe updateReqDto.applicationType
                 result?.port shouldBe updateReqDto.port
-                result?.githubUrl shouldBe updateReqDto.githubUrl
+                result?.gitRepoUrl shouldBe updateReqDto.gitRepoUrl
                 result?.version shouldBe updateReqDto.version
             }
 

@@ -9,7 +9,7 @@ data class CreateApplicationRequest(
     @field:Pattern(regexp = "^[a-zA-Z0-9 ]{1,26}$")
     val name: String,
     val description: String?,
-    val githubUrl: String?,
+    val gitRepoUrl: String?,
     val applicationType: ApplicationType,
     val port: Int,
     val version: String,

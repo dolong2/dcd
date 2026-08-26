@@ -15,7 +15,7 @@ fun CreateApplicationReqDto.toEntity(workspace: Workspace, externalPort: Int): A
     Application(
         name = this.name,
         description = this.description,
-        githubUrl = this.githubUrl,
+        gitRepoUrl = this.gitRepoUrl,
         applicationType = this.applicationType,
         workspace = workspace,
         port = this.port,
@@ -30,7 +30,7 @@ fun Application.toDto(envList: List<ApplicationEnv>, initialScriptList: List<App
         id = this.id,
         name = this.name,
         description = this.description,
-        githubUrl = this.githubUrl,
+        gitRepoUrl = this.gitRepoUrl,
         applicationType = this.applicationType,
         env = envList.flatMap { it.details }.associate {
             val envValue =
@@ -72,7 +72,7 @@ fun Application.toResDto(): ApplicationResDto =
         name = this.name,
         description = this.description,
         applicationType = this.applicationType,
-        githubUrl = this.githubUrl,
+        gitRepoUrl = this.gitRepoUrl,
         port = this.port,
         externalPort = this.externalPort,
         version = this.version,

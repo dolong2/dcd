@@ -8,7 +8,7 @@ data class ApplicationDetailResponse(
     val name: String,
     val description: String?,
     val applicationType: ApplicationType,
-    val githubUrl: String?,
+    val gitRepoUrl: String?,
     val env: Map<String, String>,
     val port: Int,
     val externalPort: Int,
