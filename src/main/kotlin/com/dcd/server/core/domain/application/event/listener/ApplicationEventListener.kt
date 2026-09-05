@@ -40,12 +40,13 @@ class ApplicationEventListener(
         val applicationList = queryApplicationPort.findByIds(event.applicationIdList)
 
         applicationList.forEach { application ->
-            containerPort.execute {
-                deleteContainer(application)
-                deleteImage(application)
-            }
 
             CoroutineScope(Dispatchers.IO).launch {
+                containerPort.execute {
+                    deleteContainer(application)
+                    deleteImage(application)
+                }
+
                 refreshApplicationService.refresh(application)
 
                 val updatedApplication = application.copy(status = ApplicationStatus.STOPPED)
