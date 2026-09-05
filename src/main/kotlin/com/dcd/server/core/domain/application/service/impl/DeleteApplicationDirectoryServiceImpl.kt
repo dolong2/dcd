@@ -7,8 +7,6 @@ import com.dcd.server.core.domain.application.model.Application
 import com.dcd.server.core.domain.application.model.enums.ApplicationStatus
 import com.dcd.server.core.domain.application.service.DeleteApplicationDirectoryService
 import com.dcd.server.core.domain.application.util.FailureCase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import java.nio.file.Paths
@@ -18,14 +16,12 @@ class DeleteApplicationDirectoryServiceImpl(
     private val fileOperationPort: FileOperationPort,
     private val eventPublisher: ApplicationEventPublisher
 ) : DeleteApplicationDirectoryService {
-    override suspend fun deleteApplicationDirectory(application: Application) {
-        withContext(Dispatchers.IO) {
-            try {
-                fileOperationPort.deleteDirectory(Paths.get(application.directoryName))
-            } catch (e: FileOperationException) {
-                eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.DELETE_DIRECTORY_FAILURE))
-                throw e
-            }
+    override fun deleteApplicationDirectory(application: Application) {
+        try {
+            fileOperationPort.deleteDirectory(Paths.get(application.directoryName))
+        } catch (e: FileOperationException) {
+            eventPublisher.publishEvent(ChangeApplicationStatusEvent(ApplicationStatus.FAILURE, application, FailureCase.DELETE_DIRECTORY_FAILURE))
+            throw e
         }
     }
 }
