@@ -13,8 +13,6 @@ import com.dcd.server.core.domain.application.spi.QueryApplicationPort
 import com.dcd.server.core.domain.application.util.FailureCase
 import com.dcd.server.core.domain.env.spi.QueryApplicationEnvPort
 import com.dcd.server.infrastructure.domain.application.file.ImageFileContent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 import java.io.File
@@ -29,13 +27,7 @@ class ApplicationImageFileAdapter(
     private val eventPublisher: ApplicationEventPublisher,
     private val encryptPort: EncryptPort
 ) : ApplicationImageFilePort {
-    override suspend fun createImageFile(application: Application) {
-        withContext(Dispatchers.IO) {
-            createFile(application)
-        }
-    }
-
-    private fun createFile(application: Application) {
+    override fun createImageFile(application: Application) {
         val version = application.version
         val applicationPath = Paths.get(application.directoryName)
         val applicationEnv =
