@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.AuthenticationEntryPoint
@@ -12,7 +13,8 @@ import org.springframework.stereotype.Component
 
 @Component
 class CustomAuthenticationEntryPoint(
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val requestMappingInspector: RequestMappingInspector
 ): AuthenticationEntryPoint {
 
     private val log = LoggerFactory.getLogger(this.javaClass.simpleName)
@@ -22,7 +24,14 @@ class CustomAuthenticationEntryPoint(
         response: HttpServletResponse,
         authException: AuthenticationException
     ) {
-        val errorCode = ErrorCode.FORBIDDEN
+        val errorCode = when (val result = requestMappingInspector.inspect(request)) {
+            is RequestMappingInspector.Result.NotFound -> ErrorCode.NOT_FOUND
+            is RequestMappingInspector.Result.MethodNotAllowed -> {
+                response.setHeader(HttpHeaders.ALLOW, result.supportedMethods.joinToString { it.name() })
+                ErrorCode.METHOD_NOT_ALLOWED
+            }
+            is RequestMappingInspector.Result.Matched -> ErrorCode.UNAUTHORIZED
+        }
         log.error(request.method)
         log.error(request.requestURI)
         log.error(errorCode.msg)
