@@ -4,6 +4,7 @@ import com.dcd.server.infrastructure.global.jwt.adapter.ParseTokenAdapter
 import com.dcd.server.infrastructure.global.security.CustomAccessDeniedHandler
 import com.dcd.server.infrastructure.global.security.CustomAuthenticationEntryPoint
 import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.servlet.DispatcherType
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -20,6 +21,7 @@ class SecurityConfig(
     private val parseTokenAdapter: ParseTokenAdapter,
     private val objectMapper: ObjectMapper,
     private val customAccessDeniedHandler: CustomAccessDeniedHandler,
+    private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint,
 ) {
     @Bean
     protected fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -39,6 +41,9 @@ class SecurityConfig(
                 it.requestMatchers(RequestMatcher { request ->
                     CorsUtils.isPreFlightRequest(request)
                 }).permitAll()
+                
+                // dispatcher type error
+                it.dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
 
                 //auth
                 it.requestMatchers(HttpMethod.POST, "/auth/email").permitAll()
@@ -117,7 +122,7 @@ class SecurityConfig(
 
         http
             .exceptionHandling {
-                it.authenticationEntryPoint(CustomAuthenticationEntryPoint(objectMapper))
+                it.authenticationEntryPoint(customAuthenticationEntryPoint)
                 it.accessDeniedHandler(customAccessDeniedHandler)
             }
 

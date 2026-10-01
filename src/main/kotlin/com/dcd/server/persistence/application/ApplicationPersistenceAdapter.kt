@@ -7,10 +7,10 @@ import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.persistence.application.adapter.toDomain
 import com.dcd.server.persistence.application.adapter.toEntity
 import com.dcd.server.persistence.application.repository.ApplicationRepository
+import com.dcd.server.persistence.common.extension.toUUIDOrNull
 import com.dcd.server.persistence.workspace.adapter.toEntity
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
-import java.util.UUID
 
 @Component
 class ApplicationPersistenceAdapter(
@@ -38,11 +38,12 @@ class ApplicationPersistenceAdapter(
     }
 
     override fun findById(id: String): Application? =
-        applicationRepository.findByIdOrNull(UUID.fromString(id))
+        id.toUUIDOrNull()
+            ?.let { applicationRepository.findByIdOrNull(it) }
             ?.toDomain()
 
     override fun findByIds(ids: List<String>): List<Application> =
-        applicationRepository.findAllById(ids.map { UUID.fromString(it) })
+        applicationRepository.findAllById(ids.mapNotNull { it.toUUIDOrNull() })
             .map { it.toDomain() }
 
     override fun existsByExternalPort(externalPort: Int): Boolean =

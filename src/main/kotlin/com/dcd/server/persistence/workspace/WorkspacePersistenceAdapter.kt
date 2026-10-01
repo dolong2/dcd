@@ -3,21 +3,21 @@ package com.dcd.server.persistence.workspace
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.workspace.model.Workspace
 import com.dcd.server.core.domain.workspace.spi.WorkspacePort
+import com.dcd.server.persistence.common.extension.toUUIDOrNull
 import com.dcd.server.persistence.user.adapter.toEntity
 import com.dcd.server.persistence.workspace.adapter.toDomain
 import com.dcd.server.persistence.workspace.adapter.toEntity
 import com.dcd.server.persistence.workspace.repository.WorkspaceRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
-import java.util.UUID
 
 @Component
 class WorkspacePersistenceAdapter(
     private val workspaceRepository: WorkspaceRepository
 ) : WorkspacePort {
     override fun findById(id: String): Workspace? {
-        return workspaceRepository
-            .findByIdOrNull(UUID.fromString(id))
+        return id.toUUIDOrNull()
+            ?.let { workspaceRepository.findByIdOrNull(it) }
             ?.toDomain()
     }
 

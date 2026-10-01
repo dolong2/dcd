@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.web.access.AccessDeniedHandler
@@ -12,7 +13,8 @@ import org.springframework.stereotype.Component
 
 @Component
 class CustomAccessDeniedHandler(
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val requestMappingInspector: RequestMappingInspector
 ) : AccessDeniedHandler {
     private val log = LoggerFactory.getLogger(this::class.simpleName)
 
@@ -21,7 +23,14 @@ class CustomAccessDeniedHandler(
         response: HttpServletResponse,
         accessDeniedException: AccessDeniedException?
     ) {
-        val errorCode = ErrorCode.INVALID_ROLE
+        val errorCode = when (val result = requestMappingInspector.inspect(request)) {
+            is RequestMappingInspector.Result.NotFound -> ErrorCode.NOT_FOUND
+            is RequestMappingInspector.Result.MethodNotAllowed -> {
+                response.setHeader(HttpHeaders.ALLOW, result.supportedMethods.joinToString { it.name() })
+                ErrorCode.METHOD_NOT_ALLOWED
+            }
+            is RequestMappingInspector.Result.Matched -> ErrorCode.INVALID_ROLE
+        }
         log.error(request.method)
         log.error(request.requestURI)
         log.error(errorCode.msg)
