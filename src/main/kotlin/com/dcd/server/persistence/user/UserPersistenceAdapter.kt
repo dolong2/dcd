@@ -3,6 +3,7 @@ package com.dcd.server.persistence.user
 import com.dcd.server.core.domain.user.model.enums.Status
 import com.dcd.server.core.domain.user.model.User
 import com.dcd.server.core.domain.user.spi.UserPort
+import com.dcd.server.persistence.common.extension.toUUIDOrNull
 import com.dcd.server.persistence.user.adapter.toDomain
 import com.dcd.server.persistence.user.adapter.toEntity
 import com.dcd.server.persistence.user.repository.UserRepository
@@ -23,7 +24,8 @@ class UserPersistenceAdapter(
     }
 
     override fun findById(id: String): User? =
-        userRepository.findByIdOrNull(UUID.fromString(id))
+        id.toUUIDOrNull()
+            ?.let { userRepository.findByIdOrNull(it) }
             ?.toDomain()
 
     override fun findByEmail(email: String): User? =
@@ -34,7 +36,9 @@ class UserPersistenceAdapter(
         userRepository.existsByEmail(email)
 
     override fun existsById(userId: String): Boolean =
-        userRepository.existsById(UUID.fromString(userId))
+        userId.toUUIDOrNull()
+            ?.let { userRepository.existsById(it) }
+            ?: false
 
     override fun findByStatus(status: Status): List<User> =
         userRepository.findAllByStatus(status)
