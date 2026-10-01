@@ -12,6 +12,7 @@ import org.springframework.http.server.ServerHttpResponse
 import org.springframework.stereotype.Component
 import org.springframework.web.socket.WebSocketHandler
 import org.springframework.web.socket.server.HandshakeInterceptor
+import org.springframework.web.util.UriComponentsBuilder
 import java.lang.Exception
 
 @Component
@@ -37,9 +38,8 @@ class WebSocketInterceptor(
                 ?: return reject(response, ErrorCode.NOT_VALID_TOKEN)
         }
 
-        val applicationId = request.uri.query
-            ?.split("=")
-            ?.getOrNull(1)
+        val applicationId = UriComponentsBuilder.fromUri(request.uri).build()
+            .queryParams.getFirst("applicationId")
             ?.takeIf { it.isNotBlank() }
             ?: return reject(response, ErrorCode.BAD_REQUEST, "접속할 애플리케이션 아이디가 주어지지 않음")
 
