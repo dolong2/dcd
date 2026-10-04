@@ -46,6 +46,8 @@ getImageVersion.sh
 
 /sql/
 
+docs/
+
 ### terraform ###
 terraform/.terraform.lock.hcl
 terraform/.terraform
