@@ -112,6 +112,7 @@ class SecurityConfig(
                 it.requestMatchers(HttpMethod.POST, "/{workspaceId}/volume/{volumeId}/mount").authenticated()
                 it.requestMatchers(HttpMethod.DELETE, "/{workspaceId}/volume/{volumeId}/mount").authenticated()
                 it.requestMatchers(HttpMethod.POST, "/{workspaceId}/volume/{volumeId}/files").authenticated()
+                it.requestMatchers(HttpMethod.DELETE, "/{workspaceId}/volume/{volumeId}/files").authenticated()
 
                 //when url not set
                 it.anyRequest().denyAll()
